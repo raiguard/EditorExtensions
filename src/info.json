@@ -1,0 +1,10 @@
+{
+    "name": "EditorExtensions",
+    "version": "1.0.0",
+    "title": "Editor Extensions",
+    "author": "raiguard",
+    "homepage": "https://github.com/raiguard/EditorExtensions",
+    "factorio_version": "0.17",
+    "dependencies": ["base >= 0.17.79"],
+    "description": "Editor Extensions extends the Factorio Map Editor with additional tools and features, and adds a whole set of items/entities to make testing easier. Easily switch between the map editor and normal play, generate or destroy unlimited items, fluids, electricity, and heat, gain access to energy-free and superfast version of many vaniila entities, and more!\n\nDesigned to be a replacement for Creative Mode and Infinity Mode."
+}
