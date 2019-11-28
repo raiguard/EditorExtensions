@@ -10,7 +10,7 @@ data:extend{
         stack_size = 50,
         icons = {apply_infinity_tint{icon=base_accumulator.icon, icon_size=base_accumulator.icon_size, icon_mipmaps=base_accumulator.icon_mipmaps}},
         place_result = 'infinity-accumulator-primary-output',
-        subgroup = 'im-electricity',
+        subgroup = 'ee-electricity',
         order = 'a'
     }
 }
@@ -33,7 +33,7 @@ for _,t in pairs(ia_types) do
     ia.name = 'infinity-accumulator-' .. t
     ia.icons = ia_icons
     ia.energy_source = {type='electric', usage_priority=t, buffer_capacity='500GJ'}
-    ia.subgroup = 'im-electricity'
+    ia.subgroup = 'ee-electricity'
     ia.order = 'a'
     ia.minable.result = 'infinity-accumulator'
     ia.placeable_by = {item='infinity-accumulator', count=1}

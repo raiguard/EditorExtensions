@@ -9,7 +9,7 @@ data:extend{
         icons = {apply_infinity_tint{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32, icon_mipmaps=0}},
         stack_size = 50,
         place_result = 'infinity-loader-dummy-combinator',
-        subgroup = 'im-misc',
+        subgroup = 'ee-misc',
         order = 'aa'
     }
 }

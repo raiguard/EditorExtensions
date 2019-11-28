@@ -6,7 +6,7 @@ local table = require('__stdlib__/stdlib/utils/table')
 -- infinity pipe
 local ip_item = data.raw['item']['infinity-pipe']
 ip_item.icons = {apply_infinity_tint(ip_item.icons[1])}
-ip_item.subgroup = 'im-misc'
+ip_item.subgroup = 'ee-misc'
 ip_item.order = 'ba'
 ip_item.stack_size = 50
 ip_item.flags = {}
@@ -14,7 +14,7 @@ ip_item.flags = {}
 -- heat interface
 local hp_base = data.raw['item']['heat-pipe']
 local hi_item = data.raw['item']['heat-interface']
-hi_item.subgroup = 'im-misc'
+hi_item.subgroup = 'ee-misc'
 hi_item.order = 'ca'
 hi_item.stack_size = 50
 hi_item.icons = {apply_infinity_tint{icon=hp_base.icon, icon_size=hp_base.icon_size, icon_mipmaps=hp_base.icon_mipmaps}}
@@ -25,7 +25,7 @@ local ir_item = table.deepcopy(data.raw['item']['radar'])
 ir_item.name = 'infinity-radar'
 ir_item.icons = {apply_infinity_tint{icon=ir_item.icon, icon_size=ir_item.icon_size, icon_mipmaps=ir_item.icon_mipmaps}}
 ir_item.place_result = 'infinity-radar'
-ir_item.subgroup = 'im-misc'
+ir_item.subgroup = 'ee-misc'
 ir_item.order = 'da'
 
 -- infinity beacon
@@ -33,7 +33,7 @@ local ib_item = table.deepcopy(data.raw['item']['beacon'])
 ib_item.name = 'infinity-beacon'
 ib_item.icons = {apply_infinity_tint{icon=ib_item.icon, icon_size=ib_item.icon_size, icon_mipmaps=ib_item.icon_mipmaps}}
 ib_item.place_result = 'infinity-beacon'
-ib_item.subgroup='im-modules'
+ib_item.subgroup='ee-modules'
 ib_item.order = 'aa'
 
 -- infinity lab
@@ -41,7 +41,7 @@ local lab_item = table.deepcopy(data.raw['item']['lab'])
 lab_item.name = 'infinity-lab'
 lab_item.icons = {apply_infinity_tint{icon=lab_item.icon, icon_size=lab_item.icon_size, icon_mipmaps=lab_item.icon_mipmaps}}
 lab_item.place_result = 'infinity-lab'
-lab_item.subgroup = 'im-misc'
+lab_item.subgroup = 'ee-misc'
 lab_item.order = 'ea'
 
 -- infinity inserter
@@ -49,7 +49,7 @@ local ii_item = table.deepcopy(data.raw['item']['filter-inserter'])
 ii_item.name = 'infinity-inserter'
 ii_item.icons = {apply_infinity_tint{icon=ii_item.icon, icon_size=ii_item.icon_size, icon_mipmaps=ii_item.icon_mipmaps}}
 ii_item.place_result = 'infinity-inserter'
-ii_item.subgroup = 'im-misc'
+ii_item.subgroup = 'ee-misc'
 ii_item.order = 'ab'
 
 -- infinity pump
@@ -57,7 +57,7 @@ local p_item = table.deepcopy(data.raw['item']['pump'])
 p_item.name = 'infinity-pump'
 p_item.icons = {apply_infinity_tint{icon=p_item.icon, icon_size=p_item.icon_size, icon_mipmaps=p_item.icon_mipmaps}}
 p_item.place_result = 'infinity-pump'
-p_item.subgroup = 'im-misc'
+p_item.subgroup = 'ee-misc'
 p_item.order = 'bb'
 
 data:extend{ip_item, hi_item, ir_item, ib_item, lab_item, ii_item, p_item}
@@ -72,7 +72,7 @@ data:extend{
         name = 'infinity-fusion-reactor-equipment',
         icon_size = 32,
         icons = {apply_infinity_tint{icon=reactor_base.icon, icon_size=reactor_base.icon_size, icon_mipmaps=reactor_base.icon_mipmaps}},
-        subgroup = 'im-equipment',
+        subgroup = 'ee-equipment',
         order = 'aa',
         placed_as_equipment_result = 'infinity-fusion-reactor-equipment',
         stack_size = 50
@@ -83,7 +83,7 @@ data:extend{
         name = 'infinity-personal-roboport-equipment',
         icon_size = 32,
         icons = {apply_infinity_tint{icon=roboport_base.icon, icon_size=roboport_base.icon_size, icon_mipmaps=roboport_base.icon_mipmaps}},
-        subgroup = 'im-equipment',
+        subgroup = 'ee-equipment',
         order = 'ab',
         placed_as_equipment_result = 'infinity-personal-roboport-equipment',
         stack_size = 50
@@ -251,7 +251,7 @@ end
 
 local module_template = {
     type = 'module',
-    subgroup = 'im-modules',
+    subgroup = 'ee-modules',
     stack_size = 50
 }
 

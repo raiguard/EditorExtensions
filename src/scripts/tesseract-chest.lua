@@ -30,7 +30,7 @@ end
 
 -- retrieve each item prototype and its stack size
 local function update_tesseract_data()
-    local include_hidden = settings.global['im-tesseract-include-hidden'].value
+    local include_hidden = settings.global['ee-tesseract-include-hidden'].value
     local data = {}
     for n,p in pairs(game.item_prototypes) do
         if include_hidden or not p.has_flag('hidden') then
@@ -57,7 +57,7 @@ end)
 
 -- when a mod setting changes
 on_event(defines.events.on_runtime_mod_setting_changed, function(e)
-    if e.setting == 'im-tesseract-include-hidden' then
+    if e.setting == 'ee-tesseract-include-hidden' then
         -- update filters of all tesseract chests
         update_tesseract_data()
         update_all_chest_filters()

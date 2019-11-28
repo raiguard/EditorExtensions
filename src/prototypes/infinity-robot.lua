@@ -5,7 +5,7 @@ local cr_item = table.deepcopy(data.raw['item']['construction-robot'])
 cr_item.name = 'infinity-construction-robot'
 cr_item.icons = {apply_infinity_tint{icon=cr_item.icon, icon_size=cr_item.icon_size, icon_mipmaps=cr_item.icon_mipmaps}}
 cr_item.place_result = 'infinity-construction-robot'
-cr_item.subgroup = 'im-robots'
+cr_item.subgroup = 'ee-robots'
 cr_item.order = 'ba'
 cr_item.stack_size = 100
 
@@ -13,7 +13,7 @@ local lr_item = table.deepcopy(data.raw['item']['logistic-robot'])
 lr_item.name = 'infinity-logistic-robot'
 lr_item.icons = {apply_infinity_tint{icon=lr_item.icon, icon_size=lr_item.icon_size, icon_mipmaps=lr_item.icon_mipmaps}}
 lr_item.place_result = 'infinity-logistic-robot'
-lr_item.subgroup = 'im-robots'
+lr_item.subgroup = 'ee-robots'
 lr_item.order = 'bb'
 lr_item.stack_size = 100
 
@@ -21,7 +21,7 @@ local ir_item = table.deepcopy(data.raw['item']['roboport'])
 ir_item.name = 'infinity-roboport'
 ir_item.icons = {apply_infinity_tint{icon=ir_item.icon, icon_size=ir_item.icon_size, icon_mipmaps=ir_item.icon_mipmaps}}
 ir_item.place_result = 'infinity-roboport'
-ir_item.subgroup = 'im-robots'
+ir_item.subgroup = 'ee-robots'
 ir_item.order = 'a'
 ir_item.stack_size = 50
 

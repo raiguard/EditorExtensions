@@ -16,7 +16,7 @@ local tess_chest_data = {
 
 -- modify existing infinity-chest item
 local ic_item = data.raw['item']['infinity-chest']
-ic_item.subgroup = 'im-inventories'
+ic_item.subgroup = 'ee-inventories'
 ic_item.order = 'aa'
 ic_item.stack_size = 50
 ic_item.flags = {}
@@ -65,7 +65,7 @@ for lm,d in pairs(chest_data) do
     chest.type = 'infinity-container'
     chest.name = 'infinity-chest-' .. lm
     chest.order = d.o
-    chest.subgroup = 'im-inventories'
+    chest.subgroup = 'ee-inventories'
     chest.icons = {{icon=ic_entity.icon, icon_size=ic_entity.icon_size, icon_mipmaps=ic_entity.icon_mipmaps, tint=d.t}}
     chest.erase_contents_when_mined = true
     chest.picture = table.deepcopy(inf_chest_picture)

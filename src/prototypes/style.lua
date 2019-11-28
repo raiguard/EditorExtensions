@@ -155,14 +155,14 @@ styles['virtual_slot_table_scroll_pane'] = {
 data:extend{
     {
         type = 'sprite',
-        name = 'im-logo',
+        name = 'ee-logo',
         filename = '__EditorExtensions__/graphics/gui/crafting-group.png',
         size = 128,
         flags = {'icon'}
     },
     {
         type = 'sprite',
-        name = 'im-info-black-inline',
+        name = 'ee-info-black-inline',
         filename = '__EditorExtensions__/graphics/gui/info-black-inline.png',
         size = {16,40},
         flags = {'icon'}

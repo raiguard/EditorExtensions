@@ -13,19 +13,19 @@ data:extend{
     -- shortcut
     {
         type = 'shortcut',
-        name = 'im-toggle-map-editor',
+        name = 'ee-toggle-map-editor',
         icon = shortcut_sprite('x32.png', 32),
         disabled_icon = shortcut_sprite('x32-white.png', 32),
         small_icon = shortcut_sprite('x24.png', 24),
         disabled_small_icon = shortcut_sprite('x24-white.png', 24),
         action = 'lua',
-        associated_control_input = 'im-toggle-map-editor',
+        associated_control_input = 'ee-toggle-map-editor',
         toggleable = true
     },
     -- custom input
     {
         type = 'custom-input',
-        name = 'im-toggle-map-editor',
+        name = 'ee-toggle-map-editor',
         key_sequence = 'CONTROL + SHIFT + E',
         action = 'lua'
     }

@@ -7,7 +7,7 @@ local cw_item = table.deepcopy(data.raw['item-with-entity-data']['cargo-wagon'])
 cw_item.name = 'infinity-cargo-wagon'
 cw_item.icons = {apply_infinity_tint{icon=cw_item.icon, icon_size=cw_item.icon_size, icon_mipmaps=cw_item.icon_mipmaps}}
 cw_item.place_result = 'infinity-cargo-wagon'
-cw_item.subgroup = 'im-trains'
+cw_item.subgroup = 'ee-trains'
 cw_item.order = 'ba'
 cw_item.stack_size = 50
 
@@ -15,7 +15,7 @@ local fw_item = table.deepcopy(data.raw['item-with-entity-data']['fluid-wagon'])
 fw_item.name = 'infinity-fluid-wagon'
 fw_item.icons = {apply_infinity_tint{icon=fw_item.icon, icon_size=fw_item.icon_size, icon_mipmaps=fw_item.icon_mipmaps}}
 fw_item.place_result = 'infinity-fluid-wagon'
-fw_item.subgroup = 'im-trains'
+fw_item.subgroup = 'ee-trains'
 fw_item.order = 'bb'
 fw_item.stack_size = 50
 
@@ -23,7 +23,7 @@ local l_item = table.deepcopy(data.raw['item-with-entity-data']['locomotive'])
 l_item.name = 'infinity-locomotive'
 l_item.icons = {apply_infinity_tint{icon=l_item.icon, icon_size=l_item.icon_size, icon_mipmaps=l_item.icon_mipmaps}}
 l_item.place_result = 'infinity-locomotive'
-l_item.subgroup = 'im-trains'
+l_item.subgroup = 'ee-trains'
 l_item.order = 'aa'
 l_item.stack_size = 50
 
