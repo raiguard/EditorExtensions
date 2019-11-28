@@ -15,6 +15,11 @@ function util.player_table(obj)
     else return global.players[obj.player_index] end -- gave the event table
 end
 
+-- prints the contents of the event table
+function util.debug_print(e)
+    print(serpent.block(e))
+end
+
 util.constants = {
     -- commonly-used set of events for when an entity is built
     entity_built_events = {
@@ -41,6 +46,29 @@ util.constants = {
 
 util.area = math2d.bounding_box
 util.position = math2d.position
+
+util.textfield = {}
+
+function util.textfield.clamp_number_input(element, clamps, last_value)
+    local text = element.text
+    if text == ''
+    or (clamps[1] and tonumber(text) < clamps[1])
+    or (clamps[2] and tonumber(text) > clamps[2]) then
+        element.style = 'ee_invalid_slider_textfield'
+    else
+        element.style = 'ee_slider_textfield'
+        last_value = text
+    end
+    return last_value
+end
+
+function util.textfield.set_last_valid_value(element, last_value)
+    if element.text ~= last_value then
+        element.text = last_value
+        element.style = 'ee_slider_textfield'
+    end
+    return element.text
+end
 
 -- -- ----------------------------------------------------------------------------------------------------
 -- -- GUI

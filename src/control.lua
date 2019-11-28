@@ -16,15 +16,25 @@ require('scripts/tesseract-chest')
 local event = require('scripts/lib/event-handler')
 local util = require('scripts/lib/util')
 
+local function setup_player(index)
+    local data = {
+        gui = {}
+    }
+    global.players[index] = data
+end
+
 -- GENERAL SETUP
 event.on_init(function()
     global.players = {}
     -- the first time someone toggles the map editor, unpause the current tick
     global.map_editor_toggled = false
+    for i,p in pairs(game.players) do
+        setup_player(i)
+    end
 end)
 
 event.register(defines.events.on_player_created, function(e)
-
+    setup_player(e.player_index)
 end)
 
 -- map editor shortcut and hotkey

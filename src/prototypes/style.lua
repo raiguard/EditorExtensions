@@ -83,7 +83,8 @@ styles['ee_disabled_dropdown_button'] = {
     parent = 'dropdown_button',
     disabled_font_color = styles['button'].disabled_font_color,
     disabled_graphical_set = styles['button'].disabled_graphical_set,
-    left_padding = 8
+    left_padding = 8,
+    width = 116
 }
 
 -- styles['green_button'] = {
