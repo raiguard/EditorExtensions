@@ -29,11 +29,3 @@ require('prototypes/infinity-wagon')
 require('prototypes/item-group')
 require('prototypes/shortcut')
 require('prototypes/style')
-
-data:extend{
-    {
-        type = 'custom-input',
-        name = 'ee-toggle-cheats-gui',
-        key_sequence = 'CONTROL + SHIFT + C'
-    }
-}
