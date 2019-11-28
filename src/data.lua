@@ -29,3 +29,10 @@ require('prototypes/infinity-wagon')
 require('prototypes/item-group')
 require('prototypes/shortcut')
 require('prototypes/style')
+
+-- editor controller settings
+local editor_controller = data.raw['editor-controller'].default
+editor_controller.show_character_tab_in_controller_gui = true
+editor_controller.show_infinity_filters_in_controller_gui = true
+editor_controller.inventory_size = 150
+editor_controller.render_as_day = false
