@@ -150,6 +150,9 @@ function event.dispatch(e)
     end
 end
 
+-- raises an event
+event.raise = script.raise_event
+
 -- shortcut for event.register('on_init', function)
 function event.on_init(handler)
     event.register('on_init', handler)
