@@ -1,12 +1,11 @@
 -- ----------------------------------------------------------------------------------------------------
 -- TESSERACT CHEST CONTROL SCRIPTING
 
-local event = require('__stdlib__/stdlib/event/event')
-local on_event = event.register
+local event = require('scripts/lib/event-handler')
 local chest_names = {'tesseract-chest','tesseract-chest-passive-provider','tesseract-chest-storage'}
 
--- ----------------------------------------------------------------------------------------------------
--- UTILITIES
+-- --------------------------------------------------
+-- LOCAL UTILITIES
 
 -- set the filters for the given tesseract chest
 local function update_chest_filters(entity)
@@ -42,10 +41,10 @@ local function update_tesseract_data()
     global.tesseract_data = data
 end
 
--- ----------------------------------------------------------------------------------------------------
--- LISTENERS
+-- --------------------------------------------------
+-- EVENT HANDLERS
 
-event.on_init(function(e)
+event.on_init(function()
     update_tesseract_data()
 end)
 
@@ -56,7 +55,7 @@ event.on_configuration_changed(function(e)
 end)
 
 -- when a mod setting changes
-on_event(defines.events.on_runtime_mod_setting_changed, function(e)
+event.register(defines.events.on_runtime_mod_setting_changed, function(e)
     if e.setting == 'ee-tesseract-include-hidden' then
         -- update filters of all tesseract chests
         update_tesseract_data()
@@ -65,7 +64,7 @@ on_event(defines.events.on_runtime_mod_setting_changed, function(e)
 end)
 
 -- when an entity is built
-on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
+event.register({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
     local entity = e.created_entity or e.entity
     if entity.name:find('tesseract') then
         update_chest_filters(entity)

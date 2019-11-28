@@ -5,10 +5,10 @@
 -- MODULES
 
 -- require('scripts/infinity-accumulator')
--- require('scripts/infinity-inserter')
+require('scripts/infinity-inserter')
 -- require('scripts/infinity-loader')
--- require('scripts/infinity-wagon')
--- require('scripts/tesseract-chest')
+require('scripts/infinity-wagon')
+require('scripts/tesseract-chest')
 
 -- --------------------------------------------------
 -- SETUP AND GENERAL SCRIPTING
@@ -19,6 +19,12 @@ local util = require('scripts/lib/util')
 -- GENERAL SETUP
 event.on_init(function()
     global.players = {}
+    -- the first time someone toggles the map editor, unpause the current tick
+    global.map_editor_toggled = false
+end)
+
+event.register(defines.events.on_player_created, function(e)
+
 end)
 
 -- map editor shortcut and hotkey
@@ -27,4 +33,9 @@ event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, functio
     local player = util.get_player(e)
     player.toggle_map_editor()
     player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
+    -- unpause the game if it is the first time the map editor has been toggled
+    if global.map_editor_toggled == false then
+        global.map_editor_toggled = true
+        game.tick_paused = false
+    end
 end)

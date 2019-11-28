@@ -1,12 +1,29 @@
+local math2d = require('__core__/lualib/math2d')
 local util = require('__core__/lualib/util')
-
--- ----------------------------------------------------------------------------------------------------
--- GENERAL
 
 function util.get_player(obj)
     if type(obj) == 'number' then return game.players[obj], global.players[obj]
     else return game.players[obj.player_index], global.players[obj.player_index] end
 end
+
+util.constants = {
+    built_events = {
+        defines.events.on_built_entity,
+        defines.events.on_robot_built_entity,
+        defines.events.script_raised_built,
+        defines.events.script_raised_revive
+    },
+    destroyed_events = {
+        defines.events.on_player_mined_entity,
+        defines.events.on_robot_mined_entity,
+        defines.events.on_entity_died,
+        defines.events.script_raised_destroy
+    }
+}
+
+util.position = {}
+
+util.position.distance = math2d.position.distance
 
 -- -- ----------------------------------------------------------------------------------------------------
 -- -- GUI

@@ -1,11 +1,49 @@
-local abs = math.abs
-local area = require('__stdlib__/stdlib/area/area')
-local event = require('__stdlib__/stdlib/event/event')
-local on_event = event.register
-local position = require('__stdlib__/stdlib/area/position')
-local util = require('scripts/util/util')
+-- ----------------------------------------------------------------------------------------------------
+-- INFINITY ACCUMULATOR
 
-local conditional_event = require('scripts/util/conditional-event')
+local abs = math.abs
+local event = require('scripts/lib/event-handler')
+local util = require('scripts/lib/util')
+
+-- --------------------------------------------------
+-- LOCAL UTILITIES
+
+
+
+-- --------------------------------------------------
+-- CONDITIONAL HANDLERS
+
+local function wagon_on_tick(e)
+    for _,t in pairs(global.wagons) do
+        if t.wagon.valid and t.proxy.valid then
+            if t.wagon_name == 'infinity-cargo-wagon' then
+                if t.flip == 0 then
+                    t.wagon_inv.clear()
+                    for n,c in pairs(t.proxy_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
+                    t.flip = 1
+                elseif t.flip == 1 then
+                    t.proxy_inv.clear()
+                    for n,c in pairs(t.wagon_inv.get_contents()) do t.proxy_inv.insert{name=n, count=c} end
+                    t.flip = 0
+                end
+            elseif t.wagon_name == 'infinity-fluid-wagon' then
+                if t.flip == 0 then
+                    local fluid = t.proxy_fluidbox[1]
+                    t.wagon_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature} or nil
+                    t.flip = 1
+                elseif t.flip == 1 then
+                    local fluid = t.wagon_fluidbox[1]
+                    t.proxy_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature} or nil
+                    t.flip = 0
+                end
+            end
+            t.proxy.teleport(t.wagon.position)
+        end
+    end
+end
+
+-- --------------------------------------------------
+-- STATIC HANDLERS
 
 -- on game init
 event.on_init(function()
@@ -13,12 +51,16 @@ event.on_init(function()
 end)
 
 -- when an entity is built
-on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built, defines.events.script_raised_revive}, function(e)
+event.register(util.constants.built_events, function(e)
     local entity = e.created_entity or e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
-        local proxy = entity.surface.create_entity{name = 'infinity-wagon-' .. (entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'), position = entity.position, force = entity.force}
+        local proxy = entity.surface.create_entity{
+            name = 'infinity-wagon-'..(entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'),
+            position = entity.position,
+            force = entity.force
+        }
         if table_size(global.wagons) == 0 then
-            conditional_event.register('infinity_wagon.on_tick')
+            event.register(defines.events.on_tick, wagon_on_tick, 'wagon_on_tick')
         end
         -- create all api lookups here to save time in on_tick()
         local data = {
@@ -44,7 +86,7 @@ on_event({defines.events.on_built_entity, defines.events.on_robot_built_entity, 
 end)
 
 -- before an entity is mined by a player or marked for deconstructione
-on_event({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
+event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' then
         -- clear the wagon's inventory and set FLIP to 3 to prevent it from being refilled
@@ -54,7 +96,7 @@ on_event({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_
 end)
 
 -- when a deconstruction order is canceled
-on_event(defines.events.on_cancelled_deconstruction, function(e)
+event.register(defines.events.on_cancelled_deconstruction, function(e)
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' then
         global.wagons[entity.unit_number].flip = 0
@@ -62,37 +104,37 @@ on_event(defines.events.on_cancelled_deconstruction, function(e)
 end)
 
 -- when an entity is destroyed
-on_event({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity, defines.events.on_entity_died, defines.events.script_raised_destroy}, function(e)
+event.register(util.constants.destroyed_events, function(e)
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         global.wagons[entity.unit_number].proxy.destroy()
         global.wagons[entity.unit_number] = nil
         if table_size(global.wagons) == 0 then
-            conditional_event.deregister('infinity_wagon.on_tick')
+            event.deregister(defines.events.on_tick, wagon_on_tick, 'wagon_on_tick')
         end
     end
 end)
 
 -- when a gui is opened
-on_event('iw-open-gui', function(e)
+event.register('ee-mouse-leftclick', function(e)
     local player = util.get_player(e)
     local selected = player.selected
     if selected and (selected.name == 'infinity-cargo-wagon' or selected.name == 'infinity-fluid-wagon') then
-        if position.distance(player.position, selected.position) <= player.reach_distance then
+        if util.position.distance(player.position, selected.position) <= player.reach_distance then
             player.opened = global.wagons[selected.unit_number].proxy
         end
     end
 end)
 
 -- override cargo wagon's default GUI opening
-on_event(defines.events.on_gui_opened, function(e)
+event.register(defines.events.on_gui_opened, function(e)
     if e.entity and (e.entity.name == 'infinity-cargo-wagon' or e.entity.name == 'infinity-fluid-wagon') then
         game.players[e.player_index].opened = global.wagons[e.entity.unit_number].proxy
     end
 end)
 
 -- when an entity copy/paste happens
-on_event(defines.events.on_entity_settings_pasted, function(e)
+event.register(defines.events.on_entity_settings_pasted, function(e)
     if e.source.name == 'infinity-cargo-wagon' and e.destination.name == 'infinity-cargo-wagon' then
         global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
     elseif e.source.name == 'infinity-fluid-wagon' and e.destination.name == 'infinity-fluid-wagon' then
@@ -101,7 +143,7 @@ on_event(defines.events.on_entity_settings_pasted, function(e)
 end)
 
 -- when a player selects an area for blueprinting
-on_event(defines.events.on_player_setup_blueprint, function(e)
+event.register(defines.events.on_player_setup_blueprint, function(e)
     local player = util.get_player(e)
     local bp = player.blueprint_to_setup
     if not bp or not bp.valid_for_read then

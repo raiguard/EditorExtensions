@@ -109,7 +109,7 @@ data:extend{cw_entity, fw_entity, l_entity, ic_entity, ip_entity}
 data:extend{
     {
         type = 'custom-input',
-        name = 'iw-open-gui',
+        name = 'ee-mouse-leftclick',
         key_sequence = '',
         linked_game_control = 'open-gui'
     }
