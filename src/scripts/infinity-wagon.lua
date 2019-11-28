@@ -37,6 +37,10 @@ local function wagon_on_tick(e)
     end
 end
 
+event.on_load(function()
+    event.load_conditional_handlers{wagon_on_tick=wagon_on_tick}
+end)
+
 -- --------------------------------------------------
 -- STATIC HANDLERS
 
