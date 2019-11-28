@@ -6,11 +6,6 @@ local event = require('scripts/lib/event-handler')
 local util = require('scripts/lib/util')
 
 -- --------------------------------------------------
--- LOCAL UTILITIES
-
-
-
--- --------------------------------------------------
 -- CONDITIONAL HANDLERS
 
 local function wagon_on_tick(e)
@@ -51,7 +46,7 @@ event.on_init(function()
 end)
 
 -- when an entity is built
-event.register(util.constants.built_events, function(e)
+event.register(util.constants.entity_built_events, function(e)
     local entity = e.created_entity or e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         local proxy = entity.surface.create_entity{
@@ -104,7 +99,7 @@ event.register(defines.events.on_cancelled_deconstruction, function(e)
 end)
 
 -- when an entity is destroyed
-event.register(util.constants.destroyed_events, function(e)
+event.register(util.constants.entity_destroyed_events, function(e)
     local entity = e.entity
     if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         global.wagons[entity.unit_number].proxy.destroy()

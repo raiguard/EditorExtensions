@@ -6,7 +6,7 @@ function titlebar.create(parent, name, data)
     local titlebar_flow = parent.add {
         type = 'flow',
         name = prefix .. 'flow',
-        style = 'titlebar_flow'
+        style = 'ee_titlebar_flow'
     }
 
     if data.adjust_for_border ~= false then
