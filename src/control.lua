@@ -21,21 +21,10 @@ event.on_init(function()
     global.players = {}
 end)
 
-local function update_shortcut_toggled(player)
+-- map editor shortcut and hotkey
+event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, function(e)
+    if e.prototype_name and e.prototype_name ~= 'ee-toggle-map-editor' then return end
+    local player = util.get_player(e)
+    player.toggle_map_editor()
     player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
-end
-
--- map editor shortcut
-event.register(defines.events.on_lua_shortcut, function(e)
-    if e.prototype_name ~= 'ee-toggle-map-editor' then return end
-    local player = util.get_player(e)
-    player.toggle_map_editor()
-    update_shortcut_toggled(player)
-end)
-
--- map editor hotkey
-event.register('ee-toggle-map-editor', function(e)
-    local player = util.get_player(e)
-    player.toggle_map_editor()
-    update_shortcut_toggled(player)
 end)
