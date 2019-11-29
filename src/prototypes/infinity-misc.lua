@@ -58,7 +58,16 @@ p_item.place_result = 'infinity-pump'
 p_item.subgroup = 'ee-misc'
 p_item.order = 'bb'
 
-data:extend{ip_item, hi_item, ir_item, ib_item, lab_item, ii_item, p_item}
+-- infinity fuel
+local if_item = table.deepcopy(data.raw['item']['nuclear-fuel'])
+if_item.name = 'infinity-fuel'
+if_item.icons = {apply_infinity_tint{icon=if_item.icon, icon_size=if_item.icon_size, icon_mipmaps=if_item.icon_mipmaps}}
+if_item.stack_size = 100
+if_item.fuel_value = '1000YJ'
+if_item.subgroup = 'ee-trains'
+if_item.order = 'c'
+
+data:extend{ip_item, hi_item, ir_item, ib_item, lab_item, ii_item, p_item, if_item}
 
 local reactor_base = data.raw['item']['fusion-reactor-equipment']
 local roboport_base = data.raw['item']['personal-roboport-equipment']
@@ -89,7 +98,7 @@ data:extend{
 }
 
 register_recipes{'infinity-pipe', 'heat-interface', 'infinity-radar', 'infinity-beacon', 'infinity-lab', 'infinity-inserter',
-    'infinity-pump', 'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment'}
+    'infinity-pump', 'infinity-fusion-reactor-equipment', 'infinity-personal-roboport-equipment', 'infinity-fuel'}
 
 
 -- ------------------------------------------------------------------------------------------
