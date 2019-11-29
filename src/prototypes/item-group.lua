@@ -22,7 +22,6 @@ data:extend {
         type = 'item-group',
         name = 'ee-tools',
         order = 'zzzzz',
-        icon = '__EditorExtensions__/graphics/gui/crafting-group.png',
-        icon_size = 128
+        icons={{icon='__EditorExtensions__/graphics/gui/crafting-group.png', icon_size=128, icon_mipmaps=2}}
     }
 }

@@ -226,6 +226,7 @@ data:extend{
         name = 'ee-logo',
         filename = '__EditorExtensions__/graphics/gui/crafting-group.png',
         size = 128,
+        mipmap_count = 2,
         flags = {'icon'}
     },
     {
