@@ -1,6 +1,16 @@
 local math2d = require('__core__/lualib/math2d')
 local util = require('__core__/lualib/util')
 
+-- returns true if the table contains the specified value
+function table.contains(table, value)
+    for k,v in pairs(table) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
 -- returns the player and his global table
 function util.get_player(obj)
     if type(obj) == 'number' then return game.players[obj], global.players[obj] -- gave the player_index itself
@@ -41,11 +51,37 @@ util.constants = {
         sprite = 'utility/close_white',
         hovered_sprite = 'utility/close_black',
         clicked_sprite = 'utility/close_black'
+    },
+    -- vectors for neighboring tiles, in order of defines.direction
+    neighbor_tile_vectors = {
+        [defines.direction.north] = {x=0,y=-1},
+        [defines.direction.northeast] = {x=1,y=-1},
+        [defines.direction.east] = {x=1,y=-0},
+        [defines.direction.southeast] = {x=1,y=1},
+        [defines.direction.south] = {x=0,y=1},
+        [defines.direction.southwest] = {x=-1,y=1},
+        [defines.direction.west] = {x=-1,y=0},
+        [defines.direction.northwest] = {x=-1,y=-1}
     }
 }
 
 util.area = math2d.bounding_box
+
+util.direction = {}
+
+-- borrowed from STDLIB: returns the next or previous direction
+function util.direction.next_direction(direction, reverse, eight_way)
+    return (direction + (eight_way and ((reverse and -1) or 1) or ((reverse and -2) or 2))) % 8
+end
+
 util.position = math2d.position
+
+function util.position.to_tile_area(pos)
+    return {
+        left_top = {x=math.floor(pos.x), y=math.floor(pos.y)},
+        right_bottom = {x=math.ceil(pos.x), y=math.ceil(pos.y)}
+    }
+end
 
 util.textfield = {}
 

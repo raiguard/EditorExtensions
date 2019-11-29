@@ -1,5 +1,5 @@
 -- ----------------------------------------------------------------------------------------------------
--- INFINITY INSERTER CONTROL SCRIPTING
+-- INFINITY INSERTER
 
 local event = require('scripts/lib/event-handler')
 

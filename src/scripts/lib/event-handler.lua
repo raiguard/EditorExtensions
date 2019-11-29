@@ -153,6 +153,9 @@ end
 -- raises an event
 event.raise = script.raise_event
 
+-- sets the filters for an event
+event.set_filters = script.set_event_filter
+
 -- shortcut for event.register('on_init', function)
 function event.on_init(handler)
     event.register('on_init', handler)

@@ -1,5 +1,5 @@
 -- ----------------------------------------------------------------------------------------------------
--- INFINITY ACCUMULATOR
+-- INFINITY WAGONS
 
 local abs = math.abs
 local event = require('scripts/lib/event-handler')
@@ -52,7 +52,7 @@ end)
 -- when an entity is built
 event.register(util.constants.entity_built_events, function(e)
     local entity = e.created_entity or e.entity
-    if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
+    if entity.valid and (entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon') then
         local proxy = entity.surface.create_entity{
             name = 'infinity-wagon-'..(entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'),
             position = entity.position,
@@ -105,7 +105,7 @@ end)
 -- when an entity is destroyed
 event.register(util.constants.entity_destroyed_events, function(e)
     local entity = e.entity
-    if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
+    if entity.valid and (entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon') then
         global.wagons[entity.unit_number].proxy.destroy()
         global.wagons[entity.unit_number] = nil
         if table_size(global.wagons) == 0 then

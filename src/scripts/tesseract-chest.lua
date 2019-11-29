@@ -1,5 +1,5 @@
 -- ----------------------------------------------------------------------------------------------------
--- TESSERACT CHEST CONTROL SCRIPTING
+-- TESSERACT CHEST
 
 local event = require('scripts/lib/event-handler')
 local chest_names = {'tesseract-chest','tesseract-chest-passive-provider','tesseract-chest-storage'}
@@ -66,7 +66,7 @@ end)
 -- when an entity is built
 event.register({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
     local entity = e.created_entity or e.entity
-    if entity.name:find('tesseract') then
+    if entity.valid and entity.name:find('tesseract') then
         update_chest_filters(entity)
     end
 end)

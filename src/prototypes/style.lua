@@ -87,6 +87,36 @@ styles['ee_disabled_dropdown_button'] = {
     width = 116
 }
 
+local shadow_def = {
+    position = {382, 107},
+    corner_size = 12,
+    top_outer_border_shift = 4,
+    bottom_outer_border_shift = -4,
+    left_outer_border_shift = 4,
+    right_outer_border_shift = -4,
+    draw_type = 'outer'
+}
+
+styles['ee_slot_button_light'] = {
+    type='button_style',
+    parent='train_schedule_item_select_button',
+    size = 36,
+    padding = 0,
+	default_graphical_set = {
+		base = {border=4, position={2,738}, size=76},
+		shadow = shadow_def
+    },
+    hovered_graphical_set = {
+        base = {border=4, position={82,738}, size=76},
+        shadow = shadow_def,
+        glow = offset_by_2_rounded_corners_glow(default_glow_color)
+    },
+    clicked_graphical_set = {
+        base = {border=4, position={162,738}, size=76},
+        shadow = shadow_def
+    }
+}
+
 -- styles['green_button'] = {
 --     type = 'button_style',
 --     parent = 'button',
