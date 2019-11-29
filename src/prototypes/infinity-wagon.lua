@@ -1,5 +1,3 @@
-local sprites = require('__stdlib__/stdlib/data/modules/sprites')
-
 -- ------------------------------------------------------------------------------------------
 -- ITEMS
 
@@ -33,6 +31,13 @@ register_recipes{'infinity-cargo-wagon', 'infinity-fluid-wagon', 'infinity-locom
 
 -- ------------------------------------------------------------------------------------------
 -- ENTITIES
+
+local empty_picture = {
+    filename = '__core__/graphics/empty.png',
+    priority = 'extra-high',
+    width = 1,
+    height = 1
+}
 
 local cw_entity = table.deepcopy(data.raw['cargo-wagon']['cargo-wagon'])
 cw_entity.name = 'infinity-cargo-wagon'
@@ -83,7 +88,7 @@ end
 -- non-interactable chest and pipe
 local ic_entity = table.deepcopy(data.raw['infinity-container']['infinity-chest'])
 ic_entity.name = 'infinity-wagon-chest'
-ic_entity.picture = sprites.empty_picture()
+ic_entity.picture = empty_picture
 ic_entity.collision_mask = {'layer-15'}
 ic_entity.selection_box = nil
 ic_entity.selectable_in_game = false
@@ -98,7 +103,7 @@ ip_entity.order = 'a'
 ip_entity.flags = {'hide-alt-info', 'hidden'}
 
 for k,t in pairs(ip_entity.pictures) do
-    ip_entity.pictures[k] = sprites.empty_picture()
+    ip_entity.pictures[k] = empty_picture
 end
 
 data:extend{cw_entity, fw_entity, l_entity, ic_entity, ip_entity}

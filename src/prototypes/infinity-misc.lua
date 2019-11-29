@@ -1,5 +1,3 @@
-local table = require('__stdlib__/stdlib/utils/table')
-
 -- ------------------------------------------------------------------------------------------
 -- ITEMS
 
@@ -266,7 +264,9 @@ local modules = {
 }
 
 for _,v in pairs(modules) do
-    v = table.merge(v, module_template)
+    for tk,tv in pairs(module_template) do
+        v[tk] = tv
+    end
     v.icons = get_module_icon(v.icon_ref, v.tint)
     v.icon_ref = nil
     data:extend{v}

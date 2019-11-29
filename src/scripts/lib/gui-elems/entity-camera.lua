@@ -1,4 +1,4 @@
-local position = require('__stdlib__/stdlib/area/position')
+local util = require('scripts/lib/util')
 local entity_camera = {}
 
 function entity_camera.create(parent, name, size, data)
@@ -11,7 +11,7 @@ function entity_camera.create(parent, name, size, data)
     local camera = frame.add {
         type = 'camera',
         name = name .. '_camera',
-        position = position.add(data.entity.position, data.camera_offset or {0,0}),
+        position = util.position.add(data.entity.position, data.camera_offset or {0,0}),
         zoom = (data.camera_zoom or 1) * data.player.display_scale
     }
 
@@ -24,10 +24,6 @@ function entity_camera.create(parent, name, size, data)
     end
 
     return camera
-end
-
-function entity_camera.update(element, data)
-    
 end
 
 return entity_camera
