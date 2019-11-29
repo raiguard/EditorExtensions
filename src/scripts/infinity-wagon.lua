@@ -105,7 +105,7 @@ end)
 -- when an entity is destroyed
 event.register(util.constants.entity_destroyed_events, function(e)
     local entity = e.entity
-    if entity.valid and (entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon') then
+    if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
         global.wagons[entity.unit_number].proxy.destroy()
         global.wagons[entity.unit_number] = nil
         if table_size(global.wagons) == 0 then

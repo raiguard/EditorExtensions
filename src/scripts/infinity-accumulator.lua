@@ -176,7 +176,7 @@ function gui.create(parent, entity, player)
     local window = parent.add{type='frame', name='ee_ia_window', style='dialog_frame', direction='vertical'}
     local titlebar = titlebar.create(window, 'ee_ia_titlebar', {
         draggable = true,
-        label = {'gui-infinity-accumulator.titlebar-label-caption'},
+        label = {'entity-name.infinity-accumulator-tertiary'},
         buttons = {util.constants.close_button_def}
     })
     event.gui.on_click(titlebar.children[3], close_button_clicked, 'ia_close_button_clicked', player.index)
@@ -309,6 +309,22 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
             local player_table = util.player_table(i)
             player_table.gui.ia.entity = new_entity
             gui.update_settings(player_table.gui.ia)
+        end
+    end
+end)
+
+event.register(util.constants.entity_destroyed_events, function(e)
+    if check_is_accumulator(e.entity) then
+        -- close open GUIs
+        if global.conditional_event_registry.ia_close_button_clicked then
+            for _,i in ipairs(global.conditional_event_registry.ia_close_button_clicked.players) do
+                local player_table = util.player_table(i)
+                -- check if they're viewing this one
+                if player_table.gui.ia.entity == e.entity then
+                    gui.destroy(player_table.gui.ia.elems.window, e.player_index)
+                    player_table.gui.ia = nil
+                end
+            end
         end
     end
 end)

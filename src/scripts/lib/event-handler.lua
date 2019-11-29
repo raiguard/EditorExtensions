@@ -146,6 +146,13 @@ function event.dispatch(e)
         end
     end
     for _,t in ipairs(event_registry[id]) do
+        -- check if any userdata has gone invalid since last iteration
+        for _,v in pairs(e) do
+            if type(v) == 'table' and v.__self and not v.valid then
+                return
+            end
+        end
+        -- call the handler
         t.handler(e)
     end
 end
@@ -289,8 +296,12 @@ function event.gui.dispatch(e)
     local data = gui_event_data[e.name]
     -- check filters
     for _,t in ipairs(data) do
-        -- check element validity so it doesn't crash...
-        if e.element.valid == false then break end
+        -- check if any userdata has gone invalid since the last iteration
+        for _,v in pairs(e) do
+            if type(v) == 'table' and v.__self and not v.valid then
+                return
+            end
+        end
         local filters = t.filters
         local dispatched = false
         for name, param in pairs(filters) do
