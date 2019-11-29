@@ -17,7 +17,8 @@ local gui = {}
 -- iterate through all of these to result in the belt type
 local belt_type_patterns = {
     -- editor extensions :D
-    ['infinity%-loader%-loader%-?'] = '',
+    ['infinity%-'] = '',
+    ['loader%-loader%-?'] = '',
     -- beltlayer: https://mods.factorio.com/mod/beltlayer
     ['layer%-connector'] = '',
     -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
@@ -179,7 +180,7 @@ local function create_loader(type, mode, surface, position, direction, force, sk
             name = 'infinity-loader-logic-combinator',
             position = position,
             force = force,
-            direction = direction,
+            direction = mode == 'input' and util.oppositedirection(direction) or direction,
             create_build_effect_smoke = false
         }
     end
@@ -196,11 +197,11 @@ local function update_loader_type(belt_type, entity)
 	local combinator = entity.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=position}[1]
 	local control = combinator.get_control_behavior()
 	local parameters = control.parameters
-	local enabled = control.enabled
+    local enabled = control.enabled
 	-- destroy combinator and raise event, which will cause everything else to be destroyed as well
 	combinator.destroy{raise_destroy=true}
 	-- create new loader, sync filters
-	local new_loader, new_inserters, new_chest, new_combinator = create_loader(belt_type, mode, surface, position, direction, force, true)
+	local new_loader, new_inserters, new_chest, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
 	local new_control = new_combinator.get_or_create_control_behavior()
 	new_control.parameters = parameters
 	new_control.enabled = enabled
@@ -254,7 +255,9 @@ local function close_button_clicked(e)
 end
 
 local function state_switch_state_changed(e)
-    util.debug_print(e)
+    local entity = util.player_table(e.player_index).gui.il.entity
+    entity.get_or_create_control_behavior().enabled = e.element.switch_state == 'left'
+    update_filters(entity)
 end
 
 local function filter_button_elem_changed(e)
@@ -284,7 +287,7 @@ function gui.create(parent, entity, player)
     local window = parent.add{type='frame', name='ee_il_window', style='dialog_frame', direction='vertical'}
     local titlebar = titlebar.create(window, 'ee_il_titlebar', {
         draggable = true,
-        label = {'gui-infinity-accumulator.titlebar-label-caption'},
+        label = {'entity-name.infinity-loader'},
         buttons = {util.constants.close_button_def}
     })
     event.gui.on_click(titlebar.children[3], close_button_clicked, 'il_close_button_clicked', player.index)
@@ -375,10 +378,11 @@ local function snap_belt_neighbors(entity)
     entity.rotate()
     local rev_belt_neighbors = check_belt_neighbors(entity, check_is_loader, true)
     entity.rotate()
+    for _,e in ipairs(belt_neighbors) do
+        snap_loader(e, entity)
+    end
     for _,e in ipairs(rev_belt_neighbors) do
-        if not table.contains(belt_neighbors, e) then
-            snap_loader(e, entity)
-        end
+        snap_loader(e, entity)
     end
 end
 
@@ -427,30 +431,28 @@ end)
 
 event.register(util.constants.entity_built_events, function(e)
     local entity = e.created_entity or e.entity
-    if entity.valid then
-        if entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
-            -- just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
-            local type, mode = 'express', 'output'
-            local direction = entity.direction
-            local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, direction, entity.force)
-            -- get previous filters, if any
-            local old_control = entity.get_or_create_control_behavior()
-            local new_control = combinator.get_or_create_control_behavior()
-            new_control.parameters = old_control.parameters
-            new_control.enabled = old_control.enabled
-            entity.destroy()
-            -- update entity
-            snap_loader(loader)
-        elseif entity.type == 'transport-belt' then
-            snap_neighboring_loaders(entity.surface, entity.position)
-        elseif entity.type == 'underground-belt' then
-            snap_neighboring_loaders(entity.surface, entity.position)
-            if entity.neighbours then
-                snap_neighboring_loaders(entity.neighbours.surface, entity.neighbours.position)
-            end
-        elseif entity.type == 'splitter' or entity.type == 'loader' then
-            snap_belt_neighbors(entity)
+    if entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
+        -- just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
+        local type, mode = 'express', 'output'
+        local direction = entity.direction
+        local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, direction, entity.force)
+        -- get previous filters, if any
+        local old_control = entity.get_or_create_control_behavior()
+        local new_control = combinator.get_or_create_control_behavior()
+        new_control.parameters = old_control.parameters
+        new_control.enabled = old_control.enabled
+        entity.destroy()
+        -- update entity
+        snap_loader(loader)
+    elseif entity.type == 'transport-belt' then
+        snap_neighboring_loaders(entity.surface, entity.position)
+    elseif entity.type == 'underground-belt' then
+        snap_neighboring_loaders(entity.surface, entity.position)
+        if entity.neighbours then
+            snap_neighboring_loaders(entity.neighbours.surface, entity.neighbours.position)
         end
+    elseif entity.type == 'splitter' or entity.type == 'loader' then
+        snap_belt_neighbors(entity)
     end
 end)
 
@@ -484,8 +486,16 @@ end)
 event.register(util.constants.entity_destroyed_events, function(e)
     local entity = e.entity
     if entity.name == 'infinity-loader-logic-combinator' then
-        if e.player_index then
-            -- close GUI
+        -- close open GUIs
+        if global.conditional_event_registry.il_close_button_clicked then
+            for _,i in ipairs(global.conditional_event_registry.il_close_button_clicked.players) do
+                local player_table = util.player_table(i)
+                -- check if they're viewing this one
+                if player_table.gui.il.entity == entity then
+                    gui.destroy(player_table.gui.il.elems.window, e.player_index)
+                    player_table.gui.il = nil
+                end
+            end
         end
         local entities = entity.surface.find_entities_filtered{position=entity.position}
         for _,e in pairs(entities) do
