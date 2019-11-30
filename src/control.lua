@@ -76,15 +76,12 @@ event.register(defines.events.on_built_entity, function(e)
             -- there are no connections, so do nothing
             return
         end
-        -- get any adjacent assembling machines
-        local assemblers = util.entity.check_neighbors(entity, function(e) return e.type == 'assembling-machine' end, false, true)
-        -- for each adjacent assembling machine
-        for _,e in ipairs(assemblers) do
-            local fluidbox = e.fluidbox
+        -- for each adjacent assembling machine, if any
+        for _,e in ipairs(util.entity.check_neighbors(entity, function(e) return e.type == 'assembling-machine' end, false, true)) do
             -- check each fluidbox to see if we're connected to it
+            local fluidbox = e.fluidbox
             for i=1,#fluidbox do
                 local connections = fluidbox.get_connections(i)
-                util.debug_print(connections)
                 if #connections == 1 and connections[1] == own_fluidbox and fluidbox.get_prototype(i).production_type == 'input' then
                     -- snap infinity filter
                     entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=1, mode='exactly'}
