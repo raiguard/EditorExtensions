@@ -64,7 +64,7 @@ event.register(defines.events.on_runtime_mod_setting_changed, function(e)
 end)
 
 -- when an entity is built
-event.register({defines.events.on_built_entity, defines.events.on_robot_built_entity, defines.events.script_raised_built}, function(e)
+event.register(util.constants.entity_built_events, function(e)
     local entity = e.created_entity or e.entity
     if entity.name:find('tesseract') then
         update_chest_filters(entity)
