@@ -67,3 +67,41 @@ end)
 -- INFINITY PIPE
 
 -- event.register(defines.events.on_built_entity, )
+
+-- --------------------------------------------------
+-- EVENT FILTERS
+-- Add filters to all events that support them so we can preserve as much performance as possible
+
+event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built_entity}, {
+    {filter='name', name='infinity-loader-dummy-combinator'},
+    {filter='name', name='infinity-loader-logic-combinator'},
+    {filter='name', name='infinity-cargo-wagon'},
+    {filter='name', name='infinity-fluid-wagon'},
+    {filter='name', name='tesseract-chest'},
+    {filter='name', name='tesseract-passive-provider-chest'},
+    {filter='name', name='tesseract-storage-chest'},
+    {filter='name', name='infinity-inserter'},
+    {filter='name', name='infinity-pipe'}
+})
+
+event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
+    {filter='name', name='infinity-accumulator-primary-output'},
+    {filter='name', name='infinity-accumulator-primary-input'},
+    {filter='name', name='infinity-accumulator-secondary-output'},
+    {filter='name', name='infinity-accumulator-secondary-input'},
+    {filter='name', name='infinity-accumulator-tertiary'},
+    {filter='name', name='infinity-loader-dummy-combinator'},
+    {filter='name', name='infinity-loader-logic-combinator'},
+    {filter='name', name='infinity-cargo-wagon'},
+    {filter='name', name='infinity-fluid-wagon'},
+})
+
+event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
+    {filter='name', name='infinity-cargo-wagon'},
+    {filter='name', name='infinity-fluid-wagon'}
+})
+
+event.set_filters(defines.events.on_cancelled_deconstruction, {
+    {filter='name', name='infinity-cargo-wagon'},
+    {filter='name', name='infinity-fluid-wagon'}
+})
