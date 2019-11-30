@@ -67,6 +67,41 @@ util.constants = {
 
 util.area = math2d.bounding_box
 
+util.entity = {}
+
+-- apply the function to each belt neighbor connected to this entity, and return entities for which the function returned true
+function util.entity.check_belt_neighbors(entity, func, type_agnostic, return_true)
+    local belt_neighbors = entity.belt_neighbours
+    local matched_entities = {}
+    for _,type in pairs{'inputs', 'outputs'} do
+        if not type_agnostic then matched_entities[type] = {} end
+        for _,e in ipairs(belt_neighbors[type] or {}) do
+            if func(e) then
+                if return_true then
+                    return true
+                end
+                table.insert(type_agnostic and matched_entities or matched_entities[type], e)
+            end
+        end
+    end
+    return matched_entities
+end
+
+-- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
+function util.entity.check_neighbors(entity, func, inc_corners, dir_agnostic)
+    local matched_entities = {}
+    for i=0,7,inc_corners and 1 or 2 do
+        if not dir_agnostic then matched_entities[i] = {} end
+        local entities = entity.surface.find_entities(util.position.to_tile_area(util.position.add(entity.position, util.constants.neighbor_tile_vectors[i])))
+        for _,e in ipairs(entities) do
+            if func(e) then
+                table.insert(dir_agnostic and matched_entities or matched_entities[i], e)
+            end
+        end
+    end
+    return matched_entities
+end
+
 util.direction = {}
 
 -- borrowed from STDLIB: returns the next or previous direction

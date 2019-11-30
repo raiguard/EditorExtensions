@@ -210,39 +210,6 @@ local function update_loader_type(belt_type, entity)
     return new_loader
 end
 
--- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
-local function check_neighbors(surface, position, func, inc_corners, dir_agnostic)
-    local matched_entities = {}
-    for i=0,7,inc_corners and 1 or 2 do
-        if not dir_agnostic then matched_entities[i] = {} end
-        local entities = surface.find_entities(util.position.to_tile_area(util.position.add(position, util.constants.neighbor_tile_vectors[i])))
-        for _,e in ipairs(entities) do
-            if func(e) then
-                table.insert(dir_agnostic and matched_entities or matched_entities[i], e)
-            end
-        end
-    end
-    return matched_entities
-end
-
--- apply the function to each belt neighbor connected to this entity, and return entities for which the function returned true
-local function check_belt_neighbors(entity, func, type_agnostic, return_true)
-    local belt_neighbors = entity.belt_neighbours
-    local matched_entities = {}
-    for _,type in pairs{'inputs', 'outputs'} do
-        if not type_agnostic then matched_entities[type] = {} end
-        for _,e in ipairs(belt_neighbors[type] or {}) do
-            if func(e) then
-                if return_true then
-                    return true
-                end
-                table.insert(type_agnostic and matched_entities or matched_entities[type], e)
-            end
-        end
-    end
-    return matched_entities
-end
-
 -- --------------------------------------------------
 -- GUI
 
@@ -366,17 +333,17 @@ local function snap_loader(loader, entity)
 end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
-local function snap_neighboring_loaders(surface, position)
-    for _,e in pairs(check_neighbors(surface, position, check_is_loader, false, true)) do
+local function snap_neighboring_loaders(entity)
+    for _,e in pairs(util.entity.check_neighbors(entity.surface, entity.position, check_is_loader, false, true)) do
         snap_loader(e, entity)
     end
 end
 
 -- checks belt neighbors for both rotations of the source entity for infinity loaders, and calls the snapping function on them
 local function snap_belt_neighbors(entity)
-    local belt_neighbors = check_belt_neighbors(entity, check_is_loader, true)
+    local belt_neighbors = util.entity.check_belt_neighbors(entity, check_is_loader, true)
     entity.rotate()
-    local rev_belt_neighbors = check_belt_neighbors(entity, check_is_loader, true)
+    local rev_belt_neighbors = util.entity.check_belt_neighbors(entity, check_is_loader, true)
     entity.rotate()
     for _,e in ipairs(belt_neighbors) do
         snap_loader(e, entity)
@@ -445,11 +412,11 @@ event.register(util.constants.entity_built_events, function(e)
         -- update entity
         snap_loader(loader)
     elseif entity.type == 'transport-belt' then
-        snap_neighboring_loaders(entity.surface, entity.position)
+        snap_neighboring_loaders(entity)
     elseif entity.type == 'underground-belt' then
-        snap_neighboring_loaders(entity.surface, entity.position)
+        snap_neighboring_loaders(entity)
         if entity.neighbours then
-            snap_neighboring_loaders(entity.neighbours.surface, entity.neighbours.position)
+            snap_neighboring_loaders(entity)
         end
     elseif entity.type == 'splitter' or entity.type == 'loader' then
         snap_belt_neighbors(entity)
@@ -468,7 +435,7 @@ event.register(defines.events.on_player_rotated_entity, function(e)
         update_filters(entity)
     elseif entity.type == 'transport-belt' then
         -- snap adjacent infinity loaders
-        snap_neighboring_loaders(entity.surface, entity.position)
+        snap_neighboring_loaders(entity)
     elseif entity.type == 'underground-belt' then
         -- snap belt neighbors
         snap_belt_neighbors(entity)

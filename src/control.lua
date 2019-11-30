@@ -66,7 +66,34 @@ end)
 -- --------------------------------------------------
 -- INFINITY PIPE
 
--- event.register(defines.events.on_built_entity, )
+event.register(defines.events.on_built_entity, function(e)
+    local entity = e.created_entity
+    if entity.name == 'infinity-pipe' then
+        -- get own fluidbox
+        local own_fluidbox = entity.fluidbox
+        -- see if it's connected to anything
+        if #own_fluidbox.get_connections(1) == 0 then
+            -- there are no connections, so do nothing
+            return
+        end
+        -- get any adjacent assembling machines
+        local assemblers = util.entity.check_neighbors(entity, function(e) return e.type == 'assembling-machine' end, false, true)
+        -- for each adjacent assembling machine
+        for _,e in ipairs(assemblers) do
+            local fluidbox = e.fluidbox
+            -- check each fluidbox to see if we're connected to it
+            for i=1,#fluidbox do
+                local connections = fluidbox.get_connections(i)
+                util.debug_print(connections)
+                if #connections == 1 and connections[1] == own_fluidbox and fluidbox.get_prototype(i).production_type == 'input' then
+                    -- snap infinity filter
+                    entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=1, mode='exactly'}
+                    return
+                end
+            end
+        end
+    end
+end)
 
 -- --------------------------------------------------
 -- EVENT FILTERS
