@@ -3,7 +3,7 @@
 -- Allows one to easily register multiple handlers for an event
 -- Includes special filtering for GUI events
 -- Makes handling of conditional events far easier
--- Does not support event filters
+-- Event filters can be specified, see the event.set_filters() function
 
 -- library
 local event = {}
@@ -160,8 +160,18 @@ end
 -- raises an event
 event.raise = script.raise_event
 
--- sets the filters for an event
-event.set_filters = script.set_event_filter
+-- sets the filters for an event or table of events
+function event.set_filters(id, filters)
+    -- recursive handling of ids
+    if type(id) == 'table' then
+        for _,n in pairs(id) do
+            event.deregister(n, handler, conditional_name)
+        end
+        return
+    end
+    -- set the filters
+    script.set_event_filter(id, filters)
+end
 
 -- shortcut for event.register('on_init', function)
 function event.on_init(handler)
