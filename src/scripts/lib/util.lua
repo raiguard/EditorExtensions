@@ -88,7 +88,7 @@ function util.entity.check_belt_neighbors(entity, func, type_agnostic, return_tr
 end
 
 -- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
-function util.entity.check_neighbors(entity, func, inc_corners, dir_agnostic)
+function util.entity.check_tile_neighbors(entity, func, inc_corners, dir_agnostic)
     local matched_entities = {}
     for i=0,7,inc_corners and 1 or 2 do
         if not dir_agnostic then matched_entities[i] = {} end

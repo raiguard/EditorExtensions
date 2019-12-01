@@ -1,7 +1,7 @@
 -- ----------------------------------------------------------------------------------------------------
 -- INFINITY ACCUMULATOR
 
-local event = require('scripts/lib/event-handler')
+local event = require('scripts/lib/event')
 local util = require('scripts/lib/util')
 
 -- GUI ELEMENTS

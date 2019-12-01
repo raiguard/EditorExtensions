@@ -12,7 +12,7 @@ require('scripts/tesseract-chest')
 -- --------------------------------------------------
 -- SETUP AND GENERAL SCRIPTING
 
-local event = require('scripts/lib/event-handler')
+local event = require('scripts/lib/event')
 local util = require('scripts/lib/util')
 
 local function setup_player(index)
@@ -52,6 +52,7 @@ end)
 -- --------------------------------------------------
 -- INFINITY INSERTER
 
+-- set manually built inserters to blacklist mode by default
 event.register(defines.events.on_built_entity, function(e)
     local entity = e.created_entity
     if entity.name == 'infinity-inserter' then
@@ -66,6 +67,7 @@ end)
 -- --------------------------------------------------
 -- INFINITY PIPE
 
+-- snap infinity pipe filter to adjacent assembler input if a player built it manually
 event.register(defines.events.on_built_entity, function(e)
     local entity = e.created_entity
     if entity.name == 'infinity-pipe' then
@@ -77,7 +79,7 @@ event.register(defines.events.on_built_entity, function(e)
             return
         end
         -- for each adjacent assembling machine, if any
-        for _,e in ipairs(util.entity.check_neighbors(entity, function(e) return e.type == 'assembling-machine' end, false, true)) do
+        for _,e in ipairs(util.entity.check_tile_neighbors(entity, function(e) return e.type == 'assembling-machine' end, false, true)) do
             -- check each fluidbox to see if we're connected to it
             local fluidbox = e.fluidbox
             for i=1,#fluidbox do

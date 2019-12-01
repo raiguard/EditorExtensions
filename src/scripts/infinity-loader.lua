@@ -1,7 +1,7 @@
 -- ----------------------------------------------------------------------------------------------------
 -- INFINITY LOADER
 
-local event = require('scripts/lib/event-handler')
+local event = require('scripts/lib/event')
 local util = require('scripts/lib/util')
 
 -- GUI ELEMENTS
@@ -334,7 +334,7 @@ end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
 local function snap_neighboring_loaders(entity)
-    for _,e in pairs(util.entity.check_neighbors(entity.surface, entity.position, check_is_loader, false, true)) do
+    for _,e in pairs(util.entity.check_tile_neighbors(entity.surface, entity.position, check_is_loader, false, true)) do
         snap_loader(e, entity)
     end
 end
@@ -356,7 +356,10 @@ end
 -- ----------------------------------------------------------------------------------------------------
 -- COMPATIBILITY
 
--- picker dollies
+--
+-- PICKER DOLLIES
+--
+
 local function picker_dollies_move(e)
     local entity = e.moved_entity
     if entity.name == 'infinity-loader-logic-combinator' then
@@ -368,6 +371,16 @@ local function picker_dollies_move(e)
         snap_loader(loader)
     end
 end
+event.on_init(function()
+    if remote.interfaces['PickerDollies'] and remote.interfaces['PickerDollies']['dolly_moved_entity_id'] then
+        event.register(remote.call('PickerDollies', 'dolly_moved_entity_id'), picker_dollies_move)
+    end
+end)
+event.on_load(function()
+    if remote.interfaces['PickerDollies'] and remote.interfaces['PickerDollies']['dolly_moved_entity_id'] then
+        event.register(remote.call('PickerDollies', 'dolly_moved_entity_id'), picker_dollies_move)
+    end
+end)
 
 -- --------------------------------------------------
 -- STATIC HANDLERS
@@ -380,21 +393,6 @@ remote.add_interface('ee_infinity_loader', {
     update_loader_inserters = update_inserters,
     update_loader_filters = update_filters
 })
-
-event.on_init(function()
-    global.loaders = {}
-    -- picker dollies
-    if remote.interfaces['PickerDollies'] and remote.interfaces['PickerDollies']['dolly_moved_entity_id'] then
-        event.register(remote.call('PickerDollies', 'dolly_moved_entity_id'), picker_dollies_move)
-    end
-end)
-
-event.on_load(function()
-    -- picker dollies
-    if remote.interfaces['PickerDollies'] and remote.interfaces['PickerDollies']['dolly_moved_entity_id'] then
-        event.register(remote.call('PickerDollies', 'dolly_moved_entity_id'), picker_dollies_move)
-    end
-end)
 
 event.register(util.constants.entity_built_events, function(e)
     local entity = e.created_entity or e.entity
