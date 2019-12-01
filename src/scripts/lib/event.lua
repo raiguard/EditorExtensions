@@ -96,9 +96,11 @@ function event.register(id, handler, conditional_name, player_index)
             table.remove(registry, i)
         end
     end
-    -- add the handler to the events tables
+    -- add the handler to the events table
     table.insert(registry, {handler=handler})
     if conditional_name then
+        -- add the conditional_name to the events table as well
+        registry[#registry].conditional_name = conditional_name
         local con_registry = global.conditional_event_registry
         if not con_registry[conditional_name] then
             con_registry[conditional_name] = {id={id}, players={player_index}}
@@ -195,7 +197,7 @@ end
         just calls all the handlers that have been registered to it. If you want to actually raise an event, use event.raise.
         This is the master handler that all events are actually registered to, which then invokes all of the handlers that you register to it.
     Parameters:
-        e :: table: Table that will be passed to the handlers. Please be careful to exactly mimick
+        e :: table: Table that will be passed to the handlers. Please be careful to exactly mimick the table as vanilla would provide it!
     Returns:
         event :: event: Returns an instance of the library to allow for function call chaining.
     Usage:
@@ -216,12 +218,18 @@ function event.dispatch(e)
             error('Event is registered but has no handlers!')
         end
     end
+    local con_registry = global.conditional_event_registry
     for _,t in ipairs(event_registry[id]) do
         -- check if any userdata has gone invalid since last iteration
         for _,v in pairs(e) do
             if type(v) == 'table' and v.__self and not v.valid then
                 return event
             end
+        end
+        -- check if we can include players in the list
+        if t.conditional_name then
+            -- sometimes the conditional event registry goes nil WHILE an event is running, so do an extra check just in case
+            e.registered_players = con_registry[t.conditional_name] and con_registry[t.conditional_name].players or {}
         end
         -- call the handler
         t.handler(e)
@@ -322,7 +330,7 @@ end
                 Example: event.gui.on_click({name={'my_button'}}, handler)
         2. Simply provide the name string, ID number, or element as the filter, instead of a table. The name_match filter type cannot be shortcutted.
                 Example: event.gui.on_click('my_button', handler)
-                
+
     As you can see, this makes the GUI event calls a lot more compact and easier to read.
 ]]--
 
@@ -374,7 +382,7 @@ function event.gui.register(filters, id, handler, conditional_name, player_index
         for _,n in pairs(id) do
             event.gui.register(filters, n, handler, conditional_name, player_index)
         end
-        return
+        return event.gui
     end
     -- convert filter format if shortcutting was used
     if type(filters) == 'string' then
@@ -393,6 +401,8 @@ function event.gui.register(filters, id, handler, conditional_name, player_index
     table.insert(gui_event_data[id], {handler=handler, filters=filters})
     -- register conditional event if it is one
     if conditional_name then
+        -- add the conditional_name to the data table as well
+        gui_event_data[id][#gui_event_data[id]].conditional_name = conditional_name
         assert(player_index, 'Must include player index when registering a conditional event')
         local con_registry = global.conditional_event_registry
         if not con_registry[conditional_name] then
@@ -403,13 +413,14 @@ function event.gui.register(filters, id, handler, conditional_name, player_index
                 if id == id then
                     -- someone else already registered it, so add our player index to the list
                     table.insert(con_registry[conditional_name].players, player_index)
-                    return
+                    return event.gui
                 end
             end
             -- insert the ID if it didn't exist already
             table.insert(con_registry[conditional_name].id, id)
         end
     end
+    return event.gui
 end
 
 --[[
@@ -436,7 +447,7 @@ function event.gui.deregister(id, handler, conditional_name, player_index)
         for _,n in pairs(id) do
             event.gui.deregister(n, handler, conditional_name, player_index)
         end
-        return
+        return event.gui
     end
     -- remove from conditional event registry if needed
     if conditional_name then
@@ -451,7 +462,7 @@ function event.gui.deregister(id, handler, conditional_name, player_index)
             global.conditional_event_registry[conditional_name] = nil
         else
             -- other players still need this conditional event, so don't do anything else
-            return
+            return event.gui
         end
     end
     local data = gui_event_data[id]
@@ -466,12 +477,14 @@ function event.gui.deregister(id, handler, conditional_name, player_index)
         gui_event_data[id] = nil
         event.deregister(id, event.gui.dispatch)
     end
+    return event.gui
 end
 
 -- DO NOT CALL THIS FUNCTION, USE EVENT.DISPATCH INSTEAD. THINGS WILL GET WEIRD IF YOU CALL THIS DIRECTLY!
 -- dispatches GUI events
 function event.gui.dispatch(e)
     local data = gui_event_data[e.name]
+    local con_registry = global.conditional_event_registry
     -- check filters
     for _,t in ipairs(data) do
         -- check if any userdata has gone invalid since the last iteration
@@ -479,6 +492,11 @@ function event.gui.dispatch(e)
             if type(v) == 'table' and v.__self and not v.valid then
                 return
             end
+        end
+        -- check if we can include players in the list
+        if t.conditional_name then
+            -- sometimes the conditional event registry goes nil WHILE an event is running, so do an extra check just in case
+            e.registered_players = con_registry[t.conditional_name] and con_registry[t.conditional_name].players or {}
         end
         local filters = t.filters
         local dispatched = false
