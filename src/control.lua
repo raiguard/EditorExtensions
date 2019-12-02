@@ -17,6 +17,7 @@ local util = require('scripts/lib/util')
 
 local function setup_player(index)
     local data = {
+        flags = {},
         gui = {}
     }
     global.players[index] = data
@@ -24,9 +25,10 @@ end
 
 -- GENERAL SETUP
 event.on_init(function()
+    global.flags = {
+        map_editor_toggled = false
+    }
     global.players = {}
-    -- the first time someone toggles the map editor, unpause the current tick
-    global.map_editor_toggled = false
     for i,p in pairs(game.players) do
         setup_player(i)
     end
@@ -43,8 +45,8 @@ event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, functio
     player.toggle_map_editor()
     player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
     -- the first time someone toggles the map editor, unpause the current tick
-    if global.map_editor_toggled == false then
-        global.map_editor_toggled = true
+    if global.flags.map_editor_toggled == false then
+        global.flags.map_editor_toggled = true
         game.tick_paused = false
     end
 end)
@@ -109,8 +111,7 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
     {filter='name', name='infinity-inserter'},
     {filter='name', name='infinity-pipe'}
 })
-
-event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
+.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
     {filter='name', name='infinity-accumulator-primary-output'},
     {filter='name', name='infinity-accumulator-primary-input'},
     {filter='name', name='infinity-accumulator-secondary-output'},
@@ -121,13 +122,11 @@ event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robo
     {filter='name', name='infinity-cargo-wagon'},
     {filter='name', name='infinity-fluid-wagon'},
 })
-
-event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
+.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
     {filter='name', name='infinity-cargo-wagon'},
     {filter='name', name='infinity-fluid-wagon'}
 })
-
-event.set_filters(defines.events.on_cancelled_deconstruction, {
+.set_filters(defines.events.on_cancelled_deconstruction, {
     {filter='name', name='infinity-cargo-wagon'},
     {filter='name', name='infinity-fluid-wagon'}
 })
