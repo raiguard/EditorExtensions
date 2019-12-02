@@ -389,9 +389,10 @@ end)
 remote.add_interface('ee_infinity_loader', {
     create_loader = create_loader,
     update_loader_filters = update_filters,
-    snap_update_placed_loader = snap_update_placed_loader,
     update_loader_inserters = update_inserters,
-    update_loader_filters = update_filters
+    snap_loader = snap_loader,
+    snap_neighboring_loaders = snap_neighboring_loaders,
+    snap_belt_neighbors = snap_belt_neighbors
 })
 
 event.register(util.constants.entity_built_events, function(e)
@@ -417,6 +418,30 @@ event.register(util.constants.entity_built_events, function(e)
         end
     elseif entity.type == 'splitter' or entity.type == 'loader' then
         snap_belt_neighbors(entity)
+    end
+end)
+
+event.register(util.constants.entity_built_events, function(e)
+    local entity = e.created_entity or e.entity
+    if entity.name == 'entity-ghost' and entity.ghost_name == 'infinity-loader-logic-combinator' then
+        -- convert to dummy combinator ghost
+        local old_control = entity.get_or_create_control_behavior()
+        local new_entity = entity.surface.create_entity{
+            name = 'entity-ghost',
+            ghost_name = 'infinity-loader-dummy-combinator',
+            position = entity.position,
+            direction = entity.direction,
+            force = entity.force,
+            player = entity.last_user,
+            create_build_effect_smoke = false
+        }
+        -- transfer control behavior
+        local new_control = new_entity.get_or_create_control_behavior()
+        new_control.parameters = old_control.parameters
+        new_control.enabled = old_control.enabled
+        entity.destroy()
+        -- raise event
+        event.raise(defines.events.script_raised_built, {entity=new_entity, tick=game.tick})
     end
 end)
 

@@ -75,6 +75,6 @@ data:extend{
         name = 'ee-tesseract-include-hidden',
         setting_type = 'runtime-global',
         default_value = false,
-        order = 'b'
+        order = 'a'
     }
 }

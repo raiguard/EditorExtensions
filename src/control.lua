@@ -113,7 +113,9 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
     {filter='type', type='transport-belt'},
     {filter='type', type='underground-belt'},
     {filter='type', type='splitter'},
-    {filter='type', type='loader'}
+    {filter='type', type='loader'},
+    {filter='ghost'},
+    {filter='ghost_name', name='infinity-loader-logic-combinator'}
 })
 .set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
     {filter='name', name='infinity-accumulator-primary-output'},
