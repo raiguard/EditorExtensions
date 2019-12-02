@@ -57,7 +57,7 @@ editor_controller.inventory_size = 150
 editor_controller.render_as_day = false
 
 data:extend{
-    -- shortcut
+    -- SHORTCUTS
     {
         type = 'shortcut',
         name = 'ee-toggle-map-editor',
@@ -69,7 +69,7 @@ data:extend{
         associated_control_input = 'ee-toggle-map-editor',
         toggleable = true
     },
-    -- custom input
+    -- CUSTOM INPUTS
     {
         type = 'custom-input',
         name = 'ee-toggle-map-editor',
