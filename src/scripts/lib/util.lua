@@ -25,11 +25,6 @@ function util.player_table(obj)
     else return global.players[obj.player_index] end -- gave the event table
 end
 
--- prints the contents of the event table
-function util.debug_print(e)
-    print(serpent.block(e))
-end
-
 util.constants = {
     -- commonly-used set of events for when an entity is built
     entity_built_events = {

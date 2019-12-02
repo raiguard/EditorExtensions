@@ -43,7 +43,8 @@ for lm,d in pairs(tess_chest_data) do
     local suffix = lm == '' and lm or '-'..lm
     local chest = table.deepcopy(ic_item)
     chest.name = 'tesseract-chest'..suffix
-    chest.localised_description = {'', {'entity-description.tesseract-chest'}, lm ~= '' and {'', '\n', {'entity-description.logistic-chest-'..lm}} or '', '\n[color=255,57,48]', {'entity-description.tesseract-chest-warning'}, '[/color]'}
+    chest.localised_description = {'', {'entity-description.tesseract-chest'}, lm ~= '' and {'', '\n', {'entity-description.logistic-chest-'..lm}} or '',
+                                   '\n[color=255,57,48]', {'entity-description.tesseract-chest-warning'}, '[/color]'}
     chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=d.t}}
     chest.place_result = 'tesseract-chest'..suffix
     chest.order = d.o

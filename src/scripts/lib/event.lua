@@ -68,9 +68,9 @@ function event.register(id, handler, conditional_name, player_index)
     -- recursive handling of ids
     if type(id) == 'table' then
         for _,n in pairs(id) do
-            event.register(n, handler, conditional_name)
+            event.register(n, handler, conditional_name, player_index)
         end
-        return
+        return event
     end
     -- create event registry if it doesn't exist
     if not event_registry[id] then
