@@ -20,6 +20,16 @@ tesseract_chest_data = {
     ['storage'] = {t={255,220,113}, o='bc'}
 }
 
+function extract_icon_info(obj)
+    return {icon=obj.icon, icon_size=obj.icon_size, icon_mipmaps=obj.icon_mipmaps}
+end
+
+-- most of it
+require('prototypes/entity')
+require('prototypes/equipment')
+require('prototypes/item-group')
+require('prototypes/item')
+
 -- editor controller settings
 local editor_controller = data.raw['editor-controller'].default
 editor_controller.show_character_tab_in_controller_gui = true
