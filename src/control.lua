@@ -1,6 +1,9 @@
 -- ----------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS CONTROL SCRIPTING
 
+local event = require('scripts/lib/event')
+local util = require('scripts/lib/util')
+
 -- --------------------------------------------------
 -- MODULES
 
@@ -11,9 +14,6 @@ require('scripts/tesseract-chest')
 
 -- --------------------------------------------------
 -- SETUP AND GENERAL SCRIPTING
-
-local event = require('scripts/lib/event')
-local util = require('scripts/lib/util')
 
 local function setup_player(index)
     local data = {

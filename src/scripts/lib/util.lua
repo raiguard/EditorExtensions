@@ -104,6 +104,16 @@ function util.direction.next_direction(direction, reverse, eight_way)
     return (direction + (eight_way and ((reverse and -1) or 1) or ((reverse and -2) or 2))) % 8
 end
 
+-- simple logging function - prints the string or table to the dev console or the ingame console
+function util.log(message, print_to_game)
+    local func = print_to_game and game.print or log
+    if type(message) == 'table' then
+        func('\n'..serpent.block(message))
+    else
+        func(message)
+    end
+end
+
 util.position = math2d.position
 
 function util.position.to_tile_area(pos)
