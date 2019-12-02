@@ -146,7 +146,7 @@ function event.deregister(id, handler, conditional_name, player_index)
     -- recursive handling of ids
     if type(id) == 'table' then
         for _,n in pairs(id) do
-            event.deregister(n, handler, conditional_name)
+            event.deregister(n, handler, conditional_name, player_index)
         end
         return event
     end
@@ -159,9 +159,12 @@ function event.deregister(id, handler, conditional_name, player_index)
     -- remove from conditional event registry if needed
     if conditional_name then
         local con_registry = global.conditional_event_registry[conditional_name]
-        for i,p in ipairs(con_registry.players) do
-            if p == player_index then
-                table.remove(con_registry.players, i)
+        if player_index then
+            for i,p in ipairs(con_registry.players) do
+                if p == player_index then
+                    table.remove(con_registry.players, i)
+                    break
+                end
             end
         end
         if table_size(con_registry.players) == 0 then
@@ -452,10 +455,12 @@ function event.gui.deregister(id, handler, conditional_name, player_index)
     -- remove from conditional event registry if needed
     if conditional_name then
         local con_registry = global.conditional_event_registry[conditional_name]
-        for i,p in ipairs(con_registry.players) do
-            if p == player_index then
-                table.remove(con_registry.players, i)
-                break
+        if player_index then
+            for i,p in ipairs(con_registry.players) do
+                if p == player_index then
+                    table.remove(con_registry.players, i)
+                    break
+                end
             end
         end
         if table_size(con_registry.players) == 0 then
