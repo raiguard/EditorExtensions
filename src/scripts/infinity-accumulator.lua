@@ -58,6 +58,7 @@ local function set_entity_settings(entity, mode, buffer_size)
     local watts = util.parse_energy(buffer_size..'W')
     if mode == 'output' then
         entity.power_production = watts
+        entity.energy = buffer_size
     elseif mode == 'input' then
         entity.power_usage = watts
     end
