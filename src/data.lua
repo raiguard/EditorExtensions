@@ -51,10 +51,11 @@ end
 
 -- EDITOR CONTROLLER
 local editor_controller = data.raw['editor-controller'].default
-editor_controller.show_character_tab_in_controller_gui = true
-editor_controller.show_infinity_filters_in_controller_gui = true
-editor_controller.inventory_size = 150
-editor_controller.render_as_day = false
+for n,t in pairs(settings.startup) do
+    if n:match('ee%-controller') then
+        editor_controller[n:gsub('ee%-controller%-', '')] = t.value
+    end
+end
 
 data:extend{
     -- SHORTCUTS
