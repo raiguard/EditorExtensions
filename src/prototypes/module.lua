@@ -1,6 +1,8 @@
 -- ----------------------------------------------------------------------------------------------------
 -- MODULES
 
+local util = require('scripts/lib/util')
+
 local function get_module_icon(icon_ref, tint)
     local obj = data.raw['module'][icon_ref]
     return {{icon=obj.icon, icon_size=obj.icon_size, tint=tint}}
@@ -12,11 +14,9 @@ local module_template = {
     stack_size = 50
 }
 
-for _,v in pairs(module_data) do
-    for tk,tv in pairs(module_template) do
-        v[tk] = tv
-    end
-    v.icons = get_module_icon(v.icon_ref, v.tint)
-    v.icon_ref = nil
-    data:extend{v}
+for _,t in pairs(module_data) do
+    local module = table.merge{t, module_template}
+    module.icons = get_module_icon(module.icon_ref, module.tint)
+    module.icon_ref = nil
+    data:extend{module}
 end

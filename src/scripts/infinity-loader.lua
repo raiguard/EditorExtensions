@@ -62,22 +62,10 @@ local function check_is_loader(entity)
     return false
 end
 
-local function to_vector_2d(direction, longitudinal, orthogonal)
-    if direction == defines.direction.north then
-        return {x=orthogonal, y=-longitudinal}
-    elseif direction == defines.direction.south then
-        return {x=-orthogonal, y=longitudinal}
-    elseif direction == defines.direction.east then
-        return {x=longitudinal, y=orthogonal}
-    elseif direction == defines.direction.west then
-        return {x=-longitudinal, y=-orthogonal}
-    end
-end
-
 -- get the direction that the mouth of the loader is facing
 local function get_loader_direction(loader)
     if loader.loader_type == 'input' then
-        return util.oppositedirection(loader.direction)
+        return util.direction.opposite(loader.direction)
     end
     return loader.direction
 end
@@ -96,13 +84,13 @@ local function update_inserters(loader)
     local e_position = loader.position
     local e_direction = loader.direction
     for i=1,#inserters do
-        local side = i > (#inserters/2) and -0.25 or 0.25
+        local orthogonal = i > (#inserters/2) and -0.25 or 0.25
         local inserter = inserters[i]
         local mod = math.min((i % (#inserters/2)),3)
         if e_type == 'input' then
             -- pickup on belt, drop in chest
             inserter.pickup_target = loader
-            inserter.pickup_position = util.position.add(e_position, to_vector_2d(e_direction,(-mod*0.2 + 0.3),side))
+            inserter.pickup_position = util.position.add(e_position, util.direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal))
             inserter.drop_target = chest
             inserter.drop_position = e_position
         elseif e_type == 'output' then
@@ -110,7 +98,7 @@ local function update_inserters(loader)
             inserter.pickup_target = chest
             inserter.pickup_position = chest.position
             inserter.drop_target = loader
-            inserter.drop_position = util.position.add(e_position, to_vector_2d(e_direction,(mod*0.2 - 0.3),side))
+            inserter.drop_position = util.position.add(e_position, util.direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal))
         end
         -- TEMPORARY rendering
         -- rendering.draw_circle{target=inserter.pickup_position, color={r=0,g=1,b=0,a=0.5}, surface=loader.surface, radius=0.03, filled=true, time_to_live=180}
@@ -132,10 +120,10 @@ local function update_filters(entity)
     elseif loader.loader_type == 'input' then
         inserter_filter_mode = 'blacklist'
     end
-    -- update inserter filter based on side
+    -- update inserter filter based on orthogonal
     for i=1,#inserters do
-        local side = i > (#inserters/2) and 1 or 2
-        inserters[i].set_filter(1, filters[side].signal.name or nil)
+        local orthogonal = i > (#inserters/2) and 1 or 2
+        inserters[i].set_filter(1, filters[orthogonal].signal.name or nil)
         inserters[i].inserter_filter_mode = inserter_filter_mode
         inserters[i].active = enabled
     end
@@ -180,7 +168,7 @@ local function create_loader(type, mode, surface, position, direction, force, sk
             name = 'infinity-loader-logic-combinator',
             position = position,
             force = force,
-            direction = mode == 'input' and util.oppositedirection(direction) or direction,
+            direction = mode == 'input' and util.direction.opposite(direction) or direction,
             create_build_effect_smoke = false
         }
     end
@@ -300,7 +288,7 @@ local function snap_loader(loader, entity)
     -- if the entity was not supplied, find it
     if not entity then
         entity = loader.surface.find_entities_filtered{
-            area = util.position.to_tile_area(util.position.add(loader.position, util.constants.neighbor_tile_vectors[get_loader_direction(loader)])),
+            area = util.position.to_tile_area(util.position.add(loader.position, util.direction.to_vector(get_loader_direction(loader), 1))),
             type = {'transport-belt', 'underground-belt', 'splitter', 'loader'}
         }[1]
         if not entity then
@@ -395,32 +383,7 @@ remote.add_interface('ee_infinity_loader', {
     snap_belt_neighbors = snap_belt_neighbors
 })
 
-event.register(util.constants.entity_built_events, function(e)
-    local entity = e.created_entity or e.entity
-    if entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
-        -- just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
-        local direction = entity.direction
-        local loader, inserters, chest, combinator = create_loader('express', 'output', entity.surface, entity.position, direction, entity.force)
-        -- get previous filters, if any
-        local old_control = entity.get_or_create_control_behavior()
-        local new_control = combinator.get_or_create_control_behavior()
-        new_control.parameters = old_control.parameters
-        new_control.enabled = old_control.enabled
-        entity.destroy()
-        -- update entity
-        snap_loader(loader)
-    elseif entity.type == 'transport-belt' then
-        snap_neighboring_loaders(entity)
-    elseif entity.type == 'underground-belt' then
-        snap_neighboring_loaders(entity)
-        if entity.neighbours then
-            snap_neighboring_loaders(entity)
-        end
-    elseif entity.type == 'splitter' or entity.type == 'loader' then
-        snap_belt_neighbors(entity)
-    end
-end)
-
+-- when an entity is built in-game of through script, or constructed or revived through script
 event.register(util.constants.entity_built_events, function(e)
     local entity = e.created_entity or e.entity
     if entity.name == 'entity-ghost' and entity.ghost_name == 'infinity-loader-logic-combinator' then
@@ -442,6 +405,26 @@ event.register(util.constants.entity_built_events, function(e)
         entity.destroy()
         -- raise event
         event.raise(defines.events.script_raised_built, {entity=new_entity, tick=game.tick})
+    elseif entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
+        -- just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
+        local loader, inserters, chest, combinator = create_loader('express', 'output', entity.surface, entity.position, entity.direction, entity.force)
+        -- get previous filters, if any
+        local old_control = entity.get_or_create_control_behavior()
+        local new_control = combinator.get_or_create_control_behavior()
+        new_control.parameters = old_control.parameters
+        new_control.enabled = old_control.enabled
+        entity.destroy()
+        -- update entity
+        snap_loader(loader)
+    elseif entity.type == 'transport-belt' then
+        snap_neighboring_loaders(entity)
+    elseif entity.type == 'underground-belt' then
+        snap_neighboring_loaders(entity)
+        if entity.neighbours then
+            snap_neighboring_loaders(entity)
+        end
+    elseif entity.type == 'splitter' or entity.type == 'loader' then
+        snap_belt_neighbors(entity)
     end
 end)
 
@@ -461,7 +444,7 @@ event.register(defines.events.on_player_rotated_entity, function(e)
     elseif entity.type == 'underground-belt' then
         -- snap belt neighbors
         snap_belt_neighbors(entity)
-        -- snap belt neighbors for the other side of the underneathy
+        -- snap belt neighbors for the other orthogonal of the underneathy
         if entity.neighbours then
             snap_belt_neighbors(entity.neighbours)
         end

@@ -11,6 +11,8 @@ function table.contains(table, value)
     return false
 end
 
+table.merge = util.merge
+
 -- returns the player and his global table
 function util.get_player(obj)
     if type(obj) == 'number' then return game.players[obj], global.players[obj] -- gave the player_index itself
@@ -46,17 +48,6 @@ util.constants = {
         sprite = 'utility/close_white',
         hovered_sprite = 'utility/close_black',
         clicked_sprite = 'utility/close_black'
-    },
-    -- vectors for neighboring tiles, in order of defines.direction
-    neighbor_tile_vectors = {
-        [defines.direction.north] = {x=0,y=-1},
-        [defines.direction.northeast] = {x=1,y=-1},
-        [defines.direction.east] = {x=1,y=-0},
-        [defines.direction.southeast] = {x=1,y=1},
-        [defines.direction.south] = {x=0,y=1},
-        [defines.direction.southwest] = {x=-1,y=1},
-        [defines.direction.west] = {x=-1,y=0},
-        [defines.direction.northwest] = {x=-1,y=-1}
     }
 }
 
@@ -65,16 +56,13 @@ util.area = math2d.bounding_box
 util.entity = {}
 
 -- apply the function to each belt neighbor connected to this entity, and return entities for which the function returned true
-function util.entity.check_belt_neighbors(entity, func, type_agnostic, return_true)
+function util.entity.check_belt_neighbors(entity, func, type_agnostic)
     local belt_neighbors = entity.belt_neighbours
     local matched_entities = {}
     for _,type in pairs{'inputs', 'outputs'} do
         if not type_agnostic then matched_entities[type] = {} end
         for _,e in ipairs(belt_neighbors[type] or {}) do
             if func(e) then
-                if return_true then
-                    return true
-                end
                 table.insert(type_agnostic and matched_entities or matched_entities[type], e)
             end
         end
@@ -83,11 +71,11 @@ function util.entity.check_belt_neighbors(entity, func, type_agnostic, return_tr
 end
 
 -- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
-function util.entity.check_tile_neighbors(entity, func, inc_corners, dir_agnostic)
+function util.entity.check_tile_neighbors(entity, func, eight_way, dir_agnostic)
     local matched_entities = {}
-    for i=0,7,inc_corners and 1 or 2 do
+    for i=0,7,eight_way and 1 or 2 do
         if not dir_agnostic then matched_entities[i] = {} end
-        local entities = entity.surface.find_entities(util.position.to_tile_area(util.position.add(entity.position, util.constants.neighbor_tile_vectors[i])))
+        local entities = entity.surface.find_entities(util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1))))
         for _,e in ipairs(entities) do
             if func(e) then
                 table.insert(dir_agnostic and matched_entities or matched_entities[i], e)
@@ -98,10 +86,25 @@ function util.entity.check_tile_neighbors(entity, func, inc_corners, dir_agnosti
 end
 
 util.direction = {}
+util.direction.opposite = util.oppositedirection
 
 -- borrowed from STDLIB: returns the next or previous direction
-function util.direction.next_direction(direction, reverse, eight_way)
+function util.direction.next(direction, reverse, eight_way)
     return (direction + (eight_way and ((reverse and -1) or 1) or ((reverse and -2) or 2))) % 8
+end
+
+-- gets a vector based on a cardinal direction
+function util.direction.to_vector(direction, longitudinal, orthogonal)
+    orthogonal = orthogonal or 0
+    if direction == defines.direction.north then
+        return {x=orthogonal, y=-longitudinal}
+    elseif direction == defines.direction.south then
+        return {x=-orthogonal, y=longitudinal}
+    elseif direction == defines.direction.east then
+        return {x=longitudinal, y=orthogonal}
+    elseif direction == defines.direction.west then
+        return {x=-longitudinal, y=-orthogonal}
+    end
 end
 
 -- simple logging function - prints the string or table to the dev console or the ingame console
@@ -116,6 +119,7 @@ end
 
 util.position = math2d.position
 
+-- creates an area that is the tile the position is contained in
 function util.position.to_tile_area(pos)
     return {
         left_top = {x=math.floor(pos.x), y=math.floor(pos.y)},
@@ -125,6 +129,7 @@ end
 
 util.textfield = {}
 
+-- clamps numeric textfields to between two values, and sets the textfield style if it is invalid
 function util.textfield.clamp_number_input(element, clamps, last_value)
     local text = element.text
     if text == ''
@@ -138,6 +143,7 @@ function util.textfield.clamp_number_input(element, clamps, last_value)
     return last_value
 end
 
+-- sets the numeric textfield to the last valid value and resets the style
 function util.textfield.set_last_valid_value(element, last_value)
     if element.text ~= last_value then
         element.text = last_value
