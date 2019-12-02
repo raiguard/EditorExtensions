@@ -14,14 +14,14 @@ end
 -- returns the player and his global table
 function util.get_player(obj)
     if type(obj) == 'number' then return game.players[obj], global.players[obj] -- gave the player_index itself
-    elseif obj.index then return game.players[obj.index], global.players[obj.index] -- gave a player object
+    elseif obj.__self then return game.players[obj.index], global.players[obj.index] -- gave a player object
     else return game.players[obj.player_index], global.players[obj.player_index] end -- gave the event table
 end
 
 -- just returns the player table
 function util.player_table(obj)
     if type(obj) == 'number' then return global.players[obj] -- gave the player_index itself
-    elseif obj.index then return global.players[obj.index] -- gave a player object
+    elseif obj.__self then return global.players[obj.index] -- gave a player object
     else return global.players[obj.player_index] end -- gave the event table
 end
 

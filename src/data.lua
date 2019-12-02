@@ -10,7 +10,7 @@ function register_recipes(t, free_resource)
         data:extend{
             {
                 type = 'recipe',
-                name = free_resource and 'im_free_resource_'..k or 'im_tool_'..k,
+                name = 'ee_tool_'..k,
                 ingredients = {},
                 enabled = false,
                 result = k
