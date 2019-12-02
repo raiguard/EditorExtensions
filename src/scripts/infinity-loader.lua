@@ -334,7 +334,7 @@ end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
 local function snap_neighboring_loaders(entity)
-    for _,e in pairs(util.entity.check_tile_neighbors(entity.surface, entity.position, check_is_loader, false, true)) do
+    for _,e in pairs(util.entity.check_tile_neighbors(entity, check_is_loader, false, true)) do
         snap_loader(e, entity)
     end
 end
@@ -398,9 +398,8 @@ event.register(util.constants.entity_built_events, function(e)
     local entity = e.created_entity or e.entity
     if entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
         -- just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
-        local type, mode = 'express', 'output'
         local direction = entity.direction
-        local loader, inserters, chest, combinator = create_loader(type, mode, entity.surface, entity.position, direction, entity.force)
+        local loader, inserters, chest, combinator = create_loader('express', 'output', entity.surface, entity.position, direction, entity.force)
         -- get previous filters, if any
         local old_control = entity.get_or_create_control_behavior()
         local new_control = combinator.get_or_create_control_behavior()
