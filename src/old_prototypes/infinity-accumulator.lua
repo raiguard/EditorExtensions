@@ -15,8 +15,6 @@ data:extend{
     }
 }
 
-register_recipes{'infinity-accumulator'}
-
 -- ------------------------------------------------------------------------------------------
 -- ENTITIES
 

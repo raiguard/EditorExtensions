@@ -1,34 +1,24 @@
-infinity_tint = {r=1, g=0.5, b=1, a=1}
+-- ----------------------------------------------------------------------------------------------------
+-- EDITOR EXTENSIONS PROTOTYPES
 
+infinity_tint = {r=1, g=0.5, b=1, a=1}
 function apply_infinity_tint(t)
     t.tint = infinity_tint
     return t
 end
 
-function register_recipes(t, free_resource)
-    for _,k in pairs(t) do
-        data:extend{
-            {
-                type = 'recipe',
-                name = 'ee_tool_'..k,
-                ingredients = {},
-                enabled = false,
-                result = k
-            }
-        }
-    end
-end
-
-require('prototypes/infinity-accumulator')
-require('prototypes/infinity-chest')
-require('prototypes/infinity-loader')
-require('prototypes/infinity-misc')
-require('prototypes/infinity-pole')
-require('prototypes/infinity-robot')
-require('prototypes/infinity-wagon')
-require('prototypes/item-group')
-require('prototypes/shortcut')
-require('prototypes/style')
+infinity_chest_data = {
+    ['active-provider'] = {s=0, t={218,115,255}, o='ab'},
+    ['passive-provider'] = {s=0, t={255,141,114}, o='ac'},
+    ['storage'] = {s=1, t={255,220,113}, o='ad'},
+    ['buffer'] = {s=30, t={114,255,135}, o='ae'},
+    ['requester'] = {s=30, t={114,236,255}, o='af'}
+}
+tesseract_chest_data = {
+    [''] = {t={255,255,255}, o='ba'},
+    ['passive-provider'] = {t={255,141,114}, o='bb'},
+    ['storage'] = {t={255,220,113}, o='bc'}
+}
 
 -- editor controller settings
 local editor_controller = data.raw['editor-controller'].default
