@@ -1,6 +1,7 @@
 -- ----------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS PROTOTYPES
 
+-- UTILITIES
 infinity_tint = {r=1, g=0.5, b=1, a=1}
 function apply_infinity_tint(t)
     t.tint = infinity_tint
@@ -24,15 +25,70 @@ function extract_icon_info(obj)
     return {icon=obj.icon, icon_size=obj.icon_size, icon_mipmaps=obj.icon_mipmaps}
 end
 
--- most of it
-require('prototypes/entity')
-require('prototypes/equipment')
-require('prototypes/item-group')
-require('prototypes/item')
+module_data = {
+    {name='super-speed-module', icon_ref='speed-module-3', order='ba', category = 'speed', tier=50, effect={speed={bonus=2.5}}, tint={r=0.5,g=0.5,b=1}},
+    {name='super-effectivity-module', icon_ref='effectivity-module-3', order='bb', category='effectivity', tier=50, effect={consumption={bonus=-2.5}},
+     tint={r=0.5,g=1,b=0.5}},
+    {name='super-productivity-module', icon_ref='productivity-module-3', order='bc', category='productivity', tier=50, effect={productivity={bonus=2.5}},
+     tint={r=1,g=0.5,b=0.5}},
+    {name='super-clean-module', icon_ref='speed-module-3', order='bd', category='effectivity', tier=50, effect={pollution={bonus=-2.5}}, tint={r=0.5,g=1,b=1}},
+    {name='super-slow-module', icon_ref='speed-module', order='ca', category = 'speed', tier=50, effect={speed={bonus=-2.5}}, tint={r=0.5,g=0.5,b=1}},
+    {name='super-ineffectivity-module', icon_ref='effectivity-module', order='cb', category = 'effectivity', tier=50, effect={consumption={bonus=2.5}},
+     tint={r=0.5,g=1,b=0.5}},
+    {name='super-dirty-module', icon_ref='speed-module', order='cc', category='effectivity', tier=50, effect={pollution={bonus=2.5}}, tint={r=0.5,g=1,b=1}}
+}
 
--- editor controller settings
+local function shortcut_sprite(suffix, size)
+    return {
+        filename = '__EditorExtensions__/graphics/shortcut-bar/map-editor-'..suffix,
+        priority = 'extra-high-no-scale',
+        size = size,
+        scale = 1,
+        mipmap_count = 2,
+        flags = {'icon'}
+    }
+end
+
+-- EDITOR CONTROLLER
 local editor_controller = data.raw['editor-controller'].default
 editor_controller.show_character_tab_in_controller_gui = true
 editor_controller.show_infinity_filters_in_controller_gui = true
 editor_controller.inventory_size = 150
 editor_controller.render_as_day = false
+
+data:extend{
+    -- shortcut
+    {
+        type = 'shortcut',
+        name = 'ee-toggle-map-editor',
+        icon = shortcut_sprite('x32.png', 32),
+        disabled_icon = shortcut_sprite('x32-white.png', 32),
+        small_icon = shortcut_sprite('x24.png', 24),
+        disabled_small_icon = shortcut_sprite('x24-white.png', 24),
+        action = 'lua',
+        associated_control_input = 'ee-toggle-map-editor',
+        toggleable = true
+    },
+    -- custom input
+    {
+        type = 'custom-input',
+        name = 'ee-toggle-map-editor',
+        key_sequence = 'CONTROL + SHIFT + E',
+        action = 'lua'
+    },
+    {
+        type = 'custom-input',
+        name = 'ee-mouse-leftclick',
+        key_sequence = '',
+        linked_game_control = 'open-gui'
+    }
+}
+
+-- the rest...
+require('prototypes/entity')
+require('prototypes/equipment')
+require('prototypes/item-group')
+require('prototypes/item')
+require('prototypes/module')
+require('prototypes/recipe')
+require('prototypes/style')

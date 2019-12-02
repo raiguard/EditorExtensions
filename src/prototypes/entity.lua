@@ -19,12 +19,12 @@ do
     base_entity.picture.layers[1] = apply_infinity_tint(base_entity.picture.layers[1])
     base_entity.picture.layers[1].hr_version = apply_infinity_tint(base_entity.picture.layers[1].hr_version)
     base_entity.localised_description = {'entity-description.infinity-accumulator'}
-    local ia_icons = data.raw['item']['infinity-accumulator'].icons
+    local accumulator_icons = {apply_infinity_tint(base_entity.icons[1])}
 
     for _,t in pairs(accumulator_types) do
         local entity = table.deepcopy(base_entity)
         entity.name = 'infinity-accumulator-' .. t
-        entity.icons = ia_icons
+        entity.icons = accumulator_icons
         entity.energy_source = {type='electric', usage_priority=t, buffer_capacity='500GJ'}
         entity.subgroup = 'ee-electricity'
         entity.order = 'a'
@@ -56,7 +56,7 @@ do
     local base_entity = table.deepcopy(data.raw['infinity-container']['infinity-chest'])
     local infinity_chest_picture = table.deepcopy(base_entity.picture)
 
-    for lm,d in pairs(chest_data) do
+    for lm,d in pairs(infinity_chest_data) do
         local chest = table.deepcopy(data.raw['logistic-container']['logistic-chest-' .. lm])
         chest.type = 'infinity-container'
         chest.name = 'infinity-chest-' .. lm
@@ -83,12 +83,12 @@ do
     local comp_chest_picture = table.deepcopy(compilatron_chest.picture)
     comp_chest_picture.layers[1].shift = util.by_pixel(0,-4.25)
     comp_chest_picture.layers[1].hr_version.shift = util.by_pixel(0,-4.25)
-    for lm,d in pairs(tess_chest_data) do
+    for lm,d in pairs(tesseract_chest_data) do
         local suffix = lm == '' and lm or '-'..lm
         local chest = table.deepcopy(data.raw['infinity-container']['infinity-chest'..suffix])
         chest.name = 'tesseract-chest'..suffix
         chest.order = d.o
-        chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=d.t}}
+        chest.icons = {{icon=compilatron_chest.icon, icon_size=compilatron_chest.icon_size, icon_mipmaps=compilatron_chest.icon_mipmaps, tint=d.t}}
         chest.picture = table.deepcopy(comp_chest_picture)
         chest.picture.layers[1].tint = d.t
         chest.picture.layers[1].hr_version.tint = d.t
@@ -104,7 +104,7 @@ end
 -- This is actually the heat interface, we're just changing the name and appearance.
 local infinity_heat_pipe = data.raw['heat-interface']['heat-interface']
 infinity_heat_pipe.gui_mode = 'all'
-infinity_heat_pipe.icons = {apply_infinity_tint(extract_icon_info(infinity_heat_pipe))}
+infinity_heat_pipe.icons = {apply_infinity_tint(extract_icon_info(data.raw['item']['heat-pipe']))}
 infinity_heat_pipe.picture.filename = '__base__/graphics/entity/heat-pipe/heat-pipe-t-1.png'
 apply_infinity_tint(infinity_heat_pipe.picture)
 infinity_heat_pipe.picture.hr_version = apply_infinity_tint{
@@ -302,7 +302,7 @@ data:extend{infinity_locomotive}
 -- This already exists, we're just changing the color
 local infinity_pipe = data.raw['infinity-pipe']['infinity-pipe']
 infinity_pipe.gui_mode = 'all'
-infinity_pipe.icons = {apply_infinity_tint(extract_icon_info(infinity_pipe))}
+infinity_pipe.icons = {apply_infinity_tint(infinity_pipe.icons[1])}
 for name, picture in pairs(infinity_pipe.pictures) do
     if name ~= 'high_temperature_flow' and name ~= 'middle_temperature_flow' and name ~= 'low_temperature_flow' and name ~= 'gas_flow' then
         apply_infinity_tint(picture)
@@ -463,7 +463,7 @@ do
     local infinity_wagon_chest = table.deepcopy(data.raw['infinity-container']['infinity-chest'])
     infinity_wagon_chest.name = 'infinity-wagon-chest'
     infinity_wagon_chest.icons = {apply_infinity_tint(extract_icon_info(infinity_wagon_chest))}
-    infinity_wagon_chest.picture = empty_picture
+    infinity_wagon_chest.picture = empty_sheet
     infinity_wagon_chest.collision_mask = {'layer-15'}
     infinity_wagon_chest.selection_box = nil
     infinity_wagon_chest.selectable_in_game = false
@@ -471,7 +471,7 @@ do
 
     local infinity_wagon_pipe = table.deepcopy(data.raw['infinity-pipe']['infinity-pipe'])
     infinity_wagon_pipe.name = 'infinity-wagon-pipe'
-    infinity_wagon_pipe.icons = {apply_infinity_tint(extract_icon_info(infinity_wagon_pipe))}
+    infinity_wagon_pipe.icons = {apply_infinity_tint(infinity_wagon_pipe.icons[1])}
     infinity_wagon_pipe.collision_mask = {'layer-15'}
     infinity_wagon_pipe.selection_box = nil
     infinity_wagon_pipe.selectable_in_game = false
@@ -479,7 +479,7 @@ do
     infinity_wagon_pipe.flags = {'hide-alt-info', 'hidden'}
 
     for k,t in pairs(infinity_wagon_pipe.pictures) do
-        infinity_wagon_pipe.pictures[k] = empty_picture
+        infinity_wagon_pipe.pictures[k] = empty_sheet
     end
 
     data:extend{cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe}
