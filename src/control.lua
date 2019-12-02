@@ -109,7 +109,11 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
     {filter='name', name='tesseract-passive-provider-chest'},
     {filter='name', name='tesseract-storage-chest'},
     {filter='name', name='infinity-inserter'},
-    {filter='name', name='infinity-pipe'}
+    {filter='name', name='infinity-pipe'},
+    {filter='type', type='transport-belt'},
+    {filter='type', type='underground-belt'},
+    {filter='type', type='splitter'},
+    {filter='type', type='loader'}
 })
 .set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
     {filter='name', name='infinity-accumulator-primary-output'},
