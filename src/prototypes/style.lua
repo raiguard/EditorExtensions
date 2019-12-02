@@ -15,6 +15,25 @@ styles['ee_ia_page_frame'] = {
 }
 
 -- --------------------------------------------------
+-- SCROLLPANE STYLES
+
+styles['ee_circuit_signals_scroll_pane'] =
+{
+  type = "scroll_pane_style",
+  parent = "scroll_pane_with_dark_background_under_subheader",
+  width = 308,
+  height = 404,
+  background_graphical_set = {
+    position = {282, 17},
+    corner_size = 8,
+    overall_tiling_horizontal_padding = 4,
+    overall_tiling_vertical_spacing = 12,
+    overall_tiling_vertical_size = 28,
+    overall_tiling_vertical_padding = 4
+  }
+}
+
+-- --------------------------------------------------
 -- FLOW STYLES
 
 styles['ee_titlebar_flow'] = {
@@ -34,11 +53,9 @@ styles['ee_entity_window_content_flow'] = {
     horizontal_spacing = 10
 }
 
-styles['ee_circuit_signal_flow'] = {
+styles['ee_circuit_signals_flow'] = {
     type = 'horizontal_flow_style',
-    parent = 'ee_vertically_centered_flow',
-    width = 200,
-    horizontal_spacing = 2
+    horizontal_spacing = 12
 }
 
 -- --------------------------------------------------
@@ -94,7 +111,7 @@ styles['ee_disabled_dropdown_button'] = {
     width = 116
 }
 
-local shadow_def = {
+local modded_shadow_def = {
     position = {382, 107},
     corner_size = 12,
     top_outer_border_shift = 4,
@@ -111,67 +128,78 @@ styles['ee_filter_slot_button_light'] = {
     padding = 0,
 	default_graphical_set = {
 		base = {border=4, position={2,738}, size=76},
-		shadow = shadow_def
+		shadow = modded_shadow_def
     },
     hovered_graphical_set = {
         base = {border=4, position={82,738}, size=76},
-        shadow = shadow_def,
+        shadow = modded_shadow_def,
         glow = offset_by_2_rounded_corners_glow(default_glow_color)
     },
     clicked_graphical_set = {
         base = {border=4, position={162,738}, size=76},
-        shadow = shadow_def
+        shadow = modded_shadow_def
     },
     disabled_graphical_set = {
 		base = {border=4, position={2,738}, size=76},
-		shadow = shadow_def
+		shadow = modded_shadow_def
     }
 }
 
 local green_filename = '__EditorExtensions__/graphics/gui/green-filter-slot-button.png'
+local def_shadow_def = {
+    position = {378, 103},
+    corner_size = 16,
+    top_outer_border_shift = 4,
+    bottom_outer_border_shift = -4,
+    left_outer_border_shift = 4,
+    right_outer_border_shift = -4,
+    draw_type = "outer"
+}
 
-styles['ee_green_filter_slot_button_light'] = {
+styles['ee_green_circuit_signal_slot_button'] = {
     type='button_style',
-    parent='ee_filter_slot_button_light',
+    parent='train_schedule_item_select_button',
 	default_graphical_set = {
 		base = {border=4, position={2,0}, size=76, filename=green_filename},
-		shadow = shadow_def
+		shadow = def_shadow_def
     },
     hovered_graphical_set = {
         base = {border=4, position={82,0}, size=76, filename=green_filename},
-        shadow = shadow_def,
+        shadow = def_shadow_def,
         glow = offset_by_2_rounded_corners_glow{110, 164, 104, 127}
     },
     clicked_graphical_set = {
         base = {border=4, position={162,0}, size=76, filename=green_filename},
-        shadow = shadow_def
+        shadow = def_shadow_def
     },
     disabled_graphical_set = {
 		base = {border=4, position={2,0}, size=76, filename=green_filename},
-		shadow = shadow_def
-    }
+		shadow = def_shadow_def
+    },
+    clicked_vertical_offset = 2
 }
 
-styles['ee_red_filter_slot_button_light'] = {
+styles['ee_red_circuit_signal_slot_button'] = {
     type='button_style',
-    parent='ee_filter_slot_button_light',
+    parent='train_schedule_item_select_button',
 	default_graphical_set = {
 		base = {border=4, position={242,658}, size=76},
-		shadow = shadow_def
+		shadow = def_shadow_def
     },
     hovered_graphical_set = {
         base = {border=4, position={322,658}, size=76},
-        shadow = shadow_def,
-        glow = offset_by_2_rounded_corners_glow{110, 164, 104, 127}
+        shadow = def_shadow_def,
+        glow = offset_by_2_rounded_corners_glow{236, 130, 130, 127}
     },
     clicked_graphical_set = {
         base = {border=4, position={402,658}, size=76},
-        shadow = shadow_def
+        shadow = def_shadow_def
     },
     disabled_graphical_set = {
 		base = {border=4, position={242,658}, size=76},
-		shadow = shadow_def
-    }
+		shadow = def_shadow_def
+    },
+    clicked_vertical_offset = 2
 }
 
 -- styles['ee_virtual_slot_table_scroll_pane'] = {

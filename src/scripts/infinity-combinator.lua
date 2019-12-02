@@ -13,7 +13,16 @@ local gui = {}
 -- --------------------------------------------------
 -- LOCAL UTILITIES
 
-
+-- creates a toolbar
+local function create_toolbar(parent, color)
+    local prefix = 'ee_ic_'..color..'_toolbar_'
+    local frame = parent.add{type='frame', name=prefix..'frame', style='subheader_frame', direction='horizontal'}
+    frame.add{type='label', name=prefix..'label', style='subheader_caption_label', caption={'gui-infinity-combinator.'..color..'-toolbar-label-caption'}}
+    frame.add{type='empty-widget', name=prefix..'pusher', style='ee_invisible_horizontal_pusher'}
+    frame.add{type='sprite-button', name=prefix..'search_button', style='tool_button', sprite='utility/search_icon'}
+    frame.add{type='sprite-button', name=prefix..'reset_button', style='tool_button', sprite='utility/reset'}.enabled = false
+    return frame
+end
 
 -- --------------------------------------------------
 -- GUI
@@ -35,8 +44,15 @@ local function update_circuit_values(e)
         for _,type in ipairs{'red', 'green'} do
             local network = entity.get_circuit_network(defines.wire_type[type])
             if network then
-                local signals = network.signals or {}
-                -- do stuff...
+                local scroll = gui_data.elems[type..'_scroll']
+                scroll.clear()
+                for i,signal in ipairs(network.signals or {}) do
+                    if signal.signal.type == 'virtual' then signal.signal.type = 'virtual-signal' end
+                    -- create frame
+                    local frame = scroll.add{type='frame', name='ee_ic_red_signal_frame_'..i, style='train_schedule_condition_frame', direction='horizontal'}
+                    frame.add{type='sprite-button', name='ee_ic_red_signal_icon_'..i, style='ee_'..type..'_circuit_signal_slot_button', sprite=signal.signal.type..'/'..signal.signal.name}
+                    frame.add{type='label', name='ee_ic_red_signal_label_'..i, caption=signal.count}
+                end
             end
         end
     end
@@ -64,21 +80,17 @@ function gui.create(parent, entity, player)
         buttons = {util.constants.close_button_def}
     })
     event.gui.on_click(titlebar.children[3], close_button_clicked, 'ic_close_button_clicked', player.index)
-    local content_frame = window.add{type='frame', name='ee_ic_content_frame', style='window_content_frame'}
-    content_frame.style.horizontally_stretchable = true
-    local signals_flow = content_frame.add{type='flow', name='ee_ic_signals_flow', direction='vertical'}
-    signals_flow.style.padding = 4
-    signals_flow.style.bottom_padding = 3
-    signals_flow.style.vertical_spacing = 6
-    -- test interface
-    local test_flow = signals_flow.add{type='flow', name='ee_ic_signal_flow_1', style='ee_circuit_signal_flow', direction='horizontal'}
-    test_flow.add{type='sprite-button', name='ee_ic_signal_icon_1', style='ee_green_filter_slot_button_light', sprite='item/stone'}
-    test_flow.add{type='label', name='ee_ic_signal_label_1', caption='11238563390'}.style.left_margin = 4
-    local test_flow_2 = signals_flow.add{type='flow', name='ee_ic_signal_flow_2', style='ee_circuit_signal_flow', direction='horizontal'}
-    test_flow_2.add{type='sprite-button', name='ee_ic_signal_icon_2', style='ee_red_filter_slot_button_light', sprite='item/iron-ore'}
-    test_flow_2.add{type='label', name='ee_ic_signal_label_2', caption='9858496'}.style.left_margin = 4
+    local scrolls_flow = window.add{type='flow', name='ee_ic_scrolls_flow', style='ee_circuit_signals_flow', direction='horizontal'}
+    local red_frame = scrolls_flow.add{type='frame', name='ee_ic_red_frame', style='inside_deep_frame', direction='vertical'}
+    local red_toolbar = create_toolbar(red_frame, 'red')
+    local red_signals_scroll = red_frame.add{type='scroll-pane', name='ee_ic_red_signals_scrollpane', style='ee_circuit_signals_scroll_pane',
+                                             direction='vertical', vertical_scroll_policy='always'}
+    local green_frame = scrolls_flow.add{type='frame', name='ee_ic_green_frame', style='inside_deep_frame', direction='vertical'}
+    local green_toolbar = create_toolbar(green_frame, 'green')
+    local green_signals_scroll = green_frame.add{type='scroll-pane', name='ee_ic_green_signals_scrollpane', style='ee_circuit_signals_scroll_pane',
+                                                 direction='vertical', vertical_scroll_policy='always'}
     window.force_auto_center()
-    return {window=window, signals_flow=signals_flow}
+    return {window=window, red_scroll=red_signals_scroll, green_scroll=green_signals_scroll}
 end
 
 function gui.destroy(window, player_index)
