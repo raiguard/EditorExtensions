@@ -4,12 +4,13 @@
 
 -- LOCAL UTILITIES
 local empty_sheet = {
-    filename = "__core__/graphics/empty.png",
-    priority = "very-low",
+    filename = '__core__/graphics/empty.png',
+    priority = 'very-low',
     width = 1,
     height = 1,
     frame_count = 1,
 }
+local util = require('lib/util')
 
 -- INFINITY ACCUMULATOR
 do
@@ -99,6 +100,18 @@ do
         data:extend{chest}
     end
 end
+
+
+-- INFINITY COMBINATOR
+local infinity_combinator = table.deepcopy(data.raw['constant-combinator']['constant-combinator'])
+infinity_combinator.name = 'infinity-combinator'
+infinity_combinator.icons = {apply_infinity_tint(extract_icon_info(infinity_combinator, combinator_tint))}
+for _,dir in pairs(infinity_combinator.sprites) do
+    apply_infinity_tint(dir.layers[1], combinator_tint)
+    apply_infinity_tint(dir.layers[1].hr_version, combinator_tint)
+end
+infinity_combinator.allow_copy_paste = false
+data:extend{infinity_combinator}
 
 -- INFINITY HEAT PIPE
 -- This is actually the heat interface, we're just changing the name and appearance.
@@ -377,7 +390,7 @@ infinity_roboport.icons = {apply_infinity_tint(extract_icon_info(infinity_robopo
 infinity_roboport.logistics_radius = 200
 infinity_roboport.construction_radius = 400
 infinity_roboport.energy_source = {type='void'}
-infinity_roboport.charging_energy = "1000YW"
+infinity_roboport.charging_energy = '1000YW'
 infinity_roboport.minable.result = 'infinity-roboport'
 for _,k in pairs{'base', 'base_patch', 'base_animation', 'door_animation_up', 'door_animation_down', 'recharging_animation'} do
     if infinity_roboport[k].layers then

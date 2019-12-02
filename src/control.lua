@@ -8,6 +8,7 @@ local util = require('lib/util')
 -- MODULES
 
 require('scripts/infinity-accumulator')
+require('scripts/infinity-combinator')
 require('scripts/infinity-loader')
 require('scripts/infinity-wagon')
 require('scripts/tesseract-chest')
@@ -25,6 +26,7 @@ end
 
 -- GENERAL SETUP
 event.on_init(function()
+    global.combinators = {}
     global.flags = {
         map_editor_toggled = false
     }

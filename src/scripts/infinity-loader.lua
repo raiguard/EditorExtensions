@@ -262,9 +262,9 @@ function gui.create(parent, entity, player)
     filters_flow.add{type='label', name='ee_il_filters_label', caption={'', {'gui-infinity-loader.filters-label-caption'}, ' [img=info]'},
                    tooltip={'gui-infinity-loader.filters-label-tooltip'}}
     filters_flow.add{type='empty-widget', name='ee_il_filters_pusher', style='ee_invisible_horizontal_pusher', direction='horizontal'}
-    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_slot_button_light', elem_type='item', item=parameters[1].signal.name}
+    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_filter_slot_button_light', elem_type='item', item=parameters[1].signal.name}
     event.gui.on_elem_changed({name_match={'ee_il_filter_button'}}, filter_button_elem_changed, 'il_filter_button_elem_changed', player.index)
-    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_slot_button_light', elem_type='item', item=parameters[2].signal.name}
+    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_filter_slot_button_light', elem_type='item', item=parameters[2].signal.name}
     window.force_auto_center()
     return {window=window, camera=camera}
 end
@@ -321,7 +321,7 @@ local function snap_loader(loader, entity)
 end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
-local function snap_neighboring_loaders(entity)
+local function snap_tile_neighbors(entity)
     for _,e in pairs(util.entity.check_tile_neighbors(entity, check_is_loader, false, true)) do
         snap_loader(e, entity)
     end
@@ -379,7 +379,7 @@ remote.add_interface('ee_infinity_loader', {
     update_loader_filters = update_filters,
     update_loader_inserters = update_inserters,
     snap_loader = snap_loader,
-    snap_neighboring_loaders = snap_neighboring_loaders,
+    snap_tile_neighbors = snap_tile_neighbors,
     snap_belt_neighbors = snap_belt_neighbors
 })
 
@@ -417,11 +417,11 @@ event.register(util.constants.entity_built_events, function(e)
         -- update entity
         snap_loader(loader)
     elseif entity.type == 'transport-belt' then
-        snap_neighboring_loaders(entity)
+        snap_tile_neighbors(entity)
     elseif entity.type == 'underground-belt' then
-        snap_neighboring_loaders(entity)
+        snap_tile_neighbors(entity)
         if entity.neighbours then
-            snap_neighboring_loaders(entity)
+            snap_tile_neighbors(entity)
         end
     elseif entity.type == 'splitter' or entity.type == 'loader' then
         snap_belt_neighbors(entity)
@@ -440,7 +440,7 @@ event.register(defines.events.on_player_rotated_entity, function(e)
         update_filters(entity)
     elseif entity.type == 'transport-belt' then
         -- snap adjacent infinity loaders
-        snap_neighboring_loaders(entity)
+        snap_tile_neighbors(entity)
     elseif entity.type == 'underground-belt' then
         -- snap belt neighbors
         snap_belt_neighbors(entity)

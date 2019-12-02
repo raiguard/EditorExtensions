@@ -34,6 +34,13 @@ styles['ee_entity_window_content_flow'] = {
     horizontal_spacing = 10
 }
 
+styles['ee_circuit_signal_flow'] = {
+    type = 'horizontal_flow_style',
+    parent = 'ee_vertically_centered_flow',
+    width = 200,
+    horizontal_spacing = 2
+}
+
 -- --------------------------------------------------
 -- EMPTY WIDGET STYLES
 
@@ -97,7 +104,7 @@ local shadow_def = {
     draw_type = 'outer'
 }
 
-styles['ee_slot_button_light'] = {
+styles['ee_filter_slot_button_light'] = {
     type='button_style',
     parent='train_schedule_item_select_button',
     size = 36,
@@ -114,6 +121,56 @@ styles['ee_slot_button_light'] = {
     clicked_graphical_set = {
         base = {border=4, position={162,738}, size=76},
         shadow = shadow_def
+    },
+    disabled_graphical_set = {
+		base = {border=4, position={2,738}, size=76},
+		shadow = shadow_def
+    }
+}
+
+local green_filename = '__EditorExtensions__/graphics/gui/green-filter-slot-button.png'
+
+styles['ee_green_filter_slot_button_light'] = {
+    type='button_style',
+    parent='ee_filter_slot_button_light',
+	default_graphical_set = {
+		base = {border=4, position={2,0}, size=76, filename=green_filename},
+		shadow = shadow_def
+    },
+    hovered_graphical_set = {
+        base = {border=4, position={82,0}, size=76, filename=green_filename},
+        shadow = shadow_def,
+        glow = offset_by_2_rounded_corners_glow{110, 164, 104, 127}
+    },
+    clicked_graphical_set = {
+        base = {border=4, position={162,0}, size=76, filename=green_filename},
+        shadow = shadow_def
+    },
+    disabled_graphical_set = {
+		base = {border=4, position={2,0}, size=76, filename=green_filename},
+		shadow = shadow_def
+    }
+}
+
+styles['ee_red_filter_slot_button_light'] = {
+    type='button_style',
+    parent='ee_filter_slot_button_light',
+	default_graphical_set = {
+		base = {border=4, position={242,658}, size=76},
+		shadow = shadow_def
+    },
+    hovered_graphical_set = {
+        base = {border=4, position={322,658}, size=76},
+        shadow = shadow_def,
+        glow = offset_by_2_rounded_corners_glow{110, 164, 104, 127}
+    },
+    clicked_graphical_set = {
+        base = {border=4, position={402,658}, size=76},
+        shadow = shadow_def
+    },
+    disabled_graphical_set = {
+		base = {border=4, position={242,658}, size=76},
+		shadow = shadow_def
     }
 }
 

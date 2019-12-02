@@ -3,8 +3,9 @@
 
 -- UTILITIES
 infinity_tint = {r=1, g=0.5, b=1, a=1}
-function apply_infinity_tint(t)
-    t.tint = infinity_tint
+combinator_tint = {r=0.8, g=0.5, b=1, a=1}
+function apply_infinity_tint(t, tint)
+    t.tint = tint or infinity_tint
     return t
 end
 
