@@ -1,12 +1,12 @@
 -- ----------------------------------------------------------------------------------------------------
 -- INFINITY ACCUMULATOR
 
-local event = require('scripts/lib/event')
-local util = require('scripts/lib/util')
+local event = require('lib/event')
+local util = require('lib/util')
 
 -- GUI ELEMENTS
-local entity_camera = require('scripts/lib/gui-elems/entity-camera')
-local titlebar = require('scripts/lib/gui-elems/titlebar')
+local entity_camera = require('lib/gui-elems/entity-camera')
+local titlebar = require('lib/gui-elems/titlebar')
 
 local gui = {}
 
