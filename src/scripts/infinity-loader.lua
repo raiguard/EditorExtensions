@@ -76,36 +76,6 @@ local function num_inserters(entity)
   return math.ceil(entity.prototype.belt_speed / BELT_SPEED_FOR_60_PER_SECOND) * 2
 end
 
--- update inserter pickup/drop positions
-local function update_inserters(loader)
-    local inserters = loader.surface.find_entities_filtered{name='infinity-loader-inserter', position=loader.position}
-    local chest = loader.surface.find_entities_filtered{name='infinity-loader-chest', position=loader.position}[1]
-    local e_type = loader.loader_type
-    local e_position = loader.position
-    local e_direction = loader.direction
-    for i=1,#inserters do
-        local orthogonal = i > (#inserters/2) and -0.25 or 0.25
-        local inserter = inserters[i]
-        local mod = math.min((i % (#inserters/2)),3)
-        if e_type == 'input' then
-            -- pickup on belt, drop in chest
-            inserter.pickup_target = loader
-            inserter.pickup_position = util.position.add(e_position, util.direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal))
-            inserter.drop_target = chest
-            inserter.drop_position = e_position
-        elseif e_type == 'output' then
-            -- pickup from chest, drop on belt
-            inserter.pickup_target = chest
-            inserter.pickup_position = chest.position
-            inserter.drop_target = loader
-            inserter.drop_position = util.position.add(e_position, util.direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal))
-        end
-        -- TEMPORARY rendering
-        -- rendering.draw_circle{target=inserter.pickup_position, color={r=0,g=1,b=0,a=0.5}, surface=loader.surface, radius=0.03, filled=true, time_to_live=180}
-        -- rendering.draw_circle{target=inserter.drop_position, color={r=0,g=1,b=1,a=0.5}, surface=loader.surface, radius=0.03, filled=true, time_to_live=180}
-    end
-end
-
 -- update inserter and chest filters
 local function update_filters(entity)
     local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
@@ -135,15 +105,63 @@ local function update_filters(entity)
     chest.remove_unfiltered_items = true
 end
 
--- update belt type of the given loader
-local function update_loader_type(loader, belt_type)
-    -- save settings first
-    local position = loader.position
-    local direction = loader.direction
-    local force = loader.force
-    local player = loader.last_user
-    local loader_type = loader.loader_type
+-- update inserter pickup/drop positions
+local function update_inserters(loader)
     local surface = loader.surface
+    local inserters = surface.find_entities_filtered{name='infinity-loader-inserter', position=loader.position}
+    local chest = surface.find_entities_filtered{name='infinity-loader-chest', position=loader.position}[1]
+    local e_type = loader.loader_type
+    local e_position = loader.position
+    local e_direction = loader.direction
+    -- update number of inserters if needed
+    if #inserters ~= num_inserters(loader) then
+        util.log('updating inserter count', true)
+        for _,e in ipairs(inserters) do
+            e.destroy()
+        end
+        inserters = {}
+        for i=1,num_inserters(loader) do
+            inserters[i] = surface.create_entity{
+                name='infinity-loader-inserter',
+                position = loader.position,
+                force = loader.force,
+                direction = loader.direction,
+                create_build_effect_smoke = false
+            }
+            inserters[i].inserter_stack_size_override = 1
+        end
+        update_filters(surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1])
+    end
+    for i=1,#inserters do
+        local orthogonal = i > (#inserters/2) and -0.25 or 0.25
+        local inserter = inserters[i]
+        local mod = math.min((i % (#inserters/2)),3)
+        if e_type == 'input' then
+            -- pickup on belt, drop in chest
+            inserter.pickup_target = loader
+            inserter.pickup_position = util.position.add(e_position, util.direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal))
+            inserter.drop_target = chest
+            inserter.drop_position = e_position
+        elseif e_type == 'output' then
+            -- pickup from chest, drop on belt
+            inserter.pickup_target = chest
+            inserter.pickup_position = chest.position
+            inserter.drop_target = loader
+            inserter.drop_position = util.position.add(e_position, util.direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal))
+        end
+    end
+end
+
+-- update belt type of the given loader
+local function update_loader_type(loader, belt_type, overrides)
+    overrides = overrides or {}
+    -- save settings first
+    local position = overrides.position or loader.position
+    local direction = overrides.direction or loader.direction
+    local force = overrides.force or loader.force
+    local player = overrides.last_user or loader.last_user
+    local loader_type = overrides.loader_type or loader.loader_type
+    local surface = overrides.surface or loader.surface
     loader.destroy()
     local new_loader = surface.create_entity{
         name = 'infinity-loader-loader' .. (belt_type == '' and '' or '-'..belt_type),
@@ -185,16 +203,13 @@ local function create_loader(type, mode, surface, position, direction, force, sk
         force = force,
         create_build_effect_smoke = false
     }
-    local combinator
-    if not skip_combinator then
-        combinator = surface.create_entity{
-            name = 'infinity-loader-logic-combinator',
-            position = position,
-            force = force,
-            direction = mode == 'input' and util.direction.opposite(direction) or direction,
-            create_build_effect_smoke = false
-        }
-    end
+    local combinator = surface.create_entity{
+        name = 'infinity-loader-logic-combinator',
+        position = position,
+        force = force,
+        direction = mode == 'input' and util.direction.opposite(direction) or direction,
+        create_build_effect_smoke = false
+    }
     return loader, inserters, chest, combinator
 end
 
@@ -350,12 +365,17 @@ local function picker_dollies_move(e)
     local entity = e.moved_entity
     if entity.name == 'infinity-loader-logic-combinator' then
         local loader
-        -- move all entities from the previous position
-        for _,e in pairs(e.moved_entity.surface.find_entities_filtered{position=e.start_pos}) do
-            e.teleport(entity.position)
-            if check_is_loader(e) then loader = e end
+        -- move all entities to new position
+        for _,e in pairs(e.moved_entity.surface.find_entities_filtered{type={'loader', 'inserter', 'infinity-container'}, position=e.start_pos}) do
+            if check_is_loader(e) then
+                loader = e
+            else
+                e.teleport(entity.position)
+            end
         end
-        -- snap and update internals
+        -- loaders don't support teleportation, so destroy and recreate it
+        loader = update_loader_type(loader, get_belt_type(loader), {position=entity.position})
+        -- -- snap and update internals
         snap_loader(loader)
     end
 end
