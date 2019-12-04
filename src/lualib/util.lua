@@ -13,6 +13,8 @@ end
 
 table.merge = util.merge
 
+-- GENERAL
+
 -- returns the player and his global table
 function util.get_player(obj)
     if type(obj) == 'number' then return game.players[obj], global.players[obj] -- gave the player_index itself
@@ -52,6 +54,23 @@ util.constants = {
 }
 
 util.area = math2d.bounding_box
+
+-- utilities for prototype creation
+util.data = {
+    empty_circuit_wire_connection_points = {
+        {wire={},shadow={}},
+        {wire={},shadow={}},
+        {wire={},shadow={}},
+        {wire={},shadow={}}
+    },
+    empty_sheet = {
+        filename = '__core__/graphics/empty.png',
+        priority = 'very-low',
+        width = 1,
+        height = 1,
+        frame_count = 1
+    }
+}
 
 util.entity = {}
 

@@ -2,14 +2,6 @@
 -- ENTITIES
 -- We copy the vanilla definitions instead of creating our own, so many vanilla changes will be immediately reflected in the mod.
 
--- LOCAL UTILITIES
-local empty_sheet = {
-    filename = '__core__/graphics/empty.png',
-    priority = 'very-low',
-    width = 1,
-    height = 1,
-    frame_count = 1,
-}
 local util = require('lualib/util')
 
 -- INFINITY ACCUMULATOR
@@ -187,7 +179,7 @@ do
             erase_contents_when_mined = true,
             inventory_size = 10,
             flags = {'hide-alt-info'},
-            picture = empty_sheet,
+            picture = util.data.empty_sheet,
             icons = loader_base.icons,
             collision_box = {{-0.05,-0.05},{0.05,0.05}}
         },
@@ -204,15 +196,10 @@ do
             minable = {result='infinity-loader', mining_time=0.1},
             flags = {'player-creation', 'hidden'},
             item_slot_count = 2,
-            sprites = empty_sheet,
-            activity_led_sprites = empty_sheet,
+            sprites = util.data.empty_sheet,
+            activity_led_sprites = util.data.empty_sheet,
             activity_led_light_offsets = {{0,0}, {0,0}, {0,0}, {0,0}},
-            circuit_wire_connection_points = {
-                {wire={},shadow={}},
-                {wire={},shadow={}},
-                {wire={},shadow={}},
-                {wire={},shadow={}}
-            }
+            circuit_wire_connection_points = util.data.empty_circuit_wire_connection_points
         }
     }
 
@@ -276,10 +263,10 @@ do
             insert_position = {0, 0.2},
             filter_count = 1,
             draw_held_item = false,
-            platform_picture = empty_sheet,
-            hand_base_picture = empty_sheet,
-            hand_open_picture = empty_sheet,
-            hand_closed_picture = empty_sheet,
+            platform_picture = util.data.empty_sheet,
+            hand_base_picture = util.data.empty_sheet,
+            hand_open_picture = util.data.empty_sheet,
+            hand_closed_picture = util.data.empty_sheet,
             -- hand_base_picture = filter_inserter.hand_base_picture,
             -- hand_open_picture = filter_inserter.hand_open_picture,
             -- hand_closed_picture = filter_inserter.hand_closed_picture,
@@ -475,7 +462,7 @@ do
     local infinity_wagon_chest = table.deepcopy(data.raw['infinity-container']['infinity-chest'])
     infinity_wagon_chest.name = 'infinity-wagon-chest'
     infinity_wagon_chest.icons = {apply_infinity_tint(extract_icon_info(infinity_wagon_chest))}
-    infinity_wagon_chest.picture = empty_sheet
+    infinity_wagon_chest.picture = util.data.empty_sheet
     infinity_wagon_chest.collision_mask = {'layer-15'}
     infinity_wagon_chest.selection_box = nil
     infinity_wagon_chest.selectable_in_game = false
@@ -491,7 +478,7 @@ do
     infinity_wagon_pipe.flags = {'hide-alt-info', 'hidden'}
 
     for k,t in pairs(infinity_wagon_pipe.pictures) do
-        infinity_wagon_pipe.pictures[k] = empty_sheet
+        infinity_wagon_pipe.pictures[k] = util.data.empty_sheet
     end
 
     data:extend{cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe}
