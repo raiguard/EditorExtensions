@@ -10,7 +10,7 @@ local empty_sheet = {
     height = 1,
     frame_count = 1,
 }
-local util = require('lib/util')
+local util = require('lualib/util')
 
 -- INFINITY ACCUMULATOR
 do

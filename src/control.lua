@@ -1,8 +1,8 @@
 -- ----------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS CONTROL SCRIPTING
 
-local event = require('lib/event')
-local util = require('lib/util')
+local event = require('lualib/event')
+local util = require('lualib/util')
 
 -- --------------------------------------------------
 -- MODULES
