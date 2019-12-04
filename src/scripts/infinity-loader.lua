@@ -135,6 +135,29 @@ local function update_filters(entity)
     chest.remove_unfiltered_items = true
 end
 
+-- update belt type of the given loader
+local function update_loader_type(loader, belt_type)
+    -- save settings first
+    local position = loader.position
+    local direction = loader.direction
+    local force = loader.force
+    local player = loader.last_user
+    local loader_type = loader.loader_type
+    local surface = loader.surface
+    loader.destroy()
+    local new_loader = surface.create_entity{
+        name = 'infinity-loader-loader' .. (belt_type == '' and '' or '-'..belt_type),
+        position = position,
+        direction = direction,
+        force = force,
+        player = last_user,
+        type = loader_type,
+        create_build_effect_smoke = false
+    }
+    update_inserters(new_loader)
+    return new_loader
+end
+
 -- create an infinity loader
 local function create_loader(type, mode, surface, position, direction, force, skip_combinator)
     local loader = surface.create_entity{
@@ -173,29 +196,6 @@ local function create_loader(type, mode, surface, position, direction, force, sk
         }
     end
     return loader, inserters, chest, combinator
-end
-
-local function update_loader_type(belt_type, entity)
-	-- old loader has to be destroyed first, so save its info here
-	local position = entity.position
-	local force = entity.force
-	local direction = entity.direction
-	local mode = entity.loader_type
-	local surface = entity.surface
-	local combinator = entity.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=position}[1]
-	local control = combinator.get_control_behavior()
-	local parameters = control.parameters
-    local enabled = control.enabled
-	-- destroy combinator and raise event, which will cause everything else to be destroyed as well
-	combinator.destroy{raise_destroy=true}
-	-- create new loader, sync filters
-	local new_loader, new_inserters, new_chest, new_combinator = create_loader(belt_type, mode, surface, position, direction, force)
-	local new_control = new_combinator.get_or_create_control_behavior()
-	new_control.parameters = parameters
-	new_control.enabled = enabled
-	update_inserters(new_loader)
-    update_filters(new_combinator)
-    return new_loader
 end
 
 -- --------------------------------------------------
@@ -310,7 +310,7 @@ local function snap_loader(loader, entity)
         -- snap belt type
         local belt_type = get_belt_type(entity)
         if get_belt_type(loader) ~= belt_type then
-            loader = update_loader_type(belt_type, loader)
+            loader = update_loader_type(loader, belt_type)
         end
     end
     -- update internals
@@ -407,47 +407,48 @@ event.register(util.constants.entity_built_events, function(e)
         -- raise event
         event.raise(defines.events.script_raised_built, {entity=new_entity, tick=game.tick})
     elseif entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
-        -- just place the loader with the default values. belt_neighbors requires both entities to exist, so type/mode get set later
+        -- create the loader with default belt type, we will snap it later
         local loader, inserters, chest, combinator = create_loader('express', 'output', entity.surface, entity.position, entity.direction, entity.force)
-        -- get previous filters, if any
+        -- get and set previous filters, if any
         local old_control = entity.get_or_create_control_behavior()
         local new_control = combinator.get_or_create_control_behavior()
         new_control.parameters = old_control.parameters
         new_control.enabled = old_control.enabled
         entity.destroy()
-        -- update entity
+        -- snap new loader
         snap_loader(loader)
     elseif entity.type == 'transport-belt' then
+        -- snap neighbors
         snap_tile_neighbors(entity)
     elseif entity.type == 'underground-belt' then
+        -- snap neighbors of both sides
         snap_tile_neighbors(entity)
         if entity.neighbours then
             snap_tile_neighbors(entity)
         end
     elseif entity.type == 'splitter' or entity.type == 'loader' then
+        -- snap belt neighbors
         snap_belt_neighbors(entity)
     end
 end)
 
 event.register(defines.events.on_player_rotated_entity, function(e)
     local entity = e.entity
-    -- just in case
-    if not entity.valid then return end
     if entity.name == 'infinity-loader-logic-combinator' then
+        -- rotate loader instead of combinator
         entity.direction = e.previous_direction
         local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
         loader.rotate()
         update_inserters(loader)
         update_filters(entity)
     elseif entity.type == 'transport-belt' then
-        -- snap adjacent infinity loaders
+        -- snap neighbors
         snap_tile_neighbors(entity)
     elseif entity.type == 'underground-belt' then
-        -- snap belt neighbors
-        snap_belt_neighbors(entity)
-        -- snap belt neighbors for the other orthogonal of the underneathy
+        -- snap neighbors of both sides
+        snap_tile_neighbors(entity)
         if entity.neighbours then
-            snap_belt_neighbors(entity.neighbours)
+            snap_tile_neighbors(entity.neighbours)
         end
     elseif entity.type == 'splitter' or entity.type == 'loader' then
         -- snap belt neighbors
