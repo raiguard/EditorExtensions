@@ -77,21 +77,18 @@ event.register(defines.events.on_built_entity, function(e)
     if entity.name == 'infinity-pipe' then
         -- get own fluidbox
         local own_fluidbox = entity.fluidbox
-        -- see if it's connected to anything
-        if #own_fluidbox.get_connections(1) == 0 then
-            -- there are no connections, so do nothing
-            return
-        end
-        -- for each adjacent assembling machine, if any
-        for _,e in ipairs(util.entity.check_tile_neighbors(entity, function(e) return e.type == 'assembling-machine' end, false, true)) do
-            -- check each fluidbox to see if we're connected to it
-            local fluidbox = e.fluidbox
-            for i=1,#fluidbox do
-                local connections = fluidbox.get_connections(i)
-                if #connections == 1 and connections[1] == own_fluidbox and fluidbox.get_prototype(i).production_type == 'input' then
-                    -- snap infinity filter
-                    entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=1, mode='exactly'}
-                    return
+        -- for every connection the infinity pipe has
+        for _,fb in ipairs(own_fluidbox.get_connections(1)) do
+            -- if it's connected to an assembling machine
+            if fb.owner.type == 'assembling-machine' then
+                -- for every fluidbox in the assembling machine
+                for i=1,#fb do
+                    -- if it's an input connection, and it's connected to us
+                    if fb.get_prototype(i).production_type == 'input' and fb.get_connections(i)[1] == own_fluidbox then
+                        -- snap infinity filter
+                        entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=1, mode='exactly'}
+                        return
+                    end
                 end
             end
         end
