@@ -262,9 +262,11 @@ function gui.create(parent, entity, player)
     filters_flow.add{type='label', name='ee_il_filters_label', caption={'', {'gui-infinity-loader.filters-label-caption'}, ' [img=info]'},
                    tooltip={'gui-infinity-loader.filters-label-tooltip'}}
     filters_flow.add{type='empty-widget', name='ee_il_filters_pusher', style='ee_invisible_horizontal_pusher', direction='horizontal'}
-    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_filter_slot_button_light', elem_type='item', item=parameters[1].signal.name}
+    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_filter_slot_button_light', elem_type='item',
+                     item=parameters[1].signal.name}
     event.gui.on_elem_changed({name_match={'ee_il_filter_button'}}, filter_button_elem_changed, 'il_filter_button_elem_changed', player.index)
-    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_filter_slot_button_light', elem_type='item', item=parameters[2].signal.name}
+    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_filter_slot_button_light', elem_type='item',
+                     item=parameters[2].signal.name}
     window.force_auto_center()
     return {window=window, camera=camera}
 end
@@ -291,29 +293,25 @@ local function snap_loader(loader, entity)
             area = util.position.to_tile_area(util.position.add(loader.position, util.direction.to_vector(get_loader_direction(loader), 1))),
             type = {'transport-belt', 'underground-belt', 'splitter', 'loader'}
         }[1]
-        if not entity then
-             -- could not find an entity to connect to, so don't do any snapping
-             -- update internals
-            update_inserters(loader)
-            update_filters(loader.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1])
-            return
-        end
     end
-    -- snap direction
-    local belt_neighbors = loader.belt_neighbours
-    if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
-        -- we are facing something, but cannot connect to it, so rotate and try again
-        loader.rotate()
-        belt_neighbors = loader.belt_neighbours
+    if entity then
+        -- snap direction
+        local belt_neighbors = loader.belt_neighbours
         if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
-            -- cannot connect to whatever it is, so don't snap
+            -- we are facing something, but cannot connect to it, so rotate and try again
             loader.rotate()
-            return
+            belt_neighbors = loader.belt_neighbours
+            if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
+                -- cannot connect to whatever it is, so don't snap
+                loader.rotate()
+                return
+            end
         end
-    end
-    -- snap belt type
-    if get_belt_type(loader) ~= get_belt_type(entity) then
-        loader = update_loader_type(get_belt_type(entity), loader)
+        -- snap belt type
+        local belt_type = get_belt_type(entity)
+        if get_belt_type(loader) ~= belt_type then
+            loader = update_loader_type(belt_type, loader)
+        end
     end
     -- update internals
     update_inserters(loader)
@@ -370,10 +368,10 @@ event.on_load(function()
     end
 end)
 
--- --------------------------------------------------
--- STATIC HANDLERS
+--
+-- REMOTE INTERFACES
+--
 
--- interface to allow conditional on_tick to update the filters
 remote.add_interface('ee_infinity_loader', {
     create_loader = create_loader,
     update_loader_filters = update_filters,
@@ -382,6 +380,9 @@ remote.add_interface('ee_infinity_loader', {
     snap_tile_neighbors = snap_tile_neighbors,
     snap_belt_neighbors = snap_belt_neighbors
 })
+
+-- --------------------------------------------------
+-- STATIC HANDLERS
 
 -- when an entity is built in-game of through script, or constructed or revived through script
 event.register(util.constants.entity_built_events, function(e)
