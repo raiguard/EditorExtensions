@@ -349,11 +349,13 @@ end
 local function picker_dollies_move(e)
     local entity = e.moved_entity
     if entity.name == 'infinity-loader-logic-combinator' then
-        -- destroy all entities in the previous position
+        local loader
+        -- move all entities from the previous position
         for _,e in pairs(e.moved_entity.surface.find_entities_filtered{position=e.start_pos}) do
-            e.destroy()
+            e.teleport(entity.position)
+            if check_is_loader(e) then loader = e end
         end
-        local loader, inserters, chest = create_loader('express', 'output', entity.surface, entity.position, entity.direction, entity.force, true)
+        -- snap and update internals
         snap_loader(loader)
     end
 end
