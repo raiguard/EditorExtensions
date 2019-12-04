@@ -17,8 +17,7 @@ local gui = {}
 -- iterate through all of these to result in the belt type
 local belt_type_patterns = {
     -- editor extensions :D
-    ['infinity%-'] = '',
-    ['loader%-loader%-?'] = '',
+    ['infinity%-loader%-loader%-?'] = '',
     -- beltlayer: https://mods.factorio.com/mod/beltlayer
     ['layer%-connector'] = '',
     -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
@@ -115,7 +114,6 @@ local function update_inserters(loader)
     local e_direction = loader.direction
     -- update number of inserters if needed
     if #inserters ~= num_inserters(loader) then
-        util.log('updating inserter count', true)
         for _,e in ipairs(inserters) do
             e.destroy()
         end
