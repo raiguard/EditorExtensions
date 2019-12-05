@@ -62,19 +62,6 @@ do
     end
 end
 
--- INFINITY CONSTANT COMBINATOR
-data:extend{
-    {
-        type = 'item',
-        name = 'infinity-combinator',
-        stack_size = 50,
-        icons = {apply_infinity_tint(extract_icon_info(data.raw['constant-combinator']['constant-combinator']), combinator_tint)},
-        place_result = 'infinity-combinator',
-        subgroup = 'ee-electricity',
-        order = 'z'
-    }
-}
-
 -- INFINITY FUSION REACTOR
 data:extend{
     {

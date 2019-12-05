@@ -93,18 +93,6 @@ do
     end
 end
 
-
--- INFINITY COMBINATOR
-local infinity_combinator = table.deepcopy(data.raw['constant-combinator']['constant-combinator'])
-infinity_combinator.name = 'infinity-combinator'
-infinity_combinator.icons = {apply_infinity_tint(extract_icon_info(infinity_combinator, combinator_tint))}
-for _,dir in pairs(infinity_combinator.sprites) do
-    apply_infinity_tint(dir.layers[1], combinator_tint)
-    apply_infinity_tint(dir.layers[1].hr_version, combinator_tint)
-end
-infinity_combinator.allow_copy_paste = false
-data:extend{infinity_combinator}
-
 -- INFINITY HEAT PIPE
 -- This is actually the heat interface, we're just changing the name and appearance.
 local infinity_heat_pipe = data.raw['heat-interface']['heat-interface']
