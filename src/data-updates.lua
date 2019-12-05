@@ -10,13 +10,23 @@ for n,t in pairs(loader_base.structure) do
     end
 end
 
+local belt_patterns = {
+    -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
+    ['%-?transport%-belt%-to%-ground'] = '',
+    -- vanilla and 99% of mods
+    ['%-?underground%-belt'] = ''
+}
+
 local function create_loader(base_underground)
     local entity = table.deepcopy(data.raw['underground-belt'][base_underground])
     -- adjust pictures and icon
     entity.structure = loader_base.structure
     entity.icons = loader_base.icons
     -- basic data
-    local suffix = entity.name:gsub('%-?underground%-belt', '')
+    local suffix = entity.name
+    for pattern, replacement in pairs(belt_patterns) do
+        suffix = suffix:gsub(pattern, replacement)
+    end
     entity.type = 'loader'
     entity.name = 'infinity-loader-loader' .. (suffix ~= '' and '-'..suffix or '')
     entity.next_upgrade = nil
