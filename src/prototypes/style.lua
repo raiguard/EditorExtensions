@@ -202,23 +202,6 @@ styles['ee_red_circuit_signal_slot_button'] = {
     clicked_vertical_offset = 2
 }
 
--- styles['ee_virtual_slot_table_scroll_pane'] = {
---     type = 'scroll_pane_style',
---     parent = 'train_schedule_scroll_pane',
---     background_graphical_set = {
---         base = {
---             position = {282,17},
---             corner_size = 8,
---             overall_tiling_vertical_size = 32,
---             overall_tiling_horizontal_size = 32,
---             overall_tiling_horizontal_padding = 4,
---             overall_tiling_horizontal_spacing = 8,
---             overall_tiling_vertical_spacing = 8,
---             overall_tiling_vertical_padding = 4
---         }
---     }
--- }
-
 -- ----------------------------------------------------------------------------------------------------
 -- SPRITES
 
