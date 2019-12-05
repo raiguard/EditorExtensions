@@ -618,7 +618,7 @@ end
     Usage:
         -- check if a conditional event is registered
         if event.is_registered('player_built_entity') then game.print('someone registered that event!') end
-]]
+]]--
 function event.is_registered(conditional_name)
     return global.conditional_event_registry[conditional_name] and true or false
 end

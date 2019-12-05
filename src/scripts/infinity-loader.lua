@@ -162,7 +162,7 @@ local function update_loader_type(loader, belt_type, overrides)
     local player = overrides.last_user or loader.last_user
     local loader_type = overrides.loader_type or loader.loader_type
     local surface = overrides.surface or loader.surface
-    loader.destroy()
+    if loader then loader.destroy() end
     local new_loader = surface.create_entity{
         name = 'infinity-loader-loader' .. (belt_type == '' and '' or '-'..belt_type),
         position = position,
@@ -454,6 +454,7 @@ event.register(util.constants.entity_built_events, function(e)
     end
 end)
 
+-- when an entity is rotated
 event.register(defines.events.on_player_rotated_entity, function(e)
     local entity = e.entity
     if entity.name == 'infinity-loader-logic-combinator' then
@@ -554,5 +555,21 @@ event.register(defines.events.on_gui_closed, function(e)
     if e.gui_type == 16 and e.element.name == 'ee_il_window' then
         gui.destroy(e.element, e.player_index)
         util.player_table(e).gui.il = nil
+    end
+end)
+
+-- when mod configuration changes
+event.on_configuration_changed(function(e)
+    -- check every single infinity loader on every surface to see if it no longer has a loader entity
+    for _,surface in pairs(game.surfaces) do
+        for _,entity in ipairs(surface.find_entities_filtered{name='infinity-loader-logic-combinator'}) do
+            if #surface.find_entities_filtered{type='loader', position=entity.position} == 0 then
+                -- if its loader is gone, give it a new one with default settings
+                update_loader_type(nil, 'express', {position=entity.position, direction=entity.direction, force=entity.force,
+                                                    last_user=entity.last_user or '', loader_type='output', surface=entity.surface})
+                -- alternatively, just destroy it completely
+                -- entity.destroy{raise_destroy=true}
+            end
+        end
     end
 end)

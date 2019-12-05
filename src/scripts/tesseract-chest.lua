@@ -51,7 +51,7 @@ end)
 event.on_configuration_changed(function(e)
     -- update filters of all tesseract chests
     update_tesseract_data()
-    update_all_chest_filters() 
+    update_all_chest_filters()
 end)
 
 -- when a mod setting changes
