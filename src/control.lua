@@ -1,10 +1,10 @@
--- ----------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS CONTROL SCRIPTING
 
 local event = require('lualib/event')
 local util = require('lualib/util')
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- MODULES
 
 require('scripts/infinity-accumulator')
@@ -12,7 +12,7 @@ require('scripts/infinity-loader')
 require('scripts/infinity-wagon')
 require('scripts/tesseract-chest')
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- SETUP AND GENERAL SCRIPTING
 
 local function setup_player(index)
@@ -52,7 +52,7 @@ event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, functio
     end
 end)
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- INFINITY INSERTER
 
 -- set manually built inserters to blacklist mode by default
@@ -67,7 +67,7 @@ event.register(defines.events.on_built_entity, function(e)
     end
 end)
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- INFINITY PIPE
 
 -- snap infinity pipe filter to adjacent assembler input if a player built it manually
@@ -94,7 +94,7 @@ event.register(defines.events.on_built_entity, function(e)
     end
 end)
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- EVENT FILTERS
 -- Add filters to all events that support them so we can preserve as much performance as possible
 

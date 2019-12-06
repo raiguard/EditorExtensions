@@ -1,4 +1,4 @@
--- ----------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS PROTOTYPES
 
 -- UTILITIES
@@ -92,5 +92,5 @@ require('prototypes/equipment')
 require('prototypes/item-group')
 require('prototypes/item')
 require('prototypes/module')
-require('prototypes/recipe')
+-- require('prototypes/recipe')
 require('prototypes/style')

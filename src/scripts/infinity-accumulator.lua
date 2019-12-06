@@ -1,4 +1,4 @@
--- ----------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- INFINITY ACCUMULATOR
 
 local event = require('lualib/event')
@@ -10,7 +10,7 @@ local titlebar = require('lualib/gui-elems/titlebar')
 
 local gui = {}
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
 local constants = {
@@ -88,10 +88,10 @@ local function rev_parse_energy(value)
     return value, exponent/3
 end
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- GUI
 
--- -------------------------
+-- ----------------------------------------
 -- GUI HANDLERS
 
 local function close_button_clicked(e)
@@ -170,7 +170,7 @@ event.on_load(function()
     event.load_conditional_handlers(handlers)
 end)
 
--- -------------------------
+-- ----------------------------------------
 -- GUI MANAGEMENT
 
 function gui.create(parent, entity, player)
@@ -261,7 +261,7 @@ function gui.destroy(window, player_index)
     window.destroy()
 end
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- STATIC HANDLERS
 
 -- when a GUI is opened

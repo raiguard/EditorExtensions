@@ -1,4 +1,4 @@
--- ----------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- INFINITY LOADER
 
 local event = require('lualib/event')
@@ -10,7 +10,7 @@ local titlebar = require('lualib/gui-elems/titlebar')
 
 local gui = {}
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
 -- pattern -> replacement
@@ -213,10 +213,10 @@ local function create_loader(type, mode, surface, position, direction, force, sk
     return loader, inserters, chest, combinator
 end
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- GUI
 
--- -------------------------
+-- ----------------------------------------
 -- GUI HANDLERS
 
 local function close_button_clicked(e)
@@ -248,7 +248,7 @@ event.on_load(function()
     event.load_conditional_handlers(handlers)
 end)
 
--- -------------------------
+-- ----------------------------------------
 -- GUI MANAGEMENT
 
 function gui.create(parent, entity, player)
@@ -295,7 +295,7 @@ function gui.destroy(window, player_index)
     window.destroy()
 end
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- SNAPPING
 -- 'Snapping' in this case usually means matching both direction and belt type
 
@@ -354,7 +354,7 @@ local function snap_belt_neighbors(entity)
     end
 end
 
--- ----------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- COMPATIBILITY
 
 --
@@ -403,7 +403,7 @@ remote.add_interface('ee_infinity_loader', {
     snap_belt_neighbors = snap_belt_neighbors
 })
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- STATIC HANDLERS
 
 -- when an entity is built in-game of through script, or constructed or revived through script

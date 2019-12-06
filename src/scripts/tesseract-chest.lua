@@ -1,10 +1,10 @@
--- ----------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- TESSERACT CHEST
 
 local event = require('lualib/event')
 local chest_names = {'tesseract-chest','tesseract-chest-passive-provider','tesseract-chest-storage'}
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
 -- set the filters for the given tesseract chest
@@ -41,7 +41,7 @@ local function update_tesseract_data()
     global.tesseract_data = data
 end
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- EVENT HANDLERS
 
 event.on_init(function()
