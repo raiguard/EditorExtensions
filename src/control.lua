@@ -70,23 +70,35 @@ end)
 -- --------------------------------------------------------------------------------
 -- INFINITY PIPE
 
--- snap infinity pipe filter to adjacent assembler input if a player built it manually
+-- snap manually built infinity pipes
 event.register(defines.events.on_built_entity, function(e)
     local entity = e.created_entity
     if entity.name == 'infinity-pipe' then
-        -- get own fluidbox
-        local own_fluidbox = entity.fluidbox
-        -- for every connection the infinity pipe has
-        for _,fb in ipairs(own_fluidbox.get_connections(1)) do
-            -- if it's connected to an assembling machine
-            if fb.owner.type == 'assembling-machine' then
-                -- for every fluidbox in the assembling machine
-                for i=1,#fb do
-                    -- if it's an input connection, and it's connected to us
-                    if fb.get_prototype(i).production_type == 'input' and fb.get_connections(i)[1] == own_fluidbox then
-                        -- snap infinity filter
-                        entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=1, mode='exactly'}
-                        return
+        local mod_settings = util.get_player(e).mod_settings
+        -- default snapping
+        if mod_settings['ee-infinity-pipe-snapping'].value then
+            -- get own fluidbox
+            local own_fluidbox = entity.fluidbox
+            if own_fluidbox.get_locked_fluid(1) then
+                entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=0, mode='exactly'}
+            end
+        end
+        -- assembler snapping
+        if mod_settings['ee-infinity-pipe-assembler-snapping'].value then
+            -- get own fluidbox
+            local own_fluidbox = entity.fluidbox
+            -- for every connection the infinity pipe has
+            for _,fb in ipairs(own_fluidbox.get_connections(1)) do
+                -- if it's connected to an assembling machine
+                if fb.owner.type == 'assembling-machine' then
+                    -- for every fluidbox in the assembling machine
+                    for i=1,#fb do
+                        -- if it's an input connection, and it's connected to us
+                        if fb.get_prototype(i).production_type == 'input' and fb.get_connections(i)[1] == own_fluidbox then
+                            -- snap infinity filter
+                            entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=1, mode='exactly'}
+                            return
+                        end
                     end
                 end
             end

@@ -92,5 +92,6 @@ require('prototypes/equipment')
 require('prototypes/item-group')
 require('prototypes/item')
 require('prototypes/module')
+-- we might not even need recipes, if we're just using the editor!
 -- require('prototypes/recipe')
 require('prototypes/style')
