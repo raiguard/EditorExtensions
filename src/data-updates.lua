@@ -1,9 +1,7 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS PROTOTYPES - UPDATES
 
--- --------------------------------------------------------------------------------
 -- INFINITY LOADER
-
 local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
 loader_base.icons = {apply_infinity_tint{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32}}
 for n,t in pairs(loader_base.structure) do

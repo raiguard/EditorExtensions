@@ -1,9 +1,7 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS PROTOTYPES - FINAL FIXES
 
--- --------------------------------------------------------------------------------
 -- TESSERACT CHEST
-
 local to_check = {
     'ammo',
     'armor',
@@ -38,9 +36,7 @@ for _,p in pairs(data.raw['infinity-container']) do
     end
 end
 
--- --------------------------------------------------------------------------------
 -- INFINITY LAB
-
 local lab = data.raw['lab']['infinity-lab']
 -- fill this table with any future science pack names that don't match the pattern
 local pattern_overrides = {}
@@ -52,10 +48,8 @@ for _,p in pairs(data.raw['tool']) do
 end
 lab.inputs = packs
 
--- --------------------------------------------------------------------------------
 -- INFINITY EQUIPMENT
 -- allow equipment to be placed in all existing grid categories
-
 local categories = {}
 for _,t in pairs(data.raw['equipment-category']) do
     table.insert(categories, t.name)
@@ -63,9 +57,7 @@ end
 data.raw['generator-equipment']['infinity-fusion-reactor-equipment'].categories = categories
 data.raw['roboport-equipment']['infinity-personal-roboport-equipment'].categories = categories
 
--- --------------------------------------------------------------------------------
 -- MODULES
-
 local modules = {
     'super-speed-module',
     'super-effectivity-module',
