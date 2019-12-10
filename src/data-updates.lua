@@ -1,4 +1,9 @@
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- EDITOR EXTENSIONS PROTOTYPES - UPDATES
+
+-- --------------------------------------------------------------------------------
 -- INFINITY LOADER
+
 local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
 loader_base.icons = {apply_infinity_tint{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32}}
 for n,t in pairs(loader_base.structure) do
@@ -22,13 +27,14 @@ local function create_loader(base_underground)
     -- adjust pictures and icon
     entity.structure = loader_base.structure
     entity.icons = loader_base.icons
-    -- basic data
+    -- get name
     local suffix = entity.name
     for pattern, replacement in pairs(belt_patterns) do
         suffix = suffix:gsub(pattern, replacement)
     end
-    entity.type = 'loader'
     entity.name = 'infinity-loader-loader' .. (suffix ~= '' and '-'..suffix or '')
+    -- other data
+    entity.type = 'loader'
     entity.next_upgrade = nil
     entity.max_distance = 0
     entity.order = 'a'

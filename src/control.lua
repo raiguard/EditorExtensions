@@ -5,12 +5,14 @@ local event = require('lualib/event')
 local util = require('lualib/util')
 
 -- --------------------------------------------------------------------------------
--- MODULES
+-- SCRIPTS
 
-require('scripts/infinity-accumulator')
-require('scripts/infinity-loader')
-require('scripts/infinity-wagon')
-require('scripts/tesseract-chest')
+do
+    require('scripts/infinity-accumulator')
+    require('scripts/infinity-loader')
+    require('scripts/infinity-wagon')
+    require('scripts/tesseract-chest')
+end
 
 -- --------------------------------------------------------------------------------
 -- SETUP AND GENERAL SCRIPTING
