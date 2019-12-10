@@ -319,7 +319,7 @@ local function snap_loader(loader, entity)
             if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
                 -- cannot connect to whatever it is, so don't snap
                 loader.rotate()
-                return
+                goto skip_belt_type
             end
         end
         -- snap belt type
@@ -328,6 +328,7 @@ local function snap_loader(loader, entity)
             loader = update_loader_type(loader, belt_type)
         end
     end
+    ::skip_belt_type::
     -- update internals
     update_inserters(loader)
     update_filters(loader.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1])
