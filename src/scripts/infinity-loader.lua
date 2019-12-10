@@ -574,14 +574,3 @@ event.on_configuration_changed(function(e)
         end
     end
 end)
-
--- set default infinity filters for editor inventory when it is first opened
-event.register(defines.events.on_player_toggled_map_editor, function(e)
-    local player = game.players[e.player_index]
-    if player.controller_type == defines.controllers.editor and global.flags.map_editor_toggled == false then
-        for i,t in ipairs(load('return '..player.mod_settings['ee-default-filters'].value)()) do
-            global.flags.map_editor_toggled = true
-            player.set_infinity_filter(i, {name=t.name, count=t.count, mode='exactly', index=i})
-        end
-    end
-end)
