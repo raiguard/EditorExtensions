@@ -159,7 +159,7 @@ local function update_loader_type(loader, belt_type, overrides)
     local position = overrides.position or loader.position
     local direction = overrides.direction or loader.direction
     local force = overrides.force or loader.force
-    local player = overrides.last_user or loader.last_user
+    local last_user = overrides.last_user or loader.last_user
     local loader_type = overrides.loader_type or loader.loader_type
     local surface = overrides.surface or loader.surface
     if loader then loader.destroy() end
@@ -570,6 +570,17 @@ event.on_configuration_changed(function(e)
                 -- alternatively, just destroy it completely
                 -- entity.destroy{raise_destroy=true}
             end
+        end
+    end
+end)
+
+-- set default infinity filters for editor inventory when it is first opened
+event.register(defines.events.on_player_toggled_map_editor, function(e)
+    local player = game.players[e.player_index]
+    if player.controller_type == defines.controllers.editor and global.flags.map_editor_toggled == false then
+        for i,t in ipairs(load('return '..player.mod_settings['ee-default-filters'].value)()) do
+            global.flags.map_editor_toggled = true
+            player.set_infinity_filter(i, {name=t.name, count=t.count, mode='exactly', index=i})
         end
     end
 end)
