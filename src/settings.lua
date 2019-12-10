@@ -18,7 +18,7 @@ data:extend{
         type = 'bool-setting',
         name = 'ee-controller-render_as_day',
         setting_type = 'startup',
-        default_value = false,
+        default_value = true,
         order = 'bc'
     },
     {
