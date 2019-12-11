@@ -33,6 +33,32 @@ styles['ee_circuit_signals_scroll_pane'] =
   }
 }
 
+styles['signal_scroll_pane'] = {
+    type = 'scroll_pane_style',
+    parent = 'train_schedule_scroll_pane',
+    padding = 0,
+    height = 120,
+    background_graphical_set = {
+        base = {
+            position = {282, 17},
+            corner_size = 8,
+            overall_tiling_horizontal_padding = 4,
+            overall_tiling_horizontal_size = 32,
+            overall_tiling_horizontal_spacing = 8,
+            overall_tiling_vertical_padding = 4,
+            overall_tiling_vertical_size = 32,
+            overall_tiling_vertical_spacing = 8
+        }
+    }
+}
+
+styles['signal_slot_table'] = {
+    type = 'table_style',
+    parent = 'slot_table',
+    horizontal_spacing = 0,
+    vertical_spacing = 0
+}
+
 -- --------------------------------------------------------------------------------
 -- FLOW STYLES
 

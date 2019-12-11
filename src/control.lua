@@ -9,6 +9,7 @@ local util = require('lualib/util')
 
 do
     require('scripts/infinity-accumulator')
+    require('scripts/infinity-combinator')
     require('scripts/infinity-loader')
     require('scripts/infinity-wagon')
     require('scripts/tesseract-chest')
