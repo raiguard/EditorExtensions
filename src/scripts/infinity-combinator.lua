@@ -1,5 +1,5 @@
--- ----------------------------------------------------------------------------------------------------
--- INFINITY ACCUMULATOR
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- INFINITY COMBINATOR
 
 local event = require('lualib/event')
 local util = require('lualib/util')
@@ -10,15 +10,15 @@ local titlebar = require('lualib/gui-elems/titlebar')
 
 local gui = {}
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
 local state_to_circuit_type = {left='red', right='green'}
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- GUI
 
--- -------------------------
+-- ----------------------------------------
 -- GUI HANDLERS
 
 local function close_button_clicked(e)
@@ -33,7 +33,7 @@ local function update_circuit_values(e)
       local entity = gui_data.entity
       local control = entity.get_or_create_control_behavior()
       local network = entity.get_circuit_network(defines.wire_type[state_to_circuit_type[gui_data.elems.color_switch.switch_state]])
-      
+
   end
 end
 
@@ -46,7 +46,7 @@ event.on_load(function()
   .load_conditional_handlers{ic_update_circuit_values = update_circuit_values}
 end)
 
--- -------------------------
+-- ----------------------------------------
 -- GUI MANAGEMENT
 
 function gui.create(parent, entity, player)
@@ -84,7 +84,7 @@ function gui.destroy(window, player_index)
   window.destroy()
 end
 
--- --------------------------------------------------
+-- --------------------------------------------------------------------------------
 -- STATIC HANDLERS
 
 -- when a player opens a GUI
