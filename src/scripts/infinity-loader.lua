@@ -277,10 +277,10 @@ function gui.create(parent, entity, player)
   filters_flow.add{type='label', name='ee_il_filters_label', caption={'', {'gui-infinity-loader.filters-label-caption'}, ' [img=info]'},
            tooltip={'gui-infinity-loader.filters-label-tooltip'}}
   filters_flow.add{type='empty-widget', name='ee_il_filters_pusher', style='ee_invisible_horizontal_pusher', direction='horizontal'}
-  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_filter_slot_button_light', elem_type='item',
+  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='filter_slot_button_smaller', elem_type='item',
            item=parameters[1].signal.name}
   event.gui.on_elem_changed({name_match={'ee_il_filter_button'}}, filter_button_elem_changed, 'il_filter_button_elem_changed', player.index)
-  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_filter_slot_button_light', elem_type='item',
+  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='filter_slot_button_smaller', elem_type='item',
            item=parameters[2].signal.name}
   window.force_auto_center()
   return {window=window, camera=camera}

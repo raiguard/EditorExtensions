@@ -113,7 +113,7 @@ function gui.create(parent, entity, player)
   local signals_table = signals_scroll.add{type='table', name='slot_table', style='signal_slot_table', column_count=6}
   local bottom_flow = content_pane.add{type='frame', name='ee_ic_lower_flow', style='ee_current_signal_frame', direction='horizontal'}
   bottom_flow.style.top_margin = 2
-  bottom_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='quick_bar_slot_button', sprite='item/iron-ore', elem_type='signal'}
+  bottom_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='filter_slot_button_smaller', sprite='item/iron-ore', elem_type='signal'}
   local value_textfield = bottom_flow.add{type='textfield', name='ee_ic_input_textfield', numeric=true,
                                           clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
   value_textfield.style.natural_width = 50

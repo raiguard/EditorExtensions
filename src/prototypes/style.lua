@@ -194,28 +194,12 @@ local modded_shadow_def = {
   draw_type = 'outer'
 }
 
-styles['ee_filter_slot_button_light'] = {
-  type='button_style',
-  parent='train_schedule_item_select_button',
-  size = 36,
-  padding = 0,
-  default_graphical_set = {
-    base = {border=4, position={2,738}, size=76},
-    shadow = modded_shadow_def
-  },
-  hovered_graphical_set = {
-    base = {border=4, position={82,738}, size=76},
-    shadow = modded_shadow_def,
-    glow = offset_by_2_rounded_corners_glow(default_glow_color)
-  },
-  clicked_graphical_set = {
-    base = {border=4, position={162,738}, size=76},
-    shadow = modded_shadow_def
-  },
-  disabled_graphical_set = {
-    base = {border=4, position={2,738}, size=76},
-    shadow = modded_shadow_def
-  }
+styles['filter_slot_button_smaller'] = {
+  type = 'button_style',
+  parent = 'quick_bar_slot_button',
+  -- 0.18
+  -- parent = 'filter_slot_button',
+  size = 38
 }
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
