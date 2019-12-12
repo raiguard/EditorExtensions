@@ -14,6 +14,37 @@ styles['ee_ia_page_frame'] = {
   bottom_padding = 6
 }
 
+styles['ee_toolbar_frame'] = {
+  type = 'frame_style',
+  parent = 'subheader_frame',
+  horizontal_flow_style = {
+    type = 'horizontal_flow_style',
+    horizontally_stretchable = 'on',
+    vertical_align = 'center'
+  }
+}
+
+styles['ee_toolbar_frame_for_switch'] = {
+  type = 'frame_style',
+  parent = 'ee_toolbar_frame',
+  horizontal_flow_style = {
+    type = 'horizontal_flow_style',
+    horizontally_stretchable = 'on',
+    left_padding = 8,
+    vertical_align = 'center'
+  }
+}
+
+styles['ee_bottom_toolbar_frame'] = {
+  type = 'frame_style',
+  parent = 'subfooter_frame',
+  horizontal_flow_style = {
+    type = 'horizontal_flow_style',
+    horizontally_stretchable = 'on',
+    vertical_align = 'center'
+  }
+}
+
 -- --------------------------------------------------------------------------------
 -- SCROLLPANE STYLES
 
@@ -37,7 +68,8 @@ styles['signal_scroll_pane'] = {
   type = 'scroll_pane_style',
   parent = 'train_schedule_scroll_pane',
   padding = 0,
-  height = 120,
+  width = 240, -- six columns
+  height = 160, -- four rows
   background_graphical_set = {
     base = {
       position = {282, 17},
@@ -180,6 +212,14 @@ data:extend{
     name = 'ee-logo',
     filename = '__EditorExtensions__/graphics/gui/crafting-group.png',
     size = 128,
+    mipmap_count = 2,
+    flags = {'icon'}
+  },
+  {
+    type = 'sprite',
+    name = 'ee-time',
+    filename = '__EditorExtensions__/graphics/gui/time-alt.png',
+    size = 32,
     mipmap_count = 2,
     flags = {'icon'}
   }

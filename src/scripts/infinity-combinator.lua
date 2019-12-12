@@ -13,7 +13,7 @@ local gui = {}
 -- --------------------------------------------------
 -- LOCAL UTILITIES
 
-
+local state_to_circuit_type = {left='red', right='green'}
 
 -- --------------------------------------------------
 -- GUI
@@ -27,17 +27,14 @@ local function close_button_clicked(e)
 end
 
 local function update_circuit_values(e)
-  -- local players = global.players
-  -- for i,_ in pairs(global.combinators) do
-  --     local gui_data = players[i].gui.ic
-  --     local entity = gui_data.entity
-  --     local control = entity.get_or_create_control_behavior()
-  --     for _,type in ipairs{'red', 'green'} do
-  --         local network = entity.get_circuit_network(defines.wire_type[type])
-  --         if network then
-  --         end
-  --     end
-  -- end
+  local players = global.players
+  for i,_ in pairs(global.combinators) do
+      local gui_data = players[i].gui.ic
+      local entity = gui_data.entity
+      local control = entity.get_or_create_control_behavior()
+      local network = entity.get_circuit_network(defines.wire_type[state_to_circuit_type[gui_data.elems.color_switch.switch_state]])
+      
+  end
 end
 
 local handlers = {
@@ -53,9 +50,7 @@ end)
 -- GUI MANAGEMENT
 
 function gui.create(parent, entity, player)
-  local control = entity.get_or_create_control_behavior()
-  local parameters = control.parameters.parameters
-  local window = parent.add{type='frame', name='ee_ic_window', style='dialog_frame', direction='vertical'}
+  local window = parent.add{type='frame', name='ee_ic_window', direction='vertical'}
   local titlebar = titlebar.create(window, 'ee_ic_titlebar', {
     draggable = true,
     label = {'entity-name.infinity-combinator'},
@@ -63,16 +58,21 @@ function gui.create(parent, entity, player)
   })
   event.gui.on_click(titlebar.children[3], close_button_clicked, 'ic_close_button_clicked', player.index)
   local content_pane = window.add{type='frame', name='ee_ic_content_pane', style='inside_deep_frame', direction='vertical'}
-  -- local toolbar = content_pane.add{type='frame', name='ee_ic_toolbar_frame', style='subheader_frame'}
-  -- toolbar.style.horizontally_stretchable = true
-  -- toolbar.add{type='label', name='ee_ic_toolbar_label', style='subheader_caption_label', caption='Time:'}
+  local toolbar = content_pane.add{type='frame', name='ee_ic_toolbar_frame', style='ee_toolbar_frame_for_switch'}
+  local color_switch = toolbar.add{type='switch', name='ee_ic_color_switch', left_label_caption='Red', right_label_caption='Green'}
+  util.gui.add_pusher(toolbar, 'ee_ic_toolbar_pusher')
+  toolbar.add{type='sprite-button', name='ee_ic_search_button', style='tool_button', sprite='utility/search_icon'}
+  toolbar.add{type='sprite-button', name='ee_ic_updaterate_button', style='tool_button', sprite='ee-time'}
   local signals_scroll = content_pane.add{type='scroll-pane', name='ic_signals_scrollpane', style='signal_scroll_pane', vertical_scroll_policy='auto'}
   local signals_table = signals_scroll.add{type='table', name='slot_table', style='signal_slot_table', column_count=6}
-  for i=1,14 do
-    signals_table.add{type='sprite-button', name='ic_button_'..i, style='quick_bar_slot_button'}
-  end
+  local bottom_flow = window.add{type='flow', name='ee_ic_lower_flow', style='ee_vertically_centered_flow'}
+  bottom_flow.style.top_margin = 4
+  bottom_flow.visible = false
+  util.gui.add_pusher(window, 'ee_ic_lower_pusher')
+  local value_textfield = bottom_flow.add{type='textfield', name='ee_ic_input_textfield', style='short_number_textfield', numeric=true,
+                                          clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
   window.force_auto_center()
-  return {window=window}
+  return {window=window, color_switch=color_switch, signals_table=signals_table, value_textfield=value_textfield}
 end
 
 function gui.destroy(window, player_index)

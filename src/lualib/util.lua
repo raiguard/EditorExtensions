@@ -126,6 +126,16 @@ function util.direction.to_vector(direction, longitudinal, orthogonal)
   end
 end
 
+util.gui = {}
+
+function util.gui.add_pusher(parent, name, vertical)
+  if vertical then
+    return parent.add{type='empty-widget', name=name, style='ee_invisible_vertical_pusher'}
+  else
+    return parent.add{type='empty-widget', name=name, style='ee_invisible_horizontal_pusher'}
+  end
+end
+
 -- simple logging function - prints the string or table to the dev console or the ingame console
 function util.log(message, print_to_game)
   local func = print_to_game and game.print or log
