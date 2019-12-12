@@ -35,9 +35,14 @@ styles['ee_toolbar_frame_for_switch'] = {
   }
 }
 
-styles['ee_bottom_toolbar_frame'] = {
+styles['ee_current_signal_frame'] = {
   type = 'frame_style',
-  parent = 'subfooter_frame',
+  graphical_set = {
+    base = {
+      center = {position={76,8}, size=1},
+      draw_type = "outer"
+    }
+  },
   horizontal_flow_style = {
     type = 'horizontal_flow_style',
     horizontally_stretchable = 'on',
@@ -55,6 +60,30 @@ styles['signal_scroll_pane'] = {
   minimal_width = 252, -- six columns + scrollbar
   height = 160, -- four rows
   extra_right_padding_when_activated = -12,
+  graphical_set = {
+    base = {
+      position = {17,0},
+      corner_size = 8,
+      center = {position={42,8}, size=1},
+      top = {},
+      left_top = {},
+      right_top = {},
+      -- redefine bottom to be lighter so it transitions into the bottom pane seamlessly
+      bottom = {position={93,9}, size={1,8}},
+      draw_type = 'outer'
+    },
+    shadow = {
+      position = {183,128},
+      corner_size = 8,
+      tint = default_shadow_color,
+      scale = 0.5,
+      draw_type = 'inner',
+      -- overwrite the bottom to not have a shadow at all
+      left_bottom = {},
+      bottom = {},
+      right_bottom = {}
+    }
+  },
   background_graphical_set = {
     base = {
       position = {282, 17},
@@ -205,6 +234,14 @@ data:extend{
     type = 'sprite',
     name = 'ee-time',
     filename = '__EditorExtensions__/graphics/gui/time-alt.png',
+    size = 32,
+    mipmap_count = 2,
+    flags = {'icon'}
+  },
+  {
+    type = 'sprite',
+    name = 'ee-sort',
+    filename = '__EditorExtensions__/graphics/gui/sort.png',
     size = 32,
     mipmap_count = 2,
     flags = {'icon'}

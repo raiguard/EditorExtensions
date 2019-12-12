@@ -93,7 +93,7 @@ end)
 -- GUI MANAGEMENT
 
 function gui.create(parent, entity, player)
-  local window = parent.add{type='frame', name='ee_ic_window', direction='vertical'}
+  local window = parent.add{type='frame', name='ee_ic_window', style='dialog_frame', direction='vertical'}
   local titlebar = titlebar.create(window, 'ee_ic_titlebar', {
     draggable = true,
     label = {'entity-name.infinity-combinator'},
@@ -105,16 +105,20 @@ function gui.create(parent, entity, player)
   local color_switch = toolbar.add{type='switch', name='ee_ic_color_switch', left_label_caption='Red', right_label_caption='Green'}
   event.gui.on_switch_state_changed(color_switch, color_switch_state_changed, 'ic_color_switch_state_changed', player.index)
   util.gui.add_pusher(toolbar, 'ee_ic_toolbar_pusher')
-  toolbar.add{type='sprite-button', name='ee_ic_search_button', style='tool_button', sprite='utility/search_icon'}
-  toolbar.add{type='sprite-button', name='ee_ic_updaterate_button', style='tool_button', sprite='ee-time'}
+  local update_rate_button = toolbar.add{type='sprite-button', name='ee_ic_updaterate_button', style='tool_button', sprite='ee-time'}
+  update_rate_button.enabled = false
+  local sort_button = toolbar.add{type='sprite-button', name='ee_ic_sort_button', style='tool_button', sprite='ee-sort'}
+  sort_button.enabled = false
   local signals_scroll = content_pane.add{type='scroll-pane', name='ic_signals_scrollpane', style='signal_scroll_pane', vertical_scroll_policy='always'}
   local signals_table = signals_scroll.add{type='table', name='slot_table', style='signal_slot_table', column_count=6}
-  local bottom_flow = window.add{type='flow', name='ee_ic_lower_flow', style='ee_vertically_centered_flow'}
-  bottom_flow.style.top_margin = 4
-  bottom_flow.visible = false
-  util.gui.add_pusher(window, 'ee_ic_lower_pusher')
-  local value_textfield = bottom_flow.add{type='textfield', name='ee_ic_input_textfield', style='short_number_textfield', numeric=true,
+  local bottom_flow = content_pane.add{type='frame', name='ee_ic_lower_flow', style='ee_current_signal_frame', direction='horizontal'}
+  bottom_flow.style.top_margin = 2
+  bottom_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='quick_bar_slot_button', sprite='item/iron-ore', elem_type='signal'}
+  local value_textfield = bottom_flow.add{type='textfield', name='ee_ic_input_textfield', numeric=true,
                                           clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
+  value_textfield.style.natural_width = 50
+  value_textfield.style.minimal_width = 50
+  value_textfield.style.horizontally_stretchable = true
   window.force_auto_center()
   return {window=window, color_switch=color_switch, signals_table=signals_table, value_textfield=value_textfield}
 end
