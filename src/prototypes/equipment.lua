@@ -3,20 +3,20 @@
 
 -- infinity personal fusion reactor
 data:extend{
-    {
-        type = 'generator-equipment',
-        name = 'infinity-fusion-reactor-equipment',
-        sprite = apply_infinity_tint{
-            filename = "__base__/graphics/equipment/fusion-reactor-equipment.png",
-            width = 128,
-            height = 128,
-            priority = "medium"
-        },
-        shape = {width=1, height=1, type='full'},
-        energy_source = {type='electric', usage_priority='primary-output'},
-        power = '1000YW',
-        categories = {'armor'}
-    }
+  {
+    type = 'generator-equipment',
+    name = 'infinity-fusion-reactor-equipment',
+    sprite = apply_infinity_tint{
+      filename = "__base__/graphics/equipment/fusion-reactor-equipment.png",
+      width = 128,
+      height = 128,
+      priority = "medium"
+    },
+    shape = {width=1, height=1, type='full'},
+    energy_source = {type='electric', usage_priority='primary-output'},
+    power = '1000YW',
+    categories = {'armor'}
+  }
 }
 
 local personal_roboport = table.deepcopy(data.raw['roboport-equipment']['personal-roboport-mk2-equipment'])

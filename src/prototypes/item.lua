@@ -4,15 +4,15 @@
 
 -- INFINITY ACCUMULATOR
 data:extend{
-    {
-        type = 'item',
-        name = 'infinity-accumulator',
-        stack_size = 50,
-        icons = {apply_infinity_tint(extract_icon_info(data.raw['accumulator']['accumulator']))},
-        place_result = 'infinity-accumulator-primary-output',
-        subgroup = 'ee-electricity',
-        order = 'a'
-    }
+  {
+    type = 'item',
+    name = 'infinity-accumulator',
+    stack_size = 50,
+    icons = {apply_infinity_tint(extract_icon_info(data.raw['accumulator']['accumulator']))},
+    place_result = 'infinity-accumulator-primary-output',
+    subgroup = 'ee-electricity',
+    order = 'a'
+  }
 }
 
 -- INFINITY BEACON
@@ -26,67 +26,67 @@ data:extend{infinity_beacon}
 
 -- INFINITY AND TESSERACT CHESTS
 do
-    -- modify existing infinity-chest item
-    local ic_item = data.raw['item']['infinity-chest']
-    ic_item.subgroup = 'ee-inventories'
-    ic_item.order = 'aa'
-    ic_item.stack_size = 50
-    ic_item.flags = {}
+  -- modify existing infinity-chest item
+  local ic_item = data.raw['item']['infinity-chest']
+  ic_item.subgroup = 'ee-inventories'
+  ic_item.order = 'aa'
+  ic_item.stack_size = 50
+  ic_item.flags = {}
 
-    -- create logistic chest items
-    ic_item = table.deepcopy(data.raw['item']['infinity-chest'])
-    for lm,d in pairs(infinity_chest_data) do
-        local chest = table.deepcopy(ic_item)
-        chest.name = 'infinity-chest-' .. lm
-        chest.localised_description = {'', {'entity-description.infinity-chest'}, '\n', {'entity-description.logistic-chest-'..lm}}
-        chest.icons = {{icon=chest.icon, icon_size=chest.icon_size, icon_mipmaps=chest.icon_mipmaps, tint=d.t}}
-        chest.place_result = 'infinity-chest-' .. lm
-        chest.order = d.o
-        chest.flags = {}
-        data:extend{chest}
-    end
+  -- create logistic chest items
+  ic_item = table.deepcopy(data.raw['item']['infinity-chest'])
+  for lm,d in pairs(infinity_chest_data) do
+    local chest = table.deepcopy(ic_item)
+    chest.name = 'infinity-chest-' .. lm
+    chest.localised_description = {'', {'entity-description.infinity-chest'}, '\n', {'entity-description.logistic-chest-'..lm}}
+    chest.icons = {{icon=chest.icon, icon_size=chest.icon_size, icon_mipmaps=chest.icon_mipmaps, tint=d.t}}
+    chest.place_result = 'infinity-chest-' .. lm
+    chest.order = d.o
+    chest.flags = {}
+    data:extend{chest}
+  end
 
-    local base_comp_chest = data.raw['container']['compilatron-chest']
+  local base_comp_chest = data.raw['container']['compilatron-chest']
 
-    -- create tesseract chest items
-    for lm,d in pairs(tesseract_chest_data) do
-        local suffix = lm == '' and lm or '-'..lm
-        local chest = table.deepcopy(ic_item)
-        chest.name = 'tesseract-chest'..suffix
-        chest.localised_description = {'', {'entity-description.tesseract-chest'}, lm ~= '' and {'', '\n', {'entity-description.logistic-chest-'..lm}} or '',
-                                    '\n[color=255,57,48]', {'entity-description.tesseract-chest-warning'}, '[/color]'}
-        chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=d.t}}
-        chest.place_result = 'tesseract-chest'..suffix
-        chest.order = d.o
-        data:extend{chest}
-    end
+  -- create tesseract chest items
+  for lm,d in pairs(tesseract_chest_data) do
+    local suffix = lm == '' and lm or '-'..lm
+    local chest = table.deepcopy(ic_item)
+    chest.name = 'tesseract-chest'..suffix
+    chest.localised_description = {'', {'entity-description.tesseract-chest'}, lm ~= '' and {'', '\n', {'entity-description.logistic-chest-'..lm}} or '',
+                  '\n[color=255,57,48]', {'entity-description.tesseract-chest-warning'}, '[/color]'}
+    chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=d.t}}
+    chest.place_result = 'tesseract-chest'..suffix
+    chest.order = d.o
+    data:extend{chest}
+  end
 end
 
 -- INFINITY CONSTANT COMBINATOR
 data:extend{
-    {
-        type = 'item',
-        name = 'infinity-combinator',
-        stack_size = 50,
-        icons = {apply_infinity_tint(extract_icon_info(data.raw['constant-combinator']['constant-combinator']), combinator_tint)},
-        place_result = 'infinity-combinator',
-        subgroup = 'ee-electricity',
-        order = 'z'
-    }
+  {
+    type = 'item',
+    name = 'infinity-combinator',
+    stack_size = 50,
+    icons = {apply_infinity_tint(extract_icon_info(data.raw['constant-combinator']['constant-combinator']), combinator_tint)},
+    place_result = 'infinity-combinator',
+    subgroup = 'ee-electricity',
+    order = 'z'
+  }
 }
 
 -- INFINITY FUSION REACTOR
 data:extend{
-    {
-        type = 'item',
-        name = 'infinity-fusion-reactor-equipment',
-        icon_size = 32,
-        icons = {apply_infinity_tint(extract_icon_info(data.raw['item']['fusion-reactor-equipment']))},
-        subgroup = 'ee-equipment',
-        order = 'aa',
-        placed_as_equipment_result = 'infinity-fusion-reactor-equipment',
-        stack_size = 50
-    }
+  {
+    type = 'item',
+    name = 'infinity-fusion-reactor-equipment',
+    icon_size = 32,
+    icons = {apply_infinity_tint(extract_icon_info(data.raw['item']['fusion-reactor-equipment']))},
+    subgroup = 'ee-equipment',
+    order = 'aa',
+    placed_as_equipment_result = 'infinity-fusion-reactor-equipment',
+    stack_size = 50
+  }
 }
 
 -- INFINITY ELECTRIC POLES
@@ -142,16 +142,16 @@ data:extend{infinity_lab}
 
 -- INFINITY LOADER
 data:extend{
-    {
-        type = 'item',
-        name = 'infinity-loader',
-        localised_name = {'entity-name.infinity-loader'},
-        icons = {apply_infinity_tint{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32, icon_mipmaps=0}},
-        stack_size = 50,
-        place_result = 'infinity-loader-dummy-combinator',
-        subgroup = 'ee-misc',
-        order = 'aa'
-    }
+  {
+    type = 'item',
+    name = 'infinity-loader',
+    localised_name = {'entity-name.infinity-loader'},
+    icons = {apply_infinity_tint{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32, icon_mipmaps=0}},
+    stack_size = 50,
+    place_result = 'infinity-loader-dummy-combinator',
+    subgroup = 'ee-misc',
+    order = 'aa'
+  }
 }
 
 -- INFINITY LOCOMOTIVE
@@ -166,16 +166,16 @@ data:extend{infinity_locomotive}
 
 -- INFINITY PERSONAL ROBOPORT
 data:extend{
-    {
-        type = 'item',
-        name = 'infinity-personal-roboport-equipment',
-        icon_size = 32,
-        icons = {apply_infinity_tint(extract_icon_info(data.raw['item']['personal-roboport-equipment']))},
-        subgroup = 'ee-equipment',
-        order = 'ab',
-        placed_as_equipment_result = 'infinity-personal-roboport-equipment',
-        stack_size = 50
-    }
+  {
+    type = 'item',
+    name = 'infinity-personal-roboport-equipment',
+    icon_size = 32,
+    icons = {apply_infinity_tint(extract_icon_info(data.raw['item']['personal-roboport-equipment']))},
+    subgroup = 'ee-equipment',
+    order = 'ab',
+    placed_as_equipment_result = 'infinity-personal-roboport-equipment',
+    stack_size = 50
+  }
 }
 
 -- INFINITY PIPE
