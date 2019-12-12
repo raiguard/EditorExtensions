@@ -48,28 +48,13 @@ styles['ee_bottom_toolbar_frame'] = {
 -- --------------------------------------------------------------------------------
 -- SCROLLPANE STYLES
 
-styles['ee_circuit_signals_scroll_pane'] =
-{
-  type = "scroll_pane_style",
-  parent = "scroll_pane_with_dark_background_under_subheader",
-  width = 308,
-  height = 404,
-  background_graphical_set = {
-  position = {282, 17},
-  corner_size = 8,
-  overall_tiling_horizontal_padding = 4,
-  overall_tiling_vertical_spacing = 12,
-  overall_tiling_vertical_size = 28,
-  overall_tiling_vertical_padding = 4
-  }
-}
-
 styles['signal_scroll_pane'] = {
   type = 'scroll_pane_style',
   parent = 'train_schedule_scroll_pane',
   padding = 0,
-  width = 240, -- six columns
+  minimal_width = 252, -- six columns + scrollbar
   height = 160, -- four rows
+  extra_right_padding_when_activated = -12,
   background_graphical_set = {
     base = {
       position = {282, 17},
@@ -79,7 +64,8 @@ styles['signal_scroll_pane'] = {
       overall_tiling_horizontal_spacing = 8,
       overall_tiling_vertical_padding = 4,
       overall_tiling_vertical_size = 32,
-      overall_tiling_vertical_spacing = 8
+      overall_tiling_vertical_spacing = 8,
+      custom_horizontal_tiling_sizes = {32, 32, 32, 32, 32, 32} -- to avoid little bumps in the scrollbar area
     }
   }
 }

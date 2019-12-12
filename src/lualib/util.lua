@@ -13,6 +13,15 @@ end
 
 table.merge = util.merge
 
+-- flips a table's keys with its values
+function table.invert(table)
+  local new_table = {}
+  for k,v in pairs(table) do
+    new_table[v] = k
+  end
+  return new_table
+end
+
 -- GENERAL
 
 -- returns the player and his global table
