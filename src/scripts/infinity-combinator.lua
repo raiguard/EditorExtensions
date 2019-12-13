@@ -22,7 +22,6 @@ local function update_circuit_values(e)
   for i,_ in pairs(global.combinators) do
     local gui_data = players[i].gui.ic
     local entity = gui_data.entity
-    local control = entity.get_or_create_control_behavior()
     local network = entity.get_circuit_network(defines.wire_type[state_to_circuit_type[gui_data.elems.color_switch.switch_state]])
     local signals_table = gui_data.elems.signals_table
     if e.clear_all then signals_table.clear() end
@@ -58,6 +57,17 @@ local function update_circuit_values(e)
         -- remove outdated elements
         for name,elem in pairs(elems_by_name) do
           elem.destroy()
+          elems_by_name[name] = nil
+        end
+        -- update selected number
+        local selected_button = gui_data.elems.selected_button
+        if selected_button.elem_value then
+          local selected_name = selected_button.elem_value.name
+          if elems_by_name[selected_name] then
+            gui_data.elems.value_textfield.text = elems_by_name[selected_name].count
+          else
+            gui_data.elems.value_textfield.text = 0
+          end
         end
       end
     end
@@ -79,9 +89,20 @@ local function color_switch_state_changed(e)
   update_circuit_values{tick=game.tick, clear_all=true}
 end
 
+local function signal_button_clicked(e)
+  local player, player_table = util.get_player(e)
+  local gui_data = player_table.gui.ic
+  local type, name = e.element.sprite:match('(.+)/(.+)')
+  type = type:gsub('%-signal', '')
+  gui_data.elems.selected_button.elem_value = {type=type, name=name}
+  gui_data.elems.value_textfield.text = e.element.number
+  gui_data.selected = {type=type, name=name}
+end
+
 local handlers = {
   ic_close_button_clicked = close_button_clicked,
-  ic_color_switch_state_changed = color_switch_state_changed
+  ic_color_switch_state_changed = color_switch_state_changed,
+  ic_signal_button_clicked = signal_button_clicked
 }
 
 event.on_load(function()
@@ -111,16 +132,19 @@ function gui.create(parent, entity, player)
   sort_button.enabled = false
   local signals_scroll = content_pane.add{type='scroll-pane', name='ic_signals_scrollpane', style='signal_scroll_pane', vertical_scroll_policy='always'}
   local signals_table = signals_scroll.add{type='table', name='slot_table', style='signal_slot_table', column_count=6}
+  -- register event for all buttons in the table
+  event.gui.on_click({name_match={'ee_ic_signal_icon_'}}, signal_button_clicked, 'ic_signal_button_clicked', player.index)
   local bottom_flow = content_pane.add{type='frame', name='ee_ic_lower_flow', style='ee_current_signal_frame', direction='horizontal'}
   bottom_flow.style.top_margin = 2
-  bottom_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='filter_slot_button_smaller', sprite='item/iron-ore', elem_type='signal'}
+  local selected_button = bottom_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='filter_slot_button_smaller', sprite='item/iron-ore',
+                                          elem_type='signal'}
   local value_textfield = bottom_flow.add{type='textfield', name='ee_ic_input_textfield', numeric=true,
                                           clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
   value_textfield.style.natural_width = 50
   value_textfield.style.minimal_width = 50
   value_textfield.style.horizontally_stretchable = true
   window.force_auto_center()
-  return {window=window, color_switch=color_switch, signals_table=signals_table, value_textfield=value_textfield}
+  return {window=window, color_switch=color_switch, signals_table=signals_table, selected_button=selected_button, value_textfield=value_textfield}
 end
 
 function gui.destroy(window, player_index)
