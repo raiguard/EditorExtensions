@@ -13,12 +13,12 @@ local gui = {}
 -- --------------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
+local TEMP_UPDATERATE = 60
+
 local table_deepcopy = table.deepcopy
 local table_sort = table.sort
 local table_insert = table.insert
-local greater_than = function(a, b) return a > b end
-
-local TEMP_UPDATERATE = 60
+local greater_than_func = function(a, b) return a > b end
 
 local state_to_circuit_type = {left='red', right='green'}
 local circuit_type_to_state = {red='left', green='right'}
@@ -28,12 +28,12 @@ local function update_circuit_values(e)
   for _,i in pairs(e.player_index and {e.player_index} or global.combinators) do
     local gui_data = players[i].gui.ic
     local entity = gui_data.entity
-    local network = entity.get_circuit_network(defines.wire_type[gui_data.cur_network_color])
+    local network = entity.get_circuit_network(defines.wire_type[gui_data.network_color])
     if network then
       -- SORT SIGNALS
       local signals = network.signals
       local sorted_signals = {}
-      if gui_data.sort_mode == 1 then -- numerical
+      if gui_data.sort_mode == 'numerical' then
         local counts = {}
         local names_by_count = {}
         for _,t in ipairs(signals) do
@@ -47,9 +47,8 @@ local function update_circuit_values(e)
             names_by_count[count] = {name}
           end
         end
-        table_sort(counts, gui_data.rev_sort and greater_than)
-        -- util.log(counts)
-        local prev_count = -0.1 -- gauranteed to not be matching, since you can't use decimals in circuits!
+        table_sort(counts, gui_data.sort_direction == 'descending' and greater_than_func or nil)
+        local prev_count = -0.1 -- gauranteed to not match initially, since you can't use decimals in circuits!
         for _,c in ipairs(counts) do
           if c ~= prev_count then
             for _,n in ipairs(names_by_count[c]) do
@@ -58,7 +57,7 @@ local function update_circuit_values(e)
             prev_count = c
           end
         end
-      else -- alphabetical
+      else
         local names = {}
         local amounts_by_name = {}
         for _,t in ipairs(signals) do
@@ -67,7 +66,7 @@ local function update_circuit_values(e)
           table_insert(names, name)
           amounts_by_name[name] = t.count
         end
-        table_sort(names, gui_data.rev_sort and greater_than)
+        table_sort(names, gui_data.sort_direction == 'descending' and greater_than_func or nil)
         for _,n in ipairs(names) do
           table_insert(sorted_signals, {count=amounts_by_name[n], name=n})
         end
@@ -104,6 +103,11 @@ local function update_circuit_values(e)
   end
 end
 
+local function create_sort_button(parent, mode, direction)
+  return parent.add{type='sprite-button', name='ee_ic_sort_'..mode..'_'..direction..'_button', style='tool_button',
+                    sprite='ee-sort-'..mode..'-'..direction, tooltip={'gui-infinity-combinator.sort-'..mode..'-'..direction..'-button-tooltip'}}
+end
+
 -- --------------------------------------------------------------------------------
 -- GUI
 
@@ -117,11 +121,29 @@ end
 
 local function color_switch_state_changed(e)
   local gui_data = global.players[e.player_index].gui.ic
-  gui_data.cur_network_color = state_to_circuit_type[e.element.switch_state]
+  gui_data.network_color = state_to_circuit_type[e.element.switch_state]
   gui_data.selected = nil
   gui_data.elems.selected_button.elem_value = nil
   gui_data.elems.value_textfield.text = ''
-  update_circuit_values{tick=game.tick, clear_all=true, player_index=e.player_index}
+  update_circuit_values{clear_all=true, player_index=e.player_index}
+end
+
+local function sort_menu_button_clicked(e)
+  e.element.parent.visible = false
+  e.element.parent.parent.children[2].visible = true
+end
+
+local function sort_back_button_clicked(e)
+  e.element.parent.visible = false
+  e.element.parent.parent.children[1].visible = true
+end
+
+local function sort_button_clicked(e)
+  local mode, direction = e.element.name:gsub('ee_ic_sort_', ''):gsub('_button', ''):match('(.+)_(.+)')
+  local gui_data = util.player_table(e).gui.ic
+  gui_data.sort_mode = mode
+  gui_data.sort_direction = direction
+  update_circuit_values{clear_all=true, player_index=e.player_index}
 end
 
 local function signal_button_clicked(e)
@@ -144,12 +166,15 @@ local function selected_button_elem_changed(e)
     gui_data.selected = nil
     gui_data.elems.value_textfield.text = ''
   end
-  update_circuit_values{tick=game.tick, player_index=e.player_index}
+  update_circuit_values{player_index=e.player_index}
 end
 
 local handlers = {
   ic_close_button_clicked = close_button_clicked,
   ic_color_switch_state_changed = color_switch_state_changed,
+  ic_sort_menu_button_clicked = sort_menu_button_clicked,
+  ic_sort_back_button_clicked = sort_back_button_clicked,
+  ic_sort_button_clicked = sort_button_clicked,
   ic_signal_button_clicked = signal_button_clicked,
   ic_selected_button_elem_changed = selected_button_elem_changed
 }
@@ -173,13 +198,35 @@ function gui.create(parent, entity, player)
   event.gui.on_click(titlebar.children[3], close_button_clicked, 'ic_close_button_clicked', player.index)
   local content_pane = window.add{type='frame', name='ee_ic_content_pane', style='inside_deep_frame', direction='vertical'}
   -- TOOLBAR
-  local toolbar = content_pane.add{type='frame', name='ee_ic_toolbar_frame', style='ee_toolbar_frame_for_switch'}
-  local color_switch = toolbar.add{type='switch', name='ee_ic_color_switch', left_label_caption='Red', right_label_caption='Green'}
+  local toolbar = content_pane.add{type='frame', name='ee_ic_toolbar_frame', style='subheader_frame'}
+  -- main flow
+  local main_toolbar_flow = toolbar.add{type='flow', name='ee_ic_toolbar_main_flow', style='ee_toolbar_flow_for_switch', direction='horizontal'}
+  local color_switch = main_toolbar_flow.add{type='switch', name='ee_ic_color_switch', left_label_caption={'color.red'}, right_label_caption={'color.green'}}
   event.gui.on_switch_state_changed(color_switch, color_switch_state_changed, 'ic_color_switch_state_changed', player.index)
-  util.gui.add_pusher(toolbar, 'ee_ic_toolbar_pusher')
-  local update_rate_button = toolbar.add{type='sprite-button', name='ee_ic_updaterate_button', style='tool_button', sprite='ee-time'}
+  util.gui.add_pusher(main_toolbar_flow, 'ee_ic_toolbar_main_pusher')
+  local update_rate_button = main_toolbar_flow.add{type='sprite-button', name='ee_ic_updaterate_button', style='tool_button', sprite='ee-time'}
   update_rate_button.enabled = false
-  local sort_button = toolbar.add{type='sprite-button', name='ee_ic_sort_button', style='tool_button', sprite='ee-sort'}
+  event.gui.on_click(
+    main_toolbar_flow.add{type='sprite-button', name='ee_ic_sort_menu_button', style='tool_button', sprite='ee-sort',
+                          tooltip={'gui-infinity-combinator.sort-menu-button-tooltip'}},
+    sort_menu_button_clicked, 'ic_sort_menu_button_clicked', player.index
+  )
+  -- sort flow
+  local sort_toolbar_flow = toolbar.add{type='flow', name='ee_ic_toolbar_sort_flow', style='ee_toolbar_flow', direction='horizontal'}
+  event.gui.on_click(
+    sort_toolbar_flow.add{type='sprite-button', name='ee_ic_toolbar_sort_back_button', style='tool_button', sprite='utility/reset', tooltip={'gui.cancel'}},
+    sort_back_button_clicked, 'ic_sort_back_button_clicked', player.index
+  )
+  util.gui.add_pusher(sort_toolbar_flow, 'ee_ic_toolbar_sort_pusher')
+  event.gui.on_click({
+    element = {
+      create_sort_button(sort_toolbar_flow, 'alphabetical', 'ascending'),
+      create_sort_button(sort_toolbar_flow, 'alphabetical', 'descending'),
+      create_sort_button(sort_toolbar_flow, 'numerical', 'ascending'),
+      create_sort_button(sort_toolbar_flow, 'numerical', 'descending')
+    }}, sort_button_clicked, 'ic_sort_button_clicked', player.index
+  )
+  sort_toolbar_flow.visible = false
   -- SIGNALS TABLE
   local signals_scroll = content_pane.add{type='scroll-pane', name='ic_signals_scrollpane', style='signal_scroll_pane', vertical_scroll_policy='always'}
   local signals_table = signals_scroll.add{type='table', name='slot_table', style='signal_slot_table', column_count=6}
@@ -215,21 +262,17 @@ event.register(defines.events.on_gui_opened, function(e)
   if e.entity and e.entity.name == 'infinity-combinator' then
     local player, player_table = util.get_player(e)
     local elems = gui.create(player.gui.screen, e.entity, player)
-    elems.color_switch.switch_state = circuit_type_to_state[player_table.gui.ic.cur_network_color]
+    elems.color_switch.switch_state = circuit_type_to_state[player_table.gui.ic.network_color]
     player.opened = elems.window
-    player_table.gui.ic = {
-      elems = elems,
-      entity = e.entity,
-      cur_network_color = player_table.gui.ic.cur_network_color,
-      sort_mode = 2, -- 1: numerically, 2: alphabetically
-      rev_sort = true
-    }
+    local gui_data = player_table.gui.ic
+    gui_data.elems = elems
+    gui_data.entity = e.entity
     -- register function for updating values
     event.on_nth_tick(TEMP_UPDATERATE, update_circuit_values, 'ic_update_circuit_values', player.index)
     -- add to open combinators table
     table.insert(global.combinators, player.index)
     -- update values now
-    update_circuit_values{tick=game.tick, clear_all=true, player_index=player.index}
+    update_circuit_values{clear_all=true, player_index=player.index}
   end
 end)
 

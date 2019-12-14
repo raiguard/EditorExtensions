@@ -21,7 +21,13 @@ end
 local function setup_player(index)
   local data = {
     flags = {},
-    gui = {ic={cur_network_color='red'}}
+    gui = {
+      ic = {
+        network_color = 'red',
+        sort_mode = 'numerical',
+        sort_direction = 'descending'
+      }
+    }
   }
   global.players[index] = data
 end

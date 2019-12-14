@@ -131,6 +131,18 @@ styles['ee_circuit_signals_flow'] = {
   horizontal_spacing = 12
 }
 
+styles['ee_toolbar_flow'] = {
+  type = 'horizontal_flow_style',
+  vertical_align = 'center',
+  horizontally_stretchable = 'on'
+}
+
+styles['ee_toolbar_flow_for_switch'] = {
+  type = 'horizontal_flow_style',
+  parent = 'ee_toolbar_flow',
+  left_padding = 8
+}
+
 -- --------------------------------------------------------------------------------
 -- EMPTY WIDGET STYLES
 
@@ -205,6 +217,17 @@ styles['filter_slot_button_smaller'] = {
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- SPRITES
 
+local sort_sprite = function(mode, direction)
+  return {
+    type = 'sprite',
+    name = 'ee-sort-'..mode..'-'..direction,
+    filename = '__EditorExtensions__/graphics/gui/sort-'..mode..'-'..direction..'.png',
+    size = 32,
+    mipmap_count = 2,
+    flags = {'icon'}
+  }
+end
+
 data:extend{
   {
     type = 'sprite',
@@ -229,5 +252,9 @@ data:extend{
     size = 32,
     mipmap_count = 2,
     flags = {'icon'}
-  }
+  },
+  sort_sprite('alphabetical', 'ascending'),
+  sort_sprite('alphabetical', 'descending'),
+  sort_sprite('numerical', 'ascending'),
+  sort_sprite('numerical', 'descending')
 }
