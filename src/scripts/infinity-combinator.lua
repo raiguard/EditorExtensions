@@ -13,7 +13,7 @@ local gui = {}
 -- --------------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
-local TEMP_UPDATERATE = 60
+local TEMP_UPDATERATE = 30
 
 local table_deepcopy = table.deepcopy
 local table_sort = table.sort
@@ -32,72 +32,76 @@ local function update_circuit_values(e)
     if network then
       -- SORT SIGNALS
       local signals = network.signals
-      local sorted_signals = {}
-      if gui_data.sort_mode == 'numerical' then
-        local counts = {}
-        local names_by_count = {}
-        for _,t in ipairs(signals) do
-          local signal = t.signal
-          local name = signal.type:gsub('virtual', 'virtual-signal')..'/'..signal.name
-          local count = t.count
-          table_insert(counts, count)
-          if names_by_count[count] then
-            table_insert(names_by_count[count], name)
-          else
-            names_by_count[count] = {name}
-          end
-        end
-        table_sort(counts, gui_data.sort_direction == 'descending' and greater_than_func or nil)
-        local prev_count = -0.1 -- gauranteed to not match initially, since you can't use decimals in circuits!
-        for _,c in ipairs(counts) do
-          if c ~= prev_count then
-            for _,n in ipairs(names_by_count[c]) do
-              table_insert(sorted_signals, {count=c, name=n})
+      if signals then
+        local sorted_signals = {}
+        if gui_data.sort_mode == 'numerical' then
+          local counts = {}
+          local names_by_count = {}
+          for _,t in ipairs(signals) do
+            local signal = t.signal
+            local name = signal.type:gsub('virtual', 'virtual-signal')..'/'..signal.name
+            local count = t.count
+            table_insert(counts, count)
+            if names_by_count[count] then
+              table_insert(names_by_count[count], name)
+            else
+              names_by_count[count] = {name}
             end
-            prev_count = c
+          end
+          table_sort(counts, gui_data.sort_direction == 'descending' and greater_than_func or nil)
+          local prev_count = -0.1 -- gauranteed to not match initially, since you can't use decimals in circuits!
+          for _,c in ipairs(counts) do
+            if c ~= prev_count then
+              for _,n in ipairs(names_by_count[c]) do
+                table_insert(sorted_signals, {count=c, name=n})
+              end
+              prev_count = c
+            end
+          end
+        else
+          local names = {}
+          local amounts_by_name = {}
+          for _,t in ipairs(signals) do
+            local signal = t.signal
+            local name = signal.type:gsub('virtual', 'virtual-signal')..'/'..signal.name
+            table_insert(names, name)
+            amounts_by_name[name] = t.count
+          end
+          table_sort(names, gui_data.sort_direction == 'descending' and greater_than_func or nil)
+          for _,n in ipairs(names) do
+            table_insert(sorted_signals, {count=amounts_by_name[n], name=n})
           end
         end
-      else
-        local names = {}
-        local amounts_by_name = {}
-        for _,t in ipairs(signals) do
-          local signal = t.signal
-          local name = signal.type:gsub('virtual', 'virtual-signal')..'/'..signal.name
-          table_insert(names, name)
-          amounts_by_name[name] = t.count
-        end
-        table_sort(names, gui_data.sort_direction == 'descending' and greater_than_func or nil)
-        for _,n in ipairs(names) do
-          table_insert(sorted_signals, {count=amounts_by_name[n], name=n})
-        end
-      end
-      -- UPDATE TABLE
-      local signals_table = gui_data.elems.signals_table
-      if e.clear_all then signals_table.clear() end
-      local children = table_deepcopy(signals_table.children)
-      local selected = gui_data.selected
-      local updated_selected = false
-      for i,signal in ipairs(sorted_signals) do
-        if not children[i] then -- create button
-          signals_table.add{type='sprite-button', name='ee_ic_signal_icon_'..i, style='quick_bar_slot_button', number=signal.count, sprite=signal.name}
-        else -- update button
-          children[i].sprite = signal.name
-          children[i].number = signal.count
-          -- update selected value
-          if signal.name == selected then
-            gui_data.elems.value_textfield.text = signal.count
-            updated_selected = true
+        -- UPDATE TABLE
+        local signals_table = gui_data.elems.signals_table
+        if e.clear_all then signals_table.clear() end
+        local children = table_deepcopy(signals_table.children)
+        local selected_name = gui_data.selected_name
+        local updated_selected = false
+        for i,signal in ipairs(sorted_signals) do
+          local elem = children[i]
+          if not elem then -- create button
+            local style = selected_name == signal.name and 'ee_active_filter_slot_button' or 'filter_slot_button'
+            signals_table.add{type='sprite-button', name='ee_ic_signal_icon_'..i, style=style, number=signal.count, sprite=signal.name}
+          else -- update button
+            elem.sprite = signal.name
+            elem.number = signal.count
+            -- update selected value
+            if signal.name == selected_name then
+              gui_data.elems.value_textfield.text = signal.count
+              updated_selected = true
+            end
+            children[i] = nil
           end
-          children[i] = nil
         end
-      end
-      -- if we selected something that is not on the list, set it to zero
-      if selected and updated_selected == false then
-        gui_data.elems.value_textfield.text = 0
-      end
-      -- delete remaining elements
-      for _,elem in pairs(children) do
-        elem.destroy()
+        -- if we selected something that is not on the list, set it to zero
+        if selected_name and updated_selected == false then
+          gui_data.elems.value_textfield.text = 0
+        end
+        -- delete remaining elements
+        for _,elem in pairs(children) do
+          elem.destroy()
+        end
       end
     end
   end
@@ -121,10 +125,14 @@ end
 
 local function color_switch_state_changed(e)
   local gui_data = global.players[e.player_index].gui.ic
+  -- get network color from switch state
   gui_data.network_color = state_to_circuit_type[e.element.switch_state]
-  gui_data.selected = nil
+  -- reset bottom pane to blank
+  gui_data.selected_name = nil
   gui_data.elems.selected_button.elem_value = nil
   gui_data.elems.value_textfield.text = ''
+  gui_data.elems.active_button = nil
+  -- update signals table
   update_circuit_values{clear_all=true, player_index=e.player_index}
 end
 
@@ -139,6 +147,19 @@ local function sort_back_button_clicked(e)
 end
 
 local function sort_button_clicked(e)
+  -- update button styles
+  for i,elem in ipairs(e.element.parent.children) do
+    if i > 2 then
+      if elem == e.element then
+        e.element.style = 'ee_active_tool_button'
+        e.element.ignored_by_interaction = true
+      else
+        elem.style = 'tool_button'
+        elem.ignored_by_interaction = false
+      end
+    end
+  end
+  -- update GUI data
   local mode, direction = e.element.name:gsub('ee_ic_sort_', ''):gsub('_button', ''):match('(.+)_(.+)')
   local gui_data = util.player_table(e).gui.ic
   gui_data.sort_mode = mode
@@ -149,11 +170,19 @@ end
 local function signal_button_clicked(e)
   local player, player_table = util.get_player(e)
   local gui_data = player_table.gui.ic
+  -- update selected icon and value textfield
   local type, name = e.element.sprite:match('(.+)/(.+)')
   type = type:gsub('%-signal', '')
   gui_data.elems.selected_button.elem_value = {type=type, name=name}
   gui_data.elems.value_textfield.text = e.element.number
-  gui_data.selected = e.element.sprite
+  -- update button styles
+  if gui_data.elems.active_button then
+    gui_data.elems.active_button.style = 'filter_slot_button'
+  end
+  e.element.style = 'ee_active_filter_slot_button'
+  -- update global table
+  gui_data.selected_name = e.element.sprite
+  gui_data.elems.active_button = e.element
 end
 
 local function selected_button_elem_changed(e)
@@ -161,11 +190,22 @@ local function selected_button_elem_changed(e)
   local gui_data = player_table.gui.ic
   if e.element.elem_value then
     local elem = e.element.elem_value
-    gui_data.selected = elem.type:gsub('virtual', 'virtual-signal')..'/'..elem.name
+    -- get sprite name from chosen element data
+    gui_data.selected_name = elem.type:gsub('virtual', 'virtual-signal')..'/'..elem.name
+    -- find matching button in the table and set it to the active style
+    for _,elem in ipairs(gui_data.elems.signals_table.children) do
+      if elem.sprite == gui_data.selected_name then
+        elem.style = 'ee_active_filter_slot_button'
+        gui_data.elems.active_button = elem
+      end
+    end
   else
-    gui_data.selected = nil
+    -- remove selected sprite name, reset styles and text
+    gui_data.selected_name = nil
     gui_data.elems.value_textfield.text = ''
+    gui_data.elems.active_button.style = 'filter_slot_button'
   end
+  -- refresh the signals table
   update_circuit_values{player_index=e.player_index}
 end
 
@@ -234,15 +274,14 @@ function gui.create(parent, entity, player)
   -- SELECTED SIGNAL
   local selected_flow = content_pane.add{type='frame', name='ee_ic_lower_flow', style='ee_current_signal_frame', direction='horizontal'}
   selected_flow.style.top_margin = 2
-  local selected_button = selected_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='filter_slot_button_smaller', elem_type='signal'}
+  local selected_button = selected_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='filter_slot_button', elem_type='signal'}
   event.gui.on_elem_changed(selected_button, selected_button_elem_changed, 'ic_selected_button_elem_changed', player.index)
-  local value_textfield = selected_flow.add{type='textfield', name='ee_ic_input_textfield', numeric=true,
-                                          clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
-  value_textfield.style.natural_width = 50
-  value_textfield.style.minimal_width = 50
-  value_textfield.style.horizontally_stretchable = true
+  local value_textfield = selected_flow.add{type='textfield', name='ee_ic_input_textfield', style='ee_ic_value_textfield', numeric=true,
+                                            clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
+  value_textfield.ignored_by_interaction = true
   window.force_auto_center()
-  return {window=window, color_switch=color_switch, signals_table=signals_table, selected_button=selected_button, value_textfield=value_textfield}
+  return {window=window, color_switch=color_switch, sort_toolbar_flow=sort_toolbar_flow, signals_table=signals_table, selected_button=selected_button,
+          value_textfield=value_textfield}
 end
 
 function gui.destroy(window, player_index)
@@ -261,12 +300,21 @@ end
 event.register(defines.events.on_gui_opened, function(e)
   if e.entity and e.entity.name == 'infinity-combinator' then
     local player, player_table = util.get_player(e)
+    -- create gui, set it as opened
     local elems = gui.create(player.gui.screen, e.entity, player)
-    elems.color_switch.switch_state = circuit_type_to_state[player_table.gui.ic.network_color]
     player.opened = elems.window
+    -- add to player table
     local gui_data = player_table.gui.ic
     gui_data.elems = elems
     gui_data.entity = e.entity
+    -- set initial element states
+    elems.color_switch.switch_state = circuit_type_to_state[player_table.gui.ic.network_color]
+    for _,elem in ipairs(elems.sort_toolbar_flow.children) do
+      if elem.name:match(gui_data.sort_mode) and elem.name:match(gui_data.sort_direction) then
+        elem.style = 'ee_active_tool_button'
+        elem.ignored_by_interaction = true
+      end
+    end
     -- register function for updating values
     event.on_nth_tick(TEMP_UPDATERATE, update_circuit_values, 'ic_update_circuit_values', player.index)
     -- add to open combinators table

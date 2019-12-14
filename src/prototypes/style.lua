@@ -24,6 +24,7 @@ styles['ee_toolbar_frame'] = {
   }
 }
 
+-- CURRENTLY UNUSED
 styles['ee_toolbar_frame_for_switch'] = {
   type = 'frame_style',
   parent = 'ee_toolbar_frame',
@@ -184,6 +185,13 @@ styles['ee_invalid_slider_textfield'] = {
   }
 }
 
+styles['ee_ic_value_textfield'] = {
+  type = 'textbox_style',
+  natural_width = 50,
+  minimal_width = 50,
+  horizontally_stretchable = 'on'
+}
+
 -- --------------------------------------------------------------------------------
 -- BUTTON STYLES
 
@@ -196,22 +204,53 @@ styles['ee_disabled_dropdown_button'] = {
   width = 116
 }
 
-local modded_shadow_def = {
-  position = {382, 107},
-  corner_size = 12,
-  top_outer_border_shift = 4,
-  bottom_outer_border_shift = -4,
-  left_outer_border_shift = 4,
-  right_outer_border_shift = -4,
-  draw_type = 'outer'
+styles['ee_active_tool_button'] = {
+  type = 'button_style',
+  parent = 'tool_button',
+  default_graphical_set = {
+    base = {position={225,17}, corner_size=8},
+    shadow = default_dirt
+  },
+  hovered_font_color = button_hovered_font_color,
+  hovered_graphical_set = {
+    base = {position={369,17}, corner_size=8},
+    shadow = default_dirt
+  },
+  clicked_font_color = button_hovered_font_color,
+  clicked_graphical_set = {
+    base = {position={352,17}, corner_size=8},
+    shadow = default_dirt
+  },
 }
 
-styles['filter_slot_button_smaller'] = {
+-- REMOVE WHEN UPDATING TO 0.18:
+styles['filter_slot_button'] = {
   type = 'button_style',
-  parent = 'quick_bar_slot_button',
-  -- 0.18
-  -- parent = 'filter_slot_button',
+  parent = 'quick_bar_slot_button'
+}
+
+styles['ee_smaller_filter_slot_button'] = {
+  type = 'button_style',
+  parent = 'filter_slot_button',
   size = 38
+}
+
+styles['ee_active_filter_slot_button'] = {
+  type = 'button_style',
+  parent = 'filter_slot_button',
+  default_graphical_set = {
+    base = {border = 4, position = {80, 736}, size = 80},
+    shadow = offset_by_2_rounded_corners_glow(default_dirt_color),
+  },
+  hovered_graphical_set = {
+    base = {border = 4, position = {80, 736}, size = 80},
+    shadow = offset_by_2_rounded_corners_glow(default_dirt_color),
+    glow = offset_by_2_rounded_corners_glow(default_glow_color)
+  },
+  clicked_graphical_set = {
+    base = {border = 4, position = {160, 736}, size = 80},
+    shadow = offset_by_2_rounded_corners_glow(default_dirt_color),
+  }
 }
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
