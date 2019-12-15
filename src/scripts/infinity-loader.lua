@@ -415,6 +415,7 @@ end)
 --
 -- REMOTE INTERFACES
 -- docs: https://github.com/raiguard/EditorExtensions/wiki/Remote-Interface-Documentation
+--
 
 -- get all loader entities at a certain position
 local function get_loader_entities(surface, position)
