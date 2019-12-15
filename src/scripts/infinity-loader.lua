@@ -312,6 +312,8 @@ local snapping_blacklist = {}
 -- snaps the loader to the transport-belt-connectable entity that it's facing
 -- if entity is supplied, it will check against that entity, and will not snap if it cannot connect to it (is not facing it)
 local function snap_loader(loader, entity)
+  -- in case the loader got snapped before in the same neighbors function, don't do anything
+  if loader and not loader.valid then return end
   -- if the entity was not supplied, find it
   if not entity then
     entity = loader.surface.find_entities_filtered{
@@ -604,4 +606,10 @@ event.on_configuration_changed(function(e)
       end
     end
   end
+end)
+
+event.on_load(function()
+  event.register(remote.call('ee_infinity_loader', 'on_loader_snapped'), function(e)
+    util.log(e)
+  end)
 end)
