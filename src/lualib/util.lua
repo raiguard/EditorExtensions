@@ -146,10 +146,10 @@ function util.gui.add_pusher(parent, name, vertical)
 end
 
 -- simple logging function - prints the string or table to the dev console or the ingame console
-function util.log(message, print_to_game)
+function util.log(message, print_to_game, serpent_options)
   local func = print_to_game and game.print or log
   if type(message) == 'table' then
-    func('\n'..serpent.block(message))
+    func('\n'..serpent.block(message, serpent_options))
   else
     func(message)
   end

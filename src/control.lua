@@ -25,7 +25,8 @@ local function setup_player(index)
       ic = {
         network_color = 'red',
         sort_mode = 'numerical',
-        sort_direction = 'descending'
+        sort_direction = 'descending',
+        update_divider = 30
       }
     }
   }

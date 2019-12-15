@@ -58,7 +58,7 @@ styles['signal_scroll_pane'] = {
   type = 'scroll_pane_style',
   parent = 'train_schedule_scroll_pane',
   padding = 0,
-  minimal_width = 252, -- six columns + scrollbar
+  minimal_width = (40 * 6) + 12, -- six columns + scrollbar
   height = 160, -- four rows
   extra_right_padding_when_activated = -12,
   graphical_set = {
@@ -251,6 +251,17 @@ styles['ee_active_filter_slot_button'] = {
     base = {border = 4, position = {160, 736}, size = 80},
     shadow = offset_by_2_rounded_corners_glow(default_dirt_color),
   }
+}
+
+-- --------------------------------------------------------------------------------
+-- SLIDER STYLES
+
+styles['ee_update_rate_slider'] = {
+  type = 'slider_style',
+  minimal_width = 50,
+  natural_width = 50,
+  horizontally_stretchable = 'on',
+  left_margin = 8
 }
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
