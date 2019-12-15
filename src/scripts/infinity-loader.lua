@@ -51,7 +51,7 @@ local function get_belt_type(entity)
   if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
     -- print warning message
     game.print{'', 'EDIITOR EXTENSIONS: ', {'chat-message.unable-to-identify-belt-warning'}}
-    game.print('belt_name=\''..entity.name..'\', parse_result=\''..type..'\'')
+    game.print('entity_name=\''..entity.name..'\', parse_result=\''..type..'\'')
     -- set to default type
     type = 'express'
   end
@@ -78,11 +78,12 @@ local function num_inserters(entity)
 end
 
 -- update inserter and chest filters
-local function update_filters(entity)
-  local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
-  local inserters = entity.surface.find_entities_filtered{name='infinity-loader-inserter', position=entity.position}
-  local chest = entity.surface.find_entities_filtered{name='infinity-loader-chest', position=entity.position}[1]
-  local control = entity.get_control_behavior()
+local function update_filters(combinator, entities)
+  entities = entities or {}
+  local loader = entities.loader or combinator.surface.find_entities_filtered{type='loader', position=combinator.position}[1]
+  local inserters = entities.inserters or combinator.surface.find_entities_filtered{name='infinity-loader-inserter', position=combinator.position}
+  local chest = entities.chest or combinator.surface.find_entities_filtered{name='infinity-loader-chest', position=combinator.position}[1]
+  local control = combinator.get_control_behavior()
   local enabled = control.enabled
   local filters = control.parameters.parameters
   local inserter_filter_mode
@@ -107,10 +108,11 @@ local function update_filters(entity)
 end
 
 -- update inserter pickup/drop positions
-local function update_inserters(loader)
+local function update_inserters(loader, entities)
+  entities = entities or {}
   local surface = loader.surface
-  local inserters = surface.find_entities_filtered{name='infinity-loader-inserter', position=loader.position}
-  local chest = surface.find_entities_filtered{name='infinity-loader-chest', position=loader.position}[1]
+  local inserters = entities.inserters or surface.find_entities_filtered{name='infinity-loader-inserter', position=loader.position}
+  local chest = entities.chest or surface.find_entities_filtered{name='infinity-loader-chest', position=loader.position}[1]
   local e_type = loader.loader_type
   local e_position = loader.position
   local e_direction = loader.direction
@@ -130,7 +132,10 @@ local function update_inserters(loader)
       }
       inserters[i].inserter_stack_size_override = 1
     end
-    update_filters(surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1])
+    update_filters(
+      surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1]
+      {loader=loader, inserters=inserters, chest=chest}
+    )
   end
   for i=1,#inserters do
     local orthogonal = i > (#inserters/2) and -0.25 or 0.25
@@ -177,9 +182,11 @@ local function update_loader_type(loader, belt_type, overrides)
 end
 
 -- create an infinity loader
-local function create_loader(type, mode, surface, position, direction, force, skip_combinator)
+local function create_loader(type, mode, surface, position, direction, force)
+  local name = 'infinity-loader-loader'..(type == '' and '' or '-'..type)
+  if not game.entity_prototypes[name] then error('Attempted to create an infinity loader with an invalid belt type.') end
   local loader = surface.create_entity{
-    name = 'infinity-loader-loader' .. (type == '' and '' or '-'..type),
+    name = name,
     position = position,
     direction = direction,
     force = force,
@@ -277,10 +284,10 @@ function gui.create(parent, entity, player)
   filters_flow.add{type='label', name='ee_il_filters_label', caption={'', {'gui-infinity-loader.filters-label-caption'}, ' [img=info]'},
            tooltip={'gui-infinity-loader.filters-label-tooltip'}}
   filters_flow.add{type='empty-widget', name='ee_il_filters_pusher', style='ee_invisible_horizontal_pusher', direction='horizontal'}
-  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='filter_slot_button_smaller', elem_type='item',
+  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_smaller_filter_slot_button', elem_type='item',
            item=parameters[1].signal.name}
   event.gui.on_elem_changed({name_match={'ee_il_filter_button'}}, filter_button_elem_changed, 'il_filter_button_elem_changed', player.index)
-  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='filter_slot_button_smaller', elem_type='item',
+  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_smaller_filter_slot_button', elem_type='item',
            item=parameters[2].signal.name}
   window.force_auto_center()
   return {window=window, camera=camera}
@@ -299,6 +306,9 @@ end
 -- SNAPPING
 -- 'Snapping' in this case usually means matching both direction and belt type
 
+-- snapping blacklist - see remote interface documentation
+local snapping_blacklist = {}
+
 -- snaps the loader to the transport-belt-connectable entity that it's facing
 -- if entity is supplied, it will check against that entity, and will not snap if it cannot connect to it (is not facing it)
 local function snap_loader(loader, entity)
@@ -309,7 +319,9 @@ local function snap_loader(loader, entity)
       type = {'transport-belt', 'underground-belt', 'splitter', 'loader'}
     }[1]
   end
-  if entity then
+  local snapped = false
+  -- if the entity exists and is not on the blacklist
+  if entity and not snapping_blacklist[entity.name] then
     -- snap direction
     local belt_neighbors = loader.belt_neighbours
     if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
@@ -317,7 +329,7 @@ local function snap_loader(loader, entity)
       loader.rotate()
       belt_neighbors = loader.belt_neighbours
       if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
-        -- cannot connect to whatever it is, so don't snap
+        -- cannot connect to whatever it is, so reset and don't snap belt type
         loader.rotate()
         goto skip_belt_type
       end
@@ -327,11 +339,19 @@ local function snap_loader(loader, entity)
     if get_belt_type(loader) ~= belt_type then
       loader = update_loader_type(loader, belt_type)
     end
+    snapped = true -- this will be skipped if the snapping did not occur, so it will be false
   end
   ::skip_belt_type::
   -- update internals
   update_inserters(loader)
-  update_filters(loader.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1])
+  update_filters(
+    loader.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1],
+    {loader=loader}
+  )
+  -- raise event if snapping occured
+  if snapped then
+    event.raise(event.generate_id('il_on_loader_snapped'), {loader=loader, snapped_to=entity})
+  end
 end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
@@ -369,14 +389,13 @@ local function picker_dollies_move(e)
     -- move all entities to new position
     for _,e in pairs(e.moved_entity.surface.find_entities_filtered{type={'loader', 'inserter', 'infinity-container'}, position=e.start_pos}) do
       if check_is_loader(e) then
-        loader = e
+        -- loaders don't support teleportation, so destroy and recreate it
+        loader = update_loader_type(e, get_belt_type(e), {position=entity.position})
       else
         e.teleport(entity.position)
       end
     end
-    -- loaders don't support teleportation, so destroy and recreate it
-    loader = update_loader_type(loader, get_belt_type(loader), {position=entity.position})
-    -- -- snap and update internals
+    -- snap loader
     snap_loader(loader)
   end
 end
@@ -393,15 +412,27 @@ end)
 
 --
 -- REMOTE INTERFACES
---
+-- docs: https://github.com/raiguard/EditorExtensions/wiki/Remote-Interface-Documentation
 
+-- get all loader entities at a certain position
+local function get_loader_entities(surface, position)
+  local find = surface.find_entities_filtered
+  return find{type='loader', position=position}[1],
+         find{type='inserter', position=position},
+         find{name='infinity-loader-chest', position=position}[1],
+         find{name='infinity-loader-logic-combinator', position=position}[1]
+end
+
+event.generate_id('il_on_loader_snapped')
 remote.add_interface('ee_infinity_loader', {
-  create_loader = create_loader,
-  update_loader_filters = update_filters,
-  update_loader_inserters = update_inserters,
-  snap_loader = snap_loader,
-  snap_tile_neighbors = snap_tile_neighbors,
-  snap_belt_neighbors = snap_belt_neighbors
+  -- FUNCTIONS
+  get_loader_entities = get_loader_entities,
+  get_belt_type = get_belt_type,
+  add_to_blacklist = function(name) snapping_blacklist[name] = true end,
+  remove_from_blacklist = function(name) snapping_blacklist[name] = nil end,
+  get_blacklist = function() return snapping_blacklist end,
+  -- EVENTS
+  on_loader_snapped = function() return event.generate_id('il_on_loader_snapped') end
 })
 
 -- --------------------------------------------------------------------------------
@@ -464,7 +495,7 @@ event.register(defines.events.on_player_rotated_entity, function(e)
     local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
     loader.rotate()
     update_inserters(loader)
-    update_filters(entity)
+    update_filters(entity, {loader=loader})
   elseif entity.type == 'transport-belt' then
     -- snap neighbors
     snap_tile_neighbors(entity)
