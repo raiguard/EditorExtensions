@@ -288,6 +288,31 @@ function event.set_filters(id, filters)
   return event
 end
 
+-- holds custom event IDs
+local custom_id_registry = {}
+
+--[[
+  event.generate_id(name)
+  Info:
+    Generates a new, unique event ID. If the event has already been given an ID, it returns the existing ID.
+  Parameters:
+    name :: string: Name of the event ID to generate or retrieve.
+  Returns:
+    id :: int: The ID of the event.
+    event :: event: An instance of the library to allow for function call chaining.
+  Usage:
+    -- generate a new event ID, or retrieve it if it has already been made
+    event.generate_id('example')
+    -- function call chaining
+    event.generate_id('name_1').generate_id('name_2')
+]]--
+function event.generate_id(name)
+  if not custom_id_registry[name] then
+    custom_id_registry[name] = script.generate_event_name()
+  end
+  return custom_id_registry[name], event
+end
+
 -- shortcut for event.register('on_init', function)
 function event.on_init(handler)
   return event.register('on_init', handler)
