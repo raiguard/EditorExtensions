@@ -3,15 +3,14 @@
 
 -- INFINITY LOADER
 local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
-loader_base.icons = {apply_infinity_tint{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32}}
+loader_base.icons = {{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32}}
 for n,t in pairs(loader_base.structure) do
-  apply_infinity_tint(t.sheet)
-  apply_infinity_tint(t.sheet.hr_version)
   if n ~= 'back_patch' and n ~= 'front_patch' then
     t.sheet.filename = '__EditorExtensions__/graphics/entity/infinity-loader.png'
     t.sheet.hr_version.filename = '__EditorExtensions__/graphics/entity/hr-infinity-loader.png'
   end
 end
+recursive_tint(loader_base)
 
 local belt_patterns = {
   -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport

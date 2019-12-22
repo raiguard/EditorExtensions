@@ -4,9 +4,21 @@
 -- UTILITIES
 infinity_tint = {r=1, g=0.5, b=1, a=1}
 combinator_tint = {r=0.8, g=0.5, b=1, a=1}
-function apply_infinity_tint(t, tint)
-  t.tint = tint or infinity_tint
-  return t
+
+local function is_sprite_def(array)
+  return array.width and array.height and (array.filename or array.stripes or array.filenames)
+end
+function recursive_tint(array, tint)
+  tint = tint or infinity_tint
+  for _,v in pairs (array) do
+    if type(v) == "table" then
+      if is_sprite_def(v) or v.icon then
+        v.tint = tint
+      end
+      v = recursive_tint(v, tint)
+    end
+  end
+  return array
 end
 
 infinity_chest_data = {
@@ -25,19 +37,6 @@ tesseract_chest_data = {
 function extract_icon_info(obj)
   return {icon=obj.icon, icon_size=obj.icon_size, icon_mipmaps=obj.icon_mipmaps}
 end
-
-module_data = {
-  {name='super-speed-module', icon_ref='speed-module-3', order='ba', category = 'speed', tier=50, effect={speed={bonus=2.5}}, tint={r=0.5,g=0.5,b=1}},
-  {name='super-effectivity-module', icon_ref='effectivity-module-3', order='bb', category='effectivity', tier=50, effect={consumption={bonus=-2.5}},
-   tint={r=0.5,g=1,b=0.5}},
-  {name='super-productivity-module', icon_ref='productivity-module-3', order='bc', category='productivity', tier=50, effect={productivity={bonus=2.5}},
-   tint={r=1,g=0.5,b=0.5}},
-  {name='super-clean-module', icon_ref='speed-module-3', order='bd', category='effectivity', tier=50, effect={pollution={bonus=-2.5}}, tint={r=0.5,g=1,b=1}},
-  {name='super-slow-module', icon_ref='speed-module', order='ca', category = 'speed', tier=50, effect={speed={bonus=-2.5}}, tint={r=0.5,g=0.5,b=1}},
-  {name='super-ineffectivity-module', icon_ref='effectivity-module', order='cb', category = 'effectivity', tier=50, effect={consumption={bonus=2.5}},
-   tint={r=0.5,g=1,b=0.5}},
-  {name='super-dirty-module', icon_ref='speed-module', order='cc', category='effectivity', tier=50, effect={pollution={bonus=2.5}}, tint={r=0.5,g=1,b=1}}
-}
 
 local function shortcut_sprite(suffix, size)
   return {
@@ -92,6 +91,4 @@ require('prototypes/equipment')
 require('prototypes/item-group')
 require('prototypes/item')
 require('prototypes/module')
--- we might not even need recipes, if we're just using the editor!
--- require('prototypes/recipe')
 require('prototypes/style')

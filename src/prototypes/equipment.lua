@@ -6,7 +6,7 @@ data:extend{
   {
     type = 'generator-equipment',
     name = 'infinity-fusion-reactor-equipment',
-    sprite = apply_infinity_tint{
+    sprite = recursive_tint{
       filename = "__base__/graphics/equipment/fusion-reactor-equipment.png",
       width = 128,
       height = 128,
@@ -22,7 +22,7 @@ data:extend{
 local personal_roboport = table.deepcopy(data.raw['roboport-equipment']['personal-roboport-mk2-equipment'])
 personal_roboport.name = 'infinity-personal-roboport-equipment'
 personal_roboport.shape = {width=1, height=1, type='full'}
-personal_roboport.sprite = apply_infinity_tint(personal_roboport.sprite)
+personal_roboport.sprite = recursive_tint(personal_roboport.sprite)
 personal_roboport.charging_energy = '1000GJ'
 personal_roboport.charging_station_count = 1000
 personal_roboport.robot_limit = 1000
