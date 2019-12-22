@@ -116,7 +116,7 @@ end)
 
 -- when a gui is opened
 event.register('ee-mouse-leftclick', function(e)
-  local player = util.get_player(e)
+  local player = game.get_player(e.player_index)
   local selected = player.selected
   if selected and (selected.name == 'infinity-cargo-wagon' or selected.name == 'infinity-fluid-wagon') then
     if util.position.distance(player.position, selected.position) <= player.reach_distance then
@@ -143,7 +143,7 @@ end)
 
 -- when a player selects an area for blueprinting
 event.register(defines.events.on_player_setup_blueprint, function(e)
-  local player = util.get_player(e)
+  local player = game.get_player(e.player_index)
   local bp = player.blueprint_to_setup
   if not bp or not bp.valid_for_read then
     bp = player.cursor_stack

@@ -1,6 +1,12 @@
 local math2d = require('__core__/lualib/math2d')
 local util = require('__core__/lualib/util')
 
+math.clamp = util.clamp
+
+string.split = util.split
+
+table.compare = util.compare
+
 -- returns true if the table contains the specified value
 function table.contains(table, value)
   for k,v in pairs(table) do
@@ -23,20 +29,6 @@ function table.invert(table)
 end
 
 -- GENERAL
-
--- returns the player and his global table
-function util.get_player(obj)
-  if type(obj) == 'number' then return game.players[obj], global.players[obj] -- gave the player_index itself
-  elseif obj.__self then return game.players[obj.index], global.players[obj.index] -- gave a player object
-  else return game.players[obj.player_index], global.players[obj.player_index] end -- gave the event table
-end
-
--- just returns the player table
-function util.player_table(obj)
-  if type(obj) == 'number' then return global.players[obj] -- gave the player_index itself
-  elseif obj.__self then return global.players[obj.index] -- gave a player object
-  else return global.players[obj.player_index] end -- gave the event table
-end
 
 util.constants = {
   -- commonly-used set of events for when an entity is built

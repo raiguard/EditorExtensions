@@ -100,7 +100,8 @@ local function close_button_clicked(e)
 end
 
 local function mode_dropdown_selection_changed(e)
-  local player, player_table = util.get_player(e)
+  local player = game.get_player(e.player_index)
+local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local mode = constants.index_to_mode[e.element.selected_index]
   if mode == 'buffer' then
@@ -113,7 +114,8 @@ local function mode_dropdown_selection_changed(e)
 end
 
 local function priority_dropdown_selection_changed(e)
-  local player, player_table = util.get_player(e)
+  local player = game.get_player(e.player_index)
+local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local mode = constants.index_to_mode[gui_data.elems.mode_dropdown.selected_index]
   local priority = constants.index_to_priority[e.element.selected_index]
@@ -121,7 +123,7 @@ local function priority_dropdown_selection_changed(e)
 end
 
 local function slider_value_changed(e)
-  local player_table = util.player_table(e)
+  local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local elems = gui_data.elems
   local buffer_size = util.parse_energy(e.element.slider_value..constants.si_suffixes_joule[elems.slider_dropdown.selected_index])
@@ -130,7 +132,7 @@ local function slider_value_changed(e)
 end
 
 local function slider_textfield_text_changed(e)
-  local player_table = util.player_table(e.player_index)
+  local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local new_value = util.textfield.clamp_number_input(e.element, {0,999}, gui_data.last_textfield_value)
   if new_value ~= gui_data.last_textfield_value then
@@ -140,7 +142,7 @@ local function slider_textfield_text_changed(e)
 end
 
 local function slider_textfield_confirmed(e)
-  local player_table = util.player_table(e.player_index)
+  local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local elems = gui_data.elems
   local final_text = util.textfield.set_last_valid_value(e.element, player_table.gui.ia.last_textfield_value)
@@ -149,7 +151,7 @@ local function slider_textfield_confirmed(e)
 end
 
 local function slider_dropdown_selection_changed(e)
-  local player_table = util.player_table(e.player_index)
+  local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local elems = gui_data.elems
   local buffer_size = util.parse_energy(elems.slider.slider_value..constants.si_suffixes_joule[e.element.selected_index])
@@ -180,7 +182,7 @@ function gui.create(parent, entity, player)
     label = {'entity-name.infinity-accumulator-tertiary'},
     buttons = {util.constants.close_button_def}
   })
-  event.gui.on_click(titlebar.children[3], close_button_clicked, 'ia_close_button_clicked', player.index)
+  event.on_gui_click(close_button_clicked, {name='ia_close_button_clicked', player_index=player.index, gui_filters=titlebar.children[3]})
   local content_flow = window.add{type='flow', name='ee_ia_content_flow', style='ee_entity_window_content_flow', direction='horizontal'}
   local camera = entity_camera.create(content_flow, 'ee_ia_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
   local page_frame = content_flow.add{type='frame', name='ee_ia_page_frame', style='ee_ia_page_frame', direction='vertical'}
@@ -191,7 +193,7 @@ function gui.create(parent, entity, player)
   mode_flow.add{type='empty-widget', name='ee_ia_mode_pusher', style='ee_invisible_horizontal_pusher'}
   local mode_dropdown = mode_flow.add{type='drop-down', name='ee_ia_mode_dropdown', items=constants.localized_modes,
                     selected_index=constants.mode_to_index[mode]}
-  event.gui.on_selection_state_changed(mode_dropdown, mode_dropdown_selection_changed, 'ia_mode_dropdown_selection_changed', player.index)
+  event.on_gui_selection_state_changed(mode_dropdown_selection_changed, {name='ia_mode_dropdown_selection_changed', player_index=player.index, gui_filters=mode_dropdown})
   local priority_flow = page_frame.add{type='flow', name='ee_ia_priority_flow', style='ee_vertically_centered_flow', direction='horizontal'}
   priority_flow.style.vertically_stretchable = true
   priority_flow.add{type='label', name='ee_ia_priority_label', caption={'', {'gui-infinity-accumulator.priority-label-caption'}, ' [img=info]'},
@@ -199,7 +201,7 @@ function gui.create(parent, entity, player)
   priority_flow.add{type='empty-widget', name='ee_ia_priority_pusher', style='ee_invisible_horizontal_pusher'}
   local priority_dropdown = priority_flow.add{type='drop-down', name='ee_ia_priority_dropdown', items=constants.localized_priorities,
                         selected_index=constants.priority_to_index[priority]}
-  event.gui.on_selection_state_changed(priority_dropdown, priority_dropdown_selection_changed, 'ia_priority_dropdown_selection_changed', player.index)
+  event.on_gui_selection_state_changed(priority_dropdown_selection_changed, {name='ia_priority_dropdown_selection_changed', player_index=player.index, gui_filters=priority_dropdown})
   local priority_dropdown_dummy = priority_flow.add{type='button', name='ee_ia_priority_dropdown_dummy', style='ee_disabled_dropdown_button',
                             caption={'gui-infinity-accumulator.priority-dropdown-tertiary'}}
   priority_dropdown_dummy.enabled = false
@@ -211,15 +213,15 @@ function gui.create(parent, entity, player)
   local slider_value, dropdown_index = rev_parse_energy(entity.electric_buffer_size)
   local slider_flow = page_frame.add{type='flow', name='ee_ia_slider_flow', style='ee_vertically_centered_flow', direction='horizontal'}
   local slider = slider_flow.add{type='slider', name='ee_ia_slider', minimum_value=0, maximum_value=999, value=slider_value}
-  event.gui.on_value_changed(slider, slider_value_changed, 'ia_slider_value_changed', player.index)
+  event.on_gui_value_changed(slider_value_changed, {name='ia_slider_value_changed', player_index=player.index, gui_filters=slider})
   local slider_textfield = slider_flow.add{type='textfield', name='ee_ia_slider_textfield', style='ee_slider_textfield', text=slider_value, numeric=true,
                        lose_focus_on_confirm=true, clear_and_focus_on_right_click=true}
-  event.gui.on_text_changed(slider_textfield, slider_textfield_text_changed, 'ia_slider_textfield_text_changed', player.index)
-  event.gui.on_confirmed(slider_textfield, slider_textfield_confirmed, 'ia_slider_textfield_confirmed', player.index)
+  event.on_gui_text_changed(slider_textfield_text_changed, {name='ia_slider_textfield_text_changed', player_index=player.index, gui_filters=slider_textfield})
+  event.on_gui_confirmed(slider_textfield_confirmed, {name='ia_slider_textfield_confirmed', player_index=player.index, gui_filters=slider_textfield})
   local slider_dropdown = slider_flow.add{type='drop-down', name='ee_ia_slider_dropdown', selected_index=dropdown_index,
                       items=constants['localized_si_suffixes_'..constants.power_suffixes_by_mode[mode]]}
   slider_dropdown.style.width = 63
-  event.gui.on_selection_state_changed(slider_dropdown, slider_dropdown_selection_changed, 'ia_slider_dropdown_selection_changed', player.index)
+  event.on_gui_selection_state_changed(slider_dropdown_selection_changed, {name='ia_slider_dropdown_selection_changed', player_index=player.index, gui_filters=slider_dropdown})
   window.force_auto_center()
   return {window=window, camera=camera, mode_dropdown=mode_dropdown, priority_dropdown=priority_dropdown, priority_dropdown_dummy=priority_dropdown_dummy,
       slider=slider, slider_textfield=slider_textfield, slider_dropdown=slider_dropdown},
@@ -256,7 +258,9 @@ function gui.destroy(window, player_index)
   -- deregister all GUI events if needed
   local con_registry = global.conditional_event_registry
   for cn,h in pairs(handlers) do
-    event.gui.deregister(con_registry[cn].id, h, cn, player_index)
+    if con_registry[cn] then
+      event.deregister(con_registry[cn].id, h, {name=cn, player_index=player_index})
+    end
   end
   window.destroy()
 end
@@ -267,7 +271,8 @@ end
 -- when a GUI is opened
 event.register(defines.events.on_gui_opened, function(e)
   if e.entity and check_is_accumulator(e.entity) then
-    local player, player_table = util.get_player(e)
+    local player = game.get_player(e.player_index)
+local player_table = global.players[e.player_index]
     -- create GUI
     local elems, last_textfield_value = gui.create(player.gui.screen, e.entity, player)
     player.opened = elems.window
@@ -279,7 +284,7 @@ end)
 event.register(defines.events.on_gui_closed, function(e)
   if e.gui_type == 16 and e.element.name == 'ee_ia_window' then
     gui.destroy(e.element, e.player_index)
-    util.player_table(e).gui.ia = nil
+    global.players[e.player_index].gui.ia = nil
   end
 end)
 
@@ -290,7 +295,7 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
     local to_update = {}
     if global.conditional_event_registry.ia_close_button_clicked then
       for _,i in ipairs(global.conditional_event_registry.ia_close_button_clicked.players) do
-        local player_table = util.player_table(i)
+        local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.ia.entity == e.destination then
           table.insert(to_update, i)
@@ -307,7 +312,7 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
     end
     -- update open GUIs
     for _,i in pairs(to_update) do
-      local player_table = util.player_table(i)
+      local player_table = global.players[i]
       player_table.gui.ia.entity = new_entity
       gui.update_settings(player_table.gui.ia)
     end
@@ -319,7 +324,7 @@ event.register(util.constants.entity_destroyed_events, function(e)
     -- close open GUIs
     if global.conditional_event_registry.ia_close_button_clicked then
       for _,i in ipairs(global.conditional_event_registry.ia_close_button_clicked.players) do
-        local player_table = util.player_table(i)
+        local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.ia.entity == e.entity then
           gui.destroy(player_table.gui.ia.elems.window, e.player_index)

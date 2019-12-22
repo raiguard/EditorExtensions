@@ -232,14 +232,14 @@ local function close_button_clicked(e)
 end
 
 local function state_switch_state_changed(e)
-  local entity = util.player_table(e.player_index).gui.il.entity
+  local entity = global.players[e.player_index].gui.il.entity
   entity.get_or_create_control_behavior().enabled = e.element.switch_state == 'left'
   update_filters(entity)
 end
 
 local function filter_button_elem_changed(e)
   local index = e.element.name:gsub('ee_il_filter_button_', '')
-  local entity = util.player_table(e.player_index).gui.il.entity
+  local entity = global.players[e.player_index].gui.il.entity
   local control = entity.get_or_create_control_behavior()
   control.set_signal(index, e.element.elem_value and {signal={type='item', name=e.element.elem_value}, count=1} or nil)
   update_filters(entity)
@@ -267,7 +267,7 @@ function gui.create(parent, entity, player)
     label = {'entity-name.infinity-loader'},
     buttons = {util.constants.close_button_def}
   })
-  event.gui.on_click(titlebar.children[3], close_button_clicked, 'il_close_button_clicked', player.index)
+  event.on_gui_click(close_button_clicked, {name='il_close_button_clicked', player_index=player.index, gui_filters=titlebar.children[3]})
   local content_flow = window.add{type='flow', name='ee_il_content_flow', style='ee_entity_window_content_flow', direction='horizontal'}
   local camera = entity_camera.create(content_flow, 'ee_il_camera', 90, {player=player, entity=entity, camera_zoom=1})
   local page_frame = content_flow.add{type='frame', name='ee_il_page_frame', style='ee_ia_page_frame', direction='vertical'}
@@ -278,7 +278,7 @@ function gui.create(parent, entity, player)
   state_flow.add{type='empty-widget', name='ee_il_state_pusher', style='ee_invisible_horizontal_pusher'}
   local state_switch = state_flow.add{type='switch', name='ee_il_state_switch', left_label_caption={'gui-constant.on'},
                     right_label_caption={'gui-constant.off'}, switch_state=control.enabled and 'left' or 'right'}
-  event.gui.on_switch_state_changed(state_switch, state_switch_state_changed, 'il_state_switch_state_changed', player.index)
+  event.on_gui_switch_state_changed(state_switch_state_changed, {name='il_state_switch_state_changed', player_index=player.index, gui_filters=state_switch})
   page_frame.add{type='empty-widget', name='ee_il_page_pusher', style='ee_invisible_vertical_pusher'}
   local filters_flow = page_frame.add{type='flow', name='ee_il_filters_flow', style='ee_vertically_centered_flow', direction='horizontal'}
   filters_flow.add{type='label', name='ee_il_filters_label', caption={'', {'gui-infinity-loader.filters-label-caption'}, ' [img=info]'},
@@ -286,7 +286,7 @@ function gui.create(parent, entity, player)
   filters_flow.add{type='empty-widget', name='ee_il_filters_pusher', style='ee_invisible_horizontal_pusher', direction='horizontal'}
   filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_smaller_filter_slot_button', elem_type='item',
            item=parameters[1].signal.name}
-  event.gui.on_elem_changed({name_match={'ee_il_filter_button'}}, filter_button_elem_changed, 'il_filter_button_elem_changed', player.index)
+  event.on_gui_elem_changed(filter_button_elem_changed, {name='il_filter_button_elem_changed', player_index=player.index, gui_filters='ee_il_filter_button'})
   filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_smaller_filter_slot_button', elem_type='item',
            item=parameters[2].signal.name}
   window.force_auto_center()
@@ -297,7 +297,9 @@ function gui.destroy(window, player_index)
   -- deregister all GUI events if needed
   local con_registry = global.conditional_event_registry
   for cn,h in pairs(handlers) do
-    event.gui.deregister(con_registry[cn].id, h, cn, player_index)
+    if con_registry[cn] then
+      event.deregister(con_registry[cn].id, h, {name=cn, player_index=player_index})
+    end
   end
   window.destroy()
 end
@@ -521,7 +523,7 @@ event.register(util.constants.entity_destroyed_events, function(e)
     -- close open GUIs
     if global.conditional_event_registry.il_close_button_clicked then
       for _,i in ipairs(global.conditional_event_registry.il_close_button_clicked.players) do
-        local player_table = util.player_table(i)
+        local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.il.entity == entity then
           gui.destroy(player_table.gui.il.elems.window, e.player_index)
@@ -540,7 +542,7 @@ end)
 
 -- when a player selects an area for blueprinting
 event.register(defines.events.on_player_setup_blueprint, function(e)
-  local player = util.get_player(e)
+  local player = game.get_player(e.player_index)
   local bp = player.blueprint_to_setup
   if not bp or not bp.valid_for_read then
     bp = player.cursor_stack
@@ -578,7 +580,8 @@ end)
 -- when a player opens a GUI
 event.register(defines.events.on_gui_opened, function(e)
   if e.entity and e.entity.name == 'infinity-loader-logic-combinator' then
-    local player, player_table = util.get_player(e)
+    local player = game.get_player(e.player_index)
+    local player_table = global.players[e.player_index]
     local elems = gui.create(player.gui.screen, e.entity, player)
     player.opened = elems.window
     player_table.gui.il = {elems=elems, entity=e.entity}
@@ -589,7 +592,7 @@ end)
 event.register(defines.events.on_gui_closed, function(e)
   if e.gui_type == 16 and e.element.name == 'ee_il_window' then
     gui.destroy(e.element, e.player_index)
-    util.player_table(e).gui.il = nil
+    global.players[e.player_index].gui.il = nil
   end
 end)
 

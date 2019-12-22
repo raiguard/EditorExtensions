@@ -1,3 +1,5 @@
+pcall(require,'__debugadapter__/debugadapter.lua') -- debug adapter
+
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS CONTROL SCRIPTING
 
@@ -53,7 +55,7 @@ end)
 -- map editor shortcut and hotkey
 event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, function(e)
   if e.prototype_name and e.prototype_name ~= 'ee-toggle-map-editor' then return end
-  local player = util.get_player(e)
+  local player = game.get_player(e.player_index)
   player.toggle_map_editor()
   player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
   -- the first time someone toggles the map editor, unpause the current tick
@@ -85,7 +87,7 @@ end)
 event.register(defines.events.on_built_entity, function(e)
   local entity = e.created_entity
   if entity.name == 'infinity-pipe' then
-    local mod_settings = util.get_player(e).mod_settings
+    local mod_settings = game.get_player(e.player_index).mod_settings
     -- default snapping
     if mod_settings['ee-infinity-pipe-snapping'].value then
       -- get own fluidbox
