@@ -84,7 +84,7 @@ do
     chest.minable.result = 'tesseract-chest'..suffix
     chest.enable_inventory_bar = false
     chest.flags = {'player-creation', 'hide-alt-info'}
-    recursive_tint(chest)
+    recursive_tint(chest, d.t)
     data:extend{chest}
   end
 end
