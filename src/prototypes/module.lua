@@ -11,7 +11,8 @@ end
 local module_template = {
   type = 'module',
   subgroup = 'ee-modules',
-  stack_size = 50
+  stack_size = 50,
+  flags = {'hidden'}
 }
 
 local module_data = {

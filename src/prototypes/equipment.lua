@@ -15,7 +15,8 @@ data:extend{
     shape = {width=1, height=1, type='full'},
     energy_source = {type='electric', usage_priority='primary-output'},
     power = '1000YW',
-    categories = {'armor'}
+    categories = {'armor'},
+    flags = {'hidden'}
   }
 }
 
@@ -28,4 +29,5 @@ personal_roboport.charging_station_count = 1000
 personal_roboport.robot_limit = 1000
 personal_roboport.construction_radius = 100
 personal_roboport.take_result = 'infinity-personal-roboport-equipment'
+personal_roboport.flags = {'hidden'}
 data:extend{personal_roboport}
