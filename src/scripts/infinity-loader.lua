@@ -274,21 +274,21 @@ function gui.create(parent, entity, player)
   page_frame.style.width = 160
   local state_flow = page_frame.add{type='flow', name='ee_il_state_flow', style='ee_vertically_centered_flow', direction='horizontal'}
   state_flow.add{type='label', name='ee_il_state_label', caption={'', {'gui-infinity-loader.state-label-caption'}, ' [img=info]'},
-           tooltip={'gui-infinity-loader.state-label-tooltip'}}
+    tooltip={'gui-infinity-loader.state-label-tooltip'}}
   state_flow.add{type='empty-widget', name='ee_il_state_pusher', style='ee_invisible_horizontal_pusher'}
   local state_switch = state_flow.add{type='switch', name='ee_il_state_switch', left_label_caption={'gui-constant.on'},
-                    right_label_caption={'gui-constant.off'}, switch_state=control.enabled and 'left' or 'right'}
+    right_label_caption={'gui-constant.off'}, switch_state=control.enabled and 'left' or 'right'}
   event.on_gui_switch_state_changed(state_switch_state_changed, {name='il_state_switch_state_changed', player_index=player.index, gui_filters=state_switch})
   page_frame.add{type='empty-widget', name='ee_il_page_pusher', style='ee_invisible_vertical_pusher'}
   local filters_flow = page_frame.add{type='flow', name='ee_il_filters_flow', style='ee_vertically_centered_flow', direction='horizontal'}
   filters_flow.add{type='label', name='ee_il_filters_label', caption={'', {'gui-infinity-loader.filters-label-caption'}, ' [img=info]'},
-           tooltip={'gui-infinity-loader.filters-label-tooltip'}}
+    tooltip={'gui-infinity-loader.filters-label-tooltip'}}
   filters_flow.add{type='empty-widget', name='ee_il_filters_pusher', style='ee_invisible_horizontal_pusher', direction='horizontal'}
   filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_smaller_filter_slot_button', elem_type='item',
-           item=parameters[1].signal.name}
+    item=parameters[1].signal.name}
   event.on_gui_elem_changed(filter_button_elem_changed, {name='il_filter_button_elem_changed', player_index=player.index, gui_filters='ee_il_filter_button'})
   filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_smaller_filter_slot_button', elem_type='item',
-           item=parameters[2].signal.name}
+    item=parameters[2].signal.name}
   window.force_auto_center()
   return {window=window, camera=camera}
 end
@@ -603,16 +603,10 @@ event.on_configuration_changed(function(e)
       if #surface.find_entities_filtered{type='loader-1x1', position=entity.position} == 0 then
         -- if its loader is gone, give it a new one with default settings
         update_loader_type(nil, 'express', {position=entity.position, direction=entity.direction, force=entity.force,
-                          last_user=entity.last_user or '', loader_type='output', surface=entity.surface})
+          last_user=entity.last_user or '', loader_type='output', surface=entity.surface})
         -- alternatively, just destroy it completely
         -- entity.destroy{raise_destroy=true}
       end
     end
   end
-end)
-
-event.on_load(function()
-  event.register(remote.call('ee_infinity_loader', 'on_loader_snapped'), function(e)
-    util.log(e)
-  end)
 end)
