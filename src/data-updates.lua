@@ -31,7 +31,7 @@ local function create_loader(base_underground)
   end
   entity.name = 'infinity-loader-loader' .. (suffix ~= '' and '-'..suffix or '')
   -- other data
-  entity.type = 'loader'
+  entity.type = 'loader-1x1'
   entity.next_upgrade = nil
   entity.max_distance = 0
   entity.order = 'a'

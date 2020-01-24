@@ -80,7 +80,7 @@ end
 -- update inserter and chest filters
 local function update_filters(combinator, entities)
   entities = entities or {}
-  local loader = entities.loader or combinator.surface.find_entities_filtered{type='loader', position=combinator.position}[1]
+  local loader = entities.loader or combinator.surface.find_entities_filtered{type='loader-1x1', position=combinator.position}[1]
   local inserters = entities.inserters or combinator.surface.find_entities_filtered{name='infinity-loader-inserter', position=combinator.position}
   local chest = entities.chest or combinator.surface.find_entities_filtered{name='infinity-loader-chest', position=combinator.position}[1]
   local control = combinator.get_control_behavior()
@@ -320,7 +320,7 @@ local function snap_loader(loader, entity)
   if not entity then
     entity = loader.surface.find_entities_filtered{
       area = util.position.to_tile_area(util.position.add(loader.position, util.direction.to_vector(get_loader_direction(loader), 1))),
-      type = {'transport-belt', 'underground-belt', 'splitter', 'loader'}
+      type = {'transport-belt', 'underground-belt', 'splitter', 'loader-1x1'}
     }[1]
   end
   local snapped = false
@@ -391,7 +391,7 @@ local function picker_dollies_move(e)
   if entity.name == 'infinity-loader-logic-combinator' then
     local loader
     -- move all entities to new position
-    for _,e in pairs(e.moved_entity.surface.find_entities_filtered{type={'loader', 'inserter', 'infinity-container'}, position=e.start_pos}) do
+    for _,e in pairs(e.moved_entity.surface.find_entities_filtered{type={'loader-1x1', 'inserter', 'infinity-container'}, position=e.start_pos}) do
       if check_is_loader(e) then
         -- loaders don't support teleportation, so destroy and recreate it
         loader = update_loader_type(e, get_belt_type(e), {position=entity.position})
@@ -422,7 +422,7 @@ end)
 -- get all loader entities at a certain position
 local function get_loader_entities(surface, position)
   local find = surface.find_entities_filtered
-  return find{type='loader', position=position}[1],
+  return find{type='loader-1x1', position=position}[1],
          find{type='inserter', position=position},
          find{name='infinity-loader-chest', position=position}[1],
          find{name='infinity-loader-logic-combinator', position=position}[1]
@@ -485,7 +485,7 @@ event.register(util.constants.entity_built_events, function(e)
     if entity.neighbours then
       snap_tile_neighbors(entity)
     end
-  elseif entity.type == 'splitter' or entity.type == 'loader' then
+  elseif entity.type == 'splitter' or entity.type == 'loader-1x1' then
     -- snap belt neighbors
     snap_belt_neighbors(entity)
   end
@@ -497,7 +497,7 @@ event.register(defines.events.on_player_rotated_entity, function(e)
   if entity.name == 'infinity-loader-logic-combinator' then
     -- rotate loader instead of combinator
     entity.direction = e.previous_direction
-    local loader = entity.surface.find_entities_filtered{type='loader', position=entity.position}[1]
+    local loader = entity.surface.find_entities_filtered{type='loader-1x1', position=entity.position}[1]
     loader.rotate()
     update_inserters(loader)
     update_filters(entity, {loader=loader})
@@ -510,7 +510,7 @@ event.register(defines.events.on_player_rotated_entity, function(e)
     if entity.neighbours then
       snap_tile_neighbors(entity.neighbours)
     end
-  elseif entity.type == 'splitter' or entity.type == 'loader' then
+  elseif entity.type == 'splitter' or entity.type == 'loader-1x1' then
     -- snap belt neighbors
     snap_belt_neighbors(entity)
   end
@@ -601,7 +601,7 @@ event.on_configuration_changed(function(e)
   -- check every single infinity loader on every surface to see if it no longer has a loader entity
   for _,surface in pairs(game.surfaces) do
     for _,entity in ipairs(surface.find_entities_filtered{name='infinity-loader-logic-combinator'}) do
-      if #surface.find_entities_filtered{type='loader', position=entity.position} == 0 then
+      if #surface.find_entities_filtered{type='loader-1x1', position=entity.position} == 0 then
         -- if its loader is gone, give it a new one with default settings
         update_loader_type(nil, 'express', {position=entity.position, direction=entity.direction, force=entity.force,
                           last_user=entity.last_user or '', loader_type='output', surface=entity.surface})
