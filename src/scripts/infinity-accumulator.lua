@@ -256,10 +256,9 @@ end
 
 function gui.destroy(window, player_index)
   -- deregister all GUI events if needed
-  local con_registry = global.conditional_event_registry
   for cn,h in pairs(handlers) do
-    if con_registry[cn] then
-      event.deregister(con_registry[cn].id, h, {name=cn, player_index=player_index})
+    if event.is_registered(cn, player_index) then
+      event.deregister_conditional(h, cn, player_index)
     end
   end
   window.destroy()
@@ -293,8 +292,8 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
   if check_is_accumulator(e.source) and check_is_accumulator(e.destination) and e.source.name ~= e.destination.name then
     -- get players viewing the destination accumulator
     local to_update = {}
-    if global.conditional_event_registry.ia_close_button_clicked then
-      for _,i in ipairs(global.conditional_event_registry.ia_close_button_clicked.players) do
+    if global.__lualib.event.ia_close_button_clicked then
+      for _,i in ipairs(global.__lualib.event.ia_close_button_clicked.players) do
         local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.ia.entity == e.destination then
@@ -322,8 +321,8 @@ end)
 event.register(util.constants.entity_destroyed_events, function(e)
   if check_is_accumulator(e.entity) then
     -- close open GUIs
-    if global.conditional_event_registry.ia_close_button_clicked then
-      for _,i in ipairs(global.conditional_event_registry.ia_close_button_clicked.players) do
+    if global.__lualib.event.ia_close_button_clicked then
+      for _,i in ipairs(global.__lualib.event.ia_close_button_clicked.players) do
         local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.ia.entity == e.entity then

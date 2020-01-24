@@ -86,7 +86,6 @@ local function dispatch_event(e)
       game.force_crc()
     end
   end
-  log(serpent.block(event_registry[3]))
   return event
 end
 -- pass-through handlers for special events

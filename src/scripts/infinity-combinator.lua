@@ -256,11 +256,15 @@ local handlers = {
   ic_color_switch_state_changed = color_switch_state_changed,
   ic_update_rate_menu_button_clicked = update_rate_menu_button_clicked,
   ic_update_rate_back_button_clicked = update_rate_back_button_clicked,
+  ic_update_rate_slider_value_changed = update_rate_slider_value_changed,
+  ic_update_rate_textfield_text_changed = update_rate_textfield_text_changed,
+  ic_update_rate_textfield_confirmed = update_rate_textfield_confirmed,
   ic_sort_menu_button_clicked = sort_menu_button_clicked,
   ic_sort_back_button_clicked = sort_back_button_clicked,
   ic_sort_button_clicked = sort_button_clicked,
   ic_signal_button_clicked = signal_button_clicked,
   ic_selected_button_elem_changed = selected_button_elem_changed
+
 }
 
 event.on_load(function()
@@ -346,10 +350,9 @@ end
 
 function gui.destroy(window, player_index)
   -- deregister all GUI events if needed
-  local con_registry = global.conditional_event_registry
   for cn,h in pairs(handlers) do
-    if con_registry[cn] then
-      event.deregister(con_registry[cn].id, h, {name=cn, player_index=player_index})
+    if event.is_registered(cn, player_index) then
+      event.deregister_conditional(h, cn, player_index)
     end
   end
   window.destroy()
@@ -362,7 +365,7 @@ end
 event.register(defines.events.on_gui_opened, function(e)
   if e.entity and e.entity.name == 'infinity-combinator' then
     local player = game.get_player(e.player_index)
-local player_table = global.players[e.player_index]
+    local player_table = global.players[e.player_index]
     -- create gui, set it as opened
     local elems = gui.create(player.gui.screen, player)
     player.opened = elems.window
@@ -382,7 +385,7 @@ local player_table = global.players[e.player_index]
       end
     end
     -- register function for updating values
-    event.register(defines.events.on_tick, update_circuit_values, 'ic_update_circuit_values', player.index)
+    event.register(defines.events.on_tick, update_circuit_values, {name='ic_update_circuit_values', player_index=player.index})
     -- add to open combinators table
     table.insert(global.combinators, player.index)
     -- update values now

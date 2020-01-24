@@ -295,10 +295,9 @@ end
 
 function gui.destroy(window, player_index)
   -- deregister all GUI events if needed
-  local con_registry = global.conditional_event_registry
   for cn,h in pairs(handlers) do
-    if con_registry[cn] then
-      event.deregister(con_registry[cn].id, h, {name=cn, player_index=player_index})
+    if event.is_registered(cn, player_index) then
+      event.deregister_conditional(h, cn, player_index)
     end
   end
   window.destroy()
@@ -521,8 +520,8 @@ event.register(util.constants.entity_destroyed_events, function(e)
   local entity = e.entity
   if entity.name == 'infinity-loader-logic-combinator' then
     -- close open GUIs
-    if global.conditional_event_registry.il_close_button_clicked then
-      for _,i in ipairs(global.conditional_event_registry.il_close_button_clicked.players) do
+    if global.__lualib.event.il_close_button_clicked then
+      for _,i in ipairs(global.__lualib.event.il_close_button_clicked.players) do
         local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.il.entity == entity then

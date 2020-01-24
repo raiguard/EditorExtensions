@@ -8,7 +8,7 @@ local util = require('lualib/util')
 -- --------------------------------------------------------------------------------
 -- CONDITIONAL HANDLERS
 
-local function wagon_on_tick(e)
+local function wagon_on_tick()
   for _,t in pairs(global.wagons) do
     if t.wagon.valid and t.proxy.valid then
       if t.wagon_name == 'infinity-cargo-wagon' then
@@ -59,7 +59,7 @@ event.register(util.constants.entity_built_events, function(e)
       force = entity.force
     }
     if table_size(global.wagons) == 0 then
-      event.register(defines.events.on_tick, wagon_on_tick, 'wagon_on_tick')
+      event.register(defines.events.on_tick, wagon_on_tick, {name='wagon_on_tick'})
     end
     -- create all api lookups here to save time in on_tick()
     local data = {
