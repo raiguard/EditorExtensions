@@ -33,6 +33,9 @@ local function setup_player(index)
     }
   }
   global.players[index] = data
+  -- set map editor shortcut state
+  local player = game.get_player(index)
+  player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
 end
 
 -- GENERAL SETUP
@@ -47,8 +50,14 @@ event.on_init(function()
   end
 end)
 
+-- set up player when created
 event.register(defines.events.on_player_created, function(e)
   setup_player(e.player_index)
+end)
+
+-- destroy player table when removed
+event.register(defines.events.on_player_removed, function(e)
+  global.players[e.player_index] = nil
 end)
 
 -- map editor shortcut and hotkey
@@ -62,6 +71,12 @@ event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, functio
     global.flags.map_editor_toggled = true
     game.tick_paused = false
   end
+end)
+
+event.register(defines.events.on_player_toggled_map_editor, function(e)
+  -- set map editor shortcut state
+  local player = game.get_player(e.player_index)
+  player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
 end)
 
 -- --------------------------------------------------------------------------------
