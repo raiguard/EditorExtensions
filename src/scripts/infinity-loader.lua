@@ -50,7 +50,7 @@ local function get_belt_type(entity)
   -- check to see if the loader prototype exists
   if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
     -- print warning message
-    game.print{'', 'EDIITOR EXTENSIONS: ', {'chat-message.unable-to-identify-belt-warning'}}
+    game.print{'', 'EDIITOR EXTENSIONS: ', {'ee-message.unable-to-identify-belt'}}
     game.print('entity_name=\''..entity.name..'\', parse_result=\''..type..'\'')
     -- set to default type
     type = 'express'

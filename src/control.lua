@@ -1,10 +1,15 @@
-pcall(require,'__debugadapter__/debugadapter.lua') -- debug adapter
 
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS CONTROL SCRIPTING
 
+-- debug adapter
+pcall(require,'__debugadapter__/debugadapter.lua')
+
 local event = require('lualib/event')
 local util = require('lualib/util')
+
+-- locals
+local string_find = string.find
 
 -- -----------------------------------------------------------------------------
 -- SCRIPTS
@@ -127,6 +132,21 @@ event.register(defines.events.on_built_entity, function(e)
         entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode='exactly'}
       end
     end
+  end
+end)
+
+-- --------------------------------------------------------------------------------
+-- TESTING TOOLS RECIPES
+
+event.on_player_cheat_mode_enabled(function(e)
+  local player = game.get_player(e.player_index)
+  local force = player.force
+  -- check if it has already been enabled for this force
+  if force.recipes['ee-infinity-loader'].enabled == false then
+    for n,r in pairs(game.recipe_prototypes) do
+      if string_find(n, 'ee-') and force.recipes[n] then force.recipes[n].enabled = true end
+    end
+    force.print{'ee-message.testing-tools-enabled', player.name}
   end
 end)
 
