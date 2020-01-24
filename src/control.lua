@@ -101,33 +101,30 @@ end)
 event.register(defines.events.on_built_entity, function(e)
   local entity = e.created_entity
   if entity.name == 'infinity-pipe' then
-    local mod_settings = game.get_player(e.player_index).mod_settings
-    -- default snapping
-    if mod_settings['ee-infinity-pipe-snapping'].value then
-      -- get own fluidbox
-      local own_fluidbox = entity.fluidbox
-      if own_fluidbox.get_locked_fluid(1) then
-        entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=0, mode='exactly'}
-      end
-    end
-    -- assembler snapping
-    if mod_settings['ee-infinity-pipe-assembler-snapping'].value then
-      -- get own fluidbox
-      local own_fluidbox = entity.fluidbox
-      -- for every connection the infinity pipe has
-      for _,fb in ipairs(own_fluidbox.get_connections(1)) do
-        -- if it's connected to an assembling machine
-        if fb.owner.type == 'assembling-machine' then
-          -- for every fluidbox in the assembling machine
+    local neighbours = entity.neighbours[1]
+    local own_fb = entity.fluidbox
+    local s = settings.get_player_settings(e.player_index)
+    -- snap to adjacent assemblers
+    if s['ee-infinity-pipe-assembler-snapping'].value then
+      for ni=1,#neighbours do
+        local neighbour = neighbours[ni]
+        if neighbour.type == 'assembling-machine' and neighbour.fluidbox then
+          local fb = neighbour.fluidbox
           for i=1,#fb do
-            -- if it's an input connection, and it's connected to us
-            if fb.get_prototype(i).production_type == 'input' and fb.get_connections(i)[1] == own_fluidbox then
-              -- snap infinity filter
-              entity.set_infinity_pipe_filter{name=own_fluidbox.get_locked_fluid(1), percentage=1, mode='exactly'}
-              return
+            if fb.get_connections(i)[1] == own_fb and fb.get_prototype(i).production_type == 'input' then
+              -- set to fill the pipe with the fluid
+              entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(i), percentage=1, mode='exactly'}
+              return -- don't do default snapping
             end
           end
         end
+      end
+    end
+    -- snap to locked fluid
+    if s['ee-infinity-pipe-snapping'].value then
+      local fluid = own_fb.get_locked_fluid(1)
+      if fluid then
+        entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode='exactly'}
       end
     end
   end
