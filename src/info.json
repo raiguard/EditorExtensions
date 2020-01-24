@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "title": "Editor Extensions",
   "author": "raiguard",
-  "homepage": "https://github.com/raiguard/EditorExtensions",
+  "homepage": "https://github.com/raiguard/Factorio-EditorExtensions",
   "factorio_version": "0.18",
   "dependencies": ["base >= 0.18.0"],
-  "description": "Extends the map editor with new features and tools, makes tweaks to it to facilitate sandbox testing, and adds items and entities to make testing easier. Designed to be a replacement for Creative Mode and Infinity Mode."
+  "description": "Extends the map editor with new features and tools, makes tweaks to it to facilitate easier sandbox play, and adds items and entities to assist with testing factories. Designed to be a replacement for Creative Mode and Infinity Mode."
 }

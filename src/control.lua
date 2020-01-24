@@ -163,7 +163,6 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
 
 if __DebugAdapter then
   script.on_event('DEBUG-INSPECT-GLOBAL', function(e)
-    local registry = event.get_registry()
     local breakpoint -- put breakpoint here to inspect global at any time
   end)
 end
