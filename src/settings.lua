@@ -51,24 +51,31 @@ data:extend{
   },
   {
     type = 'bool-setting',
+    name = 'ee-controller-show_additional_entity_info_gui',
+    setting_type = 'startup',
+    default_value = false,
+    order = 'be'
+  },
+  {
+    type = 'bool-setting',
     name = 'ee-controller-fill_built_entity_energy_buffers',
     setting_type = 'startup',
     default_value = true,
-    order = 'be'
+    order = 'bf'
   },
   {
     type = 'bool-setting',
     name = 'ee-controller-show_character_tab_in_controller_gui',
     setting_type = 'startup',
     default_value = true,
-    order = 'bfa'
+    order = 'bga'
   },
   {
     type = 'bool-setting',
     name = 'ee-controller-show_infinity_filters_in_controller_gui',
     setting_type = 'startup',
     default_value = true,
-    order = 'bfb'
+    order = 'bgb'
   },
   -- MAP SETTINGS
   {
