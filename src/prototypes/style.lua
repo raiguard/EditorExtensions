@@ -223,7 +223,7 @@ styles['ee_active_tool_button'] = {
   },
 }
 
--- REMOVE WHEN UPDATING TO 0.18:
+-- REMOVE WHEN THE NEW CHARACTER GUI IS MERGED:
 styles['filter_slot_button'] = {
   type = 'button_style',
   parent = 'quick_bar_slot_button'

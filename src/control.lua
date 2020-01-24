@@ -6,19 +6,18 @@ pcall(require,'__debugadapter__/debugadapter.lua') -- debug adapter
 local event = require('lualib/event')
 local util = require('lualib/util')
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- SCRIPTS
 
 do
   require('scripts/infinity-accumulator')
   require('scripts/infinity-combinator')
-  require('scripts/infinity-inventory-filters')
   require('scripts/infinity-loader')
   require('scripts/infinity-wagon')
   require('scripts/tesseract-chest')
 end
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- SETUP AND GENERAL SCRIPTING
 
 local function setup_player(index)
@@ -159,3 +158,12 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter='name', name='infinity-cargo-wagon'},
   {filter='name', name='infinity-fluid-wagon'}
 })
+
+-- DEBUG ADAPTER
+
+if __DebugAdapter then
+  script.on_event('DEBUG-INSPECT-GLOBAL', function(e)
+    local registry = event.get_registry()
+    local breakpoint -- put breakpoint here to inspect global at any time
+  end)
+end
