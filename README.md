@@ -9,6 +9,6 @@ This mod includes a ton of items and tools to aid with testing your setups. Supe
 
 ### Mode switching
 
-![](resources/shortcut-preview)
+![](resources/shortcut-preview.png)
 
 This mod adds a shortcut button to toggle the map editor. This makes it painless to switch to the editor when you need it, and switch back when you want to have a body again. You can also toggle modes with `Ctrl + Shift + E`.
