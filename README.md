@@ -1,4 +1,14 @@
-# Editor Extensions
-Editor Extensions appends the Factorio map editor with tons of new features, useful both for scenario creation and for testing builds. Quickly swap between the editor and normal play, generate or destroy infinite items, fluids, electricity, or heat, gain access to supercharged versions of many vanilla items and entities, and more!
+## Editor Extensions
+Extends the Factorio map editor with new tools and utilities, and makes tweaks to aid with sandbox play. Adds a suite of supercharged items and entities to assist with testing setups, and allows for easy and painless switching between the editor and normal play.
 
-Designed to be a replacement for the Creative Mode and Infinity Mode mods.
+### Testing tools
+
+![](resources/tools-preview.png)
+
+This mod includes a ton of items and tools to aid with testing your setups. Supercharged robots, energy-free inserters, infinite item, fluid, heat, and electricity manipulation, and overpowered modules are just a few of the tools at your disposal.
+
+### Mode switching
+
+![](resources/shortcut-preview)
+
+This mod adds a shortcut button to toggle the map editor. This makes it painless to switch to the editor when you need it, and switch back when you want to have a body again. You can also toggle modes with `Ctrl + Shift + E`.
