@@ -102,13 +102,18 @@ data:extend{infinity_combinator}
 local infinity_heat_pipe = data.raw['heat-interface']['heat-interface']
 infinity_heat_pipe.gui_mode = 'all'
 infinity_heat_pipe.icons = {extract_icon_info(data.raw['item']['heat-pipe'])}
-infinity_heat_pipe.picture.filename = '__base__/graphics/entity/heat-pipe/heat-pipe-t-1.png'
-infinity_heat_pipe.picture.hr_version = {
-  filename = '__base__/graphics/entity/heat-pipe/hr-heat-pipe-t-1.png',
-  width = 64,
-  height = 64,
-  scale = 0.5,
-  flags = {'no-crop'}
+infinity_heat_pipe.picture = {
+  filename = '__base__/graphics/entity/heat-pipe/heat-pipe-t-1.png',
+  width = 32,
+  height = 32,
+  flags = {'no-crop'},
+  hr_version = {
+    filename = '__base__/graphics/entity/heat-pipe/hr-heat-pipe-t-1.png',
+    width = 64,
+    height = 64,
+    scale = 0.5,
+    flags = {'no-crop'}
+  }
 }
 recursive_tint(infinity_heat_pipe)
 
