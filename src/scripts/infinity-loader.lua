@@ -220,6 +220,36 @@ local function create_loader(type, mode, surface, position, direction, force)
   return loader, inserters, chest, combinator
 end
 
+-- apply the function to each belt neighbor connected to this entity, and return entities for which the function returned true
+local function check_belt_neighbors(entity, func, type_agnostic)
+  local belt_neighbors = entity.belt_neighbours
+  local matched_entities = {}
+  for _,type in pairs{'inputs', 'outputs'} do
+    if not type_agnostic then matched_entities[type] = {} end
+    for _,e in ipairs(belt_neighbors[type] or {}) do
+      if func(e) then
+        table.insert(type_agnostic and matched_entities or matched_entities[type], e)
+      end
+    end
+  end
+  return matched_entities
+end
+
+-- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
+local function check_tile_neighbors(entity, func, eight_way, dir_agnostic)
+  local matched_entities = {}
+  for i=0,7,eight_way and 1 or 2 do
+    if not dir_agnostic then matched_entities[i] = {} end
+    local entities = entity.surface.find_entities(util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1))))
+    for _,e in ipairs(entities) do
+      if func(e) then
+        table.insert(dir_agnostic and matched_entities or matched_entities[i], e)
+      end
+    end
+  end
+  return matched_entities
+end
+
 -- --------------------------------------------------------------------------------
 -- GUI
 
@@ -359,16 +389,16 @@ end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
 local function snap_tile_neighbors(entity)
-  for _,e in pairs(util.entity.check_tile_neighbors(entity, check_is_loader, false, true)) do
+  for _,e in pairs(check_tile_neighbors(entity, check_is_loader, false, true)) do
     snap_loader(e, entity)
   end
 end
 
 -- checks belt neighbors for both rotations of the source entity for infinity loaders, and calls the snapping function on them
 local function snap_belt_neighbors(entity)
-  local belt_neighbors = util.entity.check_belt_neighbors(entity, check_is_loader, true)
+  local belt_neighbors = check_belt_neighbors(entity, check_is_loader, true)
   entity.rotate()
-  local rev_belt_neighbors = util.entity.check_belt_neighbors(entity, check_is_loader, true)
+  local rev_belt_neighbors = check_belt_neighbors(entity, check_is_loader, true)
   entity.rotate()
   for _,e in ipairs(belt_neighbors) do
     snap_loader(e, entity)

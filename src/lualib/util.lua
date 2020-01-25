@@ -1,32 +1,9 @@
+-- -------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- UTILITIES
+-- This file is not part of RaiLuaLib, but is specific to each mod
+
 local math2d = require('__core__/lualib/math2d')
 local util = require('__core__/lualib/util')
-
-math.clamp = util.clamp
-
-string.split = util.split
-
-table.compare = util.compare
-
--- returns true if the table contains the specified value
-function table.contains(table, value)
-  for k,v in pairs(table) do
-    if v == value then
-      return true
-    end
-  end
-  return false
-end
-
-table.merge = util.merge
-
--- flips a table's keys with its values
-function table.invert(table)
-  local new_table = {}
-  for k,v in pairs(table) do
-    new_table[v] = k
-  end
-  return new_table
-end
 
 -- GENERAL
 
@@ -54,8 +31,6 @@ util.constants = {
   }
 }
 
-util.area = math2d.bounding_box
-
 -- utilities for prototype creation
 util.data = {
   empty_circuit_wire_connection_points = {
@@ -72,38 +47,6 @@ util.data = {
     frame_count = 1
   }
 }
-
-util.entity = {}
-
--- apply the function to each belt neighbor connected to this entity, and return entities for which the function returned true
-function util.entity.check_belt_neighbors(entity, func, type_agnostic)
-  local belt_neighbors = entity.belt_neighbours
-  local matched_entities = {}
-  for _,type in pairs{'inputs', 'outputs'} do
-    if not type_agnostic then matched_entities[type] = {} end
-    for _,e in ipairs(belt_neighbors[type] or {}) do
-      if func(e) then
-        table.insert(type_agnostic and matched_entities or matched_entities[type], e)
-      end
-    end
-  end
-  return matched_entities
-end
-
--- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
-function util.entity.check_tile_neighbors(entity, func, eight_way, dir_agnostic)
-  local matched_entities = {}
-  for i=0,7,eight_way and 1 or 2 do
-    if not dir_agnostic then matched_entities[i] = {} end
-    local entities = entity.surface.find_entities(util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1))))
-    for _,e in ipairs(entities) do
-      if func(e) then
-        table.insert(dir_agnostic and matched_entities or matched_entities[i], e)
-      end
-    end
-  end
-  return matched_entities
-end
 
 util.direction = {}
 util.direction.opposite = util.oppositedirection
@@ -134,16 +77,6 @@ function util.gui.add_pusher(parent, name, vertical)
     return parent.add{type='empty-widget', name=name, style='ee_invisible_vertical_pusher'}
   else
     return parent.add{type='empty-widget', name=name, style='ee_invisible_horizontal_pusher'}
-  end
-end
-
--- simple logging function - prints the string or table to the dev console or the ingame console
-function util.log(message, print_to_game, serpent_options)
-  local func = print_to_game and game.print or log
-  if type(message) == 'table' then
-    func('\n'..serpent.block(message, serpent_options))
-  else
-    func(message)
   end
 end
 

@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2020.1.25
+  Bugfixes:
+    - Fixed incorrect infinity heat pipe picture definition causing a crash in some cases
+    - Fixed save/load safety of event GUI filters
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2020.1.25
   Features:
