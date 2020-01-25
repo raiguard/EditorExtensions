@@ -5,6 +5,8 @@
 local math2d = require('__core__/lualib/math2d')
 local util = require('__core__/lualib/util')
 
+table.merge = util.merge
+
 -- GENERAL
 
 util.constants = {
