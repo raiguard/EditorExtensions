@@ -24,7 +24,6 @@ local gui_filter_matchers = {
 -- calls handler functions tied to an event
 -- ALL events go through this function
 local function dispatch_event(e)
-  local global_data = global.__lualib.event
   local id = e.name
   -- set ID for special events
   if e.nth_tick then
@@ -51,7 +50,7 @@ local function dispatch_event(e)
     local name = options.name
     local gui_filters
     if name then
-      local con_data = global_data[name]
+      local con_data = global.__lualib.event[name]
       if not con_data then error('Conditional event has been raised, but has no data!') end
       e.registered_players = con_data.players
       -- if there are GUI filters, check them
@@ -301,11 +300,17 @@ end
 
 -- re-registers conditional handlers if they're in the registry
 function event.load_conditional_handlers(data)
-  local global_data = global.__lualib.event
+  -- check for the existence of global.__lualib in case we're migrating from a previous version
+  local global_data
+  if not global.__lualib then
+    global_data = global.conditional_event_registry
+  else
+    global_data = global.__lualib.event
+  end
   for name, handler in pairs(data) do
     local registry = global_data[name]
     if registry then
-        event.register(registry.id, handler, {name=name, gui_filters=registry.gui_filters})
+        event.register(registry.id, handler, {name=name})
     end
   end
   return event
