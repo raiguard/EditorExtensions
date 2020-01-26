@@ -90,7 +90,10 @@ event.register(defines.events.on_player_removed, function(e)
   global.players[e.player_index] = nil
 end)
 
--- map editor shortcut and hotkey
+-- --------------------------------------------------------------------------------
+-- MAP EDITOR SHORTCUT
+
+-- when toggled
 event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, function(e)
   if e.prototype_name and e.prototype_name ~= 'ee-toggle-map-editor' then return end
   local player = game.get_player(e.player_index)
@@ -103,10 +106,16 @@ event.register({defines.events.on_lua_shortcut, 'ee-toggle-map-editor'}, functio
   end
 end)
 
-event.register(defines.events.on_player_toggled_map_editor, function(e)
+event.on_player_toggled_map_editor(function(e)
   -- set map editor shortcut state
   local player = game.get_player(e.player_index)
   player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
+end)
+
+-- lock or unlock the editor depending on if the player is an admin
+event.register({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
+  local player = game.get_player(e.player_index)
+  player.set_shortcut_available('ee-toggle-map-editor', player.admin)
 end)
 
 -- --------------------------------------------------------------------------------

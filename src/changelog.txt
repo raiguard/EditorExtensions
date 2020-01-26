@@ -3,6 +3,7 @@ Version: 1.0.2
 Date: 2020.1.26
   Features:
     - If you are already in cheat mode when Editor Extensions is added to your save, the testing tools will unlock themselves automatically
+    - The toggle map editor shortcut will visually disable itself if the player is not an admin
   Bugfixes:
     - Fixed not being able to unlock testing tools using /cheat if cheat mode was already enabled
     - Fixed data stage code structure to prevent leaking globals into other mods, and fix many incompatibilities both known and unknown
