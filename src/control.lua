@@ -6,7 +6,7 @@
 pcall(require,'__debugadapter__/debugadapter.lua')
 
 local event = require('lualib/event')
-local util = require('lualib/util')
+local util = require('scripts/util')
 
 -- locals
 local string_find = string.find

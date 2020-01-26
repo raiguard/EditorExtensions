@@ -2,11 +2,11 @@
 -- INFINITY ACCUMULATOR
 
 local event = require('lualib/event')
-local util = require('lualib/util')
+local util = require('scripts/util')
 
 -- GUI ELEMENTS
-local entity_camera = require('lualib/gui-elems/entity-camera')
-local titlebar = require('lualib/gui-elems/titlebar')
+local entity_camera = require('scripts/gui-elems/entity-camera')
+local titlebar = require('scripts/gui-elems/titlebar')
 
 local gui = {}
 

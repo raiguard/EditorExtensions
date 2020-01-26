@@ -56,7 +56,6 @@ self.module_data = {
 }
 
 -- definitions
--- utilities for prototype creation
 self.empty_circuit_wire_connection_points = {
   {wire={},shadow={}},
   {wire={},shadow={}},

@@ -3,7 +3,7 @@
 
 local abs = math.abs
 local event = require('lualib/event')
-local util = require('lualib/util')
+local util = require('scripts/util')
 
 -- --------------------------------------------------------------------------------
 -- CONDITIONAL HANDLERS

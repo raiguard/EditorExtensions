@@ -2,10 +2,10 @@
 -- INFINITY COMBINATOR
 
 local event = require('lualib/event')
-local util = require('lualib/util')
+local util = require('scripts/util')
 
 -- GUI ELEMENTS
-local titlebar = require('lualib/gui-elems/titlebar')
+local titlebar = require('scripts/gui-elems/titlebar')
 
 local gui = {}
 

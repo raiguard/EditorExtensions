@@ -3,7 +3,7 @@
 
 local event = require('lualib/event')
 local chest_names = {'tesseract-chest','tesseract-chest-passive-provider','tesseract-chest-storage'}
-local util = require('lualib/util')
+local util = require('scripts/util')
 
 -- --------------------------------------------------------------------------------
 -- LOCAL UTILITIES
