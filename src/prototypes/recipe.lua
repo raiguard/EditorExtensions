@@ -2,6 +2,8 @@
 -- RECIPES
 -- For use in cheat mode so you can use the tools outside of the editor
 
+local util = require('prototypes/util')
+
 local recipe_names = {
   'infinity-accumulator',
   'infinity-beacon',
@@ -40,14 +42,14 @@ local function register_recipes(t)
 end
 
 register_recipes(recipe_names)
-for lm,t in pairs(infinity_chest_data) do
+for lm,t in pairs(util.infinity_chest_data) do
   register_recipes{'infinity-chest-'..lm}
 end
-for lm,t in pairs(tesseract_chest_data) do
+for lm,t in pairs(util.tesseract_chest_data) do
   if lm ~= '' then
       register_recipes{'tesseract-chest-'..lm}
   end
 end
-for _,t in ipairs(module_data) do
+for _,t in ipairs(util.module_data) do
   register_recipes{t.name}
 end

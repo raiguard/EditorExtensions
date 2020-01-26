@@ -1,11 +1,8 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- UTILITIES
--- This file is not part of RaiLuaLib, but is specific to each mod
+-- CONTROL STAGE UTILITIES
 
 local math2d = require('__core__/lualib/math2d')
-local util = require('__core__/lualib/util')
-
-table.merge = util.merge
+local util = table.deepcopy(require('__core__/lualib/util'))
 
 -- GENERAL
 
@@ -30,23 +27,6 @@ util.constants = {
     sprite = 'utility/close_white',
     hovered_sprite = 'utility/close_black',
     clicked_sprite = 'utility/close_black'
-  }
-}
-
--- utilities for prototype creation
-util.data = {
-  empty_circuit_wire_connection_points = {
-    {wire={},shadow={}},
-    {wire={},shadow={}},
-    {wire={},shadow={}},
-    {wire={},shadow={}}
-  },
-  empty_sheet = {
-    filename = '__core__/graphics/empty.png',
-    priority = 'very-low',
-    width = 1,
-    height = 1,
-    frame_count = 1
   }
 }
 

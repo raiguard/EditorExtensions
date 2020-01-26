@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2020.1.26
+  Bugfixes:
+    - Fixed data stage code structure to prevent leaking globals into other mods, and fix many incompatibilities both known and unknown
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2020.1.25
   Bugfixes:
