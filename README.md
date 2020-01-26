@@ -7,6 +7,8 @@ Extends the Factorio map editor with new tools and utilities, and makes tweaks t
 
 This mod includes a ton of items and tools to aid with testing your setups. Supercharged robots, energy-free inserters, infinite item, fluid, heat, and electricity manipulation, and overpowered modules are just a few of the tools at your disposal.
 
+These tools are normally only available inside of the editor. If you would like to access them while in normal play, use the `/cheat` command.
+
 ### Mode switching
 
 ![](resources/shortcut-preview.png)
