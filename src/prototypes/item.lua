@@ -76,6 +76,20 @@ data:extend{
   }
 }
 
+-- INFINITY EXOSKELETON
+data:extend{
+  {
+    type = 'item',
+    name = 'infinity-exoskeleton-equipment',
+    icon_size = 32,
+    icons = util.recursive_tint{util.extract_icon_info(data.raw['item']['exoskeleton-equipment'])},
+    subgroup = 'ee-equipment',
+    order = 'ac',
+    placed_as_equipment_result = 'infinity-exoskeleton-equipment',
+    stack_size = 50
+  }
+}
+
 -- INFINITY FUSION REACTOR
 data:extend{
   {

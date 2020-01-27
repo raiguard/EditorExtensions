@@ -6,6 +6,7 @@ local self = table.deepcopy(require('__core__/lualib/util'))
 -- tints
 self.infinity_tint = {r=1, g=0.5, b=1, a=1}
 self.combinator_tint = {r=0.8, g=0.5, b=1, a=1}
+self.equipment_background_color = {r=0.5, g=0.25, b=0.5, a=1}
 
 -- recursive tinting - tint all sprite definitions in the given table
 local function is_sprite_def(array)
