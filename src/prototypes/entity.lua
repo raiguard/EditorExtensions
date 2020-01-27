@@ -334,6 +334,9 @@ infinity_roboport.logistics_radius = 200
 infinity_roboport.construction_radius = 400
 infinity_roboport.energy_source = {type='void'}
 infinity_roboport.charging_energy = '1000YW'
+infinity_roboport.charging_distance = 0
+infinity_roboport.charging_station_count = 100
+infinity_roboport.charging_threshold_distance = 0
 infinity_roboport.minable.result = 'infinity-roboport'
 util.recursive_tint(infinity_roboport)
 data:extend{infinity_roboport}
