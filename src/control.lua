@@ -4,6 +4,11 @@
 
 -- debug adapter
 pcall(require,'__debugadapter__/debugadapter.lua')
+if __DebugAdapter then
+  script.on_event('DEBUG-INSPECT-GLOBAL', function(e)
+    local breakpoint -- put breakpoint here to inspect global at any time
+  end)
+end
 
 local event = require('lualib/event')
 local util = require('scripts/util')
@@ -205,10 +210,52 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter='name', name='infinity-fluid-wagon'}
 })
 
--- DEBUG ADAPTER
+-- --------------------------------------------------------------------------------
+-- MIGRATIONS
 
-if __DebugAdapter then
-  script.on_event('DEBUG-INSPECT-GLOBAL', function(e)
-    local breakpoint -- put breakpoint here to inspect global at any time
-  end)
+-- table of migration functions
+local migrations = {
+  ['1.1.0'] = function(e)
+    -- enable infinity equipment recipes, hide electric energy interface recipe
+    for _,force in pairs(game.forces) do
+      local recipes = force.recipes
+      if recipes['ee-infinity-loader'].enabled then
+        recipes['electric-energy-interface'].enabled = false
+        recipes['ee-infinity-exoskeleton-equipment'].enabled = true
+        recipes['ee-infinity-fusion-reactor-equipment'].enabled = true
+        recipes['ee-infinity-personal-roboport-equipment'].enabled = true
+      end
+    end
+  end
+}
+
+-- returns true if v2 is newer than v1, false if otherwise
+local function compare_versions(v1, v2)
+  local v1_split = util.split(v1, '.')
+  local v2_split = util.split(v2, '.')
+  for i=1,#v1_split do
+    if v1_split[i] < v2_split[i] then
+      return true
+    end
+  end
+  return false
 end
+
+-- handle migrations
+event.on_configuration_changed(function(e)
+  local changes = e.mod_changes.EditorExtensions
+  if changes then
+    local old = changes.old_version
+    if old then
+      -- version migrations
+      local migrate = false
+      for v,f in pairs(migrations) do
+        if migrate or compare_versions(old, v) then
+          migrate = true
+          log('Applying migration: '..v)
+          f(e)
+        end
+      end
+    end
+  end
+end)

@@ -1,10 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.3
 Date: 2020.1.27
+  Features:
+    - Added infinity exoskeleton equipment
   Changes:
+    - Buffed infinity roboport to have 100 charging slots and charge all bots in the center, significantly speeding it up
     - Removed some redundant code for showing the testing items
   Bugfixes:
     - Fixed that the electric energy interface would show in the crafting menu when using /cheat
+    - Fixed that infinity equipment wasn't included in the crafting recipes after using /cheat
+    - Fixed that infinity equipment would not be tinted when stuck in armor
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.2
