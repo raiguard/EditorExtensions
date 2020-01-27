@@ -28,20 +28,15 @@ local function enable_recipes(player)
   -- check if it has already been enabled for this force
   if force.recipes['ee-infinity-loader'].enabled == false then
     for n,_ in pairs(game.recipe_prototypes) do
-      if string_find(n, 'ee-') and force.recipes[n] then force.recipes[n].enabled = true end
+      if string_find(n, '^ee%-') and force.recipes[n] then force.recipes[n].enabled = true end
     end
     force.print{'ee-message.testing-tools-enabled', player.name}
   end
 end
 
--- use on_console_command instead of on_cheat_mode_enabled so people can enable the recipes post-partem
-event.on_console_command(function(e)
-  if e.command == 'cheat' then
-    local player = game.get_player(e.player_index)
-    if player.cheat_mode then
-      enable_recipes(player)
-    end
-  end
+-- enable the testing items when cheat mode is enabled
+event.on_player_cheat_mode_enabled(function(e)
+  enable_recipes(game.get_player(e.player_index))
 end)
 
 -- -----------------------------------------------------------------------------

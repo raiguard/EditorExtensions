@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2020.1.27
+  Changes:
+    - Removed some redundant code for showing the testing items
+  Bugfixes:
+    - Fixed that the electric energy interface would show in the crafting menu when using /cheat
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2020.1.26
   Features:
