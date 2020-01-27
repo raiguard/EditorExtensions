@@ -5,26 +5,29 @@
 local util = require('prototypes/util')
 
 local recipe_names = {
+  'heat-interface',
   'infinity-accumulator',
   'infinity-beacon',
+  'infinity-cargo-wagon',
   'infinity-chest',
   'infinity-combinator',
+  'infinity-construction-robot',
   'infinity-electric-pole',
+  'infinity-exoskeleton-equipment',
+  'infinity-fluid-wagon',
   'infinity-fuel',
-  'heat-interface',
+  'infinity-fusion-reactor-equipment',
   'infinity-inserter',
   'infinity-lab',
   'infinity-loader',
   'infinity-locomotive',
+  'infinity-logistic-robot',
+  'infinity-personal-roboport-equipment',
   'infinity-pipe',
-  'infinity-substation',
   'infinity-pump',
   'infinity-radar',
   'infinity-roboport',
-  'infinity-construction-robot',
-  'infinity-logistic-robot',
-  'infinity-cargo-wagon',
-  'infinity-fluid-wagon',
+  'infinity-substation',
   'tesseract-chest'
 }
 local function register_recipes(t)
