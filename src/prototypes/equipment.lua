@@ -19,7 +19,7 @@ data:extend{
     shape = {width=1, height=1, type='full'},
     energy_source = {type='electric', usage_priority='secondary-input'},
     energy_consumption = '200kW',
-    movement_bonus = 4,
+    movement_bonus = 2,
     categories = {'armor'}
   },
   {
