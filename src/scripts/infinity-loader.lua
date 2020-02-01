@@ -10,7 +10,7 @@ local titlebar = require('scripts/gui-elems/titlebar')
 
 local gui = {}
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
 -- pattern -> replacement
@@ -250,7 +250,7 @@ local function check_tile_neighbors(entity, func, eight_way, dir_agnostic)
   return matched_entities
 end
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- GUI
 
 -- ----------------------------------------
@@ -333,7 +333,7 @@ function gui.destroy(window, player_index)
   window.destroy()
 end
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- SNAPPING
 -- 'Snapping' in this case usually means matching both direction and belt type
 
@@ -469,7 +469,7 @@ remote.add_interface('ee_infinity_loader', {
   on_loader_snapped = function() return event.generate_id('il_on_loader_snapped') end
 })
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- STATIC HANDLERS
 
 -- when an entity is built in-game of through script, or constructed or revived through script

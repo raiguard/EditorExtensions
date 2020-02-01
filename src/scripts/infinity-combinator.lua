@@ -9,7 +9,7 @@ local titlebar = require('scripts/gui-elems/titlebar')
 
 local gui = {}
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
 local table_deepcopy = table.deepcopy
@@ -116,7 +116,7 @@ local function create_sort_button(parent, mode, direction)
                     sprite='ee-sort-'..mode..'-'..direction, tooltip={'gui-infinity-combinator.sort-'..mode..'-'..direction..'-button-tooltip'}}
 end
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- GUI
 
 -- ----------------------------------------
@@ -358,7 +358,7 @@ function gui.destroy(window, player_index)
   window.destroy()
 end
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- STATIC HANDLERS
 
 -- when a player opens a GUI

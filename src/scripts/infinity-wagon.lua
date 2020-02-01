@@ -5,7 +5,7 @@ local abs = math.abs
 local event = require('lualib/event')
 local util = require('scripts/util')
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- CONDITIONAL HANDLERS
 
 local function wagon_on_tick()
@@ -41,7 +41,7 @@ event.on_load(function()
   event.load_conditional_handlers{wagon_on_tick=wagon_on_tick}
 end)
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- STATIC HANDLERS
 
 -- on game init

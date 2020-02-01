@@ -25,7 +25,7 @@ require('scripts/infinity-loader')
 require('scripts/infinity-wagon')
 require('scripts/tesseract-chest')
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- TESTING TOOLS RECIPES
 
 local function enable_recipes(player, skip_message)
@@ -122,16 +122,16 @@ event.on_init(function()
 end)
 
 -- set up player when created
-event.register(defines.events.on_player_created, function(e)
+event.on_player_created(function(e)
   setup_player(e.player_index)
 end)
 
 -- destroy player table when removed
-event.register(defines.events.on_player_removed, function(e)
+event.on_player_removed(function(e)
   global.players[e.player_index] = nil
 end)
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- MAP EDITOR SHORTCUT
 
 -- when toggled
@@ -159,11 +159,11 @@ event.register({defines.events.on_player_promoted, defines.events.on_player_demo
   player.set_shortcut_available('ee-toggle-map-editor', player.admin)
 end)
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- INFINITY INSERTER
 
 -- set manually built inserters to blacklist mode by default
-event.register(defines.events.on_built_entity, function(e)
+event.on_built_entity(function(e)
   local entity = e.created_entity
   if entity.name == 'infinity-inserter' then
     local control = entity.get_control_behavior()
@@ -174,11 +174,11 @@ event.register(defines.events.on_built_entity, function(e)
   end
 end)
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- INFINITY PIPE
 
 -- snap manually built infinity pipes
-event.register(defines.events.on_built_entity, function(e)
+event.on_built_entity(function(e)
   local entity = e.created_entity
   if entity.name == 'infinity-pipe' then
     local neighbours = entity.neighbours[1]
@@ -210,7 +210,7 @@ event.register(defines.events.on_built_entity, function(e)
   end
 end)
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- EVENT FILTERS
 -- Add filters to all events that support them so we can preserve as much performance as possible
 
@@ -251,7 +251,7 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter='name', name='infinity-fluid-wagon'}
 })
 
--- --------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- MIGRATIONS
 
 -- table of migration functions
