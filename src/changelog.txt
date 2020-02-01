@@ -1,8 +1,9 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.3
-Date: 2020.1.27
+Version: 1.1.0
+Date: 2020.2.1
   Features:
     - Added infinity exoskeleton equipment
+    - Added /ee_cheat command that is similar to /cheat, but outfits you with infinity equipment instead of vanilla equipment
   Changes:
     - Buffed infinity roboport to have 100 charging slots and charge all bots in the center, significantly speeding it up
     - Removed some redundant code for showing the testing items

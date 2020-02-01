@@ -28,20 +28,61 @@ require('scripts/tesseract-chest')
 -- --------------------------------------------------------------------------------
 -- TESTING TOOLS RECIPES
 
-local function enable_recipes(player)
+local function enable_recipes(player, skip_message)
   local force = player.force
   -- check if it has already been enabled for this force
   if force.recipes['ee-infinity-loader'].enabled == false then
     for n,_ in pairs(game.recipe_prototypes) do
       if string_find(n, '^ee%-') and force.recipes[n] then force.recipes[n].enabled = true end
     end
-    force.print{'ee-message.testing-tools-enabled', player.name}
+    if not skip_message then
+      force.print{'ee-message.testing-tools-enabled', player.name}
+    end
   end
 end
 
 -- enable the testing items when cheat mode is enabled
 event.on_player_cheat_mode_enabled(function(e)
   enable_recipes(game.get_player(e.player_index))
+end)
+
+-- armor outfit
+local armor_outfit = {
+  {name='infinity-fusion-reactor-equipment', position={0,0}},
+  {name='infinity-personal-roboport-equipment', position={1,0}},
+  {name='infinity-exoskeleton-equipment', position={2,0}},
+  {name='infinity-exoskeleton-equipment', position={3,0}}
+}
+
+-- /ee_cheat command
+commands.add_command('ee_cheat', {'ee-message.cheat-command-help'}, function(e)
+  local player = game.get_player(e.player_index)
+  if player.admin then
+    local force = player.force
+    -- research all techs for the force
+    force.research_all_technologies()
+    -- enable cheat mode for the player
+    -- this will also unlock the testing tools and notify the force
+    player.cheat_mode = true
+    -- create outfitted power armor
+    player.clean_cursor()
+    local cursor_stack = player.cursor_stack
+    cursor_stack.set_stack{name='power-armor-mk2'}
+    local grid = cursor_stack.grid
+    for i=1,#armor_outfit do
+      grid.put(armor_outfit[i])
+    end
+    player.insert(cursor_stack)
+    cursor_stack.clear()
+    -- insert robots
+    player.insert{name='infinity-construction-robot', count=100}
+    -- reach distance
+    player.character_build_distance_bonus = 1000000
+    player.character_reach_distance_bonus = 1000000
+    player.character_resource_reach_distance_bonus = 1000000
+  else
+    player.print{'ee-message.cheat-command-denied'}
+  end
 end)
 
 -- -----------------------------------------------------------------------------
