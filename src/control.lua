@@ -267,6 +267,12 @@ local migrations = {
         recipes['ee-infinity-personal-roboport-equipment'].enabled = true
       end
     end
+    -- enable recipes for any players who already have cheat mode enabled
+    for _,player in pairs(game.players) do
+      if player.cheat_mode then
+        enable_recipes(player)
+      end
+    end
   end
 }
 
