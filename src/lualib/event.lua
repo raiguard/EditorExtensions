@@ -24,6 +24,7 @@ local gui_filter_matchers = {
 -- calls handler functions tied to an event
 -- ALL events go through this function
 local function dispatch_event(e)
+  local global_data = global.__lualib.event
   local id = e.name
   -- set ID for special events
   if e.nth_tick then
@@ -50,11 +51,14 @@ local function dispatch_event(e)
     local name = options.name
     local gui_filters
     if name then
-      local con_data = global.__lualib.event[name]
+      local con_data = global_data[name]
       if not con_data then error('Conditional event has been raised, but has no data!') end
       e.registered_players = con_data.players
       -- if there are GUI filters, check them
       gui_filters = con_data.gui_filters[e.player_index]
+      if not gui_filters and table_size(con_data.gui_filters) > 0 then
+        goto continue
+      end
     else
       gui_filters = t.gui_filters
     end
@@ -127,13 +131,13 @@ function event.register(id, handler, options)
     if not t then
       global_data[name] = {id=id, players={}, gui_filters={}}
       t = global_data[name]
-    else
+    elseif player_index then
       -- check if the player already registered this event
       local players = t.players
       for i=1,#players do
         if players[i] == player_index then
           -- don't do anything
-          log('Tried to re-register a conditional event for player '..player_index..', skipping!')
+          log('Tried to re-register \''..name..'\' for player '..player_index..', skipping!')
           return event
         end
       end
@@ -147,7 +151,9 @@ function event.register(id, handler, options)
         error('Must specify a player_index when using gui filters on a conditional event.')
       end
     end
-    table_insert(t.players, player_index)
+    if player_index then
+      table_insert(t.players, player_index)
+    end
     if skip_registration then return event end
   end
   -- register handler
@@ -183,7 +189,12 @@ function event.register(id, handler, options)
     n_options.gui_filters = nil
     if name then gui_filters = nil end
     -- add the handler to the events table
-     table.insert(registry, {handler=handler, gui_filters=gui_filters, options=n_options})
+    local data = {handler=handler, gui_filters=gui_filters, options=n_options}
+    if options.insert_at_front then
+      table_insert(registry, 1, data)
+    else
+      table_insert(registry, data)
+    end
   end
   return event -- function call chaining
 end
@@ -272,16 +283,16 @@ end
 -- SHORTCUT FUNCTIONS
 
 -- bootstrap events
-function event.on_init(handler)
-  return event.register('on_init', handler)
+function event.on_init(handler, options)
+  return event.register('on_init', handler, options)
 end
 
-function event.on_load(handler)
-  return event.register('on_load', handler)
+function event.on_load(handler, options)
+  return event.register('on_load', handler, options)
 end
 
-function event.on_configuration_changed(handler)
-  return event.register('on_configuration_changed', handler)
+function event.on_configuration_changed(handler, options)
+  return event.register('on_configuration_changed', handler, options)
 end
 
 function event.on_nth_tick(nthTick, handler, options)
@@ -300,17 +311,11 @@ end
 
 -- re-registers conditional handlers if they're in the registry
 function event.load_conditional_handlers(data)
-  -- check for the existence of global.__lualib in case we're migrating from a previous version
-  local global_data
-  if not global.__lualib then
-    global_data = global.conditional_event_registry
-  else
-    global_data = global.__lualib.event
-  end
+  local global_data = global.__lualib.event
   for name, handler in pairs(data) do
     local registry = global_data[name]
     if registry then
-        event.register(registry.id, handler, {name=name})
+      event.register(registry.id, handler, {name=name})
     end
   end
   return event
