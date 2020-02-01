@@ -51,7 +51,8 @@ local armor_outfit = {
   {name='infinity-fusion-reactor-equipment', position={0,0}},
   {name='infinity-personal-roboport-equipment', position={1,0}},
   {name='infinity-exoskeleton-equipment', position={2,0}},
-  {name='infinity-exoskeleton-equipment', position={3,0}}
+  {name='infinity-exoskeleton-equipment', position={3,0}},
+  {name='night-vision-equipment', position={0,1}}
 }
 
 -- /ee_cheat command
