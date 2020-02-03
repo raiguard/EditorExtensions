@@ -619,7 +619,7 @@ end)
 
 -- when a GUI is closed
 event.register(defines.events.on_gui_closed, function(e)
-  if e.gui_type == 16 and e.element.name == 'ee_il_window' then
+  if e.gui_type == 16 and e.element and e.element.name == 'ee_il_window' then
     gui.destroy(e.element, e.player_index)
     global.players[e.player_index].gui.il = nil
   end

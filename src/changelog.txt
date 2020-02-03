@@ -2,6 +2,7 @@
 Version: 1.1.1
 Date: 2020.2.3
   Bugfixes:
+    - Fixed a crash when another mod's custom GUI was closed before this mod got to read it
     - Fixed a crash when an infinity pipe is snapping to a fluidbox with an index greater than one
     - Fixed incorrect infinity pipe snapping behavior when there are multiple infinity pipes connected to the same crafting machine
 

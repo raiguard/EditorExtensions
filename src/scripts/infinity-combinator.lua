@@ -395,7 +395,7 @@ end)
 
 -- when a GUI is closed
 event.register(defines.events.on_gui_closed, function(e)
-  if e.gui_type == 16 and e.element.name == 'ee_ic_window' then
+  if e.gui_type == 16 and e.element and e.element.name == 'ee_ic_window' then
     gui.destroy(e.element, e.player_index)
     -- deregister on_tick
     event.deregister(defines.events.on_tick, update_circuit_values, 'ic_update_circuit_values', e.player_index)
