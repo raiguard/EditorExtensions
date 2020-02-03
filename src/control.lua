@@ -194,7 +194,10 @@ event.on_built_entity(function(e)
           local fb = neighbour.fluidbox
           for i=1,#fb do
             local connections = fb.get_connections(i)
-            if connections[1] and connections[1].owner.unit_number == own_id and fb.get_prototype(i).production_type == 'input' then
+            -- local prototype = fb.get_prototype(i)
+            -- local production_type = prototype.production_type
+            -- local unit_number = connections[1] and connections[1].owner.unit_number
+            if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == 'input') then
               -- set to fill the pipe with the fluid
               entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(1), percentage=1, mode='exactly'}
               return -- don't do default snapping
