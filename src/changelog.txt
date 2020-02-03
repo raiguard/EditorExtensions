@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 2020.2.3
+  Bugfixes:
+    - Fixed a crash when an infinity pipe is snapping to a fluidbox with an index greater than one
+    - Fixed incorrect infinity pipe snapping behavior when there are multiple infinity pipes connected to the same crafting machine
+
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2020.2.1
   Features:

@@ -184,6 +184,7 @@ event.on_built_entity(function(e)
   if entity.name == 'infinity-pipe' then
     local neighbours = entity.neighbours[1]
     local own_fb = entity.fluidbox
+    local own_id = entity.unit_number
     local s = settings.get_player_settings(e.player_index)
     -- snap to adjacent assemblers
     if s['ee-infinity-pipe-assembler-snapping'].value then
@@ -192,9 +193,10 @@ event.on_built_entity(function(e)
         if neighbour.type == 'assembling-machine' and neighbour.fluidbox then
           local fb = neighbour.fluidbox
           for i=1,#fb do
-            if fb.get_connections(i)[1] == own_fb and fb.get_prototype(i).production_type == 'input' then
+            local connections = fb.get_connections(i)
+            if connections[1] and connections[1].owner.unit_number == own_id and fb.get_prototype(i).production_type == 'input' then
               -- set to fill the pipe with the fluid
-              entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(i), percentage=1, mode='exactly'}
+              entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(1), percentage=1, mode='exactly'}
               return -- don't do default snapping
             end
           end
