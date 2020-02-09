@@ -78,9 +78,11 @@ commands.add_command('ee_cheat', {'ee-message.cheat-command-help'}, function(e)
     -- insert robots
     player.insert{name='infinity-construction-robot', count=100}
     -- reach distance
-    player.character_build_distance_bonus = 1000000
-    player.character_reach_distance_bonus = 1000000
-    player.character_resource_reach_distance_bonus = 1000000
+    if player.character then
+      player.character_build_distance_bonus = 1000000
+      player.character_reach_distance_bonus = 1000000
+      player.character_resource_reach_distance_bonus = 1000000
+    end
   else
     player.print{'ee-message.cheat-command-denied'}
   end
