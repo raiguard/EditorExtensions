@@ -229,7 +229,6 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter='name', name='infinity-fluid-wagon'},
   {filter='name', name='tesseract-chest'},
   {filter='name', name='tesseract-chest-passive-provider'},
-  {filter='name', name='tesseract-chest-storage'},
   {filter='name', name='infinity-inserter'},
   {filter='name', name='infinity-pipe'},
   {filter='type', type='transport-belt'},
