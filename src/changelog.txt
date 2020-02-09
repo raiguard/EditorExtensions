@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
 Date: ????
+  Changes:
+    - Updated crafting group icon
+    - Removed tesseract storage chest due to performance problems making it completely unusable
+  Bugfixes:
+    - Fixed a crash when using the /ee_cheat command without a character
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.1

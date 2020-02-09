@@ -40,8 +40,7 @@ self.infinity_chest_data = {
 }
 self.tesseract_chest_data = {
   [''] = {t={255,255,255}, o='ba'},
-  ['passive-provider'] = {t={255,141,114}, o='bb'},
-  ['storage'] = {t={255,220,113}, o='bc'}
+  ['passive-provider'] = {t={255,141,114}, o='bb'}
 }
 self.module_data = {
   {name='super-speed-module', icon_ref='speed-module-3', order='ba', category = 'speed', tier=50, effect={speed={bonus=2.5}}, tint={r=0.5,g=0.5,b=1}},
