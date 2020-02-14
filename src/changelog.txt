@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.2.0
-Date: ????
+Version: 1.1.2
+Date: 2020-02-14
   Changes:
     - Updated crafting group icon
     - Removed tesseract storage chest due to performance problems making it completely unusable
@@ -9,7 +9,7 @@ Date: ????
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.1
-Date: 2020.2.3
+Date: 2020-02-03
   Bugfixes:
     - Fixed a crash when another mod's custom GUI was closed before this mod got to read it
     - Fixed a crash when an infinity pipe is snapping to a fluidbox with an index greater than one
@@ -17,7 +17,7 @@ Date: 2020.2.3
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
-Date: 2020.2.1
+Date: 2020-02-01
   Features:
     - Added infinity exoskeleton equipment
     - Added /ee_cheat command that is similar to /cheat, but outfits you with infinity equipment instead of vanilla equipment
@@ -31,7 +31,7 @@ Date: 2020.2.1
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.2
-Date: 2020.1.26
+Date: 2020-01-26
   Features:
     - If you are already in cheat mode when Editor Extensions is added to your save, the testing tools will unlock themselves automatically
     - The toggle map editor shortcut will visually disable itself if the player is not an admin
@@ -41,13 +41,13 @@ Date: 2020.1.26
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
-Date: 2020.1.25
+Date: 2020-01-25
   Bugfixes:
     - Fixed incorrect infinity heat pipe picture definition causing a crash in some cases
     - Fixed save/load safety of event GUI filters
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
-Date: 2020.1.25
+Date: 2020-01-25
   Features:
     - Initial release
