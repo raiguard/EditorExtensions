@@ -41,12 +41,16 @@ local lab = data.raw['lab']['infinity-lab']
 -- fill this table with any future science pack names that don't match the pattern
 local pattern_overrides = {}
 local packs = {}
-for _,p in pairs(data.raw['tool']) do
-  if p.name:find('science%-pack') then
-    table.insert(packs, p.name)
+for _,p in pairs(data.raw['lab']) do
+  for _, input in pairs(p.inputs) do
+    packs[input] = true
   end
 end
-lab.inputs = packs
+local over = {}
+for p,_ in pairs(packs) do
+  table.insert(over, p)
+end
+lab.inputs = over
 
 -- INFINITY EQUIPMENT
 -- allow equipment to be placed in all existing grid categories

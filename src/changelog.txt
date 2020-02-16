@@ -6,6 +6,9 @@ Date: ????
     - Added default infinity inventory filters setting
   Changes:
     - Improved styling of infinity loader filter buttons and infinity combinator selected button
+  Bugfixes:
+    - Fixed missing key error when trying to build over an infinity loader
+    - Fixed infinity lab not properly detecting all possible science packs
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 2020-02-14
