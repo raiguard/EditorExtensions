@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.0
+Date: ????
+  Features:
+
+---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 2020-02-14
   Changes:
@@ -6,7 +11,6 @@ Date: 2020-02-14
     - Removed tesseract storage chest due to performance problems making it completely unusable
   Bugfixes:
     - Fixed a crash when using the /ee_cheat command without a character
-
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.1
 Date: 2020-02-03
@@ -14,7 +18,6 @@ Date: 2020-02-03
     - Fixed a crash when another mod's custom GUI was closed before this mod got to read it
     - Fixed a crash when an infinity pipe is snapping to a fluidbox with an index greater than one
     - Fixed incorrect infinity pipe snapping behavior when there are multiple infinity pipes connected to the same crafting machine
-
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2020-02-01
@@ -28,7 +31,6 @@ Date: 2020-02-01
     - Fixed that the electric energy interface would show in the crafting menu when using /cheat
     - Fixed that infinity equipment wasn't included in the crafting recipes after using /cheat
     - Fixed that infinity equipment would not be tinted when stuck in armor
-
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: 2020-01-26
@@ -38,14 +40,12 @@ Date: 2020-01-26
   Bugfixes:
     - Fixed not being able to unlock testing tools using /cheat if cheat mode was already enabled
     - Fixed data stage code structure to prevent leaking globals into other mods, and fix many incompatibilities both known and unknown
-
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.1
 Date: 2020-01-25
   Bugfixes:
     - Fixed incorrect infinity heat pipe picture definition causing a crash in some cases
     - Fixed save/load safety of event GUI filters
-
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2020-01-25
