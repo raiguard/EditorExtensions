@@ -160,6 +160,13 @@ event.on_load(function()
   end
 end)
 
+event.on_configuration_changed(function(e)
+  if not global.__lualib.gui then
+    global.__lualib.gui = {}
+    global_data = global.__lualib.gui
+  end
+end)
+
 -- -----------------------------------------------------------------------------
 -- OBJECT
 

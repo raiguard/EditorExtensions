@@ -6,6 +6,7 @@ pcall(require,'__debugadapter__/debugadapter.lua')
 
 -- dependencies
 local event = require('lualib/event')
+local migrations = require('lualib/migrations')
 local util = require('scripts/util')
 
 -- locals
@@ -258,8 +259,8 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
 -- MIGRATIONS
 
 -- table of migration functions
-local migrations = {
-  ['1.1.0'] = function(e)
+local version_migrations = {
+  ['1.1.0'] = function()
     -- enable infinity equipment recipes, hide electric energy interface recipe
     for _,force in pairs(game.forces) do
       local recipes = force.recipes
@@ -279,33 +280,7 @@ local migrations = {
   end
 }
 
--- returns true if v2 is newer than v1, false if otherwise
-local function compare_versions(v1, v2)
-  local v1_split = util.split(v1, '.')
-  local v2_split = util.split(v2, '.')
-  for i=1,#v1_split do
-    if v1_split[i] < v2_split[i] then
-      return true
-    end
-  end
-  return false
-end
-
 -- handle migrations
 event.on_configuration_changed(function(e)
-  local changes = e.mod_changes.EditorExtensions
-  if changes then
-    local old = changes.old_version
-    if old then
-      -- version migrations
-      local migrate = false
-      for v,f in pairs(migrations) do
-        if migrate or compare_versions(old, v) then
-          migrate = true
-          log('Applying migration: '..v)
-          f(e)
-        end
-      end
-    end
-  end
-end)
+  migrations.on_config_changed(e, version_migrations)
+end, {insert_at_front=true})
