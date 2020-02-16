@@ -4,6 +4,8 @@ Date: ????
   Features:
     - Added infinity inventory filters import/export dialog
     - Added default infinity inventory filters setting
+  Changes:
+    - Improved styling of infinity loader filter buttons
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 2020-02-14
