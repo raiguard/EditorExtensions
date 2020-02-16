@@ -81,6 +81,7 @@ gui.add_handlers{
         if e.gui_type and e.gui_type == 3 then
           local player_table = global.players[e.player_index]
           gui.destroy(player_table.gui.inventory_filters_buttons.window, 'inventory_filters_buttons', e.player_index)
+          player_table.gui.inventory_filters_buttons = nil
         end
       end
     },
@@ -89,6 +90,11 @@ gui.add_handlers{
         -- close the GUI if the player exits the map editor
         local player_table = global.players[e.player_index]
         gui.destroy(player_table.gui.inventory_filters_buttons.window, 'inventory_filters_buttons', e.player_index)
+        player_table.gui.inventory_filters_buttons = nil
+        if player_table.gui.inventory_filters_string then
+          gui.destroy(player_table.gui.inventory_filters_string.window, 'inventory_filters_string', e.player_index)
+          player_table.gui.inventory_filters_string = nil
+        end
       end,
       on_player_display_resolution_changed = function(e)
         local player = game.get_player(e.player_index)

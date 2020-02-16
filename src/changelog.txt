@@ -2,7 +2,8 @@
 Version: 1.2.0
 Date: ????
   Features:
-
+    - Added infinity inventory filters import/export dialog
+    - Added default infinity inventory filters setting
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.2
 Date: 2020-02-14

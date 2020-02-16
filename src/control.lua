@@ -1,10 +1,10 @@
-
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- EDITOR EXTENSIONS CONTROL SCRIPTING
+-- CONTROL SCRIPTING
 
 -- debug adapter
 pcall(require,'__debugadapter__/debugadapter.lua')
 
+-- dependencies
 local event = require('lualib/event')
 local util = require('scripts/util')
 
