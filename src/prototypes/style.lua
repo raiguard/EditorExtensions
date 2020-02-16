@@ -50,10 +50,9 @@ local shadow = {
   draw_type = 'outer'
 }
 
-styles.ee_infinity_loader_filter_button = {
+styles.ee_filter_slot_button_inset = {
   type = 'button_style',
   parent = 'filter_slot_button',
-  size = 38,
   default_graphical_set = {
     base = {border=4, position={0,736}, size=80},
     shadow = shadow
@@ -67,6 +66,12 @@ styles.ee_infinity_loader_filter_button = {
     base = {border=4, position={160,736}, size=80},
     shadow = shadow
   },
+}
+
+styles.ee_infinity_loader_filter_button = {
+  type = 'button_style',
+  parent = 'ee_filter_slot_button_inset',
+  size = 38
 }
 
 styles.ee_active_filter_slot_button = {
@@ -172,7 +177,8 @@ styles.ee_current_signal_frame = {
   horizontal_flow_style = {
     type = 'horizontal_flow_style',
     horizontally_stretchable = 'on',
-    vertical_align = 'center'
+    vertical_align = 'center',
+    horizontal_spacing = 6
   }
 }
 

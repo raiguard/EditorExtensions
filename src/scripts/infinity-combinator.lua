@@ -338,7 +338,7 @@ function gui.create(parent, player)
   -- SELECTED SIGNAL
   local selected_flow = content_pane.add{type='frame', name='ee_ic_lower_flow', style='ee_current_signal_frame', direction='horizontal'}
   selected_flow.style.top_margin = 2
-  local selected_button = selected_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='filter_slot_button', elem_type='signal'}
+  local selected_button = selected_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='ee_filter_slot_button_inset', elem_type='signal'}
   event.on_gui_elem_changed(selected_button_elem_changed, {name='ic_selected_button_elem_changed', player_index=player.index, gui_filters=selected_button})
   local value_textfield = selected_flow.add{type='textfield', name='ee_ic_input_textfield', style='ee_ic_value_textfield', numeric=true,
                                             clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
