@@ -212,3 +212,10 @@ event.on_gui_opened(function(e)
     end
   end
 end)
+
+-- -----------------------------------------------------------------------------
+-- OBJECT
+
+return {
+  import_inventory_filters = import_filters
+}

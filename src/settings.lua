@@ -100,6 +100,14 @@ data:extend{
     default_value = true,
     order = 'ab'
   },
+  {
+    type = 'string-setting',
+    name = 'ee-default-inventory-filters',
+    setting_type = 'runtime-per-user',
+    allow_blank = true,
+    default_value = '',
+    order = 'ba'
+  }
   -- {
   --   type = 'bool-setting',
   --   name = 'ee-inventory-and-cursor-stack-sync',

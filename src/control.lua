@@ -19,8 +19,9 @@ require('scripts/infinity-accumulator')
 require('scripts/infinity-combinator')
 require('scripts/infinity-loader')
 require('scripts/infinity-wagon')
-require('scripts/inventory')
 require('scripts/tesseract-chest')
+
+local inventory = require('scripts/inventory')
 
 -- -----------------------------------------------------------------------------
 -- TESTING TOOLS RECIPES
@@ -90,7 +91,9 @@ end)
 
 local function setup_player(index)
   local data = {
-    flags = {},
+    flags = {
+      map_editor_toggled = false
+    },
     gui = {
       ic = {
         network_color = 'red',
@@ -150,7 +153,17 @@ end)
 event.on_player_toggled_map_editor(function(e)
   -- set map editor shortcut state
   local player = game.get_player(e.player_index)
-  player.set_shortcut_toggled('ee-toggle-map-editor', player.controller_type == defines.controllers.editor)
+  local player_table = global.players[e.player_index]
+  local new_state = player.controller_type == defines.controllers.editor
+  player.set_shortcut_toggled('ee-toggle-map-editor', new_state)
+  -- set default filters
+  if new_state and not player_table.flags.map_editor_toggled then
+    player_table.flags.map_editor_toggled = true
+    local default_filters = player.mod_settings['ee-default-inventory-filters'].value
+    if default_filters ~= '' then
+      inventory.import_inventory_filters(player, default_filters)
+    end
+  end
 end)
 
 -- lock or unlock the editor depending on if the player is an admin
@@ -276,6 +289,13 @@ local version_migrations = {
       if player.cheat_mode then
         enable_recipes(player)
       end
+    end
+  end,
+  ['1.2.0'] = function()
+    local player_tables = global.players
+    -- set toggled_map_editor flag to true for all players
+    for i,_ in pairs(game.players) do
+      player_tables[i].flags.map_editor_toggled = true
     end
   end
 }
