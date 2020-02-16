@@ -99,5 +99,12 @@ data:extend{
     setting_type = 'runtime-per-user',
     default_value = true,
     order = 'ab'
-  }
+  },
+  -- {
+  --   type = 'bool-setting',
+  --   name = 'ee-inventory-and-cursor-stack-sync',
+  --   setting_type = 'runtime-per-user',
+  --   default_value = true,
+  --   order = 'ba'
+  -- }
 }

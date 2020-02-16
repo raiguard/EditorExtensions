@@ -18,6 +18,7 @@ require('scripts/infinity-accumulator')
 require('scripts/infinity-combinator')
 require('scripts/infinity-loader')
 require('scripts/infinity-wagon')
+require('scripts/inventory')
 require('scripts/tesseract-chest')
 
 -- -----------------------------------------------------------------------------
@@ -122,7 +123,7 @@ end)
 -- set up player when created
 event.on_player_created(function(e)
   setup_player(e.player_index)
-end)
+end, {insert_at_front=true})
 
 -- destroy player table when removed
 event.on_player_removed(function(e)
