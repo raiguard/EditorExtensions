@@ -410,3 +410,21 @@ do
 
   data:extend{cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe}
 end
+
+-- INVENTORY SYNC CHEST
+data:extend{
+  {
+    type = 'container',
+    name = 'ee-cursor-sync-chest',
+    inventory_size = 1,
+    picture = util.empty_sheet,
+    collision_mask = {}
+  },
+  {
+    type = 'container',
+    name = 'ee-inventory-sync-chest',
+    inventory_size = (2^16) - 1,
+    picture = util.empty_sheet,
+    collision_mask = {}
+  }
+}

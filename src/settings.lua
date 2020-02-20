@@ -107,12 +107,12 @@ data:extend{
     allow_blank = true,
     default_value = '',
     order = 'ba'
+  },
+  {
+    type = 'bool-setting',
+    name = 'ee-inventory-sync',
+    setting_type = 'runtime-per-user',
+    default_value = true,
+    order = 'ca'
   }
-  -- {
-  --   type = 'bool-setting',
-  --   name = 'ee-inventory-and-cursor-stack-sync',
-  --   setting_type = 'runtime-per-user',
-  --   default_value = true,
-  --   order = 'ba'
-  -- }
 }

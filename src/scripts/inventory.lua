@@ -13,22 +13,79 @@ local string_sub = string.sub
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
--- -- sync the inventory when they go in/out of the editor
--- local function on_player_toggled_map_editor(e)
-  
--- end
+-- before the mode is switched
+local function pre_toggled_editor(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  -- cursor stack
+  local cursor_stack = player.cursor_stack
+  if cursor_stack and cursor_stack.valid_for_read then
+    local chest = player.surface.create_entity{
+      name = 'ee-cursor-sync-chest',
+      position = player.position,
+      create_build_effect_smoke = false
+    }
+    if not chest then error('Failed to create cursor sync chest.') end
+    local chest_inventory = chest.get_inventory(defines.inventory.chest)
+    chest_inventory[1].set_stack(cursor_stack)
+    player_table.cursor_sync_chest = chest
+  end
+  -- main inventory
+  do
+    local chest = player.surface.create_entity{
+      name = 'ee-inventory-sync-chest',
+      position = player.position,
+      create_build_effect_smoke = false
+    }
+    if not chest then error('Failed to create inventory sync chest.') end
+    local chest_inventory = chest.get_inventory(defines.inventory.chest)
+    local player_inventory = player.get_main_inventory()
+    for i=1,#player_inventory do
+      chest_inventory[i].set_stack(player_inventory[i])
+    end
+    player_table.inventory_sync_chest = chest
+  end
+end
 
--- -- toggle the sync when the player goes in/out of cheat mode
--- event.register({defines.events.on_player_cheat_mode_enabled, defines.events.on_player_cheat_mode_disabled}, function(e)
---   local player = game.get_player(e.player_index)
---   local player_table = global.players[e.player_index]
---   local cheat_mode = player.cheat_mode
---   if cheat_mode and player.mod_settings['ee-inventory-and-cursor-sync'].value then
---     player_table.flags.inventory_sync = true
---   else
---     player_table.flags.inventory_sync = false
---   end
--- end)
+-- after the mode is switched
+local function toggled_editor(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  -- cursor stack
+  if player_table.cursor_sync_chest then
+    local chest = player_table.cursor_sync_chest
+    if not chest then error('Failed to retrieve inventory sync chest.') end
+    player.cursor_stack.set_stack(chest.get_inventory(defines.inventory.chest)[1])
+    chest.destroy()
+    player_table.cursor_sync_chest = nil
+  end
+  -- main inventory
+  local chest = player_table.inventory_sync_chest
+  if not chest then error('Failed to retrieve inventory sync chest.') end
+  local chest_inventory = chest.get_inventory(defines.inventory.chest)
+  local player_inventory = player.get_main_inventory()
+  for i=1,#player_inventory do
+    player_inventory[i].set_stack(chest_inventory[i])
+  end
+  chest.destroy()
+  player_table.inventory_sync_chest = nil
+end
+
+-- toggle the sync when the player goes in/out of cheat mode
+event.register({defines.events.on_player_cheat_mode_enabled, defines.events.on_player_cheat_mode_disabled, defines.events.on_runtime_mod_setting_changed}, function(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  local cheat_mode = player.cheat_mode
+  if cheat_mode and player.mod_settings['ee-inventory-sync'].value then
+    player_table.flags.inventory_sync = true
+    event.register(defines.events.on_pre_player_toggled_map_editor, pre_toggled_editor, {name='inventory_sync_pre_toggled_editor', player_index=e.player_index})
+    event.register(defines.events.on_player_toggled_map_editor, toggled_editor, {name='inventory_sync_toggled_editor', player_index=e.player_index})
+  else
+    player_table.flags.inventory_sync = false
+    event.deregister(defines.events.on_pre_player_toggled_map_editor, pre_toggled_editor, 'inventory_sync_pre_toggled_editor', e.player_index)
+    event.deregister(defines.events.on_player_toggled_map_editor, toggled_editor, 'inventory_sync_toggled_editor', e.player_index)
+  end
+end)
 
 -- -----------------------------------------------------------------------------
 -- INFINITY INVENTORY FILTERS
@@ -47,6 +104,7 @@ end
 
 local function import_filters(player, string)
   local decoded_string = game.decode_string(string)
+  if not decoded_string then return false end
   if string_sub(decoded_string, 1, 16) == 'EditorExtensions' and string_sub(decoded_string, 18, 34) == 'inventory_filters' then
     -- extract version for migrations
     local _,_,version,json = string_find(decoded_string, '^.-%-.-%-(%d-)%-(.*)$')
@@ -166,7 +224,7 @@ gui.add_handlers{
           gui.destroy(gui_data.window, 'inventory_filters_string', e.player_index)
           player_table.gui.inventory_filters_string = nil
         else
-          player.print{'ee-message.invalid-inventory-filter-string'}
+          player.print{'ee-message.invalid-inventory-filters-string'}
         end
       end
     },
