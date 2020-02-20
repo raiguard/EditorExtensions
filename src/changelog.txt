@@ -7,6 +7,7 @@ Date: ????
     - Added default infinity inventory filters setting
   Changes:
     - Improved styling of infinity loader filter buttons and infinity combinator selected button
+    - Editor GUI character tab is now hidden by default
   Bugfixes:
     - Fixed missing key error when trying to build over an infinity loader
     - Fixed infinity lab not properly detecting all possible science packs
