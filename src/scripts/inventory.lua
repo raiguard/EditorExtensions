@@ -109,12 +109,10 @@ event.register(
     local player_table = global.players[e.player_index]
     local cheat_mode = player.cheat_mode
     if cheat_mode and player.mod_settings['ee-inventory-sync'].value then
-      player_table.flags.inventory_sync = true
       event.register(defines.events.on_pre_player_toggled_map_editor, pre_toggled_editor, {name='inventory_sync_pre_toggled_editor',
         player_index=e.player_index})
       event.register(defines.events.on_player_toggled_map_editor, toggled_editor, {name='inventory_sync_toggled_editor', player_index=e.player_index})
     else
-      player_table.flags.inventory_sync = false
       event.deregister(defines.events.on_pre_player_toggled_map_editor, pre_toggled_editor, 'inventory_sync_pre_toggled_editor', e.player_index)
       event.deregister(defines.events.on_player_toggled_map_editor, toggled_editor, 'inventory_sync_toggled_editor', e.player_index)
     end
@@ -308,5 +306,7 @@ end)
 -- OBJECT
 
 return {
-  import_inventory_filters = import_filters
+  import_inventory_filters = import_filters,
+  pre_toggled_editor = pre_toggled_editor,
+  toggled_editor = toggled_editor
 }

@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
-Date: ????
+Date: 2020-02-20
   Features:
-    - Added inventory and cursor syncronization between the editor and normal play. This feature activates if cheat mode is enabled.
+    - Added inventory and cursor syncronization between play modes (only active after enabling cheat mode)
     - Added infinity inventory filters import/export dialog
     - Added default infinity inventory filters setting
   Changes:

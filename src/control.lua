@@ -294,8 +294,14 @@ local version_migrations = {
   ['1.2.0'] = function()
     local player_tables = global.players
     -- set toggled_map_editor flag to true for all players
-    for i,_ in pairs(game.players) do
-      player_tables[i].flags.map_editor_toggled = true
+    for i,p in pairs(game.players) do
+      local flags = player_tables[i].flags
+      flags.map_editor_toggled = true
+      if p.cheat_mode then
+        -- register events for inventory sync
+        event.on_pre_player_toggled_map_editor(inventory.pre_toggled_editor, {name='inventory_sync_pre_toggled_editor', player_index=i})
+        event.on_player_toggled_map_editor(inventory.toggled_editor, {name='inventory_sync_toggled_editor', player_index=i})
+      end
     end
   end
 }
