@@ -67,7 +67,7 @@ data:extend{
     type = 'bool-setting',
     name = 'ee-controller-show_character_tab_in_controller_gui',
     setting_type = 'startup',
-    default_value = true,
+    default_value = false,
     order = 'bga'
   },
   {
