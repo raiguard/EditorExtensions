@@ -42,12 +42,11 @@ local function export_filters(player)
     filters = filters,
     remove_unfiltered_items = player.remove_unfiltered_items
   }
-  return 'EditorExtensions-inventory_filters-'..filters_table_version..'-'..game.table_to_json(output)
+  return game.encode_string('EditorExtensions-inventory_filters-'..filters_table_version..'-'..game.table_to_json(output))
 end
 
 local function import_filters(player, string)
-  -- local decoded_string = game.decode_string(string)
-  local decoded_string = string
+  local decoded_string = game.decode_string(string)
   if string_sub(decoded_string, 1, 16) == 'EditorExtensions' and string_sub(decoded_string, 18, 34) == 'inventory_filters' then
     -- extract version for migrations
     local _,_,version,json = string_find(decoded_string, '^.-%-.-%-(%d-)%-(.*)$')
