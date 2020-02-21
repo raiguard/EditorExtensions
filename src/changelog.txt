@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.1
+Date: 2020-02-21
+  Bugfixes:
+    - Fixed a crash when using an infinity loader with modded belts (forgot a comma)
+    - Fixed a crash when setting an infinity fluid wagon to have at most or exactly zero fluid
+
+---------------------------------------------------------------------------------------------------
 Version: 1.2.0
 Date: 2020-02-20
   Features:

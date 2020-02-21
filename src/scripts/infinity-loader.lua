@@ -133,7 +133,7 @@ local function update_inserters(loader, entities)
       inserters[i].inserter_stack_size_override = 1
     end
     update_filters(
-      surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1]
+      surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e_position}[1],
       {loader=loader, inserters=inserters, chest=chest}
     )
   end
@@ -634,8 +634,6 @@ event.on_configuration_changed(function(e)
         -- if its loader is gone, give it a new one with default settings
         update_loader_type(nil, 'express', {position=entity.position, direction=entity.direction, force=entity.force,
           last_user=entity.last_user or '', loader_type='output', surface=entity.surface})
-        -- alternatively, just destroy it completely
-        -- entity.destroy{raise_destroy=true}
       end
     end
   end

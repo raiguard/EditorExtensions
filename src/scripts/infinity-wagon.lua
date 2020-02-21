@@ -24,11 +24,11 @@ local function wagon_on_tick()
       elseif t.wagon_name == 'infinity-fluid-wagon' then
         if t.flip == 0 then
           local fluid = t.proxy_fluidbox[1]
-          t.wagon_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature} or nil
+          t.wagon_fluidbox[1] = fluid and fluid.amount > 0 and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature} or nil
           t.flip = 1
         elseif t.flip == 1 then
           local fluid = t.wagon_fluidbox[1]
-          t.proxy_fluidbox[1] = fluid and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature} or nil
+          t.proxy_fluidbox[1] = fluid and fluid.amount > 0 and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature} or nil
           t.flip = 0
         end
       end
