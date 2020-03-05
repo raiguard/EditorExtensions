@@ -2,8 +2,8 @@
 -- INFINITY WAGONS
 
 local abs = math.abs
-local event = require('lualib/event')
-local util = require('scripts/util')
+local event = require('__RaiLuaLib__.lualib.event')
+local util = require('scripts.util')
 
 -- -----------------------------------------------------------------------------
 -- CONDITIONAL HANDLERS

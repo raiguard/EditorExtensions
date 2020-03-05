@@ -2,9 +2,9 @@
 -- INVENTORY
 
 -- dependencies
-local event = require('lualib/event')
-local gui = require('lualib/gui')
-local migrations = require('lualib/migrations')
+local event = require('__RaiLuaLib__.lualib.event')
+local gui = require('__RaiLuaLib__.lualib.gui')
+local migration = require('__RaiLuaLib__.lualib.migration')
 
 -- locals
 local math_min = math.min
@@ -108,6 +108,7 @@ event.register(
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     local cheat_mode = player.cheat_mode
+    if e.setting and e.setting ~= 'ee-inventory-sync' then return end
     if cheat_mode and player.mod_settings['ee-inventory-sync'].value then
       event.register(defines.events.on_pre_player_toggled_map_editor, pre_toggled_editor, {name='inventory_sync_pre_toggled_editor',
         player_index=e.player_index})
@@ -143,7 +144,7 @@ local function import_filters(player, string)
     version = tonumber(version)
     local input = game.json_to_table(json)
     if version < filters_table_version then
-      migrations.generic(version, filters_table_migrations, input)
+      migration.generic(version, filters_table_migrations, input)
     end
     -- sanitise the filters to only include currently existing prototypes
     local item_prototypes = game.item_prototypes
@@ -185,10 +186,12 @@ gui.add_handlers{
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         if player_table.gui.inventory_filters_string then
-          gui.destroy(player_table.gui.inventory_filters_string.window, 'inventory_filters_string', e.player_index)
+          gui.deregister_all('inventory_filters_string', e.player_index)
+          player_table.gui.inventory_filters_string.window.destroy()
+          player_table.gui.inventory_filters_string = nil
         end
         local mode = e.element.sprite:find('export') and 'export' or 'import'
-        local gui_data = gui.create(player.gui.screen, 'inventory_filters_string', e.player_index,
+        local gui_data = gui.build(player.gui.screen, 'inventory_filters_string', e.player_index,
           {type='frame', style='dialog_frame', direction='vertical', save_as='window', children={
             {type='flow', style='ee_titlebar_flow', direction='horizontal', children={
               {type='label', style='frame_title', caption={'ee-gui.'..mode..'-inventory-filters'}},
@@ -216,7 +219,8 @@ gui.add_handlers{
       on_gui_closed = function(e)
         if e.gui_type and e.gui_type == 3 then
           local player_table = global.players[e.player_index]
-          gui.destroy(player_table.gui.inventory_filters_buttons.window, 'inventory_filters_buttons', e.player_index)
+          gui.deregister_all('inventory_filters_buttons', e.player_index)
+          player_table.gui.inventory_filters_buttons.window.destroy()
           player_table.gui.inventory_filters_buttons = nil
         end
       end
@@ -225,10 +229,12 @@ gui.add_handlers{
       on_player_toggled_map_editor = function(e)
         -- close the GUI if the player exits the map editor
         local player_table = global.players[e.player_index]
-        gui.destroy(player_table.gui.inventory_filters_buttons.window, 'inventory_filters_buttons', e.player_index)
+        gui.deregister_all('inventory_filters_buttons', e.player_index)
+        player_table.gui.inventory_filters_buttons.window.destroy()
         player_table.gui.inventory_filters_buttons = nil
         if player_table.gui.inventory_filters_string then
-          gui.destroy(player_table.gui.inventory_filters_string.window, 'inventory_filters_string', e.player_index)
+          gui.deregister_all('inventory_filters_string', e.player_index)
+          player_table.gui.inventory_filters_string.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
       end,
@@ -243,7 +249,8 @@ gui.add_handlers{
     back_button = {
       on_gui_click = function(e)
         local player_table = global.players[e.player_index]
-        gui.destroy(player_table.gui.inventory_filters_string.window, 'inventory_filters_string', e.player_index)
+        gui.deregister_all('inventory_filters_string', e.player_index)
+        player_table.gui.inventory_filters_string.window.destroy()
         player_table.gui.inventory_filters_string = nil
       end
     },
@@ -253,7 +260,8 @@ gui.add_handlers{
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.inventory_filters_string
         if import_filters(player, gui_data.textbox.text) then
-          gui.destroy(gui_data.window, 'inventory_filters_string', e.player_index)
+          gui.deregister_all('inventory_filters_string', e.player_index)
+          gui_data.window.destroy()
           player_table.gui.inventory_filters_string = nil
         else
           player.print{'ee-message.invalid-inventory-filters-string'}
@@ -279,7 +287,7 @@ event.on_gui_opened(function(e)
     if player.controller_type == defines.controllers.editor then
       -- create buttons GUI
       local player_table = global.players[e.player_index]
-      local gui_data = gui.create(player.gui.screen, 'inventory_filters_buttons', player.index,
+      local gui_data = gui.build(player.gui.screen, 'inventory_filters_buttons', player.index,
         {type='frame', style={name='shortcut_bar_window_frame', right_padding=4}, save_as='window', children={
           {type='frame', style='shortcut_bar_inner_panel', direction='horizontal', children={
             {type='sprite-button', style='shortcut_bar_button', sprite='ee-import-inventory-filters', tooltip={'ee-gui.import-inventory-filters'},

@@ -1,7 +1,7 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- MODULES
 
-local util = require('prototypes/util')
+local util = require('prototypes.util')
 
 local function get_module_icon(icon_ref, tint)
   local obj = data.raw['module'][icon_ref]

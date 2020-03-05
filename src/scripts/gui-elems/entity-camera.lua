@@ -1,4 +1,4 @@
-local util = require('scripts/util')
+local util = require('scripts.util')
 local entity_camera = {}
 
 function entity_camera.create(parent, name, size, data)

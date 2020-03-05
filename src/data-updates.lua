@@ -1,7 +1,7 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EDITOR EXTENSIONS PROTOTYPES - UPDATES
 
-local util = require('prototypes/util')
+local util = require('prototypes.util')
   
 -- INFINITY LOADER
 local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])

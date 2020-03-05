@@ -1,7 +1,7 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- EQUIPMENT
 
-local util = require('prototypes/util')
+local util = require('prototypes.util')
 
 -- infinity personal fusion reactor
 data:extend{

@@ -50,11 +50,11 @@ data:extend{
 }
 
 -- THE REST
-require('prototypes/entity')
-require('prototypes/equipment')
-require('prototypes/item-group')
-require('prototypes/item')
-require('prototypes/module')
-require('prototypes/recipe')
-require('prototypes/sprite')
-require('prototypes/style')
+require('prototypes.entity')
+require('prototypes.equipment')
+require('prototypes.item-group')
+require('prototypes.item')
+require('prototypes.module')
+require('prototypes.recipe')
+require('prototypes.sprite')
+require('prototypes.style')

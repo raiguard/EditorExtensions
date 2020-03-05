@@ -2,7 +2,7 @@
 -- RECIPES
 -- For use in cheat mode so you can use the tools outside of the editor
 
-local util = require('prototypes/util')
+local util = require('prototypes.util')
 
 local recipe_names = {
   'heat-interface',

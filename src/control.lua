@@ -2,9 +2,9 @@
 -- CONTROL SCRIPTING
 
 -- dependencies
-local event = require('lualib/event')
-local migrations = require('lualib/migrations')
-local util = require('scripts/util')
+local event = require('__RaiLuaLib__.lualib.event')
+local migration = require('__RaiLuaLib__.lualib.migration')
+local util = require('scripts.util')
 
 -- locals
 local string_find = string.find
@@ -12,13 +12,13 @@ local string_find = string.find
 -- -----------------------------------------------------------------------------
 -- SCRIPTS
 
-require('scripts/infinity-accumulator')
-require('scripts/infinity-combinator')
-require('scripts/infinity-loader')
-require('scripts/infinity-wagon')
-require('scripts/tesseract-chest')
+require('scripts.infinity-accumulator')
+require('scripts.infinity-combinator')
+require('scripts.infinity-loader')
+require('scripts.infinity-wagon')
+require('scripts.tesseract-chest')
 
-local inventory = require('scripts/inventory')
+local inventory = require('scripts.inventory')
 
 -- -----------------------------------------------------------------------------
 -- TESTING TOOLS RECIPES
@@ -227,8 +227,8 @@ end)
 
 -- -----------------------------------------------------------------------------
 -- EVENT FILTERS
--- Add filters to all events that support them so we can preserve as much performance as possible
 
+-- Add filters to all events that support them so we can preserve as much performance as possible
 event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built_entity}, {
   {filter='name', name='infinity-loader-dummy-combinator'},
   {filter='name', name='infinity-loader-logic-combinator'},
@@ -269,7 +269,7 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
 -- MIGRATIONS
 
 -- table of migration functions
-local version_migrations = {
+local migrations = {
   ['1.1.0'] = function()
     -- enable infinity equipment recipes, hide electric energy interface recipe
     for _,force in pairs(game.forces) do
@@ -304,5 +304,5 @@ local version_migrations = {
 
 -- handle migrations
 event.on_configuration_changed(function(e)
-  migrations.on_config_changed(e, version_migrations)
+  migration.on_config_changed(e, migrations)
 end, {insert_at_front=true})

@@ -1,7 +1,7 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- DATA STAGE UTILITIES
 
-local self = table.deepcopy(require('__core__/lualib/util'))
+local self = table.deepcopy(require('__core__.lualib.util'))
 
 -- tints
 self.infinity_tint = {r=1, g=0.5, b=1, a=1}

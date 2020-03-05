@@ -1,12 +1,12 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- INFINITY LOADER
 
-local event = require('lualib/event')
-local util = require('scripts/util')
+local event = require('__RaiLuaLib__.lualib.event')
+local util = require('scripts.util')
 
 -- GUI ELEMENTS
-local entity_camera = require('scripts/gui-elems/entity-camera')
-local titlebar = require('scripts/gui-elems/titlebar')
+local entity_camera = require('scripts.gui-elems.entity-camera')
+local titlebar = require('scripts.gui-elems.titlebar')
 
 local gui = {}
 
