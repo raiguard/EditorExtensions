@@ -1,9 +1,6 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- CONTROL SCRIPTING
 
--- debug adapter
-pcall(require,'__debugadapter__/debugadapter.lua')
-
 -- dependencies
 local event = require('lualib/event')
 local migrations = require('lualib/migrations')
