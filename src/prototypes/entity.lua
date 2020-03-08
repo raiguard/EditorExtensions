@@ -94,6 +94,8 @@ local infinity_combinator = table.deepcopy(data.raw['constant-combinator']['cons
 infinity_combinator.name = 'infinity-combinator'
 infinity_combinator.icons = {util.extract_icon_info(infinity_combinator)}
 infinity_combinator.allow_copy_paste = false
+infinity_combinator.placeable_by = {item='infinity-combinator', count=1}
+infinity_combinator.minable = {mining_time=0.5, result='infinity-combinator'}
 util.recursive_tint(infinity_combinator, util.combinator_tint)
 data:extend{infinity_combinator}
 

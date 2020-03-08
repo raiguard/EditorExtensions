@@ -22,7 +22,7 @@ local belt_type_patterns = {
   ['layer%-connector'] = '',
   -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
   ['ultimate%-belt'] = 'original-ultimate',
-  -- krastorio: https://mods.factorio.com/mod/Krastorio
+  -- krastorio legacy: https://mods.factorio.com/mod/Krastorio
   ['%-?kr%-01'] = '',
   ['%-?kr%-02'] = 'fast',
   ['%-?kr%-03'] = 'express',
