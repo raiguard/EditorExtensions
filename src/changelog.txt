@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.2
+Date: ????
+  Changes:
+    - Externalized lualib into a separate mod, this mod now depends on it
+  Bugfixes:
+    - Fixed a crash on trying to disable inventory sync when it wasn't enabled
+---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: 2020-02-21
   Bugfixes:

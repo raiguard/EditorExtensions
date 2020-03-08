@@ -167,13 +167,13 @@ end
 
 gui.add_templates{
   inventory_filters_string = {
-    export_nav_flow = {type='flow', style={top_margin=8}, direction='horizontal', children={
+    export_nav_flow = {type='flow', style_mods={top_margin=8}, direction='horizontal', children={
       {type='button', style='back_button', caption={'gui.cancel'}, handlers='back_button'},
-      {type='empty-widget', style={name='draggable_space', height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'}
+      {type='empty-widget', style='draggable_space', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'}
     }},
-    import_nav_flow = {type='flow', style={top_margin=8}, direction='horizontal', children={
+    import_nav_flow = {type='flow', style_mods={top_margin=8}, direction='horizontal', children={
       {type='button', style='back_button', caption={'gui.cancel'}, handlers='back_button'},
-      {type='empty-widget', style={name='draggable_space', height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'},
+      {type='empty-widget', style='draggable_space', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'},
       {type='button', style='confirm_button', caption={'gui.confirm'}, mods={enabled=false}, handlers='confirm_button', save_as=true}
     }}
   }
@@ -191,17 +191,17 @@ gui.add_handlers{
           player_table.gui.inventory_filters_string = nil
         end
         local mode = e.element.sprite:find('export') and 'export' or 'import'
-        local gui_data = gui.build(player.gui.screen, 'inventory_filters_string', e.player_index,
+        local gui_data = gui.build(player.gui.screen, {
           {type='frame', style='dialog_frame', direction='vertical', save_as='window', children={
             {type='flow', style='ee_titlebar_flow', direction='horizontal', children={
               {type='label', style='frame_title', caption={'ee-gui.'..mode..'-inventory-filters'}},
-              {type='empty-widget', style={name='draggable_space_header', height=24, horizontally_stretchable=true}, save_as='drag_handle'}
+              {type='empty-widget', style='draggable_space_header', style_mods={height=24, horizontally_stretchable=true}, save_as='drag_handle'}
             }},
-            {type='text-box', style={width=400, height=300}, clear_and_focus_on_right_click=true, mods={word_wrap=true},
+            {type='text-box', style_mods={width=400, height=300}, clear_and_focus_on_right_click=true, mods={word_wrap=true},
               handlers=(mode == 'import' and 'textbox' or nil), save_as='textbox'},
             {template='inventory_filters_string.'..mode..'_nav_flow'}
           }}
-        )
+        }, 'inventory_filters_string', e.player_index)
         gui_data.drag_handle.drag_target = gui_data.window
         gui_data.lower_drag_handle.drag_target = gui_data.window
         gui_data.window.force_auto_center()
@@ -287,8 +287,8 @@ event.on_gui_opened(function(e)
     if player.controller_type == defines.controllers.editor then
       -- create buttons GUI
       local player_table = global.players[e.player_index]
-      local gui_data = gui.build(player.gui.screen, 'inventory_filters_buttons', player.index,
-        {type='frame', style={name='shortcut_bar_window_frame', right_padding=4}, save_as='window', children={
+      local gui_data = gui.build(player.gui.screen, {
+        {type='frame', style='shortcut_bar_window_frame', style_mods={right_padding=4}, save_as='window', children={
           {type='frame', style='shortcut_bar_inner_panel', direction='horizontal', children={
             {type='sprite-button', style='shortcut_bar_button', sprite='ee-import-inventory-filters', tooltip={'ee-gui.import-inventory-filters'},
               save_as='import_button'},
@@ -296,7 +296,7 @@ event.on_gui_opened(function(e)
               save_as='export_button'}
           }}
         }}
-      )
+      }, 'inventory_filters_buttons', player.index)
       -- register events
       gui.register_handlers('inventory_filters_buttons', 'player', {player_index=e.player_index})
       gui.register_handlers('inventory_filters_buttons', 'import_export_button', {player_index=e.player_index,
