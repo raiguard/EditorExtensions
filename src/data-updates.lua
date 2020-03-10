@@ -31,7 +31,7 @@ local function create_loader(base_underground)
   for pattern, replacement in pairs(belt_patterns) do
     suffix = suffix:gsub(pattern, replacement)
   end
-  entity.name = 'infinity-loader-loader' .. (suffix ~= '' and '-'..suffix or '')
+  entity.name = 'ee-infinity-loader-loader'..(suffix ~= '' and '-'..suffix or '')
   -- other data
   entity.type = 'loader-1x1'
   entity.next_upgrade = nil

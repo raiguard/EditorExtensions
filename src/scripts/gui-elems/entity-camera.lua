@@ -4,13 +4,13 @@ local entity_camera = {}
 function entity_camera.create(parent, name, size, data)
   local frame = parent.add {
     type = 'frame',
-    name = name .. '_frame',
+    name = name..'_frame',
     style = 'inside_deep_frame'
   }
 
   local camera = frame.add {
     type = 'camera',
-    name = name .. '_camera',
+    name = name..'_camera',
     position = util.position.add(data.entity.position, data.camera_offset or {0,0}),
     zoom = (data.camera_zoom or 1) * data.player.display_scale
   }

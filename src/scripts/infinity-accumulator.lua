@@ -35,8 +35,8 @@ local constants = {
   si_suffixes_watt = {'kW', 'MW', 'GW', 'TW', 'PW', 'EW', 'ZW', 'YW'}
 }
 for i,v in pairs(constants.power_prefixes) do
-  constants.localized_si_suffixes_watt[i] = {'', {'si-prefix-symbol-' .. v}, {'si-unit-symbol-watt'}}
-  constants.localized_si_suffixes_joule[i] = {'', {'si-prefix-symbol-' .. v}, {'si-unit-symbol-joule'}}
+  constants.localized_si_suffixes_watt[i] = {'', {'si-prefix-symbol-'..v}, {'si-unit-symbol-watt'}}
+  constants.localized_si_suffixes_joule[i] = {'', {'si-prefix-symbol-'..v}, {'si-unit-symbol-joule'}}
 end
 
 local function check_is_accumulator(entity)

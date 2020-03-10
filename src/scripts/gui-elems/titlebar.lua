@@ -1,11 +1,11 @@
 local titlebar = {}
 
 function titlebar.create(parent, name, data)
-  local prefix = name .. '_'
+  local prefix = name..'_'
 
   local titlebar_flow = parent.add {
     type = 'flow',
-    name = prefix .. 'flow',
+    name = prefix..'flow',
     style = 'ee_titlebar_flow'
   }
 
@@ -16,7 +16,7 @@ function titlebar.create(parent, name, data)
   if data.label then
     titlebar_flow.add {
       type = 'label',
-      name = prefix .. 'label',
+      name = prefix..'label',
       style = 'frame_title',
       caption = data.label
     }
@@ -24,7 +24,7 @@ function titlebar.create(parent, name, data)
 
   local filler = titlebar_flow.add {
     type = 'empty-widget',
-    name = prefix .. 'filler',
+    name = prefix..'filler',
     style = 'draggable_space_header'
   }
   filler.style.horizontally_stretchable = true
@@ -40,7 +40,7 @@ function titlebar.create(parent, name, data)
     for i=1, #buttons do
       titlebar_flow.add {
         type = 'sprite-button',
-        name = prefix .. 'button_' .. buttons[i].name,
+        name = prefix..'button_'..buttons[i].name,
         style = 'close_button',
         tooltip = buttons[i].tooltip or nil,
         sprite = buttons[i].sprite,

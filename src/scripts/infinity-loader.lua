@@ -169,7 +169,7 @@ local function update_loader_type(loader, belt_type, overrides)
   local surface = overrides.surface or loader.surface
   if loader then loader.destroy() end
   local new_loader = surface.create_entity{
-    name = 'infinity-loader-loader' .. (belt_type == '' and '' or '-'..belt_type),
+    name = 'infinity-loader-loader'..(belt_type == '' and '' or '-'..belt_type),
     position = position,
     direction = direction,
     force = force,

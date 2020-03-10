@@ -7,7 +7,7 @@ local util = require('prototypes.util')
 data:extend{
   {
     type = 'movement-bonus-equipment',
-    name = 'infinity-exoskeleton-equipment',
+    name = 'ee-infinity-exoskeleton-equipment',
     sprite = {
       filename = '__base__/graphics/equipment/exoskeleton-equipment.png',
       width = 64,
@@ -24,7 +24,7 @@ data:extend{
   },
   {
     type = 'generator-equipment',
-    name = 'infinity-fusion-reactor-equipment',
+    name = 'ee-infinity-fusion-reactor-equipment',
     sprite = {
       filename = '__base__/graphics/equipment/fusion-reactor-equipment.png',
       width = 128,
@@ -42,7 +42,7 @@ data:extend{
 }
 
 local personal_roboport = table.deepcopy(data.raw['roboport-equipment']['personal-roboport-mk2-equipment'])
-personal_roboport.name = 'infinity-personal-roboport-equipment'
+personal_roboport.name = 'ee-infinity-personal-roboport-equipment'
 personal_roboport.background_color = util.equipment_background_color
 personal_roboport.shape = {width=1, height=1, type='full'}
 personal_roboport.sprite = personal_roboport.sprite
@@ -51,6 +51,6 @@ personal_roboport.charging_energy = '1000GJ'
 personal_roboport.charging_station_count = 1000
 personal_roboport.robot_limit = 1000
 personal_roboport.construction_radius = 100
-personal_roboport.take_result = 'infinity-personal-roboport-equipment'
+personal_roboport.take_result = 'ee-infinity-personal-roboport-equipment'
 personal_roboport.flags = {'hidden'}
 data:extend{personal_roboport}

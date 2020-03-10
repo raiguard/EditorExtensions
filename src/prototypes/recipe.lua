@@ -5,37 +5,36 @@
 local util = require('prototypes.util')
 
 local recipe_names = {
-  'heat-interface',
-  'infinity-accumulator',
-  'infinity-beacon',
-  'infinity-cargo-wagon',
-  'infinity-chest',
-  'infinity-combinator',
-  'infinity-construction-robot',
-  'infinity-electric-pole',
-  'infinity-exoskeleton-equipment',
-  'infinity-fluid-wagon',
-  'infinity-fuel',
-  'infinity-fusion-reactor-equipment',
-  'infinity-inserter',
-  'infinity-lab',
-  'infinity-loader',
-  'infinity-locomotive',
-  'infinity-logistic-robot',
-  'infinity-personal-roboport-equipment',
-  'infinity-pipe',
-  'infinity-pump',
-  'infinity-radar',
-  'infinity-roboport',
-  'infinity-substation',
-  'tesseract-chest'
+  'ee-infinity-accumulator',
+  'ee-infinity-beacon',
+  'ee-infinity-cargo-wagon',
+  'ee-infinity-combinator',
+  'ee-infinity-construction-robot',
+  'ee-infinity-electric-pole',
+  'ee-infinity-exoskeleton-equipment',
+  'ee-infinity-fluid-wagon',
+  'ee-infinity-fuel',
+  'ee-infinity-fusion-reactor-equipment',
+  'ee-infinity-heat-pipe',
+  'ee-infinity-inserter',
+  'ee-infinity-lab',
+  'ee-infinity-loader',
+  'ee-infinity-locomotive',
+  'ee-infinity-logistic-robot',
+  'ee-infinity-personal-roboport-equipment',
+  'ee-infinity-pipe',
+  'ee-infinity-pipe',
+  'ee-infinity-pump',
+  'ee-infinity-radar',
+  'ee-infinity-roboport',
+  'ee-infinity-substation',
 }
 local function register_recipes(t)
   for _,k in ipairs(t) do
     data:extend{
       {
         type = 'recipe',
-        name = 'ee-'..k,
+        name = k,
         ingredients = {},
         enabled = false,
         result = k
@@ -45,13 +44,11 @@ local function register_recipes(t)
 end
 
 register_recipes(recipe_names)
-for lm,t in pairs(util.infinity_chest_data) do
-  register_recipes{'infinity-chest-'..lm}
+for _,t in pairs(util.infinity_chest_data) do
+  register_recipes{'ee-infinity-chest'..(t.lm and '-'..t.lm or '')}
 end
-for lm,t in pairs(util.tesseract_chest_data) do
-  if lm ~= '' then
-      register_recipes{'tesseract-chest-'..lm}
-  end
+for _,t in pairs(util.tesseract_chest_data) do
+  register_recipes{'ee-tesseract-chest'..(t.lm and '-'..t.lm or '')}
 end
 for _,t in ipairs(util.module_data) do
   register_recipes{t.name}

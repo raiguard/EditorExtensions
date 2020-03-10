@@ -39,7 +39,7 @@ for _,p in pairs(data.raw['infinity-container']) do
 end
 
 -- INFINITY LAB
-local lab = data.raw['lab']['infinity-lab']
+local lab = data.raw['lab']['ee-infinity-lab']
 -- fill this table with any future science pack names that don't match the pattern
 local pattern_overrides = {}
 local packs = {}
@@ -60,18 +60,18 @@ local categories = {}
 for _,t in pairs(data.raw['equipment-category']) do
   table.insert(categories, t.name)
 end
-data.raw['generator-equipment']['infinity-fusion-reactor-equipment'].categories = categories
-data.raw['roboport-equipment']['infinity-personal-roboport-equipment'].categories = categories
+data.raw['generator-equipment']['ee-infinity-fusion-reactor-equipment'].categories = categories
+data.raw['roboport-equipment']['ee-infinity-personal-roboport-equipment'].categories = categories
 
 -- MODULES
 local modules = {
-  'super-speed-module',
-  'super-effectivity-module',
-  'super-productivity-module',
-  'super-clean-module',
-  'super-slow-module',
-  'super-ineffectivity-module',
-  'super-dirty-module'
+  'ee-super-speed-module',
+  'ee-super-effectivity-module',
+  'ee-super-productivity-module',
+  'ee-super-clean-module',
+  'ee-super-slow-module',
+  'ee-super-ineffectivity-module',
+  'ee-super-dirty-module'
 }
 -- reset all modules to be able to be used in all recipes
 for _,name in pairs(modules) do

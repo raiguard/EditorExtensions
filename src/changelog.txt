@@ -2,6 +2,8 @@
 Version: 1.2.2
 Date: ????
   Changes:
+    - Added a prefix to all mod items and entities to avoid compatibility issues
+    - Use our own version of the built-in infinity chest, infinity pipe, and heat interface to avoid compatibility issues
     - Removed lualib and made it a separate mod, RaiLuaLib
   Bugfixes:
     - Fixed a crash on trying to disable inventory sync when it wasn't enabled
