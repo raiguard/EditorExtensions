@@ -1,5 +1,56 @@
 {
   "entity": [
-    
+    ["infinity-accumulator-primary-output", "ee-infinity-accumulator-primary-output"],
+    ["infinity-accumulator-primary-input", "ee-infinity-accumulator-primary-input"],
+    ["infinity-accumulator-secondary-output", "ee-infinity-accumulator-secondary-output"],
+    ["infinity-accumulator-secondary-input", "ee-infinity-accumulator-secondary-input"],
+    ["infinity-accumulator-tertiary", "ee-infinity-accumulator-tertiary"],
+    ["infinity-beacon", "ee-infinity-beacon"],
+    ["infinity-cargo-wagon", "ee-infinity-cargo-wagon"],
+    ["infinity-combinator", "ee-infinity-combinator"],
+    ["infinity-construction-robot", "ee-infinity-construction-robot"],
+    ["infinity-electric-pole", "ee-infinity-electric-pole"],
+    ["infinity-exoskeleton-equipment", "ee-infinity-exoskeleton-equipment"],
+    ["infinity-fluid-wagon", "ee-infinity-fluid-wagon"],
+    ["infinity-fuel", "ee-infinity-fuel"],
+    ["infinity-fusion-reactor-equipment", "ee-infinity-fusion-reactor-equipment"],
+    ["infinity-inserter", "ee-infinity-inserter"],
+    ["infinity-lab", "ee-infinity-lab"],
+    ["infinity-loader-dummy-combinator", "ee-infinity-loader-dummy-combinator"],
+    ["infinity-loader-logic-combinator", "ee-infinity-loader-logic-combinator"],
+    ["infinity-locomotive", "ee-infinity-locomotive"],
+    ["infinity-logistic-robot", "ee-infinity-logistic-robot"],
+    ["infinity-personal-roboport-equipment", "ee-infinity-personal-roboport-equipment"],
+    ["infinity-pump", "ee-infinity-pump"],
+    ["infinity-radar", "ee-infinity-radar"],
+    ["infinity-roboport", "ee-infinity-roboport"],
+    ["infinity-substation", "ee-infinity-substation"]
+  ],
+  "item": [
+    ["infinity-accumulator", "ee-infinity-accumulator"],
+    ["infinity-beacon", "ee-infinity-beacon"],
+    ["infinity-cargo-wagon", "ee-infinity-cargo-wagon"],
+    ["infinity-combinator", "ee-infinity-combinator"],
+    ["infinity-construction-robot", "ee-infinity-construction-robot"],
+    ["infinity-electric-pole", "ee-infinity-electric-pole"],
+    ["infinity-exoskeleton-equipment", "ee-infinity-exoskeleton-equipment"],
+    ["infinity-fluid-wagon", "ee-infinity-fluid-wagon"],
+    ["infinity-fuel", "ee-infinity-fuel"],
+    ["infinity-fusion-reactor-equipment", "ee-infinity-fusion-reactor-equipment"],
+    ["infinity-inserter", "ee-infinity-inserter"],
+    ["infinity-lab", "ee-infinity-lab"],
+    ["infinity-loader", "ee-infinity-loader"],
+    ["infinity-locomotive", "ee-infinity-locomotive"],
+    ["infinity-logistic-robot", "ee-infinity-logistic-robot"],
+    ["infinity-personal-roboport-equipment", "ee-infinity-personal-roboport-equipment"],
+    ["infinity-pump", "ee-infinity-pump"],
+    ["infinity-radar", "ee-infinity-radar"],
+    ["infinity-roboport", "ee-infinity-roboport"],
+    ["infinity-substation", "ee-infinity-substation"]
+  ],
+  "equipment": [
+    ["infinity-fusion-reactor-equipment", "ee-infinity-fusion-reactor-equipment"],
+    ["infinity-personal-roboport-equipment", "ee-infinity-personal-roboport-equipment"],
+    ["infinity-exoskeleton-equipment", "ee-infinity-exoskeleton-equipment"]
   ]
 }

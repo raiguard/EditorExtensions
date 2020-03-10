@@ -17,7 +17,7 @@ local gui = {}
 -- iterate through all of these to result in the belt type
 local belt_type_patterns = {
   -- editor extensions :D
-  ['infinity%-loader%-loader%-?'] = '',
+  ['ee%-infinity%-loader%-loader%-?'] = '',
   -- beltlayer: https://mods.factorio.com/mod/beltlayer
   ['layer%-connector'] = '',
   -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
@@ -48,7 +48,7 @@ local function get_belt_type(entity)
     type = type:gsub(pattern, replacement)
   end
   -- check to see if the loader prototype exists
-  if type ~= '' and not game.entity_prototypes['infinity-loader-loader-'..type] then
+  if type ~= '' and not game.entity_prototypes['ee-infinity-loader-loader-'..type] then
     -- print warning message
     game.print{'', 'EDIITOR EXTENSIONS: ', {'ee-message.unable-to-identify-belt'}}
     game.print('entity_name=\''..entity.name..'\', parse_result=\''..type..'\'')
@@ -81,8 +81,8 @@ end
 local function update_filters(combinator, entities)
   entities = entities or {}
   local loader = entities.loader or combinator.surface.find_entities_filtered{type='loader-1x1', position=combinator.position}[1]
-  local inserters = entities.inserters or combinator.surface.find_entities_filtered{name='infinity-loader-inserter', position=combinator.position}
-  local chest = entities.chest or combinator.surface.find_entities_filtered{name='infinity-loader-chest', position=combinator.position}[1]
+  local inserters = entities.inserters or combinator.surface.find_entities_filtered{name='ee-infinity-loader-inserter', position=combinator.position}
+  local chest = entities.chest or combinator.surface.find_entities_filtered{name='ee-infinity-loader-chest', position=combinator.position}[1]
   local control = combinator.get_control_behavior()
   local enabled = control.enabled
   local filters = control.parameters.parameters
@@ -111,8 +111,8 @@ end
 local function update_inserters(loader, entities)
   entities = entities or {}
   local surface = loader.surface
-  local inserters = entities.inserters or surface.find_entities_filtered{name='infinity-loader-inserter', position=loader.position}
-  local chest = entities.chest or surface.find_entities_filtered{name='infinity-loader-chest', position=loader.position}[1]
+  local inserters = entities.inserters or surface.find_entities_filtered{name='ee-infinity-loader-inserter', position=loader.position}
+  local chest = entities.chest or surface.find_entities_filtered{name='ee-infinity-loader-chest', position=loader.position}[1]
   local e_type = loader.loader_type
   local e_position = loader.position
   local e_direction = loader.direction
@@ -124,7 +124,7 @@ local function update_inserters(loader, entities)
     inserters = {}
     for i=1,num_inserters(loader) do
       inserters[i] = surface.create_entity{
-        name='infinity-loader-inserter',
+        name='ee-infinity-loader-inserter',
         position = loader.position,
         force = loader.force,
         direction = loader.direction,
@@ -133,7 +133,7 @@ local function update_inserters(loader, entities)
       inserters[i].inserter_stack_size_override = 1
     end
     update_filters(
-      surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=e_position}[1],
+      surface.find_entities_filtered{name='ee-infinity-loader-logic-combinator', position=e_position}[1],
       {loader=loader, inserters=inserters, chest=chest}
     )
   end
@@ -169,7 +169,7 @@ local function update_loader_type(loader, belt_type, overrides)
   local surface = overrides.surface or loader.surface
   if loader then loader.destroy() end
   local new_loader = surface.create_entity{
-    name = 'infinity-loader-loader'..(belt_type == '' and '' or '-'..belt_type),
+    name = 'ee-infinity-loader-loader'..(belt_type == '' and '' or '-'..belt_type),
     position = position,
     direction = direction,
     force = force,
@@ -183,7 +183,7 @@ end
 
 -- create an infinity loader
 local function create_loader(type, mode, surface, position, direction, force)
-  local name = 'infinity-loader-loader'..(type == '' and '' or '-'..type)
+  local name = 'ee-infinity-loader-loader'..(type == '' and '' or '-'..type)
   if not game.entity_prototypes[name] then error('Attempted to create an infinity loader with an invalid belt type.') end
   local loader = surface.create_entity{
     name = name,
@@ -196,7 +196,7 @@ local function create_loader(type, mode, surface, position, direction, force)
   local inserters = {}
   for i=1,num_inserters(loader) do
      inserters[i] = surface.create_entity{
-      name='infinity-loader-inserter',
+      name='ee-infinity-loader-inserter',
       position = position,
       force = force,
       direction = direction,
@@ -205,13 +205,13 @@ local function create_loader(type, mode, surface, position, direction, force)
     inserters[i].inserter_stack_size_override = 1
   end
   local chest = surface.create_entity{
-    name = 'infinity-loader-chest',
+    name = 'ee-infinity-loader-chest',
     position = position,
     force = force,
     create_build_effect_smoke = false
   }
   local combinator = surface.create_entity{
-    name = 'infinity-loader-logic-combinator',
+    name = 'ee-infinity-loader-logic-combinator',
     position = position,
     force = force,
     direction = mode == 'input' and util.direction.opposite(direction) or direction,
@@ -248,6 +248,11 @@ local function check_tile_neighbors(entity, func, eight_way, dir_agnostic)
     end
   end
   return matched_entities
+end
+
+-- builds the internals of an infinity loader and snaps it
+local function build_loader(entity)
+
 end
 
 -- -----------------------------------------------------------------------------
@@ -294,7 +299,7 @@ function gui.create(parent, entity, player)
   local window = parent.add{type='frame', name='ee_il_window', style='dialog_frame', direction='vertical'}
   local titlebar = titlebar.create(window, 'ee_il_titlebar', {
     draggable = true,
-    label = {'entity-name.infinity-loader'},
+    label = {'entity-name.ee-infinity-loader'},
     buttons = {util.constants.close_button_def}
   })
   event.on_gui_click(close_button_clicked, {name='il_close_button_clicked', player_index=player.index, gui_filters=titlebar.children[3]})
@@ -378,7 +383,7 @@ local function snap_loader(loader, entity)
   -- update internals
   update_inserters(loader)
   update_filters(
-    loader.surface.find_entities_filtered{name='infinity-loader-logic-combinator', position=loader.position}[1],
+    loader.surface.find_entities_filtered{name='ee-infinity-loader-logic-combinator', position=loader.position}[1],
     {loader=loader}
   )
   -- raise event if snapping occured
@@ -417,7 +422,7 @@ end
 
 local function picker_dollies_move(e)
   local entity = e.moved_entity
-  if entity.name == 'infinity-loader-logic-combinator' then
+  if entity.name == 'ee-infinity-loader-logic-combinator' then
     local loader
     -- move all entities to new position
     for _,e in pairs(e.moved_entity.surface.find_entities_filtered{type={'loader-1x1', 'inserter', 'infinity-container'}, position=e.start_pos}) do
@@ -453,8 +458,8 @@ local function get_loader_entities(surface, position)
   local find = surface.find_entities_filtered
   return find{type='loader-1x1', position=position}[1],
          find{type='inserter', position=position},
-         find{name='infinity-loader-chest', position=position}[1],
-         find{name='infinity-loader-logic-combinator', position=position}[1]
+         find{name='ee-infinity-loader-chest', position=position}[1],
+         find{name='ee-infinity-loader-logic-combinator', position=position}[1]
 end
 
 event.generate_id('il_on_loader_snapped')
@@ -475,12 +480,12 @@ remote.add_interface('ee_infinity_loader', {
 -- when an entity is built in-game of through script, or constructed or revived through script
 event.register(util.constants.entity_built_events, function(e)
   local entity = e.created_entity or e.entity
-  if entity.name == 'entity-ghost' and entity.ghost_name == 'infinity-loader-logic-combinator' then
+  if entity.name == 'entity-ghost' and entity.ghost_name == 'ee-infinity-loader-logic-combinator' then
     -- convert to dummy combinator ghost
     local old_control = entity.get_or_create_control_behavior()
     local new_entity = entity.surface.create_entity{
       name = 'entity-ghost',
-      ghost_name = 'infinity-loader-dummy-combinator',
+      ghost_name = 'ee-infinity-loader-dummy-combinator',
       position = entity.position,
       direction = entity.direction,
       force = entity.force,
@@ -494,7 +499,7 @@ event.register(util.constants.entity_built_events, function(e)
     entity.destroy()
     -- raise event
     event.raise(defines.events.script_raised_built, {entity=new_entity, tick=game.tick})
-  elseif entity.name == 'infinity-loader-dummy-combinator' or entity.name == 'infinity-loader-logic-combinator' then
+  elseif entity.name == 'ee-infinity-loader-dummy-combinator' or entity.name == 'ee-infinity-loader-logic-combinator' then
     -- create the loader with default belt type, we will snap it later
     local loader, inserters, chest, combinator = create_loader('express', 'output', entity.surface, entity.position, entity.direction, entity.force)
     -- get and set previous filters, if any
@@ -523,7 +528,7 @@ end)
 -- when an entity is rotated
 event.register(defines.events.on_player_rotated_entity, function(e)
   local entity = e.entity
-  if entity.name == 'infinity-loader-logic-combinator' then
+  if entity.name == 'ee-infinity-loader-logic-combinator' then
     -- rotate loader instead of combinator
     entity.direction = e.previous_direction
     local loader = entity.surface.find_entities_filtered{type='loader-1x1', position=entity.position}[1]
@@ -548,7 +553,7 @@ end)
 -- when an entity is destroyed
 event.register(util.constants.entity_destroyed_events, function(e)
   local entity = e.entity
-  if entity.name == 'infinity-loader-logic-combinator' then
+  if entity.name == 'ee-infinity-loader-logic-combinator' then
     -- close open GUIs
     if global.__lualib.event.il_close_button_clicked then
       for _,i in ipairs(global.__lualib.event.il_close_button_clicked.players) do
@@ -579,8 +584,8 @@ event.register(defines.events.on_player_setup_blueprint, function(e)
   local entities = bp.get_blueprint_entities()
   if not entities then return end
   for i=1,#entities do
-    if entities[i].name == 'infinity-loader-logic-combinator' then
-      entities[i].name = 'infinity-loader-dummy-combinator'
+    if entities[i].name == 'ee-infinity-loader-logic-combinator' then
+      entities[i].name = 'ee-infinity-loader-dummy-combinator'
       entities[i].direction = entities[i].direction or defines.direction.north
     end
   end
@@ -589,7 +594,7 @@ end)
 
 -- when an entity settings copy/paste occurs
 event.register(defines.events.on_entity_settings_pasted, function(e)
-  if e.destination.name == 'infinity-loader-logic-combinator' then
+  if e.destination.name == 'ee-infinity-loader-logic-combinator' then
     -- sanitize filters to remove any non-ttems
     local parameters = {parameters={}}
     local items = 0
@@ -608,7 +613,7 @@ end)
 
 -- when a player opens a GUI
 event.register(defines.events.on_gui_opened, function(e)
-  if e.entity and e.entity.name == 'infinity-loader-logic-combinator' then
+  if e.entity and e.entity.name == 'ee-infinity-loader-logic-combinator' then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     local elems = gui.create(player.gui.screen, e.entity, player)
@@ -629,7 +634,7 @@ end)
 event.on_configuration_changed(function(e)
   -- check every single infinity loader on every surface to see if it no longer has a loader entity
   for _,surface in pairs(game.surfaces) do
-    for _,entity in ipairs(surface.find_entities_filtered{name='infinity-loader-logic-combinator'}) do
+    for _,entity in ipairs(surface.find_entities_filtered{name='ee-infinity-loader-logic-combinator'}) do
       if #surface.find_entities_filtered{type='loader-1x1', position=entity.position} == 0 then
         -- if its loader is gone, give it a new one with default settings
         update_loader_type(nil, 'express', {position=entity.position, direction=entity.direction, force=entity.force,
@@ -638,3 +643,24 @@ event.on_configuration_changed(function(e)
     end
   end
 end)
+
+-- -----------------------------------------------------------------------------
+-- OBJECT
+
+local self = {}
+
+-- for use in migrations, takes a lonesome logic combinator and builds the internals
+function self.build_loader(entity)
+  -- create the loader with default belt type, we will snap it later
+  local loader, inserters, chest, combinator = create_loader('express', 'output', entity.surface, entity.position, entity.direction, entity.force)
+  -- get and set previous filters, if any
+  local old_control = entity.get_or_create_control_behavior()
+  local new_control = combinator.get_or_create_control_behavior()
+  new_control.parameters = old_control.parameters
+  new_control.enabled = old_control.enabled
+  entity.destroy()
+  -- snap new loader
+  snap_loader(loader)
+end
+
+return self

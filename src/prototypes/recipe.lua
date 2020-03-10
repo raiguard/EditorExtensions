@@ -23,7 +23,6 @@ local recipe_names = {
   'ee-infinity-logistic-robot',
   'ee-infinity-personal-roboport-equipment',
   'ee-infinity-pipe',
-  'ee-infinity-pipe',
   'ee-infinity-pump',
   'ee-infinity-radar',
   'ee-infinity-roboport',

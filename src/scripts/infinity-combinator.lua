@@ -280,7 +280,7 @@ function gui.create(parent, player)
   local window = parent.add{type='frame', name='ee_ic_window', style='dialog_frame', direction='vertical'}
   local titlebar = titlebar.create(window, 'ee_ic_titlebar', {
     draggable = true,
-    label = {'entity-name.infinity-combinator'},
+    label = {'entity-name.ee-infinity-combinator'},
     buttons = {util.constants.close_button_def}
   })
   event.on_gui_click(close_button_clicked, {name='ic_close_button_clicked', player_index=player.index, gui_filters=titlebar.children[3]})
@@ -363,7 +363,7 @@ end
 
 -- when a player opens a GUI
 event.register(defines.events.on_gui_opened, function(e)
-  if e.entity and e.entity.name == 'infinity-combinator' then
+  if e.entity and e.entity.name == 'ee-infinity-combinator' then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     -- create gui, set it as opened

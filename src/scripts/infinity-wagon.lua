@@ -11,7 +11,7 @@ local util = require('scripts.util')
 local function wagon_on_tick()
   for _,t in pairs(global.wagons) do
     if t.wagon.valid and t.proxy.valid then
-      if t.wagon_name == 'infinity-cargo-wagon' then
+      if t.wagon_name == 'ee-infinity-cargo-wagon' then
         if t.flip == 0 then
           t.wagon_inv.clear()
           for n,c in pairs(t.proxy_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
@@ -21,7 +21,7 @@ local function wagon_on_tick()
           for n,c in pairs(t.wagon_inv.get_contents()) do t.proxy_inv.insert{name=n, count=c} end
           t.flip = 0
         end
-      elseif t.wagon_name == 'infinity-fluid-wagon' then
+      elseif t.wagon_name == 'ee-infinity-fluid-wagon' then
         if t.flip == 0 then
           local fluid = t.proxy_fluidbox[1]
           t.wagon_fluidbox[1] = fluid and fluid.amount > 0 and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature} or nil
@@ -52,9 +52,9 @@ end)
 -- when an entity is built
 event.register(util.constants.entity_built_events, function(e)
   local entity = e.created_entity or e.entity
-  if entity.valid and (entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon') then
+  if entity.valid and (entity.name == 'ee-infinity-cargo-wagon' or entity.name == 'ee-infinity-fluid-wagon') then
     local proxy = entity.surface.create_entity{
-      name = 'infinity-wagon-'..(entity.name == 'infinity-cargo-wagon' and 'chest' or 'pipe'),
+      name = 'ee-infinity-wagon-'..(entity.name == 'ee-infinity-cargo-wagon' and 'chest' or 'pipe'),
       position = entity.position,
       force = entity.force
     }
@@ -75,9 +75,9 @@ event.register(util.constants.entity_built_events, function(e)
     global.wagons[entity.unit_number] = data
     -- apply any pre-existing filters
     if e.tags and e.tags.EditorExtensions then
-      if entity.name == 'infinity-cargo-wagon' then
+      if entity.name == 'ee-infinity-cargo-wagon' then
         data.proxy.infinity_container_filters = e.tags.EditorExtensions
-      elseif entity.name == 'infinity-fluid-wagon' then
+      elseif entity.name == 'ee-infinity-fluid-wagon' then
         data.proxy.set_infinity_pipe_filter(e.tags.EditorExtensions)
       end
     end
@@ -87,7 +87,7 @@ end)
 -- before an entity is mined by a player or marked for deconstructione
 event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
   local entity = e.entity
-  if entity.name == 'infinity-cargo-wagon' then
+  if entity.name == 'ee-infinity-cargo-wagon' then
     -- clear the wagon's inventory and set FLIP to 3 to prevent it from being refilled
     global.wagons[entity.unit_number].flip = 3
     entity.get_inventory(defines.inventory.cargo_wagon).clear()
@@ -97,7 +97,7 @@ end)
 -- when a deconstruction order is canceled
 event.register(defines.events.on_cancelled_deconstruction, function(e)
   local entity = e.entity
-  if entity.name == 'infinity-cargo-wagon' then
+  if entity.name == 'ee-infinity-cargo-wagon' then
     global.wagons[entity.unit_number].flip = 0
   end
 end)
@@ -105,7 +105,7 @@ end)
 -- when an entity is destroyed
 event.register(util.constants.entity_destroyed_events, function(e)
   local entity = e.entity
-  if entity.name == 'infinity-cargo-wagon' or entity.name == 'infinity-fluid-wagon' then
+  if entity.name == 'ee-infinity-cargo-wagon' or entity.name == 'ee-infinity-fluid-wagon' then
     global.wagons[entity.unit_number].proxy.destroy()
     global.wagons[entity.unit_number] = nil
     if table_size(global.wagons) == 0 then
@@ -118,7 +118,7 @@ end)
 event.register('ee-mouse-leftclick', function(e)
   local player = game.get_player(e.player_index)
   local selected = player.selected
-  if selected and (selected.name == 'infinity-cargo-wagon' or selected.name == 'infinity-fluid-wagon') then
+  if selected and (selected.name == 'ee-infinity-cargo-wagon' or selected.name == 'ee-infinity-fluid-wagon') then
     if util.position.distance(player.position, selected.position) <= player.reach_distance then
       player.opened = global.wagons[selected.unit_number].proxy
     end
@@ -127,16 +127,16 @@ end)
 
 -- override cargo wagon's default GUI opening
 event.register(defines.events.on_gui_opened, function(e)
-  if e.entity and (e.entity.name == 'infinity-cargo-wagon' or e.entity.name == 'infinity-fluid-wagon') then
+  if e.entity and (e.entity.name == 'ee-infinity-cargo-wagon' or e.entity.name == 'ee-infinity-fluid-wagon') then
     game.players[e.player_index].opened = global.wagons[e.entity.unit_number].proxy
   end
 end)
 
 -- when an entity copy/paste happens
 event.register(defines.events.on_entity_settings_pasted, function(e)
-  if e.source.name == 'infinity-cargo-wagon' and e.destination.name == 'infinity-cargo-wagon' then
+  if e.source.name == 'ee-infinity-cargo-wagon' and e.destination.name == 'ee-infinity-cargo-wagon' then
     global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
-  elseif e.source.name == 'infinity-fluid-wagon' and e.destination.name == 'infinity-fluid-wagon' then
+  elseif e.source.name == 'ee-infinity-fluid-wagon' and e.destination.name == 'ee-infinity-fluid-wagon' then
     global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
   end
 end)
@@ -150,17 +150,17 @@ event.register(defines.events.on_player_setup_blueprint, function(e)
   end
   local entities = bp.get_blueprint_entities()
   if not entities then return end
-  local chests = player.surface.find_entities_filtered{name='infinity-wagon-chest'}
-  local pipes = player.surface.find_entities_filtered{name='infinity-wagon-pipe'}
+  local chests = player.surface.find_entities_filtered{name='ee-infinity-wagon-chest'}
+  local pipes = player.surface.find_entities_filtered{name='ee-infinity-wagon-pipe'}
   local chest_index = 0
   local pipe_index = 0
   for _,en in pairs(entities) do
     -- if the entity is an infinity wagon
-    if en.name == 'infinity-cargo-wagon' then
+    if en.name == 'ee-infinity-cargo-wagon' then
       chest_index = chest_index + 1
       if not en.tags then en.tags = {} end
       en.tags.EditorExtensions = chests[chest_index].infinity_container_filters
-    elseif en.name == 'infinity-fluid-wagon' then
+    elseif en.name == 'ee-infinity-fluid-wagon' then
       pipe_index = pipe_index + 1
       if not en.tags then en.tags = {} end
       en.tags.EditorExtensions = pipes[pipe_index].get_infinity_pipe_filter()

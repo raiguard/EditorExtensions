@@ -14,10 +14,10 @@ local string_find = string.find
 
 require('scripts.infinity-accumulator')
 require('scripts.infinity-combinator')
-require('scripts.infinity-loader')
 require('scripts.infinity-wagon')
 require('scripts.tesseract-chest')
 
+local infinity_loader = require('scripts.infinity-loader')
 local inventory = require('scripts.inventory')
 
 -- -----------------------------------------------------------------------------
@@ -43,10 +43,10 @@ end)
 
 -- armor outfit
 local armor_outfit = {
-  {name='infinity-fusion-reactor-equipment', position={0,0}},
-  {name='infinity-personal-roboport-equipment', position={1,0}},
-  {name='infinity-exoskeleton-equipment', position={2,0}},
-  {name='infinity-exoskeleton-equipment', position={3,0}},
+  {name='ee-infinity-fusion-reactor-equipment', position={0,0}},
+  {name='ee-infinity-personal-roboport-equipment', position={1,0}},
+  {name='ee-infinity-exoskeleton-equipment', position={2,0}},
+  {name='ee-infinity-exoskeleton-equipment', position={3,0}},
   {name='night-vision-equipment', position={0,1}}
 }
 
@@ -71,7 +71,7 @@ commands.add_command('ee_cheat', {'ee-message.cheat-command-help'}, function(e)
     player.insert(cursor_stack)
     cursor_stack.clear()
     -- insert robots
-    player.insert{name='infinity-construction-robot', count=100}
+    player.insert{name='ee-infinity-construction-robot', count=100}
     -- reach distance
     if player.character then
       player.character_build_distance_bonus = 1000000
@@ -230,39 +230,39 @@ end)
 
 -- Add filters to all events that support them so we can preserve as much performance as possible
 event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built_entity}, {
-  {filter='name', name='infinity-loader-dummy-combinator'},
-  {filter='name', name='infinity-loader-logic-combinator'},
-  {filter='name', name='infinity-cargo-wagon'},
-  {filter='name', name='infinity-fluid-wagon'},
-  {filter='name', name='tesseract-chest'},
-  {filter='name', name='tesseract-chest-passive-provider'},
-  {filter='name', name='infinity-inserter'},
-  {filter='name', name='infinity-pipe'},
+  {filter='name', name='ee-infinity-loader-dummy-combinator'},
+  {filter='name', name='ee-infinity-loader-logic-combinator'},
+  {filter='name', name='ee-infinity-cargo-wagon'},
+  {filter='name', name='ee-infinity-fluid-wagon'},
+  {filter='name', name='ee-tesseract-chest'},
+  {filter='name', name='ee-tesseract-chest-passive-provider'},
+  {filter='name', name='ee-infinity-inserter'},
+  {filter='name', name='ee-infinity-pipe'},
   {filter='type', type='transport-belt'},
   {filter='type', type='underground-belt'},
   {filter='type', type='splitter'},
   {filter='type', type='loader'},
   {filter='ghost'},
-  {filter='ghost_name', name='infinity-loader-logic-combinator'}
+  {filter='ghost_name', name='ee-infinity-loader-logic-combinator'}
 })
 .set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
-  {filter='name', name='infinity-accumulator-primary-output'},
-  {filter='name', name='infinity-accumulator-primary-input'},
-  {filter='name', name='infinity-accumulator-secondary-output'},
-  {filter='name', name='infinity-accumulator-secondary-input'},
-  {filter='name', name='infinity-accumulator-tertiary'},
-  {filter='name', name='infinity-loader-dummy-combinator'},
-  {filter='name', name='infinity-loader-logic-combinator'},
-  {filter='name', name='infinity-cargo-wagon'},
-  {filter='name', name='infinity-fluid-wagon'},
+  {filter='name', name='ee-infinity-accumulator-primary-output'},
+  {filter='name', name='ee-infinity-accumulator-primary-input'},
+  {filter='name', name='ee-infinity-accumulator-secondary-output'},
+  {filter='name', name='ee-infinity-accumulator-secondary-input'},
+  {filter='name', name='ee-infinity-accumulator-tertiary'},
+  {filter='name', name='ee-infinity-loader-dummy-combinator'},
+  {filter='name', name='ee-infinity-loader-logic-combinator'},
+  {filter='name', name='ee-infinity-cargo-wagon'},
+  {filter='name', name='ee-infinity-fluid-wagon'},
 })
 .set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
-  {filter='name', name='infinity-cargo-wagon'},
-  {filter='name', name='infinity-fluid-wagon'}
+  {filter='name', name='ee-infinity-cargo-wagon'},
+  {filter='name', name='ee-infinity-fluid-wagon'}
 })
 .set_filters(defines.events.on_cancelled_deconstruction, {
-  {filter='name', name='infinity-cargo-wagon'},
-  {filter='name', name='infinity-fluid-wagon'}
+  {filter='name', name='ee-infinity-cargo-wagon'},
+  {filter='name', name='ee-infinity-fluid-wagon'}
 })
 
 -- -----------------------------------------------------------------------------
@@ -297,6 +297,14 @@ local migrations = {
         -- register events for inventory sync
         event.on_pre_player_toggled_map_editor(inventory.pre_toggled_editor, {name='inventory_sync_pre_toggled_editor', player_index=i})
         event.on_player_toggled_map_editor(inventory.toggled_editor, {name='inventory_sync_toggled_editor', player_index=i})
+      end
+    end
+  end,
+  ['1.3.0'] = function()
+    -- rebuild all loader internals
+    for _,surface in pairs(game.surfaces) do
+      for _,entity in ipairs(surface.find_entities_filtered{name='ee-infinity-loader-logic-combinator'}) do
+        infinity_loader.build_loader(entity)
       end
     end
   end

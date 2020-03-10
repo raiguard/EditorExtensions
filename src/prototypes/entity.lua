@@ -79,7 +79,7 @@ do
     chest.minable.result = 'ee-tesseract-chest'..suffix
     chest.enable_inventory_bar = false
     chest.flags = {'player-creation', 'hide-alt-info'}
-    util.recursive_tint(chest, t.t)
+    util.recursive_tint(chest, t.t or {255,255,255})
     data:extend{chest}
   end
 end
@@ -168,7 +168,7 @@ do
     {
       type = 'constant-combinator',
       name = 'ee-infinity-loader-logic-combinator',
-      localised_name = {'entity-name.infinity-loader'},
+      localised_name = {'entity-name.ee-infinity-loader'},
       order = 'a',
       collision_box = loader_base.collision_box,
       selection_box = loader_base.selection_box,
