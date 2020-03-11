@@ -307,6 +307,13 @@ local migrations = {
         infinity_loader.build_loader(entity)
       end
     end
+    -- enable infintiy heat pipe recipe
+    for _,force in pairs(game.forces) do
+      local recipes = force.recipes
+      if recipes['ee-infinity-loader'].enabled then
+        recipes['ee-infinity-heat-pipe'].enabled = true
+      end
+    end
   end
 }
 
