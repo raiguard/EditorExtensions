@@ -47,6 +47,7 @@ do
     local suffix = lm and '-'..lm or ''
     local chest = table.deepcopy(base_entity)
     chest.name = 'ee-infinity-chest'..suffix
+    chest.localised_description = util.chest_description(suffix)
     chest.order = t.o
     chest.subgroup = 'ee-inventories'
     chest.erase_contents_when_mined = true
@@ -72,6 +73,7 @@ do
     local suffix = lm and '-'..lm or ''
     local chest = table.deepcopy(data.raw['infinity-container']['ee-infinity-chest'..suffix])
     chest.name = 'ee-tesseract-chest'..suffix
+    chest.localised_description = util.chest_description(suffix, true)
     chest.order = t.o
     chest.icons = {{icon=compilatron_chest.icon, icon_size=compilatron_chest.icon_size, icon_mipmaps=compilatron_chest.icon_mipmaps}}
     chest.picture = table.deepcopy(comp_chest_picture)
@@ -97,6 +99,7 @@ data:extend{infinity_combinator}
 -- INFINITY HEAT PIPE
 local infinity_heat_pipe = table.deepcopy(data.raw['heat-interface']['heat-interface'])
 infinity_heat_pipe.name = 'ee-infinity-heat-pipe'
+infinity_heat_pipe.localised_description = {'entity-description.ee-infinity-heat-pipe'}
 infinity_heat_pipe.gui_mode = 'all'
 infinity_heat_pipe.icons = {util.extract_icon_info(data.raw['item']['heat-pipe'])}
 infinity_heat_pipe.picture = {
@@ -275,6 +278,7 @@ data:extend{infinity_locomotive}
 -- INFINITY PIPE
 local infinity_pipe = table.deepcopy(data.raw['infinity-pipe']['infinity-pipe'])
 infinity_pipe.name = 'ee-infinity-pipe'
+infinity_pipe.localised_description = {'entity-description.ee-infinity-pipe'}
 infinity_pipe.gui_mode = 'all'
 infinity_pipe.icons = infinity_pipe.icons
 infinity_pipe.mineable = {mining_time=0.5, result='ee-infinity-pipe'}

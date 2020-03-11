@@ -30,6 +30,16 @@ function self.extract_icon_info(obj)
   return {icon=obj.icon, icon_size=obj.icon_size, icon_mipmaps=obj.icon_mipmaps}
 end
 
+-- generate the localised description of a chest
+function self.chest_description(suffix, is_tesseract)
+  if is_tesseract then
+    return {'', {'entity-description.ee-tesseract-chest'}, suffix ~= '' and {'', '\n', {'entity-description.logistic-chest'..suffix}} or '',
+      '\n[color=255,57,48]', {'entity-description.ee-tesseract-chest-warning'}, '[/color]'}
+  else
+    return {'', {'entity-description.ee-infinity-chest'}, suffix ~= '' and {'', '\n', {'entity-description.logistic-chest'..suffix}} or ''}
+  end
+end
+
 -- data tables
 self.infinity_chest_data = {
   {o='aa'},

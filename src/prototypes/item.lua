@@ -35,11 +35,12 @@ do
     local suffix = lm and '-'..lm or ''
     local chest = table.deepcopy(ic_item)
     chest.name = 'ee-infinity-chest'..suffix
-    chest.localised_description = {'', {'entity-description.ee-infinity-chest'}, '\n', lm and {'entity-description.logistic-chest'..suffix} or ''}
+    chest.localised_description = util.chest_description(suffix)
     chest.icons = {{icon=chest.icon, icon_size=chest.icon_size, icon_mipmaps=chest.icon_mipmaps, tint=t.t}}
     chest.place_result = 'ee-infinity-chest'..suffix
     chest.subgroup = 'ee-inventories'
     chest.order = t.o
+    chest.flags = {}
     data:extend{chest}
   end
 
@@ -51,12 +52,12 @@ do
     local suffix = lm and '-'..lm or ''
     local chest = table.deepcopy(ic_item)
     chest.name = 'ee-tesseract-chest'..suffix
-    chest.localised_description = {'', {'entity-description.ee-tesseract-chest'}, lm and {'', '\n', {'entity-description.logistic-chest'..suffix}} or '',
-      '\n[color=255,57,48]', {'entity-description.ee-tesseract-chest-warning'}, '[/color]'}
+    chest.localised_description = util.chest_description(suffix, true)
     chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=t.t}}
     chest.place_result = 'ee-tesseract-chest'..suffix
     chest.subgroup = 'ee-inventories'
     chest.order = t.o
+    chest.flags = {}
     data:extend{chest}
   end
 end
@@ -130,6 +131,7 @@ data:extend{infinity_fuel}
 -- INFINITY HEAT PIPE
 local infinity_heat_pipe = table.deepcopy(data.raw['item']['heat-interface'])
 infinity_heat_pipe.name = 'ee-infinity-heat-pipe'
+infinity_heat_pipe.localised_description = {'entity-description.ee-infinity-heat-pipe'}
 infinity_heat_pipe.subgroup = 'ee-misc'
 infinity_heat_pipe.order = 'ca'
 infinity_heat_pipe.stack_size = 50
