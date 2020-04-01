@@ -124,7 +124,7 @@ end)
 -- set up player when created
 event.on_player_created(function(e)
   setup_player(e.player_index)
-end, {insert_at_front=true})
+end, nil, {insert_at=1})
 
 -- destroy player table when removed
 event.on_player_removed(function(e)
@@ -203,9 +203,6 @@ event.on_built_entity(function(e)
           local fb = neighbour.fluidbox
           for i=1,#fb do
             local connections = fb.get_connections(i)
-            -- local prototype = fb.get_prototype(i)
-            -- local production_type = prototype.production_type
-            -- local unit_number = connections[1] and connections[1].owner.unit_number
             if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == 'input') then
               -- set to fill the pipe with the fluid
               entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(1), percentage=1, mode='exactly'}
@@ -245,7 +242,7 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter='ghost'},
   {filter='ghost_name', name='ee-infinity-loader-logic-combinator'}
 })
-.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
+event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
   {filter='name', name='ee-infinity-accumulator-primary-output'},
   {filter='name', name='ee-infinity-accumulator-primary-input'},
   {filter='name', name='ee-infinity-accumulator-secondary-output'},
@@ -256,11 +253,11 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter='name', name='ee-infinity-cargo-wagon'},
   {filter='name', name='ee-infinity-fluid-wagon'},
 })
-.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
+event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
   {filter='name', name='ee-infinity-cargo-wagon'},
   {filter='name', name='ee-infinity-fluid-wagon'}
 })
-.set_filters(defines.events.on_cancelled_deconstruction, {
+event.set_filters(defines.events.on_cancelled_deconstruction, {
   {filter='name', name='ee-infinity-cargo-wagon'},
   {filter='name', name='ee-infinity-fluid-wagon'}
 })
@@ -293,10 +290,9 @@ local migrations = {
     for i,p in pairs(game.players) do
       -- set map editor toggled flag to true
       player_tables[i].flags.map_editor_toggled = true
-      if p.cheat_mode then
-        -- register events for inventory sync
-        event.on_pre_player_toggled_map_editor(inventory.pre_toggled_editor, {name='inventory_sync_pre_toggled_editor', player_index=i})
-        event.on_player_toggled_map_editor(inventory.toggled_editor, {name='inventory_sync_toggled_editor', player_index=i})
+      if p.mod_settings['ee-inventory-sync'].value and p.cheat_mode then
+        -- enable events for inventory sync
+        event.enable_group('inventory_sync', i)
       end
     end
   end,
@@ -320,4 +316,4 @@ local migrations = {
 -- handle migrations
 event.on_configuration_changed(function(e)
   migration.on_config_changed(e, migrations)
-end, {insert_at_front=true})
+end, nil, {insert_at=1})

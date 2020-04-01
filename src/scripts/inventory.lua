@@ -106,19 +106,20 @@ event.register(
   {defines.events.on_player_cheat_mode_enabled, defines.events.on_player_cheat_mode_disabled, defines.events.on_runtime_mod_setting_changed},
   function(e)
     local player = game.get_player(e.player_index)
-    local player_table = global.players[e.player_index]
     local cheat_mode = player.cheat_mode
     if e.setting and e.setting ~= 'ee-inventory-sync' then return end
     if cheat_mode and player.mod_settings['ee-inventory-sync'].value then
-      event.register(defines.events.on_pre_player_toggled_map_editor, pre_toggled_editor, {name='inventory_sync_pre_toggled_editor',
-        player_index=e.player_index})
-      event.register(defines.events.on_player_toggled_map_editor, toggled_editor, {name='inventory_sync_toggled_editor', player_index=e.player_index})
+      event.enable_group('inventory_sync', e.player_index)
     else
-      event.deregister(defines.events.on_pre_player_toggled_map_editor, pre_toggled_editor, 'inventory_sync_pre_toggled_editor', e.player_index)
-      event.deregister(defines.events.on_player_toggled_map_editor, toggled_editor, 'inventory_sync_toggled_editor', e.player_index)
+      event.disable_group('inventory_sync', e.player_index)
     end
   end
 )
+
+event.register_conditional{
+  inventory_sync_pre_toggled_editor = {id=defines.events.on_pre_player_toggled_map_editor, handler=pre_toggled_editor, group='inventory_sync'},
+  inventory_sync_toggled_editor = {id=defines.events.on_player_toggled_map_editor, handler=toggled_editor, group='inventory_sync'},
+}
 
 -- -----------------------------------------------------------------------------
 -- INFINITY INVENTORY FILTERS
@@ -165,24 +166,25 @@ local function import_filters(player, string)
   return false
 end
 
-gui.add_templates{
+gui.templates:extend{
   inventory_filters_string = {
     export_nav_flow = {type='flow', style_mods={top_margin=8}, direction='horizontal', children={
-      {type='button', style='back_button', caption={'gui.cancel'}, handlers='back_button'},
+      {type='button', style='back_button', caption={'gui.cancel'}, handlers='inventory_filters_string.back_button'},
       {type='empty-widget', style='draggable_space', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'}
     }},
     import_nav_flow = {type='flow', style_mods={top_margin=8}, direction='horizontal', children={
-      {type='button', style='back_button', caption={'gui.cancel'}, handlers='back_button'},
+      {type='button', style='back_button', caption={'gui.cancel'}, handlers='inventory_filters_string.back_button'},
       {type='empty-widget', style='draggable_space', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'},
-      {type='button', style='confirm_button', caption={'gui.confirm'}, mods={enabled=false}, handlers='confirm_button', save_as=true}
+      {type='button', style='confirm_button', caption={'gui.confirm'}, mods={enabled=false}, handlers='inventory_filters_string.confirm_button',
+        save_as='confirm_button'}
     }}
   }
 }
 
-gui.add_handlers{
+gui.handlers:extend{
   inventory_filters_buttons = {
     import_export_button = {
-      on_gui_click = function(e)
+      on_click = {id=defines.events.on_gui_click, handler=function(e)
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         if player_table.gui.inventory_filters_string then
@@ -198,10 +200,10 @@ gui.add_handlers{
               {type='empty-widget', style='draggable_space_header', style_mods={height=24, horizontally_stretchable=true}, save_as='drag_handle'}
             }},
             {type='text-box', style_mods={width=400, height=300}, clear_and_focus_on_right_click=true, mods={word_wrap=true},
-              handlers=(mode == 'import' and 'textbox' or nil), save_as='textbox'},
+              handlers=(mode == 'import' and 'inventory_filters_string.textbox' or nil), save_as='textbox'},
             {template='inventory_filters_string.'..mode..'_nav_flow'}
           }}
-        }, 'inventory_filters_string', e.player_index)
+        })
         gui_data.drag_handle.drag_target = gui_data.window
         gui_data.lower_drag_handle.drag_target = gui_data.window
         gui_data.window.force_auto_center()
@@ -213,70 +215,70 @@ gui.add_handlers{
         end
 
         player_table.gui.inventory_filters_string = gui_data
-      end
+      end}
     },
     inventory_window = {
-      on_gui_closed = function(e)
+      on_gui_closed = {id=defines.events.on_gui_closed, handler=function(e)
         if e.gui_type and e.gui_type == 3 then
           local player_table = global.players[e.player_index]
-          gui.deregister_all('inventory_filters_buttons', e.player_index)
+          event.disable_group('gui.inventory_filters_buttons', e.player_index)
           player_table.gui.inventory_filters_buttons.window.destroy()
           player_table.gui.inventory_filters_buttons = nil
         end
-      end
+      end}
     },
     player = {
-      on_player_toggled_map_editor = function(e)
+      on_player_toggled_map_editor = {id=defines.events.on_player_toggled_map_editor, handler=function(e)
         -- close the GUI if the player exits the map editor
         local player_table = global.players[e.player_index]
-        gui.deregister_all('inventory_filters_buttons', e.player_index)
+        event.disable_group('gui.inventory_filters_buttons', e.player_index)
         player_table.gui.inventory_filters_buttons.window.destroy()
         player_table.gui.inventory_filters_buttons = nil
         if player_table.gui.inventory_filters_string then
-          gui.deregister_all('inventory_filters_string', e.player_index)
+          event.disable_group('gui.inventory_filters_string', e.player_index)
           player_table.gui.inventory_filters_string.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
-      end,
-      on_player_display_resolution_changed = function(e)
+      end},
+      on_player_display_resolution_changed = {id=defines.events.on_player_display_resolution_changed, handler=function(e)
         local player = game.get_player(e.player_index)
         local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
         gui_data.window.location = {x=0, y=(player.display_resolution.height-(56*player.display_scale))}
-      end
+      end}
     }
   },
   inventory_filters_string = {
     back_button = {
-      on_gui_click = function(e)
+      on_gui_click = {id=defines.events.on_gui_click, handler=function(e)
         local player_table = global.players[e.player_index]
-        gui.deregister_all('inventory_filters_string', e.player_index)
+        event.disable_group('gui.inventory_filters_string', e.player_index)
         player_table.gui.inventory_filters_string.window.destroy()
         player_table.gui.inventory_filters_string = nil
-      end
+      end}
     },
     confirm_button = {
-      on_gui_click = function(e)
+      on_gui_click = {id=defines.events.on_gui_click, handler=function(e)
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.inventory_filters_string
         if import_filters(player, gui_data.textbox.text) then
-          gui.deregister_all('inventory_filters_string', e.player_index)
+          event.disable_group('gui.inventory_filters_string', e.player_index)
           gui_data.window.destroy()
           player_table.gui.inventory_filters_string = nil
         else
           player.print{'ee-message.invalid-inventory-filters-string'}
         end
-      end
+      end}
     },
     textbox = {
-      on_gui_text_changed = function(e)
+      on_gui_text_changed = {id=defines.events.on_gui_text_changed, handler=function(e)
         local gui_data = global.players[e.player_index].gui.inventory_filters_string
         if e.element.text == '' then
           gui_data.confirm_button.enabled = false
         else
           gui_data.confirm_button.enabled = true
         end
-      end
+      end}
     }
   }
 }
@@ -291,21 +293,18 @@ event.on_gui_opened(function(e)
         {type='frame', style='shortcut_bar_window_frame', style_mods={right_padding=4}, save_as='window', children={
           {type='frame', style='shortcut_bar_inner_panel', direction='horizontal', children={
             {type='sprite-button', style='shortcut_bar_button', sprite='ee-import-inventory-filters', tooltip={'ee-gui.import-inventory-filters'},
-              save_as='import_button'},
+              handlers='inventory_filters_buttons.import_export_button', save_as='import_button'},
             {type='sprite-button', style='shortcut_bar_button', sprite='ee-export-inventory-filters', tooltip={'ee-gui.export-inventory-filters'},
-              save_as='export_button'}
+              handlers='inventory_filters_buttons.import_export_button', save_as='export_button'}
           }}
         }}
       }, 'inventory_filters_buttons', player.index)
       -- register events
-      gui.register_handlers('inventory_filters_buttons', 'player', {player_index=e.player_index})
-      gui.register_handlers('inventory_filters_buttons', 'import_export_button', {player_index=e.player_index,
-        gui_filters={gui_data.import_button, gui_data.export_button}})
-      gui.register_handlers('inventory_filters_buttons', 'inventory_window', {player_index=e.player_index})
+      event.enable_group('gui.inventory_filters_buttons', e.player_index)
       -- add to global
       player_table.gui.inventory_filters_buttons = gui_data
       -- position GUI
-      gui.call_handler('inventory_filters_buttons.player.on_player_display_resolution_changed', {player_index=e.player_index})
+      gui.handlers.inventory_filters_buttons.player.on_player_display_resolution_changed.handler{player_index=e.player_index}
     end
   end
 end)
@@ -314,7 +313,5 @@ end)
 -- OBJECT
 
 return {
-  import_inventory_filters = import_filters,
-  pre_toggled_editor = pre_toggled_editor,
-  toggled_editor = toggled_editor
+  import_inventory_filters = import_filters
 }

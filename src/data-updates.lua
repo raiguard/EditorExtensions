@@ -2,7 +2,7 @@
 -- EDITOR EXTENSIONS PROTOTYPES - UPDATES
 
 local util = require('prototypes.util')
-  
+
 -- INFINITY LOADER
 local loader_base = table.deepcopy(data.raw['underground-belt']['underground-belt'])
 loader_base.icons = {{icon='__EditorExtensions__/graphics/item/infinity-loader.png', icon_size=32}}
