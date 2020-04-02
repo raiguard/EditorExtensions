@@ -37,9 +37,9 @@ local function wagon_on_tick()
   end
 end
 
-event.on_load(function()
-  event.load_conditional_handlers{wagon_on_tick=wagon_on_tick}
-end)
+event.register_conditional{
+  wagon_on_tick = {id=defines.events.on_tick, handler=wagon_on_tick, options={skip_validation=true}}
+}
 
 -- -----------------------------------------------------------------------------
 -- STATIC HANDLERS
@@ -59,7 +59,7 @@ event.register(util.constants.entity_built_events, function(e)
       force = entity.force
     }
     if table_size(global.wagons) == 0 then
-      event.register(defines.events.on_tick, wagon_on_tick, {name='wagon_on_tick'})
+      event.enable('wagon_on_tick')
     end
     -- create all api lookups here to save time in on_tick()
     local data = {
@@ -95,7 +95,7 @@ event.register({defines.events.on_pre_player_mined_item, defines.events.on_marke
 end)
 
 -- when a deconstruction order is canceled
-event.register(defines.events.on_cancelled_deconstruction, function(e)
+event.on_cancelled_deconstruction(function(e)
   local entity = e.entity
   if entity.name == 'ee-infinity-cargo-wagon' then
     global.wagons[entity.unit_number].flip = 0
@@ -109,7 +109,7 @@ event.register(util.constants.entity_destroyed_events, function(e)
     global.wagons[entity.unit_number].proxy.destroy()
     global.wagons[entity.unit_number] = nil
     if table_size(global.wagons) == 0 then
-      event.deregister(defines.events.on_tick, wagon_on_tick, 'wagon_on_tick')
+      event.disable('wagon_on_tick')
     end
   end
 end)
@@ -126,14 +126,14 @@ event.register('ee-mouse-leftclick', function(e)
 end)
 
 -- override cargo wagon's default GUI opening
-event.register(defines.events.on_gui_opened, function(e)
+event.on_gui_opened(function(e)
   if e.entity and (e.entity.name == 'ee-infinity-cargo-wagon' or e.entity.name == 'ee-infinity-fluid-wagon') then
     game.players[e.player_index].opened = global.wagons[e.entity.unit_number].proxy
   end
 end)
 
 -- when an entity copy/paste happens
-event.register(defines.events.on_entity_settings_pasted, function(e)
+event.on_entity_settings_pasted(function(e)
   if e.source.name == 'ee-infinity-cargo-wagon' and e.destination.name == 'ee-infinity-cargo-wagon' then
     global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
   elseif e.source.name == 'ee-infinity-fluid-wagon' and e.destination.name == 'ee-infinity-fluid-wagon' then
@@ -142,7 +142,7 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
 end)
 
 -- when a player selects an area for blueprinting
-event.register(defines.events.on_player_setup_blueprint, function(e)
+event.on_player_setup_blueprint(function(e)
   local player = game.get_player(e.player_index)
   local bp = player.blueprint_to_setup
   if not bp or not bp.valid_for_read then
