@@ -23,7 +23,7 @@ local circuit_type_to_state = {red='left', green='right'}
 local function update_circuit_values(e)
   local players = global.players
   local tick = game.tick
-  for _,pi in pairs(e.player_index and {e.player_index} or global.combinators) do
+  for _,pi in pairs(e.player_index and {e.player_index} or e.registered_players) do
     local gui_data = players[pi].gui.ic
     if e.override_update_rate or tick % gui_data.update_divider == 0 then
       local entity = gui_data.entity
@@ -112,8 +112,8 @@ local function update_circuit_values(e)
 end
 
 local function create_sort_button(parent, mode, direction)
-  return parent.add{type='sprite-button', name='ee_ic_sort_'..mode..'_'..direction..'_button', style='tool_button',
-                    sprite='ee-sort-'..mode..'-'..direction, tooltip={'gui-infinity-combinator.sort-'..mode..'-'..direction..'-button-tooltip'}}
+  return parent.add{type='sprite-button', name='ee_ic_sort_'..mode..'_'..direction..'_button', style='tool_button', sprite='ee-sort-'..mode..'-'..direction,
+    tooltip={'gui-infinity-combinator.sort-'..mode..'-'..direction..'-button-tooltip'}}
 end
 
 -- -----------------------------------------------------------------------------
@@ -123,8 +123,7 @@ end
 -- GUI HANDLERS
 
 local function close_button_clicked(e)
-  -- invoke GUI closed event
-  event.raise(defines.events.on_gui_closed, {element=e.element.parent.parent, gui_type=16, player_index=e.player_index, tick=game.tick})
+  gui.destroy(e.player_index, global.players[e.player_index])
 end
 
 local function color_switch_state_changed(e)
@@ -207,7 +206,7 @@ end
 
 local function signal_button_clicked(e)
   local player = game.get_player(e.player_index)
-local player_table = global.players[e.player_index]
+  local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ic
   -- update selected icon and value textfield
   local type, name = e.element.sprite:match('(.+)/(.+)')
@@ -226,7 +225,7 @@ end
 
 local function selected_button_elem_changed(e)
   local player = game.get_player(e.player_index)
-local player_table = global.players[e.player_index]
+  local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ic
   if e.element.elem_value then
     local elem = e.element.elem_value
@@ -251,26 +250,21 @@ local player_table = global.players[e.player_index]
   update_circuit_values{player_index=e.player_index, override_update_rate=true}
 end
 
-local handlers = {
-  ic_close_button_clicked = close_button_clicked,
-  ic_color_switch_state_changed = color_switch_state_changed,
-  ic_update_rate_menu_button_clicked = update_rate_menu_button_clicked,
-  ic_update_rate_back_button_clicked = update_rate_back_button_clicked,
-  ic_update_rate_slider_value_changed = update_rate_slider_value_changed,
-  ic_update_rate_textfield_text_changed = update_rate_textfield_text_changed,
-  ic_update_rate_textfield_confirmed = update_rate_textfield_confirmed,
-  ic_sort_menu_button_clicked = sort_menu_button_clicked,
-  ic_sort_back_button_clicked = sort_back_button_clicked,
-  ic_sort_button_clicked = sort_button_clicked,
-  ic_signal_button_clicked = signal_button_clicked,
-  ic_selected_button_elem_changed = selected_button_elem_changed
-
+event.register_conditional{
+  ic_close_button_clicked = {id=defines.events.on_gui_click, handler=close_button_clicked, group='ic_gui'},
+  ic_color_switch_state_changed = {id=defines.events.on_gui_switch_state_changed, handler=color_switch_state_changed, group='ic_gui'},
+  ic_update_rate_menu_button_clicked = {id=defines.events.on_gui_click, handler=update_rate_menu_button_clicked, group='ic_gui'},
+  ic_update_rate_back_button_clicked = {id=defines.events.on_gui_click, handler=update_rate_back_button_clicked, group='ic_gui'},
+  ic_update_rate_slider_value_changed = {id=defines.events.on_gui_value_changed, handler=update_rate_slider_value_changed, group='ic_gui'},
+  ic_update_rate_textfield_text_changed = {id=defines.events.on_gui_text_changed, handler=update_rate_textfield_text_changed, group='ic_gui'},
+  ic_update_rate_textfield_confirmed = {id=defines.events.on_gui_confirmed, handler=update_rate_textfield_confirmed, group='ic_gui'},
+  ic_sort_menu_button_clicked = {id=defines.events.on_gui_click, handler=sort_menu_button_clicked, group='ic_gui'},
+  ic_sort_back_button_clicked = {id=defines.events.on_gui_click, handler=sort_back_button_clicked, group='ic_gui'},
+  ic_sort_button_clicked = {id=defines.events.on_gui_click, handler=sort_button_clicked, group='ic_gui'},
+  ic_signal_button_clicked = {id=defines.events.on_gui_click, handler=signal_button_clicked, group='ic_gui', options={match_filter_strings=true}},
+  ic_selected_button_elem_changed = {id=defines.events.on_gui_elem_changed, handler=selected_button_elem_changed, group='ic_gui'},
+  ic_update_circuit_values = {id=defines.events.on_tick, handler=update_circuit_values, group='ic_gui', options={skip_validation=true}}
 }
-
-event.on_load(function()
-  event.load_conditional_handlers(handlers)
-  .load_conditional_handlers{ic_update_circuit_values = update_circuit_values}
-end)
 
 -- ----------------------------------------
 -- GUI MANAGEMENT
@@ -283,79 +277,71 @@ function gui.create(parent, player)
     label = {'entity-name.ee-infinity-combinator'},
     buttons = {util.constants.close_button_def}
   })
-  event.on_gui_click(close_button_clicked, {name='ic_close_button_clicked', player_index=player.index, gui_filters=titlebar.children[3]})
+  event.enable('ic_close_button_clicked', player.index, titlebar.children[3].index)
   local content_pane = window.add{type='frame', name='ee_ic_content_pane', style='inside_deep_frame', direction='vertical'}
   -- TOOLBAR
   local toolbar = content_pane.add{type='frame', name='ee_ic_toolbar_frame', style='subheader_frame'}
   -- main flow
   local main_toolbar_flow = toolbar.add{type='flow', name='ee_ic_toolbar_main_flow', style='ee_toolbar_flow_for_switch', direction='horizontal'}
   local color_switch = main_toolbar_flow.add{type='switch', name='ee_ic_color_switch', left_label_caption={'color.red'}, right_label_caption={'color.green'}}
-  event.on_gui_switch_state_changed(color_switch_state_changed, {name='ic_color_switch_state_changed', player_index=player.index, gui_filters=color_switch})
+  event.enable('ic_color_switch_state_changed', player.index, color_switch.index)
   util.gui.add_pusher(main_toolbar_flow, 'ee_ic_toolbar_main_pusher')
-  event.on_gui_click(update_rate_menu_button_clicked, {name='ic_update_rate_menu_button_clicked', player_index=player.index, gui_filters=
+  event.enable('ic_update_rate_menu_button_clicked', player.index,
     main_toolbar_flow.add{type='sprite-button', name='ee_ic_update_rate_button', style='tool_button', sprite='ee-time',
-                          tooltip={'gui-infinity-combinator.update-rate-menu-button-tooltip'}}
-  })
-  event.on_gui_click(sort_menu_button_clicked, {name='ic_sort_menu_button_clicked', player_index=player.index, gui_filters=
+      tooltip={'gui-infinity-combinator.update-rate-menu-button-tooltip'}}.index
+  )
+  event.enable('ic_sort_menu_button_clicked', player.index,
     main_toolbar_flow.add{type='sprite-button', name='ee_ic_sort_menu_button', style='tool_button', sprite='ee-sort',
-                          tooltip={'gui-infinity-combinator.sort-menu-button-tooltip'}},
-    
-  })
+      tooltip={'gui-infinity-combinator.sort-menu-button-tooltip'}}.index
+  )
   -- update rate flow
   local update_rate_toolbar_flow = toolbar.add{type='flow', name='ee_ic_toolbar_update_rate_flow', style='ee_toolbar_flow', direction='horizontal'}
-  event.on_gui_click(update_rate_back_button_clicked, {name='ic_update_rate_back_button_clicked', player_index=player.index, gui_filters=
+  event.enable('ic_update_rate_back_button_clicked', player.index,
     update_rate_toolbar_flow.add{type='sprite-button', name='ee_ic_toolbar_update_rate_back_button', style='tool_button', sprite='utility/reset',
-                                 tooltip={'gui.cancel'}}
-  })
+      tooltip={'gui.cancel'}}.index
+  )
   local update_rate_slider = update_rate_toolbar_flow.add{type='slider', name='ee_ic_toolbar_update_rate_slider', style='ee_update_rate_slider',
-                                                          minimum_value=1, maximum_value=60}
-  event.on_gui_value_changed(update_rate_slider_value_changed, {name='ic_update_rate_slider_value_changed', player_index=player.index,
-                             gui_filters=update_rate_slider})
+    minimum_value=1, maximum_value=60}
+  event.enable('ic_update_rate_slider_value_changed', player.index, update_rate_slider.index)
   local update_rate_textfield = update_rate_toolbar_flow.add{type='textfield', name='ee_ic_toolbar_update_rate_textfield', style='ee_slider_textfield',
-                                                             numeric=true, lose_focus_on_confirm=true}
-  event.on_gui_text_changed(update_rate_textfield_text_changed, {name='ic_update_rate_textfield_text_changed', player_index=player.index,
-                            gui_filters=update_rate_textfield})
-  event.on_gui_confirmed(update_rate_textfield_confirmed, {name='ic_update_rate_textfield_confirmed', player_index=player.index,
-                         gui_filters=update_rate_textfield})
+    numeric=true, lose_focus_on_confirm=true}
+  event.enable('ic_update_rate_textfield_text_changed', player.index, update_rate_textfield.index)
+  event.enable('ic_update_rate_textfield_confirmed', player.index, update_rate_textfield.index)
   update_rate_toolbar_flow.visible = false
   -- sort flow
   local sort_toolbar_flow = toolbar.add{type='flow', name='ee_ic_toolbar_sort_flow', style='ee_toolbar_flow', direction='horizontal'}
-  event.on_gui_click(sort_back_button_clicked, {name='ic_sort_back_button_clicked', player_index=player.index, gui_filters=
-    sort_toolbar_flow.add{type='sprite-button', name='ee_ic_toolbar_sort_back_button', style='tool_button', sprite='utility/reset', tooltip={'gui.cancel'}}
-  })
+  event.enable('ic_sort_back_button_clicked', player.index,
+    sort_toolbar_flow.add{type='sprite-button', name='ee_ic_toolbar_sort_back_button', style='tool_button', sprite='utility/reset', tooltip={'gui.cancel'}}.index
+  )
   util.gui.add_pusher(sort_toolbar_flow, 'ee_ic_toolbar_sort_pusher')
-  event.on_gui_click(sort_button_clicked, {name='ic_sort_button_clicked', player_index=player.index, gui_filters={
-    create_sort_button(sort_toolbar_flow, 'alphabetical', 'ascending'),
-    create_sort_button(sort_toolbar_flow, 'alphabetical', 'descending'),
-    create_sort_button(sort_toolbar_flow, 'numerical', 'ascending'),
-    create_sort_button(sort_toolbar_flow, 'numerical', 'descending')
-  }})
+  event.enable('ic_sort_button_clicked', player.index, {
+    create_sort_button(sort_toolbar_flow, 'alphabetical', 'ascending').index,
+    create_sort_button(sort_toolbar_flow, 'alphabetical', 'descending').index,
+    create_sort_button(sort_toolbar_flow, 'numerical', 'ascending').index,
+    create_sort_button(sort_toolbar_flow, 'numerical', 'descending').index
+  })
   sort_toolbar_flow.visible = false
   -- SIGNALS TABLE
   local signals_scroll = content_pane.add{type='scroll-pane', name='ic_signals_scrollpane', style='signal_scroll_pane', vertical_scroll_policy='always'}
   local signals_table = signals_scroll.add{type='table', name='slot_table', style='signal_slot_table', column_count=6}
-  event.on_gui_click(signal_button_clicked, {name='ic_signal_button_clicked', player_index=player.index, gui_filters='ee_ic_signal_icon_'})
+  event.enable('ic_signal_button_clicked', player.index, 'ee_ic_signal_icon_')
   -- SELECTED SIGNAL
   local selected_flow = content_pane.add{type='frame', name='ee_ic_lower_flow', style='ee_current_signal_frame', direction='horizontal'}
   selected_flow.style.top_margin = 2
   local selected_button = selected_flow.add{type='choose-elem-button', name='ee_ic_selected_icon', style='ee_filter_slot_button_inset', elem_type='signal'}
-  event.on_gui_elem_changed(selected_button_elem_changed, {name='ic_selected_button_elem_changed', player_index=player.index, gui_filters=selected_button})
+  event.enable('ic_selected_button_elem_changed', player.index, selected_button.index)
   local value_textfield = selected_flow.add{type='textfield', name='ee_ic_input_textfield', style='ee_ic_value_textfield', numeric=true,
-                                            clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
+    clear_and_focus_on_right_click=true, lose_focus_on_confirm=true}
   value_textfield.ignored_by_interaction = true
   window.force_auto_center()
   return {window=window, color_switch=color_switch, update_rate_slider=update_rate_slider, update_rate_textfield=update_rate_textfield,
           sort_toolbar_flow=sort_toolbar_flow, signals_table=signals_table, selected_button=selected_button, value_textfield=value_textfield}
 end
 
-function gui.destroy(window, player_index)
-  -- deregister all GUI events if needed
-  for cn,h in pairs(handlers) do
-    if event.is_registered(cn, player_index) then
-      event.deregister_conditional(h, cn, player_index)
-    end
-  end
-  window.destroy()
+function gui.destroy(player_index, player_table)
+  event.disable_group('ic_gui', player_index)
+  player_table.gui.ic.elems.window.destroy()
+  player_table.gui.ic = nil
 end
 
 -- -----------------------------------------------------------------------------
@@ -385,9 +371,7 @@ event.register(defines.events.on_gui_opened, function(e)
       end
     end
     -- register function for updating values
-    event.register(defines.events.on_tick, update_circuit_values, {name='ic_update_circuit_values', player_index=player.index})
-    -- add to open combinators table
-    table.insert(global.combinators, player.index)
+    event.enable('ic_update_circuit_values', player.index)
     -- update values now
     update_circuit_values{clear_all=true, player_index=player.index, override_update_rate=true}
   end
@@ -396,15 +380,6 @@ end)
 -- when a GUI is closed
 event.register(defines.events.on_gui_closed, function(e)
   if e.gui_type == 16 and e.element and e.element.name == 'ee_ic_window' then
-    gui.destroy(e.element, e.player_index)
-    -- deregister on_tick
-    event.deregister(defines.events.on_tick, update_circuit_values, 'ic_update_circuit_values', e.player_index)
-    -- remove from open combinators table
-    for i,p in ipairs(global.combinators) do
-      if p == e.player_index then
-        table.remove(global.combinators, i)
-        break
-      end
-    end
+    gui.destroy(e.player_index, global.players[e.player_index])
   end
 end)

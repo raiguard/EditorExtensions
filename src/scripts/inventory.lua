@@ -170,11 +170,11 @@ gui.templates:extend{
   inventory_filters_string = {
     export_nav_flow = {type='flow', style_mods={top_margin=8}, direction='horizontal', children={
       {type='button', style='back_button', caption={'gui.cancel'}, handlers='inventory_filters_string.back_button'},
-      {type='empty-widget', style='draggable_space', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'}
+      {type='empty-widget', style='draggable_space_header', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'}
     }},
     import_nav_flow = {type='flow', style_mods={top_margin=8}, direction='horizontal', children={
       {type='button', style='back_button', caption={'gui.cancel'}, handlers='inventory_filters_string.back_button'},
-      {type='empty-widget', style='draggable_space', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'},
+      {type='empty-widget', style='draggable_space_header', style_mods={height=32, horizontally_stretchable=true}, save_as='lower_drag_handle'},
       {type='button', style='confirm_button', caption={'gui.confirm'}, mods={enabled=false}, handlers='inventory_filters_string.confirm_button',
         save_as='confirm_button'}
     }}
@@ -184,18 +184,18 @@ gui.templates:extend{
 gui.handlers:extend{
   inventory_filters_buttons = {
     import_export_button = {
-      on_click = {id=defines.events.on_gui_click, handler=function(e)
+      on_gui_click = function(e)
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         if player_table.gui.inventory_filters_string then
-          gui.deregister_all('inventory_filters_string', e.player_index)
+          event.disable_group('gui.inventory_filters_string', e.player_index)
           player_table.gui.inventory_filters_string.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
         local mode = e.element.sprite:find('export') and 'export' or 'import'
         local gui_data = gui.build(player.gui.screen, {
           {type='frame', style='dialog_frame', direction='vertical', save_as='window', children={
-            {type='flow', style='ee_titlebar_flow', direction='horizontal', children={
+            {type='flow', children={
               {type='label', style='frame_title', caption={'ee-gui.'..mode..'-inventory-filters'}},
               {type='empty-widget', style='draggable_space_header', style_mods={height=24, horizontally_stretchable=true}, save_as='drag_handle'}
             }},
@@ -215,20 +215,20 @@ gui.handlers:extend{
         end
 
         player_table.gui.inventory_filters_string = gui_data
-      end}
+      end
     },
     inventory_window = {
-      on_gui_closed = {id=defines.events.on_gui_closed, handler=function(e)
+      on_gui_closed = function(e)
         if e.gui_type and e.gui_type == 3 then
           local player_table = global.players[e.player_index]
           event.disable_group('gui.inventory_filters_buttons', e.player_index)
           player_table.gui.inventory_filters_buttons.window.destroy()
           player_table.gui.inventory_filters_buttons = nil
         end
-      end}
+      end
     },
     player = {
-      on_player_toggled_map_editor = {id=defines.events.on_player_toggled_map_editor, handler=function(e)
+      on_player_toggled_map_editor = function(e)
         -- close the GUI if the player exits the map editor
         local player_table = global.players[e.player_index]
         event.disable_group('gui.inventory_filters_buttons', e.player_index)
@@ -239,25 +239,25 @@ gui.handlers:extend{
           player_table.gui.inventory_filters_string.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
-      end},
-      on_player_display_resolution_changed = {id=defines.events.on_player_display_resolution_changed, handler=function(e)
+      end,
+      on_player_display_resolution_changed = function(e)
         local player = game.get_player(e.player_index)
         local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
         gui_data.window.location = {x=0, y=(player.display_resolution.height-(56*player.display_scale))}
-      end}
+      end
     }
   },
   inventory_filters_string = {
     back_button = {
-      on_gui_click = {id=defines.events.on_gui_click, handler=function(e)
+      on_gui_click = function(e)
         local player_table = global.players[e.player_index]
         event.disable_group('gui.inventory_filters_string', e.player_index)
         player_table.gui.inventory_filters_string.window.destroy()
         player_table.gui.inventory_filters_string = nil
-      end}
+      end
     },
     confirm_button = {
-      on_gui_click = {id=defines.events.on_gui_click, handler=function(e)
+      on_gui_click = function(e)
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.inventory_filters_string
@@ -268,17 +268,17 @@ gui.handlers:extend{
         else
           player.print{'ee-message.invalid-inventory-filters-string'}
         end
-      end}
+      end
     },
     textbox = {
-      on_gui_text_changed = {id=defines.events.on_gui_text_changed, handler=function(e)
+      on_gui_text_changed = function(e)
         local gui_data = global.players[e.player_index].gui.inventory_filters_string
         if e.element.text == '' then
           gui_data.confirm_button.enabled = false
         else
           gui_data.confirm_button.enabled = true
         end
-      end}
+      end
     }
   }
 }
@@ -304,7 +304,7 @@ event.on_gui_opened(function(e)
       -- add to global
       player_table.gui.inventory_filters_buttons = gui_data
       -- position GUI
-      gui.handlers.inventory_filters_buttons.player.on_player_display_resolution_changed.handler{player_index=e.player_index}
+      gui.handlers.inventory_filters_buttons.player.on_player_display_resolution_changed{player_index=e.player_index}
     end
   end
 end)

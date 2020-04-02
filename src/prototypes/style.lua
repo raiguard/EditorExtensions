@@ -92,6 +92,14 @@ styles.ee_active_filter_slot_button = {
   }
 }
 
+-- slightly smaller close button that looks WAY better ;)
+styles.ee_frame_action_button = {
+  type = 'button_style',
+  parent = 'frame_action_button_no_border',
+  size = 20,
+  top_margin = 2
+}
+
 -- -----------------------------------------------------------------------------
 -- EMPTY WIDGET STYLES
 
@@ -105,15 +113,17 @@ styles.ee_invisible_vertical_pusher = {
   vertically_stretchable = 'on'
 }
 
+styles.ee_titlebar_draggable_space = {
+  type = 'empty_widget_style',
+  parent = 'draggable_space_header',
+  horizontally_stretchable = 'on',
+  natural_height = 24,
+  minimal_width = 24,
+  right_margin = 6
+}
+
 -- -----------------------------------------------------------------------------
 -- FLOW STYLES
-
-styles.ee_titlebar_flow = {
-  type = 'horizontal_flow_style',
-  direction = 'horizontal',
-  horizontally_stretchable = 'on',
-  vertical_align = 'center'
-}
 
 styles.ee_vertically_centered_flow = {
   type='horizontal_flow_style',

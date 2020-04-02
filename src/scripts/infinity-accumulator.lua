@@ -115,7 +115,7 @@ end
 
 local function priority_dropdown_selection_changed(e)
   local player = game.get_player(e.player_index)
-local player_table = global.players[e.player_index]
+  local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local mode = constants.index_to_mode[gui_data.elems.mode_dropdown.selected_index]
   local priority = constants.index_to_priority[e.element.selected_index]
