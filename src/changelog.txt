@@ -6,6 +6,7 @@ Date: ????
     - Switched to using our own versions of the built-in infinity chest, infinity pipe, and heat interface to avoid compatibility issues
     - Removed lualib and made it a separate mod, RaiLuaLib
   Bugfixes:
+    - Fixed the alignment and styling of titlebars which broke due to the new character GUI
     - Fixed a crash on trying to disable inventory sync when it wasn't enabled
     - Fixed that mining an infinity combinator would give you a regular constant combinator
 ---------------------------------------------------------------------------------------------------

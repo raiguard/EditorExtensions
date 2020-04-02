@@ -250,11 +250,6 @@ local function check_tile_neighbors(entity, func, eight_way, dir_agnostic)
   return matched_entities
 end
 
--- builds the internals of an infinity loader and snaps it
-local function build_loader(entity)
-
-end
-
 -- -----------------------------------------------------------------------------
 -- GUI
 
@@ -280,15 +275,11 @@ local function filter_button_elem_changed(e)
   update_filters(entity)
 end
 
-local handlers = {
-  il_close_button_clicked = close_button_clicked,
-  il_state_switch_state_changed = state_switch_state_changed,
-  il_filter_button_elem_changed = filter_button_elem_changed
+event.register_conditional{
+  il_close_button_clicked = {id=defines.events.on_gui_click, handler=close_button_clicked, group='il_gui'},
+  il_state_switch_state_changed = {id=defines.events.on_gui_switch_state_changed, handler=state_switch_state_changed, group='il_gui'},
+  il_filter_button_elem_changed = {id=defines.events.on_gui_elem_changed, handler=filter_button_elem_changed, group='il_gui'}
 }
-
-event.on_load(function()
-  event.load_conditional_handlers(handlers)
-end)
 
 -- ----------------------------------------
 -- GUI MANAGEMENT
@@ -302,7 +293,7 @@ function gui.create(parent, entity, player)
     label = {'entity-name.ee-infinity-loader'},
     buttons = {util.constants.close_button_def}
   })
-  event.on_gui_click(close_button_clicked, {name='il_close_button_clicked', player_index=player.index, gui_filters=titlebar.children[3]})
+  event.enable('il_close_button_clicked', player.index, titlebar.children[3].index)
   local content_flow = window.add{type='flow', name='ee_il_content_flow', style='ee_entity_window_content_flow', direction='horizontal'}
   local camera = entity_camera.create(content_flow, 'ee_il_camera', 90, {player=player, entity=entity, camera_zoom=1})
   local page_frame = content_flow.add{type='frame', name='ee_il_page_frame', style='ee_ia_page_frame', direction='vertical'}
@@ -313,29 +304,26 @@ function gui.create(parent, entity, player)
   state_flow.add{type='empty-widget', name='ee_il_state_pusher', style='ee_invisible_horizontal_pusher'}
   local state_switch = state_flow.add{type='switch', name='ee_il_state_switch', left_label_caption={'gui-constant.on'},
     right_label_caption={'gui-constant.off'}, switch_state=control.enabled and 'left' or 'right'}
-  event.on_gui_switch_state_changed(state_switch_state_changed, {name='il_state_switch_state_changed', player_index=player.index, gui_filters=state_switch})
+  event.enable('il_state_switch_state_changed', player.index, state_switch.index)
   page_frame.add{type='empty-widget', name='ee_il_page_pusher', style='ee_invisible_vertical_pusher'}
   local filters_flow = page_frame.add{type='flow', name='ee_il_filters_flow', style='ee_vertically_centered_flow', direction='horizontal'}
   filters_flow.add{type='label', name='ee_il_filters_label', caption={'', {'gui-infinity-loader.filters-label-caption'}, ' [img=info]'},
     tooltip={'gui-infinity-loader.filters-label-tooltip'}}
   filters_flow.add{type='empty-widget', name='ee_il_filters_pusher', style='ee_invisible_horizontal_pusher', direction='horizontal'}
-  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_infinity_loader_filter_button', elem_type='item',
-    item=parameters[1].signal.name}
-  event.on_gui_elem_changed(filter_button_elem_changed, {name='il_filter_button_elem_changed', player_index=player.index, gui_filters='ee_il_filter_button'})
-  filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_infinity_loader_filter_button', elem_type='item',
-    item=parameters[2].signal.name}
+  event.enable('il_filter_button_elem_changed', player.index, {
+    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_1', style='ee_infinity_loader_filter_button', elem_type='item',
+      item=parameters[1].signal.name}.index,
+    filters_flow.add{type='choose-elem-button', name='ee_il_filter_button_2', style='ee_infinity_loader_filter_button', elem_type='item',
+      item=parameters[2].signal.name}.index
+  })
   window.force_auto_center()
   return {window=window, camera=camera}
 end
 
-function gui.destroy(window, player_index)
-  -- deregister all GUI events if needed
-  for cn,h in pairs(handlers) do
-    if event.is_registered(cn, player_index) then
-      event.deregister_conditional(h, cn, player_index)
-    end
-  end
-  window.destroy()
+function gui.destroy(player_index, player_table)
+  event.disable_group('il_gui', player_index)
+  player_table.gui.il.elems.window.destroy()
+  player_table.gui.il = nil
 end
 
 -- -----------------------------------------------------------------------------
@@ -388,7 +376,7 @@ local function snap_loader(loader, entity)
   )
   -- raise event if snapping occured
   if snapped then
-    event.raise(event.generate_id('il_on_loader_snapped'), {loader=loader, snapped_to=entity})
+    event.raise(event.get_id('il_on_loader_snapped'), {loader=loader, snapped_to=entity})
   end
 end
 
@@ -413,7 +401,7 @@ local function snap_belt_neighbors(entity)
   end
 end
 
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 -- COMPATIBILITY
 
 --
@@ -450,7 +438,7 @@ end)
 
 --
 -- REMOTE INTERFACES
--- docs: https://github.com/raiguard/EditorExtensions/wiki/Remote-Interface-Documentation
+-- docs: https://github.com/raiguard/Factorio-EditorExtensions/wiki/Remote-Interface-Documentation
 --
 
 -- get all loader entities at a certain position
@@ -462,7 +450,7 @@ local function get_loader_entities(surface, position)
          find{name='ee-infinity-loader-logic-combinator', position=position}[1]
 end
 
-event.generate_id('il_on_loader_snapped')
+event.get_id('il_on_loader_snapped')
 remote.add_interface('ee_infinity_loader', {
   -- FUNCTIONS
   get_loader_entities = get_loader_entities,
@@ -471,7 +459,7 @@ remote.add_interface('ee_infinity_loader', {
   remove_from_blacklist = function(name) snapping_blacklist[name] = nil end,
   get_blacklist = function() return snapping_blacklist end,
   -- EVENTS
-  on_loader_snapped = function() return event.generate_id('il_on_loader_snapped') end
+  on_loader_snapped = function() return event.get_id('il_on_loader_snapped') end
 })
 
 -- -----------------------------------------------------------------------------
@@ -625,8 +613,7 @@ end)
 -- when a GUI is closed
 event.register(defines.events.on_gui_closed, function(e)
   if e.gui_type == 16 and e.element and e.element.name == 'ee_il_window' then
-    gui.destroy(e.element, e.player_index)
-    global.players[e.player_index].gui.il = nil
+    gui.destroy(e.player_index, global.players[e.player_index])
   end
 end)
 
