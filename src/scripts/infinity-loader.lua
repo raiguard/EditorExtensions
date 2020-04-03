@@ -27,7 +27,6 @@ local belt_type_patterns = {
   ['%-?kr%-02'] = 'fast',
   ['%-?kr%-03'] = 'express',
   ['%-?kr%-04'] = 'k',
-  ['%-?kr'] = '',
   -- replicating belts: https://mods.factorio.com/mod/replicating-belts
   ['replicating%-?'] = '',
   -- subterranean: https://mods.factorio.com/mod/Subterranean
@@ -165,6 +164,7 @@ local function update_loader_type(loader, belt_type, overrides)
   local direction = overrides.direction or loader.direction
   local force = overrides.force or loader.force
   local last_user = overrides.last_user or loader.last_user
+  if last_user == '' then last_user = nil end
   local loader_type = overrides.loader_type or loader.loader_type
   local surface = overrides.surface or loader.surface
   if loader then loader.destroy() end
@@ -622,10 +622,12 @@ event.on_configuration_changed(function(e)
   -- check every single infinity loader on every surface to see if it no longer has a loader entity
   for _,surface in pairs(game.surfaces) do
     for _,entity in ipairs(surface.find_entities_filtered{name='ee-infinity-loader-logic-combinator'}) do
+      -- if its loader is gone, give it a new one with default settings
       if #surface.find_entities_filtered{type='loader-1x1', position=entity.position} == 0 then
-        -- if its loader is gone, give it a new one with default settings
-        update_loader_type(nil, 'express', {position=entity.position, direction=entity.direction, force=entity.force,
-          last_user=entity.last_user or '', loader_type='output', surface=entity.surface})
+        snap_loader(
+          update_loader_type(nil, 'express', {position=entity.position, direction=entity.direction, force=entity.force, last_user=entity.last_user or '',
+            loader_type='output', surface=entity.surface})
+        )
       end
     end
   end

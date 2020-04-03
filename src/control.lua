@@ -14,10 +14,10 @@ local string_find = string.find
 
 require('scripts.infinity-accumulator')
 require('scripts.infinity-combinator')
+require('scripts.infinity-loader')
 require('scripts.infinity-wagon')
 require('scripts.tesseract-chest')
 
-local infinity_loader = require('scripts.infinity-loader')
 local inventory = require('scripts.inventory')
 
 -- -----------------------------------------------------------------------------
@@ -297,12 +297,6 @@ local migrations = {
     end
   end,
   ['1.3.0'] = function()
-    -- rebuild all loader internals
-    for _,surface in pairs(game.surfaces) do
-      for _,entity in ipairs(surface.find_entities_filtered{name='ee-infinity-loader-logic-combinator'}) do
-        infinity_loader.build_loader(entity)
-      end
-    end
     -- enable infintiy heat pipe recipe
     for _,force in pairs(game.forces) do
       local recipes = force.recipes

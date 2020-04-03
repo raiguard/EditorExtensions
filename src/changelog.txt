@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.0
 Date: ????
+  Features:
+    - Added Krastorio 2 compatibility for infinity loaders
   Changes:
     - Added a prefix to all items and entities to avoid conflicts with other mods
     - Switched to using our own versions of the built-in infinity chest, infinity pipe, and heat interface to avoid compatibility issues
@@ -10,6 +12,7 @@ Date: ????
     - Fixed the alignment and styling of titlebars which broke due to the new character GUI
     - Fixed a crash on trying to disable inventory sync when it wasn't enabled
     - Fixed that mining an infinity combinator would give you a regular constant combinator
+    - Fixed that an infinity loader of a modded belt type would break upon the mod's removal
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: 2020-02-21

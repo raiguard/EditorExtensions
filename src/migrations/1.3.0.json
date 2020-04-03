@@ -18,6 +18,8 @@
     ["infinity-lab", "ee-infinity-lab"],
     ["infinity-loader-dummy-combinator", "ee-infinity-loader-dummy-combinator"],
     ["infinity-loader-logic-combinator", "ee-infinity-loader-logic-combinator"],
+    ["infinity-loader-chest", "ee-infinity-loader-chest"],
+    ["infinity-loader-inserter", "ee-infinity-loader-inserter"],
     ["infinity-locomotive", "ee-infinity-locomotive"],
     ["infinity-logistic-robot", "ee-infinity-logistic-robot"],
     ["infinity-personal-roboport-equipment", "ee-infinity-personal-roboport-equipment"],
