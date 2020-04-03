@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.0
-Date: ????
+Date: 2020-04-03
   Features:
     - Added Krastorio 2 compatibility for infinity loaders
   Changes:
