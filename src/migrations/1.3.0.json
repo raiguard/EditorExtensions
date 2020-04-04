@@ -7,6 +7,13 @@
     ["infinity-accumulator-tertiary", "ee-infinity-accumulator-tertiary"],
     ["infinity-beacon", "ee-infinity-beacon"],
     ["infinity-cargo-wagon", "ee-infinity-cargo-wagon"],
+    ["infinity-chest-active-provider", "ee-infinity-chest-active-provider"],
+    ["infinity-chest-passive-provider", "ee-infinity-chest-passive-provider"],
+    ["infinity-chest-storage", "ee-infinity-chest-storage"],
+    ["infinity-chest-buffer", "ee-infinity-chest-buffer"],
+    ["infinity-chest-requester", "ee-infinity-chest-requester"],
+    ["tesseract-chest", "ee-tesseract-chest"],
+    ["tesseract-chest-passive-provider", "ee-tesseract-chest-passive-provider"],
     ["infinity-combinator", "ee-infinity-combinator"],
     ["infinity-construction-robot", "ee-infinity-construction-robot"],
     ["infinity-electric-pole", "ee-infinity-electric-pole"],
@@ -26,7 +33,11 @@
     ["infinity-pump", "ee-infinity-pump"],
     ["infinity-radar", "ee-infinity-radar"],
     ["infinity-roboport", "ee-infinity-roboport"],
-    ["infinity-substation", "ee-infinity-substation"]
+    ["infinity-substation", "ee-infinity-substation"],
+    ["infinity-cargo-wagon", "ee-infinity-cargo-wagon"],
+    ["infinity-fluid-wagon", "ee-infinity-fluid-wagon"],
+    ["infinity-wagon-chest", "ee-infinity-wagon-chest"],
+    ["infinity-wagon-pipe", "ee-infinity-wagon-pipe"]
   ],
   "item": [
     ["infinity-accumulator", "ee-infinity-accumulator"],
