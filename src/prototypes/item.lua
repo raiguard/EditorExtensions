@@ -37,6 +37,7 @@ do
     chest.name = 'ee-infinity-chest'..suffix
     chest.localised_description = util.chest_description(suffix)
     chest.icons = {{icon=chest.icon, icon_size=chest.icon_size, icon_mipmaps=chest.icon_mipmaps, tint=t.t}}
+    chest.stack_size = 50
     chest.place_result = 'ee-infinity-chest'..suffix
     chest.subgroup = 'ee-inventories'
     chest.order = t.o
@@ -54,6 +55,7 @@ do
     chest.name = 'ee-tesseract-chest'..suffix
     chest.localised_description = util.chest_description(suffix, true)
     chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=t.t}}
+    chest.stack_size = 50
     chest.place_result = 'ee-tesseract-chest'..suffix
     chest.subgroup = 'ee-inventories'
     chest.order = t.o
