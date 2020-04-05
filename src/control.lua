@@ -304,6 +304,12 @@ local migrations = {
         recipes['ee-infinity-heat-pipe'].enabled = true
       end
     end
+  end,
+  ['1.3.1'] = function()
+    -- update all infinity wagon names in global
+    for _,t in pairs(global.wagons) do
+      t.wagon_name = 'ee-'..t.wagon_name
+    end
   end
 }
 
