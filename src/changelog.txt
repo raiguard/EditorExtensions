@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.1
-Date: ????
+Date: 2020-04-05
   Bugfixes:
     - Fixed several missing migrations
     - Fixed stack sizes of infinity chests and tesseract chests
