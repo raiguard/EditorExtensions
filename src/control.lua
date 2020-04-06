@@ -175,7 +175,7 @@ end)
 -- set manually built inserters to blacklist mode by default
 event.on_built_entity(function(e)
   local entity = e.created_entity
-  if entity.name == 'infinity-inserter' then
+  if entity.name == 'ee-infinity-inserter' then
     local control = entity.get_control_behavior()
     if not control then
       -- this is a new inserter, so set control mode to blacklist by default
@@ -190,7 +190,7 @@ end)
 -- snap manually built infinity pipes
 event.on_built_entity(function(e)
   local entity = e.created_entity
-  if entity.name == 'infinity-pipe' then
+  if entity.name == 'ee-infinity-pipe' then
     local neighbours = entity.neighbours[1]
     local own_fb = entity.fluidbox
     local own_id = entity.unit_number
