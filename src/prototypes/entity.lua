@@ -226,7 +226,6 @@ do
   data:extend{dummy_combinator}
 
   -- inserter
-  local filter_inserter = data.raw['inserter']['stack-filter-inserter']
   data:extend{
     {
       type = 'inserter',
