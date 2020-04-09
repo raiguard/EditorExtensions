@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.3
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed infinity pipe and infinity heat pipe returning their vanilla versions when mined
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.2
 Date: 2020-04-06

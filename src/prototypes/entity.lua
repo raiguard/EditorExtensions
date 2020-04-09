@@ -91,8 +91,8 @@ local infinity_combinator = table.deepcopy(data.raw['constant-combinator']['cons
 infinity_combinator.name = 'ee-infinity-combinator'
 infinity_combinator.icons = {util.extract_icon_info(infinity_combinator)}
 infinity_combinator.allow_copy_paste = false
-infinity_combinator.placeable_by = {item='ee-infinity-combinator', count=1}
 infinity_combinator.minable = {mining_time=0.5, result='ee-infinity-combinator'}
+infinity_combinator.placeable_by = {item='ee-infinity-combinator', count=1}
 util.recursive_tint(infinity_combinator, util.combinator_tint)
 data:extend{infinity_combinator}
 
@@ -115,7 +115,7 @@ infinity_heat_pipe.picture = {
     flags = {'no-crop'}
   }
 }
-infinity_heat_pipe.mineable = {mining_time=0.5, result='ee-infinity-heat-pipe'}
+infinity_heat_pipe.minable = {mining_time=0.5, result='ee-infinity-heat-pipe'}
 infinity_heat_pipe.placeable_by = {item='ee-infinity-heat-pipe', count=1}
 util.recursive_tint(infinity_heat_pipe)
 data:extend{infinity_heat_pipe}
@@ -281,7 +281,7 @@ infinity_pipe.name = 'ee-infinity-pipe'
 infinity_pipe.localised_description = {'entity-description.ee-infinity-pipe'}
 infinity_pipe.gui_mode = 'all'
 infinity_pipe.icons = infinity_pipe.icons
-infinity_pipe.mineable = {mining_time=0.5, result='ee-infinity-pipe'}
+infinity_pipe.minable = {mining_time=0.5, result='ee-infinity-pipe'}
 infinity_pipe.placeable_by = {item='ee-infinity-pipe', count=1}
 util.recursive_tint(infinity_pipe)
 data:extend{infinity_pipe}
