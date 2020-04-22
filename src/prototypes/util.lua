@@ -42,7 +42,7 @@ end
 
 -- data tables
 self.infinity_chest_data = {
-  {o="aa"},
+  {t={255,255,255}, o="aa"},
   {lm="active-provider", s=0, t={218,115,255}, o="ab"},
   {lm="passive-provider", s=0, t={255,141,114}, o="ac"},
   {lm="storage", s=1, t={255,220,113}, o="ad"},
@@ -50,7 +50,7 @@ self.infinity_chest_data = {
   {lm="requester", s=30, t={114,236,255}, o="af"}
 }
 self.tesseract_chest_data = {
-  {o="ba"},
+  {t={255,255,255}, o="ba"},
   {lm="passive-provider", t={255,141,114}, o="bb"}
 }
 self.module_data = {
@@ -79,6 +79,16 @@ self.empty_sheet = {
   width = 1,
   height = 1,
   frame_count = 1
+}
+self.infinity_chest_icon = {
+  icon = "__EditorExtensions__/graphics/item/infinity-chest.png",
+  icon_size = 64,
+  icon_mipmaps = 4
+}
+self.tesseract_chest_icon = {
+  icon = "__EditorExtensions__/graphics/item/tesseract-chest.png",
+  icon_size = 64,
+  icon_mipmaps = 4
 }
 
 return self

@@ -41,6 +41,45 @@ data:extend{infinity_beacon}
 
 -- INFINITY AND TESSERACT CHESTS
 do
+  local infinity_chest_picture = {
+    layers = {
+      {
+        filename = "__EditorExtensions__/graphics/entity/infinity-chest/infinity-chest.png",
+        priority = "extra-high",
+        width = 34,
+        height = 42,
+        shift = util.by_pixel(0, -3),
+        hr_version =
+        {
+          filename = "__EditorExtensions__/graphics/entity/infinity-chest/hr-infinity-chest.png",
+          priority = "extra-high",
+          width = 68,
+          height = 84,
+          shift = util.by_pixel(0, -3),
+          scale = 0.5,
+        }
+      },
+      {
+        filename = "__EditorExtensions__/graphics/entity/infinity-chest/infinity-chest-shadow.png",
+        priority = "extra-high",
+        width = 58,
+        height = 24,
+        shift = util.by_pixel(12, 6),
+        draw_as_shadow = true,
+        hr_version =
+        {
+          filename = "__EditorExtensions__/graphics/entity/infinity-chest/hr-infinity-chest-shadow.png",
+          priority = "extra-high",
+          width = 116,
+          height = 48,
+          shift = util.by_pixel(12, 6),
+          draw_as_shadow = true,
+          scale = 0.5,
+        }
+      }
+    }
+  }
+
   local base_entity = table.deepcopy(data.raw["infinity-container"]["infinity-chest"])
   for _,t in pairs(util.infinity_chest_data) do
     local lm = t.lm
@@ -48,6 +87,8 @@ do
     local chest = table.deepcopy(base_entity)
     chest.name = "ee-infinity-chest"..suffix
     chest.localised_description = util.chest_description(suffix)
+    chest.icons = {table.deepcopy(util.infinity_chest_icon)}
+    chest.picture = table.deepcopy(infinity_chest_picture)
     chest.order = t.o
     chest.subgroup = "ee-inventories"
     chest.erase_contents_when_mined = true
@@ -58,16 +99,51 @@ do
     chest.inventory_size = 100
     chest.next_upgrade = nil
     chest.flags = {"player-creation"}
-    util.recursive_tint(chest, t.t or {255,255,255})
+    util.recursive_tint(chest, t.t)
     data:extend{chest}
   end
 
   -- tesseract chests
   -- create the chests here to let other mods modify them. increase their inventory size in data-final-fixes
-  local compilatron_chest = data.raw["container"]["compilatron-chest"]
-  local comp_chest_picture = table.deepcopy(compilatron_chest.picture)
-  comp_chest_picture.layers[1].shift = util.by_pixel(0,-4.25)
-  comp_chest_picture.layers[1].hr_version.shift = util.by_pixel(0,-4.25)
+  local tesseract_chest_picture = {
+    layers = {
+      {
+        filename = "__EditorExtensions__/graphics/entity/tesseract-chest/tesseract-chest.png",
+        priority = "extra-high",
+        width = 34,
+        height = 42,
+        shift = util.by_pixel(0, -3),
+        hr_version =
+        {
+          filename = "__EditorExtensions__/graphics/entity/tesseract-chest/hr-tesseract-chest.png",
+          priority = "extra-high",
+          width = 68,
+          height = 84,
+          shift = util.by_pixel(0, -3),
+          scale = 0.5,
+        }
+      },
+      {
+        filename = "__EditorExtensions__/graphics/entity/tesseract-chest/tesseract-chest-shadow.png",
+        priority = "extra-high",
+        width = 58,
+        height = 24,
+        shift = util.by_pixel(12, 6),
+        draw_as_shadow = true,
+        hr_version =
+        {
+          filename = "__EditorExtensions__/graphics/entity/tesseract-chest/hr-tesseract-chest-shadow.png",
+          priority = "extra-high",
+          width = 116,
+          height = 48,
+          shift = util.by_pixel(12, 6),
+          draw_as_shadow = true,
+          scale = 0.5,
+        }
+      }
+    }
+  }
+  
   for _,t in pairs(util.tesseract_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
@@ -75,13 +151,13 @@ do
     chest.name = "ee-tesseract-chest"..suffix
     chest.localised_description = util.chest_description(suffix, true)
     chest.order = t.o
-    chest.icons = {{icon=compilatron_chest.icon, icon_size=compilatron_chest.icon_size, icon_mipmaps=compilatron_chest.icon_mipmaps}}
-    chest.picture = table.deepcopy(comp_chest_picture)
+    chest.icons = {table.deepcopy(util.tesseract_chest_icon)}
+    chest.picture = table.deepcopy(tesseract_chest_picture)
     chest.logistic_slots_count = 0
     chest.minable.result = "ee-tesseract-chest"..suffix
     chest.enable_inventory_bar = false
     chest.flags = {"player-creation", "hide-alt-info"}
-    util.recursive_tint(chest, t.t or {255,255,255})
+    util.recursive_tint(chest, t.t)
     data:extend{chest}
   end
 end
@@ -190,7 +266,7 @@ do
   -- create spritesheet for dummy combinator
   local sprite_files = {
     {base_loader_path.."underground-belt-structure-back-patch.png", base_loader_path.."hr-underground-belt-structure-back-patch.png"},
-    {"__EditorExtensions__/graphics/entity/infinity-loader.png", "__EditorExtensions__/graphics/entity/hr-infinity-loader.png"},
+    {"__EditorExtensions__/graphics/entity/infinity-loader/infinity-loader.png", "__EditorExtensions__/graphics/entity/infinity-loader/hr-infinity-loader.png"},
     {base_loader_path.."underground-belt-structure-front-patch.png", base_loader_path.."hr-underground-belt-structure-front-patch.png"},
   }
   local sprite_x = {south=96*0, west=96*1, north=96*2, east=96*3}

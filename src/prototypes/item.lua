@@ -36,7 +36,8 @@ do
     local chest = table.deepcopy(ic_item)
     chest.name = "ee-infinity-chest"..suffix
     chest.localised_description = util.chest_description(suffix)
-    chest.icons = {{icon=chest.icon, icon_size=chest.icon_size, icon_mipmaps=chest.icon_mipmaps, tint=t.t}}
+    chest.icons = {table.deepcopy(util.infinity_chest_icon)}
+    chest.icons[1].tint = t.t
     chest.stack_size = 50
     chest.place_result = "ee-infinity-chest"..suffix
     chest.subgroup = "ee-inventories"
@@ -45,8 +46,6 @@ do
     data:extend{chest}
   end
 
-  local base_comp_chest = data.raw["container"]["compilatron-chest"]
-
   -- create tesseract chest items
   for _,t in pairs(util.tesseract_chest_data) do
     local lm = t.lm
@@ -54,7 +53,8 @@ do
     local chest = table.deepcopy(ic_item)
     chest.name = "ee-tesseract-chest"..suffix
     chest.localised_description = util.chest_description(suffix, true)
-    chest.icons = {{icon=base_comp_chest.icon, icon_size=base_comp_chest.icon_size, icon_mipmaps=base_comp_chest.icon_mipmaps, tint=t.t}}
+    chest.icons = {table.deepcopy(util.tesseract_chest_icon)}
+    chest.icons[1].tint = t.t
     chest.stack_size = 50
     chest.place_result = "ee-tesseract-chest"..suffix
     chest.subgroup = "ee-inventories"

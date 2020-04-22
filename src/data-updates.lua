@@ -9,7 +9,7 @@ loader_base.icons = {{icon="__EditorExtensions__/graphics/item/infinity-loader.p
 for n,t in pairs(loader_base.structure) do
   if n ~= "back_patch" and n ~= "front_patch" then
     t.sheet.filename = "__EditorExtensions__/graphics/entity/infinity-loader.png"
-    t.sheet.hr_version.filename = "__EditorExtensions__/graphics/entity/hr-infinity-loader.png"
+    t.sheet.hr_version.filename = "__EditorExtensions__/graphics/entity/infinity-loader/hr-infinity-loader.png"
   end
 end
 util.recursive_tint(loader_base)

@@ -11,8 +11,6 @@ local math_min = math.min
 local string_find = string.find
 local string_sub = string.sub
 
-local inventory_sizes = {cursor=1, main=(2^16)-1, guns=3, ammo=3, armor=1}
-
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
