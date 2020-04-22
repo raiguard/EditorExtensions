@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.3.4
+Version: 1.4.0
 Date: ????
   Changes:
     - Non-logistic infinity and tesseract chests are now white, to distinguish them from the vanilla infinity chest
