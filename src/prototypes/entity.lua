@@ -362,14 +362,14 @@ do
   local construction_robot = table.deepcopy(data.raw["construction-robot"]["construction-robot"])
   construction_robot.name = "ee-infinity-construction-robot"
   construction_robot.icons = {util.extract_icon_info(construction_robot)}
-  construction_robot.flags = {"hidden"}
+  construction_robot.minable.result = "ee-infinity-construction-robot"
   for k,v in pairs(modifiers) do construction_robot[k] = v end
   util.recursive_tint(construction_robot)
 
   local logistic_robot = table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
   logistic_robot.name = "ee-infinity-logistic-robot"
   logistic_robot.icons = {util.extract_icon_info(logistic_robot)}
-  logistic_robot.flags = {"hidden"}
+  logistic_robot.minable.result = "ee-infinity-logistic-robot"
   for k,v in pairs(modifiers) do logistic_robot[k] = v end
   util.recursive_tint(logistic_robot)
 
