@@ -1,9 +1,9 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- TESSERACT CHEST
 
-local event = require('__RaiLuaLib__.lualib.event')
-local chest_names = {'ee-tesseract-chest', 'ee-tesseract-chest-passive-provider'}
-local util = require('scripts.util')
+local event = require("__RaiLuaLib__.lualib.event")
+local chest_names = {"ee-tesseract-chest", "ee-tesseract-chest-passive-provider"}
+local util = require("scripts.util")
 
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
@@ -15,7 +15,7 @@ local function update_chest_filters(entity)
   local i = 0
   for n,ss in pairs(global.tesseract_data) do
     i = i + 1
-    entity.set_infinity_container_filter(i, {name=n, count=ss, mode='exactly', index=i})
+    entity.set_infinity_container_filter(i, {name=n, count=ss, mode="exactly", index=i})
   end
 end
 
@@ -30,15 +30,15 @@ end
 
 -- retrieve each item prototype and its stack size
 local function update_tesseract_data()
-  local include_hidden = settings.global['ee-tesseract-include-hidden'].value
+  local include_hidden = settings.global["ee-tesseract-include-hidden"].value
   local data = {}
   for n,p in pairs(game.item_prototypes) do
-    if include_hidden or not p.has_flag('hidden') then
+    if include_hidden or not p.has_flag("hidden") then
       data[n] = p.stack_size
     end
   end
   -- remove dummy-steel-axe, since trying to include it will crash the game
-  data['dummy-steel-axe'] = nil
+  data["dummy-steel-axe"] = nil
   global.tesseract_data = data
 end
 
@@ -57,7 +57,7 @@ end)
 
 -- when a mod setting changes
 event.register(defines.events.on_runtime_mod_setting_changed, function(e)
-  if e.setting == 'ee-tesseract-include-hidden' then
+  if e.setting == "ee-tesseract-include-hidden" then
     -- update filters of all tesseract chests
     update_tesseract_data()
     update_all_chest_filters()
@@ -67,7 +67,7 @@ end)
 -- when an entity is built
 event.register(util.constants.entity_built_events, function(e)
   local entity = e.created_entity or e.entity
-  if entity.name:find('ee%-tesseract%-chest') then
+  if entity.name:find("ee%-tesseract%-chest") then
     update_chest_filters(entity)
   end
 end)

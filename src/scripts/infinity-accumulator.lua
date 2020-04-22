@@ -1,12 +1,12 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- INFINITY ACCUMULATOR
 
-local event = require('__RaiLuaLib__.lualib.event')
-local util = require('scripts.util')
+local event = require("__RaiLuaLib__.lualib.event")
+local util = require("scripts.util")
 
 -- GUI ELEMENTS
-local entity_camera = require('scripts.gui-elems.entity-camera')
-local titlebar = require('scripts.gui-elems.titlebar')
+local entity_camera = require("scripts.gui-elems.entity-camera")
+local titlebar = require("scripts.gui-elems.titlebar")
 
 local gui = {}
 
@@ -15,38 +15,38 @@ local gui = {}
 
 local constants = {
   localized_priorities = {
-    {'gui-infinity-accumulator.priority-dropdown-primary'},
-    {'gui-infinity-accumulator.priority-dropdown-secondary'}
+    {"gui-infinity-accumulator.priority-dropdown-primary"},
+    {"gui-infinity-accumulator.priority-dropdown-secondary"}
   },
   localized_modes = {
-    {'gui-infinity-accumulator.mode-dropdown-output'},
-    {'gui-infinity-accumulator.mode-dropdown-input'},
-    {'gui-infinity-accumulator.mode-dropdown-buffer'}
+    {"gui-infinity-accumulator.mode-dropdown-output"},
+    {"gui-infinity-accumulator.mode-dropdown-input"},
+    {"gui-infinity-accumulator.mode-dropdown-buffer"}
   },
   mode_to_index = {output=1, input=2, buffer=3},
   priority_to_index = {primary=1, secondary=2, tertiary=1},
-  index_to_mode = {'output', 'input', 'buffer'},
-  index_to_priority = {'primary', 'secondary'},
-  power_prefixes = {'kilo','mega','giga','tera','peta','exa','zetta','yotta'},
-  power_suffixes_by_mode = {output='watt', input='watt', buffer='joule'},
+  index_to_mode = {"output", "input", "buffer"},
+  index_to_priority = {"primary", "secondary"},
+  power_prefixes = {"kilo","mega","giga","tera","peta","exa","zetta","yotta"},
+  power_suffixes_by_mode = {output="watt", input="watt", buffer="joule"},
   localized_si_suffixes_watt = {},
   localized_si_suffixes_joule = {},
-  si_suffixes_joule = {'kJ', 'MJ', 'GJ', 'TJ', 'PJ', 'EJ', 'ZJ', 'YJ'},
-  si_suffixes_watt = {'kW', 'MW', 'GW', 'TW', 'PW', 'EW', 'ZW', 'YW'}
+  si_suffixes_joule = {"kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ"},
+  si_suffixes_watt = {"kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW"}
 }
 for i,v in pairs(constants.power_prefixes) do
-  constants.localized_si_suffixes_watt[i] = {'', {'si-prefix-symbol-'..v}, {'si-unit-symbol-watt'}}
-  constants.localized_si_suffixes_joule[i] = {'', {'si-prefix-symbol-'..v}, {'si-unit-symbol-joule'}}
+  constants.localized_si_suffixes_watt[i] = {"", {"si-prefix-symbol-"..v}, {"si-unit-symbol-watt"}}
+  constants.localized_si_suffixes_joule[i] = {"", {"si-prefix-symbol-"..v}, {"si-unit-symbol-joule"}}
 end
 
 local function check_is_accumulator(entity)
-  return entity.name:find('ee%-infinity%-accumulator')
+  return entity.name:find("ee%-infinity%-accumulator")
 end
 
 local function get_settings_from_name(name)
-  name = name:gsub('(%a+)-(%a+)-(%a+)-', '')
-  if name == 'tertiary' then return 'tertiary', 'buffer' end
-  local _,_,priority,mode = string.find(name, '(%a+)-(%a+)')
+  name = name:gsub("(%a+)-(%a+)-(%a+)-", "")
+  if name == "tertiary" then return "tertiary", "buffer" end
+  local _,_,priority,mode = string.find(name, "(%a+)-(%a+)")
   return priority, mode
 end
 
@@ -55,19 +55,19 @@ local function set_entity_settings(entity, mode, buffer_size)
   entity.power_production = 0
   entity.power_usage = 0
   entity.electric_buffer_size = buffer_size
-  local watts = util.parse_energy(buffer_size..'W')
-  if mode == 'output' then
+  local watts = util.parse_energy(buffer_size.."W")
+  if mode == "output" then
     entity.power_production = watts
     entity.energy = buffer_size
-  elseif mode == 'input' then
+  elseif mode == "input" then
     entity.power_usage = watts
   end
 end
 
 local function change_entity(entity, priority, mode)
-  priority = '-'..priority
-  local n_mode = mode and '-'..mode or ''
-  local new_name = 'ee-infinity-accumulator'..priority..n_mode
+  priority = "-"..priority
+  local n_mode = mode and "-"..mode or ""
+  local new_name = "ee-infinity-accumulator"..priority..n_mode
   local new_entity = entity.surface.create_entity{
     name = new_name,
     position = entity.position,
@@ -75,7 +75,7 @@ local function change_entity(entity, priority, mode)
     last_user = entity.last_user,
     create_build_effect_smoke = false
   }
-  set_entity_settings(new_entity, mode or 'buffer', entity.electric_buffer_size)
+  set_entity_settings(new_entity, mode or "buffer", entity.electric_buffer_size)
   entity.destroy()
   return new_entity
 end
@@ -104,8 +104,8 @@ local function mode_dropdown_selection_changed(e)
 local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   local mode = constants.index_to_mode[e.element.selected_index]
-  if mode == 'buffer' then
-    gui_data.entity = change_entity(gui_data.entity, 'tertiary')
+  if mode == "buffer" then
+    gui_data.entity = change_entity(gui_data.entity, "tertiary")
   else
     local priority = constants.index_to_priority[gui_data.elems.priority_dropdown.selected_index]
     gui_data.entity = change_entity(gui_data.entity, priority, mode)
@@ -159,65 +159,65 @@ local function slider_dropdown_selection_changed(e)
 end
 
 event.register_conditional{
-  ia_close_button_clicked = {id=defines.events.on_gui_click, handler=close_button_clicked, group='ia_gui'},
-  ia_mode_dropdown_selection_changed = {id=defines.events.on_gui_selection_state_changed, handler=mode_dropdown_selection_changed, group='ia_gui'},
-  ia_priority_dropdown_selection_changed = {id=defines.events.on_gui_selection_state_changed, handler=priority_dropdown_selection_changed, group='ia_gui'},
-  ia_slider_value_changed = {id=defines.events.on_gui_value_changed, handler=slider_value_changed, group='ia_gui'},
-  ia_slider_textfield_text_changed = {id=defines.events.on_gui_text_changed, handler=slider_textfield_text_changed, group='ia_gui'},
-  ia_slider_textfield_confirmed = {id=defines.events.on_gui_confirmed, handler=slider_textfield_confirmed, group='ia_gui'},
-  ia_slider_dropdown_selection_changed = {id=defines.events.on_gui_selection_state_changed, handler=slider_dropdown_selection_changed, group='ia_gui'},
+  ia_close_button_clicked = {id=defines.events.on_gui_click, handler=close_button_clicked, group="ia_gui"},
+  ia_mode_dropdown_selection_changed = {id=defines.events.on_gui_selection_state_changed, handler=mode_dropdown_selection_changed, group="ia_gui"},
+  ia_priority_dropdown_selection_changed = {id=defines.events.on_gui_selection_state_changed, handler=priority_dropdown_selection_changed, group="ia_gui"},
+  ia_slider_value_changed = {id=defines.events.on_gui_value_changed, handler=slider_value_changed, group="ia_gui"},
+  ia_slider_textfield_text_changed = {id=defines.events.on_gui_text_changed, handler=slider_textfield_text_changed, group="ia_gui"},
+  ia_slider_textfield_confirmed = {id=defines.events.on_gui_confirmed, handler=slider_textfield_confirmed, group="ia_gui"},
+  ia_slider_dropdown_selection_changed = {id=defines.events.on_gui_selection_state_changed, handler=slider_dropdown_selection_changed, group="ia_gui"},
 }
 
 -- ----------------------------------------
 -- GUI MANAGEMENT
 
 function gui.create(parent, entity, player)
-  local window = parent.add{type='frame', name='ee_ia_window', style='dialog_frame', direction='vertical'}
-  local titlebar = titlebar.create(window, 'ee_ia_titlebar', {
+  local window = parent.add{type="frame", name="ee_ia_window", style="dialog_frame", direction="vertical"}
+  local titlebar = titlebar.create(window, "ee_ia_titlebar", {
     draggable = true,
-    label = {'entity-name.ee-infinity-accumulator'},
+    label = {"entity-name.ee-infinity-accumulator"},
     buttons = {util.constants.close_button_def}
   })
-  event.enable('ia_close_button_clicked', player.index, titlebar.children[3].index)
-  local content_flow = window.add{type='flow', name='ee_ia_content_flow', style='ee_entity_window_content_flow', direction='horizontal'}
-  local camera = entity_camera.create(content_flow, 'ee_ia_camera', 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
-  local page_frame = content_flow.add{type='frame', name='ee_ia_page_frame', style='ee_ia_page_frame', direction='vertical'}
+  event.enable("ia_close_button_clicked", player.index, titlebar.children[3].index)
+  local content_flow = window.add{type="flow", name="ee_ia_content_flow", style="ee_entity_window_content_flow", direction="horizontal"}
+  local camera = entity_camera.create(content_flow, "ee_ia_camera", 110, {player=player, entity=entity, camera_zoom=1, camera_offset={0,-0.5}})
+  local page_frame = content_flow.add{type="frame", name="ee_ia_page_frame", style="ee_ia_page_frame", direction="vertical"}
   local priority, mode = get_settings_from_name(entity.name)
-  local mode_flow = page_frame.add{type='flow', name='ee_ia_mode_flow', style='ee_vertically_centered_flow', direction='horizontal'}
-  mode_flow.add{type='label', name='ee_ia_mode_label', caption={'', {'gui-infinity-accumulator.mode-label-caption'}, ' [img=info]'},
-    tooltip={'gui-infinity-accumulator.mode-label-tooltip'}}
-  mode_flow.add{type='empty-widget', name='ee_ia_mode_pusher', style='ee_invisible_horizontal_pusher'}
-  local mode_dropdown = mode_flow.add{type='drop-down', name='ee_ia_mode_dropdown', items=constants.localized_modes,
+  local mode_flow = page_frame.add{type="flow", name="ee_ia_mode_flow", style="ee_vertically_centered_flow", direction="horizontal"}
+  mode_flow.add{type="label", name="ee_ia_mode_label", caption={"", {"gui-infinity-accumulator.mode-label-caption"}, " [img=info]"},
+    tooltip={"gui-infinity-accumulator.mode-label-tooltip"}}
+  mode_flow.add{type="empty-widget", name="ee_ia_mode_pusher", style="ee_invisible_horizontal_pusher"}
+  local mode_dropdown = mode_flow.add{type="drop-down", name="ee_ia_mode_dropdown", items=constants.localized_modes,
     selected_index=constants.mode_to_index[mode]}
-  event.enable('ia_mode_dropdown_selection_changed', player.index, mode_dropdown.index)
-  local priority_flow = page_frame.add{type='flow', name='ee_ia_priority_flow', style='ee_vertically_centered_flow', direction='horizontal'}
+  event.enable("ia_mode_dropdown_selection_changed", player.index, mode_dropdown.index)
+  local priority_flow = page_frame.add{type="flow", name="ee_ia_priority_flow", style="ee_vertically_centered_flow", direction="horizontal"}
   priority_flow.style.vertically_stretchable = true
-  priority_flow.add{type='label', name='ee_ia_priority_label', caption={'', {'gui-infinity-accumulator.priority-label-caption'}, ' [img=info]'},
-    tooltip={'gui-infinity-accumulator.priority-label-tooltip'}}
-  priority_flow.add{type='empty-widget', name='ee_ia_priority_pusher', style='ee_invisible_horizontal_pusher'}
-  local priority_dropdown = priority_flow.add{type='drop-down', name='ee_ia_priority_dropdown', items=constants.localized_priorities,
+  priority_flow.add{type="label", name="ee_ia_priority_label", caption={"", {"gui-infinity-accumulator.priority-label-caption"}, " [img=info]"},
+    tooltip={"gui-infinity-accumulator.priority-label-tooltip"}}
+  priority_flow.add{type="empty-widget", name="ee_ia_priority_pusher", style="ee_invisible_horizontal_pusher"}
+  local priority_dropdown = priority_flow.add{type="drop-down", name="ee_ia_priority_dropdown", items=constants.localized_priorities,
     selected_index=constants.priority_to_index[priority]}
-  event.enable('ia_priority_dropdown_selection_changed', player.index, priority_dropdown.index)
-  local priority_dropdown_dummy = priority_flow.add{type='button', name='ee_ia_priority_dropdown_dummy', style='ee_disabled_dropdown_button',
-    caption={'gui-infinity-accumulator.priority-dropdown-tertiary'}}
+  event.enable("ia_priority_dropdown_selection_changed", player.index, priority_dropdown.index)
+  local priority_dropdown_dummy = priority_flow.add{type="button", name="ee_ia_priority_dropdown_dummy", style="ee_disabled_dropdown_button",
+    caption={"gui-infinity-accumulator.priority-dropdown-tertiary"}}
   priority_dropdown_dummy.enabled = false
-  if mode == 'buffer' then
+  if mode == "buffer" then
     priority_dropdown.visible = false
   else
     priority_dropdown_dummy.visible = false
   end
   local slider_value, dropdown_index = rev_parse_energy(entity.electric_buffer_size)
-  local slider_flow = page_frame.add{type='flow', name='ee_ia_slider_flow', style='ee_vertically_centered_flow', direction='horizontal'}
-  local slider = slider_flow.add{type='slider', name='ee_ia_slider', minimum_value=0, maximum_value=999, value=slider_value}
-  event.enable('ia_slider_value_changed', player.index, slider.index)
-  local slider_textfield = slider_flow.add{type='textfield', name='ee_ia_slider_textfield', style='ee_slider_textfield', text=slider_value, numeric=true,
+  local slider_flow = page_frame.add{type="flow", name="ee_ia_slider_flow", style="ee_vertically_centered_flow", direction="horizontal"}
+  local slider = slider_flow.add{type="slider", name="ee_ia_slider", minimum_value=0, maximum_value=999, value=slider_value}
+  event.enable("ia_slider_value_changed", player.index, slider.index)
+  local slider_textfield = slider_flow.add{type="textfield", name="ee_ia_slider_textfield", style="ee_slider_textfield", text=slider_value, numeric=true,
     lose_focus_on_confirm=true, clear_and_focus_on_right_click=true}
-  event.enable('ia_slider_textfield_text_changed', player.index, slider_textfield.index)
-  event.enable('ia_slider_textfield_confirmed', player.index, slider_textfield.index)
-  local slider_dropdown = slider_flow.add{type='drop-down', name='ee_ia_slider_dropdown', selected_index=dropdown_index,
-    items=constants['localized_si_suffixes_'..constants.power_suffixes_by_mode[mode]]}
+  event.enable("ia_slider_textfield_text_changed", player.index, slider_textfield.index)
+  event.enable("ia_slider_textfield_confirmed", player.index, slider_textfield.index)
+  local slider_dropdown = slider_flow.add{type="drop-down", name="ee_ia_slider_dropdown", selected_index=dropdown_index,
+    items=constants["localized_si_suffixes_"..constants.power_suffixes_by_mode[mode]]}
   slider_dropdown.style.width = 63
-  event.enable('ia_slider_dropdown_selection_changed', player.index, slider_dropdown.index)
+  event.enable("ia_slider_dropdown_selection_changed", player.index, slider_dropdown.index)
   window.force_auto_center()
   return {window=window, camera=camera, mode_dropdown=mode_dropdown, priority_dropdown=priority_dropdown, priority_dropdown_dummy=priority_dropdown_dummy,
     slider=slider, slider_textfield=slider_textfield, slider_dropdown=slider_dropdown},
@@ -225,14 +225,14 @@ function gui.create(parent, entity, player)
 end
 
 function gui.update_mode(elems, mode)
-  if mode == 'buffer' then
+  if mode == "buffer" then
     elems.priority_dropdown.visible = false
     elems.priority_dropdown_dummy.visible = true
   else
     elems.priority_dropdown.visible = true
     elems.priority_dropdown_dummy.visible = false
   end
-  elems.slider_dropdown.items = constants['localized_si_suffixes_'..constants.power_suffixes_by_mode[mode]]
+  elems.slider_dropdown.items = constants["localized_si_suffixes_"..constants.power_suffixes_by_mode[mode]]
 end
 
 function gui.update_settings(gui_data)
@@ -244,14 +244,14 @@ function gui.update_settings(gui_data)
   elems.priority_dropdown.selected_index = constants.priority_to_index[priority]
   elems.slider.slider_value = slider_value
   elems.slider_textfield.text = slider_value
-  elems.slider_textfield.style = 'ee_slider_textfield'
+  elems.slider_textfield.style = "ee_slider_textfield"
   elems.slider_dropdown.selected_index = dropdown_index
   gui_data.last_textfield_value = slider_value
   gui.update_mode(elems, mode)
 end
 
 function gui.destroy(window, player_index)
-  event.disable_group('ia_gui', player_index)
+  event.disable_group("ia_gui", player_index)
   window.destroy()
   global.players[player_index].gui.ia = nil
 end
@@ -273,7 +273,7 @@ end)
 
 -- when a GUI is closed
 event.register(defines.events.on_gui_closed, function(e)
-  if e.gui_type == 16 and e.element and e.element.name == 'ee_ia_window' then
+  if e.gui_type == 16 and e.element and e.element.name == "ee_ia_window" then
     gui.destroy(e.element, e.player_index)
   end
 end)
@@ -295,8 +295,8 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
     -- update entity
     local priority, mode = get_settings_from_name(e.source.name)
     local new_entity
-    if mode == 'buffer' then
-      new_entity = change_entity(e.destination, 'tertiary')
+    if mode == "buffer" then
+      new_entity = change_entity(e.destination, "tertiary")
     else
       new_entity = change_entity(e.destination, priority, mode)
     end

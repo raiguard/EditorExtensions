@@ -1,16 +1,16 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- MODULES
 
-local util = require('prototypes.util')
+local util = require("prototypes.util")
 
 local function get_module_icon(icon_ref, tint)
-  local obj = data.raw['module'][icon_ref]
+  local obj = data.raw["module"][icon_ref]
   return {{icon=obj.icon, icon_size=obj.icon_size, tint=tint}}
 end
 
 local module_template = {
-  type = 'module',
-  subgroup = 'ee-modules',
+  type = "module",
+  subgroup = "ee-modules",
   stack_size = 50
 }
 

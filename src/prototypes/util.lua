@@ -1,7 +1,7 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- DATA STAGE UTILITIES
 
-local self = table.deepcopy(require('__core__.lualib.util'))
+local self = table.deepcopy(require("__core__.lualib.util"))
 
 -- tints
 self.infinity_tint = {r=1, g=0.5, b=1, a=1}
@@ -25,7 +25,7 @@ function self.recursive_tint(array, tint)
   return array
 end
 
--- consolidate icon information into a table to use in 'icons'
+-- consolidate icon information into a table to use in "icons"
 function self.extract_icon_info(obj)
   return {icon=obj.icon, icon_size=obj.icon_size, icon_mipmaps=obj.icon_mipmaps}
 end
@@ -33,37 +33,37 @@ end
 -- generate the localised description of a chest
 function self.chest_description(suffix, is_tesseract)
   if is_tesseract then
-    return {'', {'entity-description.ee-tesseract-chest'}, suffix ~= '' and {'', '\n', {'entity-description.logistic-chest'..suffix}} or '',
-      '\n[color=255,57,48]', {'entity-description.ee-tesseract-chest-warning'}, '[/color]'}
+    return {"", {"entity-description.ee-tesseract-chest"}, suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or "",
+      "\n[color=255,57,48]", {"entity-description.ee-tesseract-chest-warning"}, "[/color]"}
   else
-    return {'', {'entity-description.ee-infinity-chest'}, suffix ~= '' and {'', '\n', {'entity-description.logistic-chest'..suffix}} or ''}
+    return {"", {"entity-description.ee-infinity-chest"}, suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or ""}
   end
 end
 
 -- data tables
 self.infinity_chest_data = {
-  {o='aa'},
-  {lm='active-provider', s=0, t={218,115,255}, o='ab'},
-  {lm='passive-provider', s=0, t={255,141,114}, o='ac'},
-  {lm='storage', s=1, t={255,220,113}, o='ad'},
-  {lm='buffer', s=30, t={114,255,135}, o='ae'},
-  {lm='requester', s=30, t={114,236,255}, o='af'}
+  {o="aa"},
+  {lm="active-provider", s=0, t={218,115,255}, o="ab"},
+  {lm="passive-provider", s=0, t={255,141,114}, o="ac"},
+  {lm="storage", s=1, t={255,220,113}, o="ad"},
+  {lm="buffer", s=30, t={114,255,135}, o="ae"},
+  {lm="requester", s=30, t={114,236,255}, o="af"}
 }
 self.tesseract_chest_data = {
-  {o='ba'},
-  {lm='passive-provider', t={255,141,114}, o='bb'}
+  {o="ba"},
+  {lm="passive-provider", t={255,141,114}, o="bb"}
 }
 self.module_data = {
-  {name='ee-super-speed-module', icon_ref='speed-module-3', order='ba', category = 'speed', tier=50, effect={speed={bonus=2.5}}, tint={r=0.5,g=0.5,b=1}},
-  {name='ee-super-effectivity-module', icon_ref='effectivity-module-3', order='bb', category='effectivity', tier=50, effect={consumption={bonus=-2.5}},
+  {name="ee-super-speed-module", icon_ref="speed-module-3", order="ba", category = "speed", tier=50, effect={speed={bonus=2.5}}, tint={r=0.5,g=0.5,b=1}},
+  {name="ee-super-effectivity-module", icon_ref="effectivity-module-3", order="bb", category="effectivity", tier=50, effect={consumption={bonus=-2.5}},
     tint={r=0.5,g=1,b=0.5}},
-  {name='ee-super-productivity-module', icon_ref='productivity-module-3', order='bc', category='productivity', tier=50, effect={productivity={bonus=2.5}},
+  {name="ee-super-productivity-module", icon_ref="productivity-module-3", order="bc", category="productivity", tier=50, effect={productivity={bonus=2.5}},
     tint={r=1,g=0.5,b=0.5}},
-  {name='ee-super-clean-module', icon_ref='speed-module-3', order='bd', category='effectivity', tier=50, effect={pollution={bonus=-2.5}}, tint={r=0.5,g=1,b=1}},
-  {name='ee-super-slow-module', icon_ref='speed-module', order='ca', category = 'speed', tier=50, effect={speed={bonus=-2.5}}, tint={r=0.5,g=0.5,b=1}},
-  {name='ee-super-ineffectivity-module', icon_ref='effectivity-module', order='cb', category = 'effectivity', tier=50, effect={consumption={bonus=2.5}},
+  {name="ee-super-clean-module", icon_ref="speed-module-3", order="bd", category="effectivity", tier=50, effect={pollution={bonus=-2.5}}, tint={r=0.5,g=1,b=1}},
+  {name="ee-super-slow-module", icon_ref="speed-module", order="ca", category = "speed", tier=50, effect={speed={bonus=-2.5}}, tint={r=0.5,g=0.5,b=1}},
+  {name="ee-super-ineffectivity-module", icon_ref="effectivity-module", order="cb", category = "effectivity", tier=50, effect={consumption={bonus=2.5}},
     tint={r=0.5,g=1,b=0.5}},
-  {name='ee-super-dirty-module', icon_ref='speed-module', order='cc', category='effectivity', tier=50, effect={pollution={bonus=2.5}}, tint={r=0.5,g=1,b=1}}
+  {name="ee-super-dirty-module", icon_ref="speed-module", order="cc", category="effectivity", tier=50, effect={pollution={bonus=2.5}}, tint={r=0.5,g=1,b=1}}
 }
 
 -- definitions
@@ -74,8 +74,8 @@ self.empty_circuit_wire_connection_points = {
   {wire={},shadow={}}
 }
 self.empty_sheet = {
-  filename = '__core__/graphics/empty.png',
-  priority = 'very-low',
+  filename = "__core__/graphics/empty.png",
+  priority = "very-low",
   width = 1,
   height = 1,
   frame_count = 1

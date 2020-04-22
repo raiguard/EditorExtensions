@@ -1,8 +1,8 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- CONTROL STAGE UTILITIES
 
-local math2d = require('__core__.lualib.math2d')
-local util = table.deepcopy(require('__core__.lualib.util'))
+local math2d = require("__core__.lualib.math2d")
+local util = table.deepcopy(require("__core__.lualib.util"))
 
 -- GENERAL
 
@@ -23,10 +23,10 @@ util.constants = {
   },
   -- close button for frames, as defined in the titlebar submodule
   close_button_def = {
-    name = 'close',
-    sprite = 'utility/close_white',
-    hovered_sprite = 'utility/close_black',
-    clicked_sprite = 'utility/close_black'
+    name = "close",
+    sprite = "utility/close_white",
+    hovered_sprite = "utility/close_black",
+    clicked_sprite = "utility/close_black"
   }
 }
 
@@ -56,9 +56,9 @@ util.gui = {}
 
 function util.gui.add_pusher(parent, name, vertical)
   if vertical then
-    return parent.add{type='empty-widget', name=name, style='ee_invisible_vertical_pusher'}
+    return parent.add{type="empty-widget", name=name, style="ee_invisible_vertical_pusher"}
   else
-    return parent.add{type='empty-widget', name=name, style='ee_invisible_horizontal_pusher'}
+    return parent.add{type="empty-widget", name=name, style="ee_invisible_horizontal_pusher"}
   end
 end
 
@@ -77,12 +77,12 @@ util.textfield = {}
 -- clamps numeric textfields to between two values, and sets the textfield style if it is invalid
 function util.textfield.clamp_number_input(element, clamps, last_value)
   local text = element.text
-  if text == ''
+  if text == ""
   or (clamps[1] and tonumber(text) < clamps[1])
   or (clamps[2] and tonumber(text) > clamps[2]) then
-    element.style = 'ee_invalid_slider_textfield'
+    element.style = "ee_invalid_slider_textfield"
   else
-    element.style = 'ee_slider_textfield'
+    element.style = "ee_slider_textfield"
     last_value = text
   end
   return last_value
@@ -92,7 +92,7 @@ end
 function util.textfield.set_last_valid_value(element, last_value)
   if element.text ~= last_value then
     element.text = last_value
-    element.style = 'ee_slider_textfield'
+    element.style = "ee_slider_textfield"
   end
   return element.text
 end
