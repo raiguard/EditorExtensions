@@ -11,6 +11,8 @@ local math_min = math.min
 local string_find = string.find
 local string_sub = string.sub
 
+local inventory_sizes = {cursor=1, main=(2^16)-1, guns=3, ammo=3, armor=1}
+
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
@@ -18,8 +20,6 @@ local string_sub = string.sub
 local function pre_toggled_editor(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
-  local create_entity = player.surface.create_entity
-  local position = player.position
   -- determine prefix based on controller type
   local prefix
   local controller_type = player.controller_type
@@ -32,32 +32,28 @@ local function pre_toggled_editor(e)
     prefix = "character_"
   end
   -- iterate all inventories
-  local chests = {}
+  local inventories = {}
   for _,name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
-    local chest = create_entity{
-      name = "ee-"..name.."-sync-chest",
-      position = position,
-      create_build_effect_smoke = false
-    }
-    if not chest then error("Failed to create "..name.." sync chest") end
-    local chest_inventory = chest.get_inventory(defines.inventory.chest)
+    local sync_inventory
     if name == "cursor" then
+      sync_inventory = game.create_inventory(1)
       local cursor_stack = player.cursor_stack
       if cursor_stack and cursor_stack.valid_for_read then
-        chest_inventory[1].set_stack(cursor_stack)
+        sync_inventory[1].set_stack(cursor_stack)
       end
     else
       local inventory_def = defines.inventory[prefix..name]
       if inventory_def then
         local source_inventory = player.get_inventory(inventory_def)
-        for i=1,math_min(#source_inventory, #chest_inventory) do
-          chest_inventory[i].set_stack(source_inventory[i])
+        sync_inventory = game.create_inventory(#source_inventory)
+        for i=1,#source_inventory do
+          sync_inventory[i].set_stack(source_inventory[i])
         end
       end
     end
-    chests[name] = chest
+    inventories[name] = sync_inventory
   end
-  player_table.sync_chests = chests
+  player_table.sync_inventories = inventories
 end
 
 -- after the mode is switched
@@ -76,29 +72,23 @@ local function toggled_editor(e)
     prefix = "character_"
   end
   -- iterate all inventories
-  local chests = player_table.sync_chests
+  local inventories = player_table.sync_inventories
   for _,name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
-    local chest = chests[name]
-    if chest then
-      local chest_inventory = chest.get_inventory(defines.inventory.chest)
-      if name == "cursor" then
-        player.cursor_stack.set_stack(chest_inventory[1])
-      else
-        local inventory_def = defines.inventory[prefix..name]
-        if inventory_def then
-          local destination_inventory = player.get_inventory(inventory_def)
-          for i=1,math_min(#destination_inventory, #chest_inventory) do
-            destination_inventory[i].set_stack(chest_inventory[i])
-          end
-          chests[name] = chest
-        end
-        chest.destroy()
-      end
+    local sync_inventory = inventories[name]
+    if name == "cursor" then
+      player.cursor_stack.set_stack(sync_inventory[1])
     else
-      error("Failed to retrieve "..name.." sync chest")
+      local inventory_def = defines.inventory[prefix..name]
+      if inventory_def then
+        local destination_inventory = player.get_inventory(inventory_def)
+        for i=1,math_min(#destination_inventory, #sync_inventory) do
+          destination_inventory[i].set_stack(sync_inventory[i])
+        end
+      end
     end
+    sync_inventory.destroy()
   end
-  player_table.sync_chests = nil
+  player_table.sync_inventories = nil
 end
 
 -- toggle the sync when the player goes in/out of cheat mode

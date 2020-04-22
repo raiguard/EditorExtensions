@@ -310,6 +310,12 @@ local migrations = {
     for _,t in pairs(global.wagons) do
       t.wagon_name = "ee-"..t.wagon_name
     end
+  end,
+  ["1.3.4"] = function()
+    -- remove any sync chests that have somehow remained (LuziferSenpai...)
+    for _, player_table in pairs(global.players) do
+      player_table.sync_chests = nil
+    end
   end
 }
 

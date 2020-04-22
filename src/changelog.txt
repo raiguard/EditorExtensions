@@ -2,6 +2,7 @@
 Version: 1.3.4
 Date: ????
   Changes:
+    - Refactored inventory and cursor sync to use the new script inventories feature instead of invisible chests
 ---------------------------------------------------------------------------------------------------
 Version: 1.3.3
 Date: 2020-04-09

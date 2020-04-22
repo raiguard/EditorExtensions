@@ -416,16 +416,3 @@ do
 
   data:extend{cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe}
 end
-
--- INVENTORY SYNC CHESTS
-local inventory_sync_chests = {}
-for name,slots in pairs{cursor=1, main=(2^16)-1, guns=3, ammo=3, armor=1} do
-  inventory_sync_chests[#inventory_sync_chests+1] = {
-    type = "container",
-    name = "ee-"..name.."-sync-chest",
-    inventory_size = slots,
-    picture = util.empty_sheet,
-    collision_mask = {}
-  }
-end
-data:extend(inventory_sync_chests)
