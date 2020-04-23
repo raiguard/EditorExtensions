@@ -90,7 +90,9 @@ event.on_player_toggled_map_editor(function(e)
 end)
 
 local function toggle_sync(player, player_table, enable)
-  enable = enable or (player_table.settings.inventory_sync and player.cheat_mode)
+  if enable == nil then
+    enable = player_table.settings.inventory_sync and player.cheat_mode
+  end
   if enable ~= player_table.flags.inventory_sync_enabled then
     if enable then
       player_table.flags.inventory_sync_enabled = true

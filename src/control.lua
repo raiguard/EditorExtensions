@@ -87,7 +87,6 @@ end
 event.on_console_command(function(e)
   if e.command == "cheat" and e.parameters == "all" then
     local player = game.get_player(e.player_index)
-    local player_table = global.players[e.player_index]
     if player.cheat_mode then
       -- remove default items
       local main_inventory = player.get_main_inventory()
@@ -182,7 +181,9 @@ event.on_runtime_mod_setting_changed(function(e)
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     update_player_settings(player, player_table)
-    inventory.toggle_sync(player, player_table)
+    if e.setting == "ee-inventory-sync" then
+      inventory.toggle_sync(player, player_table)
+    end
   end
 end)
 
@@ -273,6 +274,17 @@ event.on_built_entity(function(e)
         entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode="exactly"}
       end
     end
+  end
+end)
+
+-- -----------------------------------------------------------------------------
+-- COMMANDS
+
+commands.add_command("EditorExtensions", {"ee-message.command-help"}, function(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  if e.parameter == "toggle-inventory-sync" then
+    inventory.toggle_sync(player, player_table, not player_table.flags.inventory_sync_enabled)
   end
 end)
 

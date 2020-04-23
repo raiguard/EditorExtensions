@@ -3,6 +3,7 @@ Version: 1.4.0
 Date: ????
   Features:
     - Added new hi-res icons for infinity chests and tesseract chests
+    - Inventory sync is now able to be toggled separately from cheat mode, using /EditorExtensions toggle-inventory-sync
   Changes:
     - Non-logistic infinity and tesseract chests now have a slightly different color, to be able to distinguish them from vanilla infinity chests
     - Infinity fuel icon now uses rocket fuel instead of nuclear fuel, eliminating the ugly glow
