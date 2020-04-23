@@ -436,32 +436,6 @@ event.on_load(function()
   end
 end)
 
---
--- REMOTE INTERFACES
--- docs: https://github.com/raiguard/Factorio-EditorExtensions/wiki/Remote-Interface-Documentation
---
-
--- get all loader entities at a certain position
-local function get_loader_entities(surface, position)
-  local find = surface.find_entities_filtered
-  return find{type="loader-1x1", position=position}[1],
-         find{type="inserter", position=position},
-         find{name="ee-infinity-loader-chest", position=position}[1],
-         find{name="ee-infinity-loader-logic-combinator", position=position}[1]
-end
-
-event.get_id("il_on_loader_snapped")
-remote.add_interface("ee_infinity_loader", {
-  -- FUNCTIONS
-  get_loader_entities = get_loader_entities,
-  get_belt_type = get_belt_type,
-  add_to_blacklist = function(name) snapping_blacklist[name] = true end,
-  remove_from_blacklist = function(name) snapping_blacklist[name] = nil end,
-  get_blacklist = function() return snapping_blacklist end,
-  -- EVENTS
-  on_loader_snapped = function() return event.get_id("il_on_loader_snapped") end
-})
-
 -- -----------------------------------------------------------------------------
 -- STATIC HANDLERS
 
