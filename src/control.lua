@@ -365,13 +365,11 @@ local migrations = {
       t.wagon_name = "ee-"..t.wagon_name
     end
   end,
-  ["1.3.4"] = function()
+  ["1.4.0"] = function()
     -- remove any sync chests that have somehow remained (LuziferSenpai...)
     for _, player_table in pairs(global.players) do
       player_table.sync_chests = nil
     end
-  end,
-  ["1.4.0"] = function()
     -- add flag to all players for inventory sync
     for i, player in pairs(game.players) do
       local player_table = global.players[i]
@@ -393,7 +391,6 @@ local migrations = {
         __event.conditional_events[name] = nil
       end
     end
-    local breakpoint
   end
 }
 
