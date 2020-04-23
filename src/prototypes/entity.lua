@@ -242,7 +242,6 @@ do
       inventory_size = 10,
       flags = {"hide-alt-info"},
       picture = util.empty_sheet,
-      icons = loader_base.icons,
       collision_box = {{-0.05,-0.05},{0.05,0.05}}
     },
     -- logic combinator (what you actually interact with)
