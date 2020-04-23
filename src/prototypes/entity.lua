@@ -17,6 +17,7 @@ do
     local entity = table.deepcopy(base_entity)
     entity.name = "ee-infinity-accumulator-"..t
     entity.localised_name = {"entity-name.ee-infinity-accumulator"}
+    entity.localised_description = {"entity-description.ee-infinity-accumulator"}
     entity.icons = accumulator_icons
     entity.energy_source = {type="electric", usage_priority=t, buffer_capacity="500GJ"}
     entity.subgroup = "ee-electricity"
@@ -250,6 +251,7 @@ do
       name = "ee-infinity-loader-logic-combinator",
       icons = loader_icon,
       localised_name = {"entity-name.ee-infinity-loader"},
+      localised_description = {"entity-description.ee-infinity-loader"},
       order = "a",
       collision_box = loader_base.collision_box,
       selection_box = loader_base.selection_box,
@@ -296,7 +298,7 @@ do
   -- dummy combinator (for placement and blueprints)
   local dummy_combinator = table.deepcopy(data.raw["constant-combinator"]["ee-infinity-loader-logic-combinator"])
   dummy_combinator.name = "ee-infinity-loader-dummy-combinator"
-  dummy_combinator.localised_description = {"entity-description.infinity-loader"}
+  dummy_combinator.localised_description = {"entity-description.ee-infinity-loader"}
   dummy_combinator.minable = nil
   dummy_combinator.flags = {"player-creation"}
   dummy_combinator.icons = loader_base.icons

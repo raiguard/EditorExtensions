@@ -9,6 +9,7 @@ data:extend{
   {
     type = "item",
     name = "ee-infinity-accumulator",
+    localised_description = {"entity-description.ee-infinity-accumulator"},
     stack_size = 50,
     icons = util.recursive_tint{util.extract_icon_info(data.raw["accumulator"]["accumulator"])},
     place_result = "ee-infinity-accumulator-primary-output",
@@ -166,6 +167,7 @@ data:extend{
     type = "item",
     name = "ee-infinity-loader",
     localised_name = {"entity-name.ee-infinity-loader"},
+    localised_description = {"entity-description.ee-infinity-loader"},
     icons = util.recursive_tint{{icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}},
     stack_size = 50,
     place_result = "ee-infinity-loader-dummy-combinator",
