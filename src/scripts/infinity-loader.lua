@@ -195,7 +195,7 @@ local function create_loader(type, mode, surface, position, direction, force)
   }
   local inserters = {}
   for i=1,num_inserters(loader) do
-     inserters[i] = surface.create_entity{
+      inserters[i] = surface.create_entity{
       name="ee-infinity-loader-inserter",
       position = position,
       force = force,
@@ -374,10 +374,6 @@ local function snap_loader(loader, entity)
     loader.surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator", position=loader.position}[1],
     {loader=loader}
   )
-  -- raise event if snapping occured
-  if snapped then
-    event.raise(event.get_id("il_on_loader_snapped"), {loader=loader, snapped_to=entity})
-  end
 end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
@@ -557,10 +553,10 @@ end)
 -- when an entity settings copy/paste occurs
 event.register(defines.events.on_entity_settings_pasted, function(e)
   if e.destination.name == "ee-infinity-loader-logic-combinator" then
-    -- sanitize filters to remove any non-ttems
+    -- sanitize filters to remove any non-items
     local parameters = {parameters={}}
     local items = 0
-    for i,p in pairs(table.deepcopy(e.source.get_control_behavior().parameters.parameters)) do
+    for _,p in pairs(table.deepcopy(e.source.get_control_behavior().parameters.parameters)) do
       if p.signal and p.signal.type == "item" and items < 2 then
         items = items + 1
         p.index = items
