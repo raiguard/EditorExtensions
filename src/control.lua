@@ -8,6 +8,8 @@ local util = require("scripts.util")
 
 -- locals
 local string_find = string.find
+local string_gsub = string.gsub
+local string_sub = string.sub
 
 -- -----------------------------------------------------------------------------
 -- SCRIPTS
@@ -36,9 +38,15 @@ local function enable_recipes(player, skip_message)
   end
 end
 
--- enable the testing items when cheat mode is enabled
 event.on_player_cheat_mode_enabled(function(e)
-  enable_recipes(game.get_player(e.player_index))
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  enable_recipes(player)
+  inventory.toggle_sync(player, player_table)
+end)
+
+event.on_player_cheat_mode_disabled(function(e)
+  inventory.toggle_sync(game.get_player(e.player_index), global.players[e.player_index], false)
 end)
 
 local items_to_remove = {
@@ -106,11 +114,12 @@ event.on_console_command(function(e)
 end)
 
 -- -----------------------------------------------------------------------------
--- SETUP AND GENERAL SCRIPTING
+-- PLAYER DATA / BOOTSTRAP
 
 local function setup_player(index)
   local data = {
     flags = {
+      inventory_sync_enabled = false,
       map_editor_toggled = false
     },
     gui = {
@@ -123,12 +132,27 @@ local function setup_player(index)
     }
   }
   global.players[index] = data
-  -- set map editor shortcut state
-  local player = game.get_player(index)
-  player.set_shortcut_toggled("ee-toggle-map-editor", player.controller_type == defines.controllers.editor)
 end
 
--- GENERAL SETUP
+local function update_player_settings(player, player_table)
+  local settings = {}
+  for name, t in pairs(player.mod_settings) do
+    if string_sub(name, 1,3) == "ee-" then
+      name = string_gsub(name, "^ee%-", "")
+      settings[string_gsub(name, "%-", "_")] = t.value
+    end
+  end
+  player_table.settings = settings
+end
+
+local function refresh_player_data(player, player_table)
+  -- set shortcut state
+  player.set_shortcut_available("ee-toggle-map-editor", player.admin)
+
+  -- update settings
+  update_player_settings(player, player_table)
+end
+
 event.on_init(function()
   global.combinators = {}
   global.flags = {
@@ -137,26 +161,34 @@ event.on_init(function()
   global.players = {}
   for i,p in pairs(game.players) do
     setup_player(i)
+    refresh_player_data(p, global.players[i])
     if p.cheat_mode then
       enable_recipes(p)
     end
   end
 end)
 
--- set up player when created
 event.on_player_created(function(e)
   setup_player(e.player_index)
+  refresh_player_data(game.get_player(e.player_index), global.players[e.player_index])
 end, nil, {insert_at=1})
 
--- destroy player table when removed
 event.on_player_removed(function(e)
   global.players[e.player_index] = nil
+end)
+
+event.on_runtime_mod_setting_changed(function(e)
+  if string_sub(e.setting, 1, 3) == "ee-" then
+    local player = game.get_player(e.player_index)
+    local player_table = global.players[e.player_index]
+    update_player_settings(player, player_table)
+    inventory.toggle_sync(player, player_table)
+  end
 end)
 
 -- -----------------------------------------------------------------------------
 -- MAP EDITOR SHORTCUT
 
--- when toggled
 event.register({defines.events.on_lua_shortcut, "ee-toggle-map-editor"}, function(e)
   if e.prototype_name and e.prototype_name ~= "ee-toggle-map-editor" then return end
   local player = game.get_player(e.player_index)
@@ -338,10 +370,38 @@ local migrations = {
     for _, player_table in pairs(global.players) do
       player_table.sync_chests = nil
     end
+  end,
+  ["1.4.0"] = function()
+    -- add flag to all players for inventory sync
+    for i, player in pairs(game.players) do
+      local player_table = global.players[i]
+      -- we don't have a settings table yet (that will be created in generic migrations) so do it manually
+      player_table.flags.inventory_sync_enabled = player.mod_settings["ee-inventory-sync"].value and player.cheat_mode
+    end
+    -- remove cursor sync event data
+    for _, name in ipairs{"inventory_sync_pre_toggled_editor", "inventory_sync_toggled_editor"} do
+      local __event = global.__lualib.event
+      local event_data = __event.conditional_events[name]
+      local players = __event.players
+      if event_data then
+        for _, player_index in ipairs(event_data.players) do
+          players[player_index][name] = nil
+          if table_size(players[player_index]) == 0 then
+            players[player_index] = nil
+          end
+        end
+        __event.conditional_events[name] = nil
+      end
+    end
+    local breakpoint
   end
 }
 
 -- handle migrations
 event.on_configuration_changed(function(e)
-  migration.on_config_changed(e, migrations)
+  if migration.on_config_changed(e, migrations) then
+    for i, player in pairs(game.players) do
+      refresh_player_data(player, global.players[i])
+    end
+  end
 end, nil, {insert_at=1})

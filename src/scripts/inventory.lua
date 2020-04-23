@@ -14,10 +14,10 @@ local string_sub = string.sub
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
--- before the mode is switched
-local function pre_toggled_editor(e)
-  local player = game.get_player(e.player_index)
+event.on_pre_player_toggled_map_editor(function(e)
   local player_table = global.players[e.player_index]
+  if not player_table.flags.inventory_sync_enabled then return end
+  local player = game.get_player(e.player_index)
   -- determine prefix based on controller type
   local prefix
   local controller_type = player.controller_type
@@ -52,12 +52,12 @@ local function pre_toggled_editor(e)
     inventories[name] = sync_inventory
   end
   player_table.sync_inventories = inventories
-end
+end)
 
--- after the mode is switched
-local function toggled_editor(e)
-  local player = game.get_player(e.player_index)
+event.on_player_toggled_map_editor(function(e)
   local player_table = global.players[e.player_index]
+  if not player_table.flags.inventory_sync_enabled then return end
+  local player = game.get_player(e.player_index)
   -- determine prefix based on controller type
   local prefix
   local controller_type = player.controller_type
@@ -87,27 +87,20 @@ local function toggled_editor(e)
     sync_inventory.destroy()
   end
   player_table.sync_inventories = nil
-end
+end)
 
--- toggle the sync when the player goes in/out of cheat mode
-event.register(
-  {defines.events.on_player_cheat_mode_enabled, defines.events.on_player_cheat_mode_disabled, defines.events.on_runtime_mod_setting_changed},
-  function(e)
-    local player = game.get_player(e.player_index)
-    local cheat_mode = player.cheat_mode
-    if e.setting and e.setting ~= "ee-inventory-sync" then return end
-    if cheat_mode and player.mod_settings["ee-inventory-sync"].value then
-      event.enable_group("inventory_sync", e.player_index)
+local function toggle_sync(player, player_table, enable)
+  enable = enable or (player_table.settings.inventory_sync and player.cheat_mode)
+  if enable ~= player_table.flags.inventory_sync_enabled then
+    if enable then
+      player_table.flags.inventory_sync_enabled = true
+      player.print{"ee-message.inventory-sync-enabled"}
     else
-      event.disable_group("inventory_sync", e.player_index)
+      player_table.flags.inventory_sync_enabled = false
+      player.print{"ee-message.inventory-sync-disabled"}
     end
   end
-)
-
-event.register_conditional{
-  inventory_sync_pre_toggled_editor = {id=defines.events.on_pre_player_toggled_map_editor, handler=pre_toggled_editor, group="inventory_sync"},
-  inventory_sync_toggled_editor = {id=defines.events.on_player_toggled_map_editor, handler=toggled_editor, group="inventory_sync"},
-}
+end
 
 -- -----------------------------------------------------------------------------
 -- INFINITY INVENTORY FILTERS
@@ -301,5 +294,6 @@ end)
 -- OBJECT
 
 return {
-  import_inventory_filters = import_filters
+  import_inventory_filters = import_filters,
+  toggle_sync = toggle_sync
 }
