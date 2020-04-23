@@ -5,6 +5,7 @@ Date: ????
     - Added new hi-res icons for infinity chests and tesseract chests
   Changes:
     - Non-logistic infinity and tesseract chests now have a slightly different color, to be able to distinguish them from vanilla infinity chests
+    - Infinity fuel icon now uses rocket fuel instead of nuclear fuel, eliminating the ugly glow
     - Refactored inventory and cursor sync to use the new script inventories feature instead of invisible chests
   Bugfixes:
     - Fixed that mining an infinity robot would return its non-infinity version

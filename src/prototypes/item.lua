@@ -123,7 +123,7 @@ data:extend{infinity_electric_pole, infinity_substation}
 -- INFINITY FUEL
 local infinity_fuel = table.deepcopy(data.raw["item"]["nuclear-fuel"])
 infinity_fuel.name = "ee-infinity-fuel"
-infinity_fuel.icons = util.recursive_tint{util.extract_icon_info(infinity_fuel)}
+infinity_fuel.icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["rocket-fuel"])}
 infinity_fuel.stack_size = 100
 infinity_fuel.fuel_value = "1000YJ"
 infinity_fuel.subgroup = "ee-trains"
