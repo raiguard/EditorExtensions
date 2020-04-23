@@ -21,7 +21,7 @@ require("scripts.tesseract-chest")
 local inventory = require("scripts.inventory")
 
 -- -----------------------------------------------------------------------------
--- TESTING TOOLS RECIPES
+-- CHEAT MODE
 
 local function enable_recipes(player, skip_message)
   local force = player.force
@@ -41,8 +41,26 @@ event.on_player_cheat_mode_enabled(function(e)
   enable_recipes(game.get_player(e.player_index))
 end)
 
--- armor outfit
-local armor_outfit = {
+local items_to_remove = {
+  {name="express-loader", count=50},
+  {name="stack-inserter", count=50},
+  {name="substation", count=50},
+  {name="construction-robot", count=100},
+  {name="electric-energy-interface", count=1},
+  {name="infinity-chest", count=20},
+  {name="infinity-pipe", count=10}
+}
+
+local items_to_add = {
+  {name="ee-infinity-accumulator", count=50},
+  {name="ee-infinity-chest", count=50},
+  {name="ee-infinity-construction-robot", count=100},
+  {name="ee-infinity-inserter", count=50},
+  {name="ee-infinity-pipe", count=50},
+  {name="ee-infinity-substation", count=50}
+}
+
+local equipment_to_add = {
   {name="ee-infinity-fusion-reactor-equipment", position={0,0}},
   {name="ee-infinity-personal-roboport-equipment", position={1,0}},
   {name="ee-infinity-exoskeleton-equipment", position={2,0}},
@@ -50,36 +68,40 @@ local armor_outfit = {
   {name="night-vision-equipment", position={0,1}}
 }
 
--- /ee_cheat command
-commands.add_command("ee_cheat", {"ee-message.cheat-command-help"}, function(e)
-  local player = game.get_player(e.player_index)
-  if player.admin then
-    local force = player.force
-    -- research all techs for the force
-    force.research_all_technologies()
-    -- enable cheat mode for the player
-    -- this will also unlock the testing tools and notify the force
-    player.cheat_mode = true
-    -- create outfitted power armor
-    player.clean_cursor()
-    local cursor_stack = player.cursor_stack
-    cursor_stack.set_stack{name="power-armor-mk2"}
-    local grid = cursor_stack.grid
-    for i=1,#armor_outfit do
-      grid.put(armor_outfit[i])
+local function set_armor(inventory)
+  inventory[1].set_stack{name="power-armor-mk2"}
+  local grid = inventory[1].grid
+  for i=1,#equipment_to_add do
+    grid.put(equipment_to_add[i])
+  end
+end
+
+event.on_console_command(function(e)
+  if e.command == "cheat" and e.parameters == "all" then
+    local player = game.get_player(e.player_index)
+    local player_table = global.players[e.player_index]
+    if player.cheat_mode then
+      -- remove default items
+      local main_inventory = player.get_main_inventory()
+      for i=1,#items_to_remove do
+        main_inventory.remove(items_to_remove[i])
+      end
+      -- add custom items
+      for i=1,#items_to_add do
+        main_inventory.insert(items_to_add[i])
+      end
+      if player.controller_type == defines.controllers.character then
+        -- increase reach distance
+        player.character_build_distance_bonus = 1000000
+        player.character_reach_distance_bonus = 1000000
+        player.character_resource_reach_distance_bonus = 1000000
+        -- overwrite the default armor loadout
+        set_armor(player.get_inventory(defines.inventory.character_armor))
+      elseif player.controller_type == defines.controllers.editor then
+        -- overwrite the default armor loadout
+        set_armor(player.get_inventory(defines.inventory.editor_armor))
+      end
     end
-    player.insert(cursor_stack)
-    cursor_stack.clear()
-    -- insert robots
-    player.insert{name="ee-infinity-construction-robot", count=100}
-    -- reach distance
-    if player.character then
-      player.character_build_distance_bonus = 1000000
-      player.character_reach_distance_bonus = 1000000
-      player.character_resource_reach_distance_bonus = 1000000
-    end
-  else
-    player.print{"ee-message.cheat-command-denied"}
   end
 end)
 
