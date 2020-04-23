@@ -226,8 +226,9 @@ data:extend{infinity_lab}
 -- INFINITY LOADER
 -- Create everything except the actual loaders here. We create those in data-updates so they can get every belt type.
 do
+  local loader_icon = util.recursive_tint{{icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}}
   local loader_base = table.deepcopy(data.raw["underground-belt"]["underground-belt"])
-  loader_base.icons = util.recursive_tint{{icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=32, icon_mipmaps=0}}
+  loader_base.icons = loader_icon
 
   local base_loader_path = "__base__/graphics/entity/underground-belt/"
 
@@ -236,6 +237,7 @@ do
     {
       type = "infinity-container",
       name = "ee-infinity-loader-chest",
+      icons = loader_icon,
       erase_contents_when_mined = true,
       inventory_size = 10,
       flags = {"hide-alt-info"},
@@ -247,6 +249,7 @@ do
     {
       type = "constant-combinator",
       name = "ee-infinity-loader-logic-combinator",
+      icons = loader_icon,
       localised_name = {"entity-name.ee-infinity-loader"},
       order = "a",
       collision_box = loader_base.collision_box,
@@ -306,7 +309,7 @@ do
     {
       type = "inserter",
       name = "ee-infinity-loader-inserter",
-      icons = util.recursive_tint{{icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=32}},
+      icons = loader_icon,
       stack = true,
       collision_box = {{-0.1,-0.1}, {0.1,0.1}},
       -- selection_box = {{-0.1,-0.1}, {0.1,0.1}},
@@ -471,6 +474,7 @@ do
   local infinity_wagon_chest = table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest"])
   infinity_wagon_chest.name = "ee-infinity-wagon-chest"
   infinity_wagon_chest.icons = util.recursive_tint{util.extract_icon_info(infinity_wagon_chest)}
+  infinity_wagon_chest.subgroup = nil
   infinity_wagon_chest.picture = util.empty_sheet
   infinity_wagon_chest.collision_mask = {"layer-15"}
   infinity_wagon_chest.selection_box = nil
