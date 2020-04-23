@@ -5,6 +5,8 @@ local event = require("__RaiLuaLib__.lualib.event")
 local chest_names = {"ee-tesseract-chest", "ee-tesseract-chest-passive-provider"}
 local util = require("scripts.util")
 
+local string_sub = string.sub
+
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
@@ -65,7 +67,7 @@ end)
 
 event.register(util.constants.entity_built_events, function(e)
   local entity = e.created_entity or e.entity
-  if entity.name:find("ee%-tesseract%-chest") then
+  if string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
     update_chest_filters(entity)
   end
 end)
