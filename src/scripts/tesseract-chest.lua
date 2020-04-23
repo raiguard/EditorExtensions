@@ -55,7 +55,6 @@ event.on_configuration_changed(function(e)
   update_all_chest_filters()
 end)
 
--- when a mod setting changes
 event.register(defines.events.on_runtime_mod_setting_changed, function(e)
   if e.setting == "ee-tesseract-include-hidden" then
     -- update filters of all tesseract chests
@@ -64,7 +63,6 @@ event.register(defines.events.on_runtime_mod_setting_changed, function(e)
   end
 end)
 
--- when an entity is built
 event.register(util.constants.entity_built_events, function(e)
   local entity = e.created_entity or e.entity
   if entity.name:find("ee%-tesseract%-chest") then

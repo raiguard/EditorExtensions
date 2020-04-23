@@ -177,7 +177,7 @@ event.on_player_removed(function(e)
 end)
 
 event.on_runtime_mod_setting_changed(function(e)
-  if string_sub(e.setting, 1, 3) == "ee-" then
+  if string_sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     update_player_settings(player, player_table)
@@ -211,7 +211,7 @@ event.on_player_toggled_map_editor(function(e)
   -- set default filters
   if new_state and not player_table.flags.map_editor_toggled then
     player_table.flags.map_editor_toggled = true
-    local default_filters = player.mod_settings["ee-default-inventory-filters"].value
+    local default_filters = player_table.settings.default_inventory_filters
     if default_filters ~= "" then
       inventory.import_inventory_filters(player, default_filters)
     end
@@ -246,12 +246,12 @@ end)
 event.on_built_entity(function(e)
   local entity = e.created_entity
   if entity.name == "ee-infinity-pipe" then
+    local settings = global.players[e.player_index].settings
     local neighbours = entity.neighbours[1]
     local own_fb = entity.fluidbox
     local own_id = entity.unit_number
-    local s = settings.get_player_settings(e.player_index)
     -- snap to adjacent assemblers
-    if s["ee-infinity-pipe-assembler-snapping"].value then
+    if settings.infinity_pipe_assembler_snapping then
       for ni=1,#neighbours do
         local neighbour = neighbours[ni]
         if neighbour.type == "assembling-machine" and neighbour.fluidbox then
@@ -268,7 +268,7 @@ event.on_built_entity(function(e)
       end
     end
     -- snap to locked fluid
-    if s["ee-infinity-pipe-snapping"].value then
+    if settings.infinity_pipe_snapping then
       local fluid = own_fb.get_locked_fluid(1)
       if fluid then
         entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode="exactly"}
