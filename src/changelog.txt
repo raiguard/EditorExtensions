@@ -1,8 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.0
 Date: ????
+  Features:
+    - Added new hi-res icons for infinity chests and tesseract chests
   Changes:
-    - Non-logistic infinity and tesseract chests are now white, to distinguish them from the vanilla infinity chest
+    - Non-logistic infinity and tesseract chests now have a slightly different color, to be able to distinguish them from vanilla infinity chests
     - Refactored inventory and cursor sync to use the new script inventories feature instead of invisible chests
   Bugfixes:
     - Fixed that mining an infinity robot would return its non-infinity version

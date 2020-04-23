@@ -42,7 +42,7 @@ end
 
 -- data tables
 self.infinity_chest_data = {
-  {t={255,255,255}, o="aa"},
+  {t={255,255,225}, o="aa"},
   {lm="active-provider", s=0, t={218,115,255}, o="ab"},
   {lm="passive-provider", s=0, t={255,141,114}, o="ac"},
   {lm="storage", s=1, t={255,220,113}, o="ad"},
@@ -50,7 +50,7 @@ self.infinity_chest_data = {
   {lm="requester", s=30, t={114,236,255}, o="af"}
 }
 self.tesseract_chest_data = {
-  {t={255,255,255}, o="ba"},
+  {t={255,255,225}, o="ba"},
   {lm="passive-provider", t={255,141,114}, o="bb"}
 }
 self.module_data = {
