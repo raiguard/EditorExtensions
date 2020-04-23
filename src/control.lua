@@ -29,7 +29,7 @@ local function enable_recipes(player, skip_message)
   local force = player.force
   -- check if it has already been enabled for this force
   if force.recipes["ee-infinity-loader"].enabled == false then
-    for n,_ in pairs(game.recipe_prototypes) do
+    for n, _ in pairs(game.recipe_prototypes) do
       if string_find(n, "^ee%-") and force.recipes[n] then force.recipes[n].enabled = true end
     end
     if not skip_message then
@@ -79,7 +79,7 @@ local equipment_to_add = {
 local function set_armor(inventory)
   inventory[1].set_stack{name="power-armor-mk2"}
   local grid = inventory[1].grid
-  for i=1,#equipment_to_add do
+  for i=1, #equipment_to_add do
     grid.put(equipment_to_add[i])
   end
 end
@@ -90,11 +90,11 @@ event.on_console_command(function(e)
     if player.cheat_mode then
       -- remove default items
       local main_inventory = player.get_main_inventory()
-      for i=1,#items_to_remove do
+      for i=1, #items_to_remove do
         main_inventory.remove(items_to_remove[i])
       end
       -- add custom items
-      for i=1,#items_to_add do
+      for i=1, #items_to_add do
         main_inventory.insert(items_to_add[i])
       end
       if player.controller_type == defines.controllers.character then
@@ -135,7 +135,7 @@ end
 
 local function update_player_settings(player, player_table)
   local settings = {}
-  for name, t in pairs(player.mod_settings) do
+  for name,  t in pairs(player.mod_settings) do
     if string_sub(name, 1,3) == "ee-" then
       name = string_gsub(name, "^ee%-", "")
       settings[string_gsub(name, "%-", "_")] = t.value
@@ -158,7 +158,7 @@ event.on_init(function()
     map_editor_toggled = false
   }
   global.players = {}
-  for i,p in pairs(game.players) do
+  for i, p in pairs(game.players) do
     setup_player(i)
     refresh_player_data(p, global.players[i])
     if p.cheat_mode then
@@ -252,11 +252,11 @@ event.on_built_entity(function(e)
     local own_id = entity.unit_number
     -- snap to adjacent assemblers
     if settings.infinity_pipe_assembler_snapping then
-      for ni=1,#neighbours do
+      for ni=1, #neighbours do
         local neighbour = neighbours[ni]
         if neighbour.type == "assembling-machine" and neighbour.fluidbox then
           local fb = neighbour.fluidbox
-          for i=1,#fb do
+          for i=1, #fb do
             local connections = fb.get_connections(i)
             if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == "input") then
               -- set to fill the pipe with the fluid
@@ -335,7 +335,7 @@ event.set_filters(defines.events.on_cancelled_deconstruction, {
 local migrations = {
   ["1.1.0"] = function()
     -- enable infinity equipment recipes, hide electric energy interface recipe
-    for _,force in pairs(game.forces) do
+    for _, force in pairs(game.forces) do
       local recipes = force.recipes
       if recipes["ee-infinity-loader"].enabled then
         recipes["electric-energy-interface"].enabled = false
@@ -345,7 +345,7 @@ local migrations = {
       end
     end
     -- enable recipes for any players who already have cheat mode enabled
-    for _,player in pairs(game.players) do
+    for _, player in pairs(game.players) do
       if player.cheat_mode then
         enable_recipes(player)
       end
@@ -353,7 +353,7 @@ local migrations = {
   end,
   ["1.2.0"] = function()
     local player_tables = global.players
-    for i,p in pairs(game.players) do
+    for i, p in pairs(game.players) do
       -- set map editor toggled flag to true
       player_tables[i].flags.map_editor_toggled = true
       if p.mod_settings["ee-inventory-sync"].value and p.cheat_mode then
@@ -364,7 +364,7 @@ local migrations = {
   end,
   ["1.3.0"] = function()
     -- enable infintiy heat pipe recipe
-    for _,force in pairs(game.forces) do
+    for _, force in pairs(game.forces) do
       local recipes = force.recipes
       if recipes["ee-infinity-loader"].enabled then
         recipes["ee-infinity-heat-pipe"].enabled = true
@@ -373,28 +373,28 @@ local migrations = {
   end,
   ["1.3.1"] = function()
     -- update all infinity wagon names in global
-    for _,t in pairs(global.wagons) do
+    for _, t in pairs(global.wagons) do
       t.wagon_name = "ee-"..t.wagon_name
     end
   end,
   ["1.4.0"] = function()
     -- remove any sync chests that have somehow remained (LuziferSenpai...)
-    for _, player_table in pairs(global.players) do
+    for _,  player_table in pairs(global.players) do
       player_table.sync_chests = nil
     end
     -- add flag to all players for inventory sync
-    for i, player in pairs(game.players) do
+    for i,  player in pairs(game.players) do
       local player_table = global.players[i]
       -- we don't have a settings table yet (that will be created in generic migrations) so do it manually
       player_table.flags.inventory_sync_enabled = player.mod_settings["ee-inventory-sync"].value and player.cheat_mode
     end
     -- remove cursor sync event data
-    for _, name in ipairs{"inventory_sync_pre_toggled_editor", "inventory_sync_toggled_editor"} do
+    for _,  name in ipairs{"inventory_sync_pre_toggled_editor", "inventory_sync_toggled_editor"} do
       local __event = global.__lualib.event
       local event_data = __event.conditional_events[name]
       local players = __event.players
       if event_data then
-        for _, player_index in ipairs(event_data.players) do
+        for _,  player_index in ipairs(event_data.players) do
           players[player_index][name] = nil
           if table_size(players[player_index]) == 0 then
             players[player_index] = nil
@@ -409,7 +409,7 @@ local migrations = {
 -- handle migrations
 event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
-    for i, player in pairs(game.players) do
+    for i,  player in pairs(game.players) do
       refresh_player_data(player, global.players[i])
     end
   end

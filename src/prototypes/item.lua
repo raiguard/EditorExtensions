@@ -31,7 +31,7 @@ data:extend{infinity_beacon}
 do
   -- create infinity chest items
   local ic_item = table.deepcopy(data.raw["item"]["infinity-chest"])
-  for _,t in pairs(util.infinity_chest_data) do
+  for _, t in pairs(util.infinity_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(ic_item)
@@ -48,7 +48,7 @@ do
   end
 
   -- create tesseract chest items
-  for _,t in pairs(util.tesseract_chest_data) do
+  for _, t in pairs(util.tesseract_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(ic_item)

@@ -15,7 +15,7 @@ local function update_chest_filters(entity)
   entity.remove_unfiltered_items = true
   -- set infinity filters
   local i = 0
-  for n,ss in pairs(global.tesseract_data) do
+  for n, ss in pairs(global.tesseract_data) do
     i = i + 1
     entity.set_infinity_container_filter(i, {name=n, count=ss, mode="exactly", index=i})
   end
@@ -23,8 +23,8 @@ end
 
 -- set the filters of all existing tesseract chests
 local function update_all_chest_filters()
-  for _,s in pairs(game.surfaces) do
-    for _,e in pairs(s.find_entities_filtered{name=chest_names}) do
+  for _, s in pairs(game.surfaces) do
+    for _, e in pairs(s.find_entities_filtered{name=chest_names}) do
       update_chest_filters(e)
     end
   end
@@ -34,7 +34,7 @@ end
 local function update_tesseract_data()
   local include_hidden = settings.global["ee-tesseract-include-hidden"].value
   local data = {}
-  for n,p in pairs(game.item_prototypes) do
+  for n, p in pairs(game.item_prototypes) do
     if include_hidden or not p.has_flag("hidden") then
       data[n] = p.stack_size
     end

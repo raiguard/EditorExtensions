@@ -34,7 +34,7 @@ local constants = {
   si_suffixes_joule = {"kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ"},
   si_suffixes_watt = {"kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW"}
 }
-for i,v in pairs(constants.power_prefixes) do
+for i, v in pairs(constants.power_prefixes) do
   constants.localized_si_suffixes_watt[i] = {"", {"si-prefix-symbol-"..v}, {"si-unit-symbol-watt"}}
   constants.localized_si_suffixes_joule[i] = {"", {"si-prefix-symbol-"..v}, {"si-unit-symbol-joule"}}
 end
@@ -284,7 +284,7 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
     -- get players viewing the destination accumulator
     local to_update = {}
     if global.__lualib.event.ia_close_button_clicked then
-      for _,i in ipairs(global.__lualib.event.ia_close_button_clicked.players) do
+      for _, i in ipairs(global.__lualib.event.ia_close_button_clicked.players) do
         local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.ia.entity == e.destination then
@@ -301,7 +301,7 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
       new_entity = change_entity(e.destination, priority, mode)
     end
     -- update open GUIs
-    for _,i in pairs(to_update) do
+    for _, i in pairs(to_update) do
       local player_table = global.players[i]
       player_table.gui.ia.entity = new_entity
       gui.update_settings(player_table.gui.ia)
@@ -313,7 +313,7 @@ event.register(util.constants.entity_destroyed_events, function(e)
   if check_is_accumulator(e.entity) then
     -- close open GUIs
     if global.__lualib.event.ia_close_button_clicked then
-      for _,i in ipairs(global.__lualib.event.ia_close_button_clicked.players) do
+      for _, i in ipairs(global.__lualib.event.ia_close_button_clicked.players) do
         local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.ia.entity == e.entity then

@@ -32,7 +32,7 @@ function titlebar.create(parent, name, data)
   if data.buttons then
     filler.style.right_margin = 6
     local buttons = data.buttons
-    for i=1, #buttons do
+    for i=1,  #buttons do
       titlebar_flow.add {
         type = "sprite-button",
         name = prefix.."button_"..buttons[i].name,

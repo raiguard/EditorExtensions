@@ -29,7 +29,7 @@ local recipe_names = {
   "ee-infinity-substation",
 }
 local function register_recipes(t)
-  for _,k in ipairs(t) do
+  for _, k in ipairs(t) do
     data:extend{
       {
         type = "recipe",
@@ -43,12 +43,12 @@ local function register_recipes(t)
 end
 
 register_recipes(recipe_names)
-for _,t in pairs(util.infinity_chest_data) do
+for _, t in pairs(util.infinity_chest_data) do
   register_recipes{"ee-infinity-chest"..(t.lm and "-"..t.lm or "")}
 end
-for _,t in pairs(util.tesseract_chest_data) do
+for _, t in pairs(util.tesseract_chest_data) do
   register_recipes{"ee-tesseract-chest"..(t.lm and "-"..t.lm or "")}
 end
-for _,t in ipairs(util.module_data) do
+for _, t in ipairs(util.module_data) do
   register_recipes{t.name}
 end

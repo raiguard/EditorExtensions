@@ -14,7 +14,7 @@ local module_template = {
   stack_size = 50
 }
 
-for _,t in pairs(util.module_data) do
+for _, t in pairs(util.module_data) do
   local module = util.merge{t, module_template}
   module.icons = get_module_icon(module.icon_ref, module.tint)
   module.icon_ref = nil

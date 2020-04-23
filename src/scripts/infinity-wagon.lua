@@ -12,16 +12,16 @@ local math_abs = math.abs
 -- CONDITIONAL HANDLERS
 
 local function wagon_on_tick()
-  for _,t in pairs(global.wagons) do
+  for _, t in pairs(global.wagons) do
     if t.wagon.valid and t.proxy.valid then
       if t.wagon_name == "ee-infinity-cargo-wagon" then
         if t.flip == 0 then
           t.wagon_inv.clear()
-          for n,c in pairs(t.proxy_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
+          for n, c in pairs(t.proxy_inv.get_contents()) do t.wagon_inv.insert{name=n, count=c} end
           t.flip = 1
         elseif t.flip == 1 then
           t.proxy_inv.clear()
-          for n,c in pairs(t.wagon_inv.get_contents()) do t.proxy_inv.insert{name=n, count=c} end
+          for n, c in pairs(t.wagon_inv.get_contents()) do t.proxy_inv.insert{name=n, count=c} end
           t.flip = 0
         end
       elseif t.wagon_name == "ee-infinity-fluid-wagon" then
@@ -157,7 +157,7 @@ event.on_player_setup_blueprint(function(e)
   local pipes = player.surface.find_entities_filtered{name="ee-infinity-wagon-pipe"}
   local chest_index = 0
   local pipe_index = 0
-  for _,en in pairs(entities) do
+  for _, en in pairs(entities) do
     -- if the entity is an infinity wagon
     if en.name == "ee-infinity-cargo-wagon" then
       chest_index = chest_index + 1

@@ -21,7 +21,7 @@ util.constants = {
     defines.events.on_entity_died,
     defines.events.script_raised_destroy
   },
-  -- close button for frames, as defined in the titlebar submodule
+  -- close button for frames,  as defined in the titlebar submodule
   close_button_def = {
     name = "close",
     sprite = "utility/close_white",

@@ -14,7 +14,7 @@ local function is_sprite_def(array)
 end
 function self.recursive_tint(array, tint)
   tint = tint or self.infinity_tint
-  for _,v in pairs(array) do
+  for _, v in pairs(array) do
     if type(v) == "table" then
       if is_sprite_def(v) or v.icon then
         v.tint = tint

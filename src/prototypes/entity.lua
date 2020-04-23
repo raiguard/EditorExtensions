@@ -13,7 +13,7 @@ do
   local accumulator_icons = util.recursive_tint{(base_entity.icons[1])}
   util.recursive_tint(base_entity)
 
-  for _,t in pairs(accumulator_types) do
+  for _, t in pairs(accumulator_types) do
     local entity = table.deepcopy(base_entity)
     entity.name = "ee-infinity-accumulator-"..t
     entity.localised_name = {"entity-name.ee-infinity-accumulator"}
@@ -82,7 +82,7 @@ do
   }
 
   local base_entity = table.deepcopy(data.raw["infinity-container"]["infinity-chest"])
-  for _,t in pairs(util.infinity_chest_data) do
+  for _, t in pairs(util.infinity_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(base_entity)
@@ -145,7 +145,7 @@ do
     }
   }
   
-  for _,t in pairs(util.tesseract_chest_data) do
+  for _, t in pairs(util.tesseract_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest"..suffix])
@@ -275,10 +275,10 @@ do
   }
   local sprite_x = {south=96*0, west=96*1, north=96*2, east=96*3}
   local sprites = {}
-  for k,x in pairs(sprite_x) do
+  for k, x in pairs(sprite_x) do
     sprites[k] = {}
     sprites[k].layers = {}
-    for i,t in pairs(sprite_files) do
+    for i, t in pairs(sprite_files) do
       sprites[k].layers[i] = util.recursive_tint{
         filename = t[1],
         x = x,
@@ -443,14 +443,14 @@ do
   construction_robot.name = "ee-infinity-construction-robot"
   construction_robot.icons = {util.extract_icon_info(construction_robot)}
   construction_robot.minable.result = "ee-infinity-construction-robot"
-  for k,v in pairs(modifiers) do construction_robot[k] = v end
+  for k, v in pairs(modifiers) do construction_robot[k] = v end
   util.recursive_tint(construction_robot)
 
   local logistic_robot = table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
   logistic_robot.name = "ee-infinity-logistic-robot"
   logistic_robot.icons = {util.extract_icon_info(logistic_robot)}
   logistic_robot.minable.result = "ee-infinity-logistic-robot"
-  for k,v in pairs(modifiers) do logistic_robot[k] = v end
+  for k, v in pairs(modifiers) do logistic_robot[k] = v end
   util.recursive_tint(logistic_robot)
 
   data:extend{construction_robot, logistic_robot, infinity_roboport}
@@ -491,7 +491,7 @@ do
   infinity_wagon_pipe.order = "a"
   infinity_wagon_pipe.flags = {"hide-alt-info", "hidden"}
 
-  for k,t in pairs(infinity_wagon_pipe.pictures) do
+  for k, t in pairs(infinity_wagon_pipe.pictures) do
     infinity_wagon_pipe.pictures[k] = util.empty_sheet
   end
 

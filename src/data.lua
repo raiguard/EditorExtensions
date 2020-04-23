@@ -3,7 +3,7 @@
 
 -- EDITOR CONTROLLER
 local editor_controller = data.raw["editor-controller"].default
-for n,t in pairs(settings.startup) do
+for n, t in pairs(settings.startup) do
   if n:match("ee%-controller") then
     editor_controller[n:gsub("ee%-controller%-", "")] = t.value
   end

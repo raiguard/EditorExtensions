@@ -31,7 +31,7 @@ event.on_pre_player_toggled_map_editor(function(e)
   end
   -- iterate all inventories
   local inventories = {}
-  for _,name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
+  for _, name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
     local sync_inventory
     if name == "cursor" then
       sync_inventory = game.create_inventory(1)
@@ -44,7 +44,7 @@ event.on_pre_player_toggled_map_editor(function(e)
       if inventory_def then
         local source_inventory = player.get_inventory(inventory_def)
         sync_inventory = game.create_inventory(#source_inventory)
-        for i=1,#source_inventory do
+        for i=1, #source_inventory do
           sync_inventory[i].set_stack(source_inventory[i])
         end
       end
@@ -71,7 +71,7 @@ event.on_player_toggled_map_editor(function(e)
   end
   -- iterate all inventories
   local inventories = player_table.sync_inventories
-  for _,name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
+  for _, name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
     local sync_inventory = inventories[name]
     if name == "cursor" then
       player.cursor_stack.set_stack(sync_inventory[1])
@@ -79,7 +79,7 @@ event.on_player_toggled_map_editor(function(e)
       local inventory_def = defines.inventory[prefix..name]
       if inventory_def then
         local destination_inventory = player.get_inventory(inventory_def)
-        for i=1,math_min(#destination_inventory, #sync_inventory) do
+        for i=1, math_min(#destination_inventory, #sync_inventory) do
           destination_inventory[i].set_stack(sync_inventory[i])
         end
       end
@@ -135,7 +135,7 @@ local function import_filters(player, string)
     local output = {}
     local output_index = 0
     local filters = input.filters
-    for i=1,#filters do
+    for i=1, #filters do
       local filter = filters[i]
       if item_prototypes[filter.name] then
         output_index = output_index + 1

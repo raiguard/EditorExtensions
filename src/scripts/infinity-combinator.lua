@@ -23,7 +23,7 @@ local circuit_type_to_state = {red="left", green="right"}
 local function update_circuit_values(e)
   local players = global.players
   local tick = game.tick
-  for _,pi in pairs(e.player_index and {e.player_index} or e.registered_players) do
+  for _, pi in pairs(e.player_index and {e.player_index} or e.registered_players) do
     local gui_data = players[pi].gui.ic
     if e.override_update_rate or tick % gui_data.update_divider == 0 then
       local entity = gui_data.entity
@@ -36,7 +36,7 @@ local function update_circuit_values(e)
           if gui_data.sort_mode == "numerical" then
             local counts = {}
             local names_by_count = {}
-            for _,t in ipairs(signals) do
+            for _, t in ipairs(signals) do
               local signal = t.signal
               local name = signal.type:gsub("virtual", "virtual-signal").."/"..signal.name
               local count = t.count
@@ -49,9 +49,9 @@ local function update_circuit_values(e)
             end
             table_sort(counts, gui_data.sort_direction == "descending" and greater_than_func or nil)
             local prev_count = -0.1 -- gauranteed to not match initially, since you can't use decimals in circuits!
-            for _,c in ipairs(counts) do
+            for _, c in ipairs(counts) do
               if c ~= prev_count then
-                for _,n in ipairs(names_by_count[c]) do
+                for _, n in ipairs(names_by_count[c]) do
                   table_insert(sorted_signals, {count=c, name=n})
                 end
                 prev_count = c
@@ -60,14 +60,14 @@ local function update_circuit_values(e)
           else
             local names = {}
             local amounts_by_name = {}
-            for _,t in ipairs(signals) do
+            for _, t in ipairs(signals) do
               local signal = t.signal
               local name = signal.type:gsub("virtual", "virtual-signal").."/"..signal.name
               table_insert(names, name)
               amounts_by_name[name] = t.count
             end
             table_sort(names, gui_data.sort_direction == "descending" and greater_than_func or nil)
-            for _,n in ipairs(names) do
+            for _, n in ipairs(names) do
               table_insert(sorted_signals, {count=amounts_by_name[n], name=n})
             end
           end
@@ -77,7 +77,7 @@ local function update_circuit_values(e)
           local children = table_deepcopy(signals_table.children)
           local selected_name = gui_data.selected_name
           local updated_selected = false
-          for i,signal in ipairs(sorted_signals) do
+          for i, signal in ipairs(sorted_signals) do
             local elem = children[i]
             if not elem then -- create button
               local style = selected_name == signal.name and "ee_active_filter_slot_button" or "filter_slot_button"
@@ -102,7 +102,7 @@ local function update_circuit_values(e)
             gui_data.elems.value_textfield.text = 0
           end
           -- delete remaining elements
-          for _,elem in pairs(children) do
+          for _, elem in pairs(children) do
             elem.destroy()
           end
         end
@@ -185,7 +185,7 @@ end
 
 local function sort_button_clicked(e)
   -- update button styles
-  for i,elem in ipairs(e.element.parent.children) do
+  for i, elem in ipairs(e.element.parent.children) do
     if i > 2 then
       if elem == e.element then
         e.element.style = "ee_active_tool_button"
@@ -232,7 +232,7 @@ local function selected_button_elem_changed(e)
     -- get sprite name from chosen element data
     gui_data.selected_name = elem.type:gsub("virtual", "virtual-signal").."/"..elem.name
     -- find matching button in the table and set it to the active style
-    for _,elem in ipairs(gui_data.elems.signals_table.children) do
+    for _, elem in ipairs(gui_data.elems.signals_table.children) do
       if elem.sprite == gui_data.selected_name then
         elem.style = "ee_active_filter_slot_button"
         gui_data.elems.active_button = elem
@@ -363,7 +363,7 @@ event.register(defines.events.on_gui_opened, function(e)
     elems.update_rate_textfield.text = gui_data.update_divider
     -- set initial element states
     elems.color_switch.switch_state = circuit_type_to_state[player_table.gui.ic.network_color]
-    for _,elem in ipairs(elems.sort_toolbar_flow.children) do
+    for _, elem in ipairs(elems.sort_toolbar_flow.children) do
       if elem.name:match(gui_data.sort_mode) and elem.name:match(gui_data.sort_direction) then
         elem.style = "ee_active_tool_button"
         elem.ignored_by_interaction = true

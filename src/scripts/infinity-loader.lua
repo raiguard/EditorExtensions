@@ -43,7 +43,7 @@ local belt_type_patterns = {
 
 local function get_belt_type(entity)
   local type = entity.name
-  for pattern,replacement in pairs(belt_type_patterns) do
+  for pattern, replacement in pairs(belt_type_patterns) do
     type = type:gsub(pattern, replacement)
   end
   -- check to see if the loader prototype exists
@@ -92,14 +92,14 @@ local function update_filters(combinator, entities)
     inserter_filter_mode = "blacklist"
   end
   -- update inserter filter based on orthogonal
-  for i=1,#inserters do
+  for i=1, #inserters do
     local orthogonal = i > (#inserters/2) and 1 or 2
     inserters[i].set_filter(1, filters[orthogonal].signal.name or nil)
     inserters[i].inserter_filter_mode = inserter_filter_mode
     inserters[i].active = enabled
   end
   -- update chest filters
-  for i=1,2 do
+  for i=1, 2 do
     local name = filters[i].signal.name
     chest.set_infinity_container_filter(i, name and {name=name, count=game.item_prototypes[name].stack_size, mode="exactly", index=i} or nil)
   end
@@ -117,11 +117,11 @@ local function update_inserters(loader, entities)
   local e_direction = loader.direction
   -- update number of inserters if needed
   if #inserters ~= num_inserters(loader) then
-    for _,e in ipairs(inserters) do
+    for _, e in ipairs(inserters) do
       e.destroy()
     end
     inserters = {}
-    for i=1,num_inserters(loader) do
+    for i=1, num_inserters(loader) do
       inserters[i] = surface.create_entity{
         name="ee-infinity-loader-inserter",
         position = loader.position,
@@ -136,7 +136,7 @@ local function update_inserters(loader, entities)
       {loader=loader, inserters=inserters, chest=chest}
     )
   end
-  for i=1,#inserters do
+  for i=1, #inserters do
     local orthogonal = i > (#inserters/2) and -0.25 or 0.25
     local inserter = inserters[i]
     local mod = math.min((i % (#inserters/2)),3)
@@ -194,7 +194,7 @@ local function create_loader(type, mode, surface, position, direction, force)
     create_build_effect_smoke = false
   }
   local inserters = {}
-  for i=1,num_inserters(loader) do
+  for i=1, num_inserters(loader) do
       inserters[i] = surface.create_entity{
       name="ee-infinity-loader-inserter",
       position = position,
@@ -224,9 +224,9 @@ end
 local function check_belt_neighbors(entity, func, type_agnostic)
   local belt_neighbors = entity.belt_neighbours
   local matched_entities = {}
-  for _,type in pairs{"inputs", "outputs"} do
+  for _, type in pairs{"inputs", "outputs"} do
     if not type_agnostic then matched_entities[type] = {} end
-    for _,e in ipairs(belt_neighbors[type] or {}) do
+    for _, e in ipairs(belt_neighbors[type] or {}) do
       if func(e) then
         table.insert(type_agnostic and matched_entities or matched_entities[type], e)
       end
@@ -238,10 +238,10 @@ end
 -- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
 local function check_tile_neighbors(entity, func, eight_way, dir_agnostic)
   local matched_entities = {}
-  for i=0,7,eight_way and 1 or 2 do
+  for i=0, 7,eight_way and 1 or 2 do
     if not dir_agnostic then matched_entities[i] = {} end
     local entities = entity.surface.find_entities(util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1))))
-    for _,e in ipairs(entities) do
+    for _, e in ipairs(entities) do
       if func(e) then
         table.insert(dir_agnostic and matched_entities or matched_entities[i], e)
       end
@@ -378,7 +378,7 @@ end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
 local function snap_tile_neighbors(entity)
-  for _,e in pairs(check_tile_neighbors(entity, check_is_loader, false, true)) do
+  for _, e in pairs(check_tile_neighbors(entity, check_is_loader, false, true)) do
     snap_loader(e, entity)
   end
 end
@@ -389,10 +389,10 @@ local function snap_belt_neighbors(entity)
   entity.rotate()
   local rev_belt_neighbors = check_belt_neighbors(entity, check_is_loader, true)
   entity.rotate()
-  for _,e in ipairs(belt_neighbors) do
+  for _, e in ipairs(belt_neighbors) do
     snap_loader(e, entity)
   end
-  for _,e in ipairs(rev_belt_neighbors) do
+  for _, e in ipairs(rev_belt_neighbors) do
     snap_loader(e, entity)
   end
 end
@@ -409,7 +409,7 @@ local function picker_dollies_move(e)
   if entity.name == "ee-infinity-loader-logic-combinator" then
     local loader
     -- move all entities to new position
-    for _,e in pairs(e.moved_entity.surface.find_entities_filtered{type={"loader-1x1", "inserter", "infinity-container"}, position=e.start_pos}) do
+    for _, e in pairs(e.moved_entity.surface.find_entities_filtered{type={"loader-1x1", "inserter", "infinity-container"}, position=e.start_pos}) do
       if check_is_loader(e) then
         -- loaders don't support teleportation, so destroy and recreate it
         loader = update_loader_type(e, get_belt_type(e), {position=entity.position})
@@ -514,7 +514,7 @@ event.register(util.constants.entity_destroyed_events, function(e)
   if entity.name == "ee-infinity-loader-logic-combinator" then
     -- close open GUIs
     if global.__lualib.event.il_close_button_clicked then
-      for _,i in ipairs(global.__lualib.event.il_close_button_clicked.players) do
+      for _, i in ipairs(global.__lualib.event.il_close_button_clicked.players) do
         local player_table = global.players[i]
         -- check if they're viewing this one
         if player_table.gui.il.entity == entity then
@@ -524,7 +524,7 @@ event.register(util.constants.entity_destroyed_events, function(e)
       end
     end
     local entities = entity.surface.find_entities_filtered{position=entity.position}
-    for _,e in pairs(entities) do
+    for _, e in pairs(entities) do
       if e.name:find("infinity%-loader") then
         e.destroy()
       end
@@ -541,7 +541,7 @@ event.register(defines.events.on_player_setup_blueprint, function(e)
   end
   local entities = bp.get_blueprint_entities()
   if not entities then return end
-  for i=1,#entities do
+  for i=1, #entities do
     if entities[i].name == "ee-infinity-loader-logic-combinator" then
       entities[i].name = "ee-infinity-loader-dummy-combinator"
       entities[i].direction = entities[i].direction or defines.direction.north
@@ -556,7 +556,7 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
     -- sanitize filters to remove any non-items
     local parameters = {parameters={}}
     local items = 0
-    for _,p in pairs(table.deepcopy(e.source.get_control_behavior().parameters.parameters)) do
+    for _, p in pairs(table.deepcopy(e.source.get_control_behavior().parameters.parameters)) do
       if p.signal and p.signal.type == "item" and items < 2 then
         items = items + 1
         p.index = items
@@ -590,8 +590,8 @@ end)
 -- when mod configuration changes
 event.on_configuration_changed(function(e)
   -- check every single infinity loader on every surface to see if it no longer has a loader entity
-  for _,surface in pairs(game.surfaces) do
-    for _,entity in ipairs(surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator"}) do
+  for _, surface in pairs(game.surfaces) do
+    for _, entity in ipairs(surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator"}) do
       -- if its loader is gone, give it a new one with default settings
       if #surface.find_entities_filtered{type="loader-1x1", position=entity.position} == 0 then
         snap_loader(

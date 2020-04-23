@@ -6,7 +6,7 @@ local util = require("prototypes.util")
 -- INFINITY LOADER
 local loader_base = table.deepcopy(data.raw["underground-belt"]["underground-belt"])
 loader_base.icons = {{icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}}
-for n,t in pairs(loader_base.structure) do
+for n, t in pairs(loader_base.structure) do
   if n ~= "back_patch" and n ~= "front_patch" then
     t.sheet.filename = "__EditorExtensions__/graphics/entity/infinity-loader/infinity-loader.png"
     t.sheet.hr_version.filename = "__EditorExtensions__/graphics/entity/infinity-loader/hr-infinity-loader.png"
@@ -28,7 +28,7 @@ local function create_loader(base_underground)
   entity.icons = loader_base.icons
   -- get name
   local suffix = entity.name
-  for pattern, replacement in pairs(belt_patterns) do
+  for pattern,  replacement in pairs(belt_patterns) do
     suffix = suffix:gsub(pattern, replacement)
   end
   entity.name = "ee-infinity-loader-loader"..(suffix ~= "" and "-"..suffix or "")
@@ -45,6 +45,6 @@ local function create_loader(base_underground)
   data:extend{entity}
 end
 
-for n,_ in pairs(table.deepcopy(data.raw["underground-belt"])) do
+for n, _ in pairs(table.deepcopy(data.raw["underground-belt"])) do
   create_loader(n)
 end

@@ -27,11 +27,11 @@ local to_check = {
 }
 -- start with four extra slots to account for inserter interactions
 local slot_count = 4
-for _,n in pairs(to_check) do
+for _, n in pairs(to_check) do
   slot_count = slot_count + table_size(data.raw[n])
 end
 -- apply to tesseract chests
-for _,p in pairs(data.raw["infinity-container"]) do
+for _, p in pairs(data.raw["infinity-container"]) do
   if p.name:find("tesseract") then
     -- set tesseract chest inventory size to the number of item prototypes
     p.inventory_size = slot_count
@@ -43,13 +43,13 @@ local lab = data.raw["lab"]["ee-infinity-lab"]
 -- fill this table with any future science pack names that don't match the pattern
 local pattern_overrides = {}
 local packs = {}
-for _,p in pairs(data.raw["lab"]) do
-  for _, input in pairs(p.inputs) do
+for _, p in pairs(data.raw["lab"]) do
+  for _,  input in pairs(p.inputs) do
     packs[input] = true
   end
 end
 local over = {}
-for p,_ in pairs(packs) do
+for p, _ in pairs(packs) do
   table.insert(over, p)
 end
 lab.inputs = over
@@ -57,7 +57,7 @@ lab.inputs = over
 -- INFINITY EQUIPMENT
 -- allow equipment to be placed in all existing grid categories
 local categories = {}
-for _,t in pairs(data.raw["equipment-category"]) do
+for _, t in pairs(data.raw["equipment-category"]) do
   table.insert(categories, t.name)
 end
 data.raw["generator-equipment"]["ee-infinity-fusion-reactor-equipment"].categories = categories
@@ -74,6 +74,6 @@ local modules = {
   "ee-super-dirty-module"
 }
 -- reset all modules to be able to be used in all recipes
-for _,name in pairs(modules) do
+for _, name in pairs(modules) do
   data.raw["module"][name].limitation = nil
 end
