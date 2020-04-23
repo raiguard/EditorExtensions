@@ -341,7 +341,6 @@ end
 function gui.destroy(player_index, player_table)
   event.disable_group("ic_gui", player_index)
   player_table.gui.ic.elems.window.destroy()
-  player_table.gui.ic = nil
 end
 
 -- -----------------------------------------------------------------------------
