@@ -6,6 +6,7 @@ Date: ????
     - Inventory sync is now able to be toggled separately from cheat mode, using /EditorExtensions toggle-inventory-sync
   Changes:
     - Non-logistic infinity and tesseract chests now have a slightly different color, to be able to distinguish them from vanilla infinity chests
+    - Tesseract and infinity chest graphics are now packged with the mod
     - Infinity fuel icon now uses rocket fuel instead of nuclear fuel, eliminating the ugly glow
     - Refactored inventory and cursor sync to use the new script inventories feature instead of invisible chests
     - Removed /ee_cheat command, use /cheat all instead
