@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.0
-Date: ????
+Date: 2020-04-24
   Features:
     - Added new hi-res icons for infinity chests and tesseract chests
     - Inventory sync is now able to be toggled separately from cheat mode, using /EditorExtensions toggle-inventory-sync
