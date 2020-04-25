@@ -19,6 +19,8 @@ do
     entity.localised_name = {"entity-name.ee-infinity-accumulator"}
     entity.localised_description = {"entity-description.ee-infinity-accumulator"}
     entity.icons = accumulator_icons
+    entity.map_color = util.infinity_tint
+    entity.friendly_map_color = util.infinity_tint
     entity.energy_source = {type="electric", usage_priority=t, buffer_capacity="500GJ"}
     entity.subgroup = "ee-electricity"
     entity.order = "a"
@@ -32,6 +34,8 @@ end
 local infinity_beacon = table.deepcopy(data.raw["beacon"]["beacon"])
 infinity_beacon.name = "ee-infinity-beacon"
 infinity_beacon.icons = {(util.extract_icon_info(infinity_beacon))}
+infinity_beacon.map_color = util.infinity_tint
+infinity_beacon.friendly_map_color = util.infinity_tint
 infinity_beacon.minable.result = "ee-infinity-beacon"
 infinity_beacon.energy_source = {type="void"}
 infinity_beacon.allowed_effects = {"consumption", "speed", "productivity", "pollution"}
@@ -89,6 +93,8 @@ do
     chest.name = "ee-infinity-chest"..suffix
     chest.localised_description = util.chest_description(suffix)
     chest.icons = {table.deepcopy(util.infinity_chest_icon)}
+    chest.map_color = util.infinity_tint
+    chest.friendly_map_color = util.infinity_tint
     chest.picture = table.deepcopy(infinity_chest_picture)
     chest.order = t.o
     chest.subgroup = "ee-inventories"
@@ -167,6 +173,8 @@ end
 local infinity_combinator = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
 infinity_combinator.name = "ee-infinity-combinator"
 infinity_combinator.icons = {util.extract_icon_info(infinity_combinator)}
+infinity_combinator.map_color = util.infinity_tint
+infinity_combinator.friendly_map_color = util.infinity_tint
 infinity_combinator.allow_copy_paste = false
 infinity_combinator.minable = {mining_time=0.5, result="ee-infinity-combinator"}
 infinity_combinator.placeable_by = {item="ee-infinity-combinator", count=1}
@@ -179,6 +187,8 @@ infinity_heat_pipe.name = "ee-infinity-heat-pipe"
 infinity_heat_pipe.localised_description = {"entity-description.ee-infinity-heat-pipe"}
 infinity_heat_pipe.gui_mode = "all"
 infinity_heat_pipe.icons = {util.extract_icon_info(data.raw["item"]["heat-pipe"])}
+infinity_heat_pipe.map_color = util.infinity_tint
+infinity_heat_pipe.friendly_map_color = util.infinity_tint
 infinity_heat_pipe.picture = {
   filename = "__base__/graphics/entity/heat-pipe/heat-pipe-t-1.png",
   width = 32,
@@ -201,6 +211,8 @@ data:extend{infinity_heat_pipe}
 local infinity_inserter = table.deepcopy(data.raw["inserter"]["filter-inserter"])
 infinity_inserter.name = "ee-infinity-inserter"
 infinity_inserter.icons = {util.extract_icon_info(infinity_inserter)}
+infinity_inserter.map_color = util.infinity_tint
+infinity_inserter.friendly_map_color = util.infinity_tint
 infinity_inserter.placeable_by = {item="ee-infinity-inserter", count=1}
 infinity_inserter.minable.result = "ee-infinity-inserter"
 infinity_inserter.energy_source = {type="void"}
@@ -216,6 +228,8 @@ data:extend{infinity_inserter}
 local infinity_lab = table.deepcopy(data.raw["lab"]["lab"])
 infinity_lab.name = "ee-infinity-lab"
 infinity_lab.icons = {util.extract_icon_info(infinity_lab)}
+infinity_lab.map_color = util.infinity_tint
+infinity_lab.friendly_map_color = util.infinity_tint
 infinity_lab.minable.result = "ee-infinity-lab"
 infinity_lab.energy_source = {type="void"}
 infinity_lab.energy_usage = "1W"
@@ -252,6 +266,8 @@ do
       icons = loader_icon,
       localised_name = {"entity-name.ee-infinity-loader"},
       localised_description = {"entity-description.ee-infinity-loader"},
+      map_color = util.infinity_tint,
+      friendly_map_color = util.infinity_tint,
       order = "a",
       collision_box = loader_base.collision_box,
       selection_box = loader_base.selection_box,
@@ -343,6 +359,8 @@ end
 local infinity_locomotive = table.deepcopy(data.raw["locomotive"]["locomotive"])
 infinity_locomotive.name = "ee-infinity-locomotive"
 infinity_locomotive.icons = {util.extract_icon_info(infinity_locomotive)}
+infinity_locomotive.map_color = util.infinity_tint
+infinity_locomotive.friendly_map_color = util.infinity_tint
 infinity_locomotive.max_power = "10MW"
 infinity_locomotive.energy_source = {type="void"}
 infinity_locomotive.max_speed = 10
@@ -358,6 +376,8 @@ data:extend{infinity_locomotive}
 local infinity_pipe = table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
 infinity_pipe.name = "ee-infinity-pipe"
 infinity_pipe.localised_description = {"entity-description.ee-infinity-pipe"}
+infinity_pipe.map_color = util.infinity_tint
+infinity_pipe.friendly_map_color = util.infinity_tint
 infinity_pipe.gui_mode = "all"
 infinity_pipe.icons = infinity_pipe.icons
 infinity_pipe.minable = {mining_time=0.5, result="ee-infinity-pipe"}
@@ -370,6 +390,8 @@ do
   local infinity_power_pole = table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])
   infinity_power_pole.name = "ee-infinity-electric-pole"
   infinity_power_pole.icons = {util.extract_icon_info(infinity_power_pole)}
+  infinity_power_pole.map_color = util.infinity_tint
+  infinity_power_pole.friendly_map_color = util.infinity_tint
   infinity_power_pole.subgroup = "ee-electricity"
   infinity_power_pole.order = "ba"
   infinity_power_pole.minable.result = "ee-infinity-electric-pole"
@@ -379,6 +401,8 @@ do
   local infinity_substation = table.deepcopy(data.raw["electric-pole"]["substation"])
   infinity_substation.name = "ee-infinity-substation"
   infinity_substation.icons = {util.extract_icon_info(infinity_substation)}
+  infinity_substation.map_color = util.infinity_tint
+  infinity_substation.friendly_map_color = util.infinity_tint
   infinity_substation.subgroup = "ee-electricity"
   infinity_substation.order = "bb"
   infinity_substation.minable.result = "ee-infinity-substation"
@@ -393,6 +417,8 @@ end
 local infinity_pump = table.deepcopy(data.raw["pump"]["pump"])
 infinity_pump.name = "ee-infinity-pump"
 infinity_pump.icons = {util.extract_icon_info(infinity_pump)}
+infinity_pump.map_color = util.infinity_tint
+infinity_pump.friendly_map_color = util.infinity_tint
 infinity_pump.placeable_by = {item="ee-infinity-pump", count=1}
 infinity_pump.minable = {result="ee-infinity-pump", mining_time=0.1}
 infinity_pump.energy_source = {type="void"}
@@ -405,6 +431,8 @@ data:extend{infinity_pump}
 local infinity_radar = table.deepcopy(data.raw["radar"]["radar"])
 infinity_radar.name = "ee-infinity-radar"
 infinity_radar.icons = {util.extract_icon_info(infinity_radar)}
+infinity_radar.map_color = util.infinity_tint
+infinity_radar.friendly_map_color = util.infinity_tint
 infinity_radar.minable.result = "ee-infinity-radar"
 infinity_radar.energy_source = {type="void"}
 infinity_radar.max_distance_of_sector_revealed = 20
@@ -416,6 +444,8 @@ data:extend{infinity_radar}
 local infinity_roboport = table.deepcopy(data.raw["roboport"]["roboport"])
 infinity_roboport.name = "ee-infinity-roboport"
 infinity_roboport.icons = {util.extract_icon_info(infinity_roboport)}
+infinity_roboport.map_color = util.infinity_tint
+infinity_roboport.friendly_map_color = util.infinity_tint
 infinity_roboport.logistics_radius = 200
 infinity_roboport.construction_radius = 400
 infinity_roboport.energy_source = {type="void"}
@@ -430,7 +460,7 @@ data:extend{infinity_roboport}
 -- INFINITY ROBOTS
 do
   local modifiers = {
-    speed = 100,
+    speed = 1,
     max_energy = "0kJ",
     energy_per_tick = "0kJ",
     energy_per_move = "0kJ",
@@ -442,6 +472,8 @@ do
   local construction_robot = table.deepcopy(data.raw["construction-robot"]["construction-robot"])
   construction_robot.name = "ee-infinity-construction-robot"
   construction_robot.icons = {util.extract_icon_info(construction_robot)}
+  -- construction_robot.map_color = util.infinity_tint
+  -- construction_robot.friendly_map_color = util.infinity_tint
   construction_robot.minable.result = "ee-infinity-construction-robot"
   for k, v in pairs(modifiers) do construction_robot[k] = v end
   util.recursive_tint(construction_robot)
@@ -449,6 +481,8 @@ do
   local logistic_robot = table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
   logistic_robot.name = "ee-infinity-logistic-robot"
   logistic_robot.icons = {util.extract_icon_info(logistic_robot)}
+  -- logistic_robot.map_color = util.infinity_tint
+  -- logistic_robot.friendly_map_color = util.infinity_tint
   logistic_robot.minable.result = "ee-infinity-logistic-robot"
   for k, v in pairs(modifiers) do logistic_robot[k] = v end
   util.recursive_tint(logistic_robot)
@@ -463,12 +497,36 @@ do
   cargo_wagon.icons = {util.extract_icon_info(cargo_wagon)}
   cargo_wagon.inventory_size = 100
   cargo_wagon.minable.result = "ee-infinity-cargo-wagon"
+  cargo_wagon.minimap_representation = {
+    filename = "__EditorExtensions__/graphics/entity/infinity-cargo-wagon-minimap.png",
+    flags = {"icon"},
+    scale = 0.5,
+    size = {20,40}
+  }
+  cargo_wagon.selected_minimap_representation = {
+    filename = "__EditorExtensions__/graphics/entity/infinity-cargo-wagon-minimap-selected.png",
+    flags = {"icon"},
+    scale = 0.5,
+    size = {20,40}
+  }
   util.recursive_tint(cargo_wagon)
 
   local fluid_wagon = table.deepcopy(data.raw["fluid-wagon"]["fluid-wagon"])
   fluid_wagon.name = "ee-infinity-fluid-wagon"
   fluid_wagon.icons = {util.extract_icon_info(fluid_wagon)}
   fluid_wagon.minable.result = "ee-infinity-fluid-wagon"
+  fluid_wagon.minimap_representation = {
+    filename = "__EditorExtensions__/graphics/entity/infinity-fluid-wagon-minimap.png",
+    flags = {"icon"},
+    scale = 0.5,
+    size = {20,40}
+  }
+  fluid_wagon.selected_minimap_representation = {
+    filename = "__EditorExtensions__/graphics/entity/infinity-fluid-wagon-minimap-selected.png",
+    flags = {"icon"},
+    scale = 0.5,
+    size = {20,40}
+  }
   util.recursive_tint(fluid_wagon)
 
   -- non-interactable chest and pipe
