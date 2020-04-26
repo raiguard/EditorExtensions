@@ -11,7 +11,7 @@ local string_sub = string.sub
 -- require("scripts.infinity-combinator")
 -- require("scripts.infinity-loader")
 -- require("scripts.infinity-wagon")
--- require("scripts.tesseract-chest")
+local tesseract_chest = require("scripts.tesseract-chest")
 
 local inventory = require("scripts.inventory")
 
@@ -30,17 +30,6 @@ local function enable_recipes(player, skip_message)
     end
   end
 end
-
-event.on_player_cheat_mode_enabled(function(e)
-  local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
-  enable_recipes(player)
-  inventory.toggle_sync(player, player_table)
-end)
-
-event.on_player_cheat_mode_disabled(function(e)
-  inventory.toggle_sync(game.get_player(e.player_index), global.players[e.player_index], false)
-end)
 
 local items_to_remove = {
   {name="express-loader", count=50},
@@ -108,8 +97,7 @@ end
 -- -----------------------------------------------------------------------------
 -- MAP EDITOR SHORTCUT
 
-event.register({defines.events.on_lua_shortcut, "ee-toggle-map-editor"}, function(e)
-  if e.prototype_name and e.prototype_name ~= "ee-toggle-map-editor" then return end
+local function toggle_map_editor(e)
   local player = game.get_player(e.player_index)
   player.toggle_map_editor()
   player.set_shortcut_toggled("ee-toggle-map-editor", player.controller_type == defines.controllers.editor)
@@ -118,29 +106,29 @@ event.register({defines.events.on_lua_shortcut, "ee-toggle-map-editor"}, functio
     global.flags.map_editor_toggled = true
     game.tick_paused = false
   end
-end)
+end
 
-event.on_player_toggled_map_editor(function(e)
+local function set_shortcut_state(e)
   -- set map editor shortcut state
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
   local new_state = player.controller_type == defines.controllers.editor
   player.set_shortcut_toggled("ee-toggle-map-editor", new_state)
-  -- set default filters
-  if new_state and not player_table.flags.map_editor_toggled then
-    player_table.flags.map_editor_toggled = true
-    local default_filters = player_table.settings.default_inventory_filters
-    if default_filters ~= "" then
-      inventory.import_inventory_filters(player, default_filters)
-    end
-  end
-end)
+end
 
 -- lock or unlock the editor depending on if the player is an admin
-event.register({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
+local function set_shortcut_available(e)
   local player = game.get_player(e.player_index)
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
-end)
+end
+
+local function apply_default_filters(player, player_table)
+  player_table.flags.map_editor_toggled = true
+  local default_filters = player_table.settings.default_inventory_filters
+  if default_filters ~= "" then
+    inventory.import_inventory_filters(player, default_filters)
+  end
+end
 
 -- -----------------------------------------------------------------------------
 -- ENTITY SNAPPING
@@ -338,6 +326,7 @@ local migrations = {
 event.on_init(function()
   gui.on_init()
   init_global_data()
+  tesseract_chest.update_data()
   gui.bootstrap_postprocess()
 end)
 
@@ -350,7 +339,64 @@ event.on_configuration_changed(function(e)
     for i,  player in pairs(game.players) do
       refresh_player_data(player, global.players[i])
     end
+    tesseract_chest.update_data()
+    tesseract_chest.update_all_filters()
   end
+end)
+
+-- CHEAT MODE
+
+event.on_player_cheat_mode_enabled(function(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  enable_recipes(player)
+  inventory.toggle_sync(player, player_table)
+end)
+
+event.on_player_cheat_mode_disabled(function(e)
+  inventory.toggle_sync(game.get_player(e.player_index), global.players[e.player_index], false)
+end)
+-- ENTITIES
+
+event.register(
+  {
+    defines.events.on_built_entity,
+    defines.events.on_robot_built_entity,
+    defines.events.script_raised_built,
+    defines.events.script_raised_revive
+  },
+  function(e)
+    local entity = e.entity or e.created_entity
+    if string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
+      tesseract_chest.set_filters(entity)
+    end
+  end
+)
+
+event.register(
+  {
+    defines.events.on_player_mined_entity,
+    defines.events.on_robot_mined_entity,
+    defines.events.on_entity_died,
+    defines.events.script_raised_destroy
+  },
+  function(e)
+
+  end
+)
+
+-- GUI
+
+gui.register_events()
+
+event.on_gui_opened(function(e)
+  gui.dispatch_handlers(e)
+  inventory.on_gui_opened(e)
+end)
+
+event.on_gui_closed(function(e)
+  gui.dispatch_handlers(e)
+  inventory.on_gui_closed(e)
 end)
 
 -- PLAYER DATA
@@ -364,8 +410,13 @@ event.on_player_removed(function(e)
   global.players[e.player_index] = nil
 end)
 
+-- SETTINGS
+
 event.on_runtime_mod_setting_changed(function(e)
-  if string_sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
+  if e.setting == "ee-tesseract-include-hidden" then
+    tesseract_chest.update_data()
+    tesseract_chest.update_all_filters()
+  elseif string_sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     update_player_settings(player, player_table)
@@ -373,20 +424,6 @@ event.on_runtime_mod_setting_changed(function(e)
       inventory.toggle_sync(player, player_table)
     end
   end
-end)
-
--- RUNTIME
-
-gui.register_events()
-
-event.on_gui_opened(function(e)
-  gui.dispatch_handlers(e)
-  inventory.on_gui_opened(e)
-end)
-
-event.on_gui_closed(function(e)
-  gui.dispatch_handlers(e)
-  inventory.on_gui_closed(e)
 end)
 
 -- -----------------------------------------------------------------------------
