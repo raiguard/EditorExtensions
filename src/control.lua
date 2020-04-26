@@ -1,15 +1,12 @@
--- dependencies
 local event = require("__flib__.control.event")
 local gui = require("__flib__.control.gui")
 local migration = require("__flib__.control.migration")
 local util = require("scripts.util")
 
--- locals
 local string_find = string.find
 local string_gsub = string.gsub
 local string_sub = string.sub
 
--- modules
 -- require("scripts.infinity-accumulator")
 -- require("scripts.infinity-combinator")
 -- require("scripts.infinity-loader")
@@ -80,7 +77,7 @@ local function set_armor(inventory)
   end
 end
 
-event.on_console_command(function(e)
+local function on_cheat_command(e)
   if e.command == "cheat" and e.parameters == "all" then
     local player = game.get_player(e.player_index)
     if player.cheat_mode then
@@ -106,88 +103,7 @@ event.on_console_command(function(e)
       end
     end
   end
-end)
-
--- -----------------------------------------------------------------------------
--- PLAYER DATA / BOOTSTRAP
-
-local function setup_player(index)
-  local data = {
-    flags = {
-      inventory_sync_enabled = false,
-      map_editor_toggled = false
-    },
-    gui = {
-      ic = {
-        network_color = "red",
-        sort_mode = "numerical",
-        sort_direction = "descending",
-        update_divider = 30
-      }
-    }
-  }
-  global.players[index] = data
 end
-
-local function update_player_settings(player, player_table)
-  local settings = {}
-  for name,  t in pairs(player.mod_settings) do
-    if string_sub(name, 1,3) == "ee-" then
-      name = string_gsub(name, "^ee%-", "")
-      settings[string_gsub(name, "%-", "_")] = t.value
-    end
-  end
-  player_table.settings = settings
-end
-
-local function refresh_player_data(player, player_table)
-  -- set shortcut availability
-  player.set_shortcut_available("ee-toggle-map-editor", player.admin)
-
-  -- update settings
-  update_player_settings(player, player_table)
-end
-
-event.on_init(function()
-  gui.on_init()
-  global.combinators = {}
-  global.flags = {
-    map_editor_toggled = false
-  }
-  global.players = {}
-  for i, p in pairs(game.players) do
-    setup_player(i)
-    refresh_player_data(p, global.players[i])
-    if p.cheat_mode then
-      enable_recipes(p)
-    end
-  end
-  gui.bootstrap_postprocess()
-end)
-
-event.on_load(function()
-  gui.bootstrap_postprocess()
-end)
-
-event.on_player_created(function(e)
-  setup_player(e.player_index)
-  refresh_player_data(game.get_player(e.player_index), global.players[e.player_index])
-end, nil, {insert_at=1})
-
-event.on_player_removed(function(e)
-  global.players[e.player_index] = nil
-end)
-
-event.on_runtime_mod_setting_changed(function(e)
-  if string_sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
-    local player = game.get_player(e.player_index)
-    local player_table = global.players[e.player_index]
-    update_player_settings(player, player_table)
-    if e.setting == "ee-inventory-sync" then
-      inventory.toggle_sync(player, player_table)
-    end
-  end
-end)
 
 -- -----------------------------------------------------------------------------
 -- MAP EDITOR SHORTCUT
@@ -271,6 +187,61 @@ local function on_infinity_pipe_built(entity, player_index)
 end
 
 -- -----------------------------------------------------------------------------
+-- GLOBAL DATA
+
+local function setup_player(index)
+  local data = {
+    flags = {
+      inventory_sync_enabled = false,
+      map_editor_toggled = false
+    },
+    gui = {
+      ic = {
+        network_color = "red",
+        sort_mode = "numerical",
+        sort_direction = "descending",
+        update_divider = 30
+      }
+    }
+  }
+  global.players[index] = data
+end
+
+local function update_player_settings(player, player_table)
+  local settings = {}
+  for name,  t in pairs(player.mod_settings) do
+    if string_sub(name, 1,3) == "ee-" then
+      name = string_gsub(name, "^ee%-", "")
+      settings[string_gsub(name, "%-", "_")] = t.value
+    end
+  end
+  player_table.settings = settings
+end
+
+local function refresh_player_data(player, player_table)
+  -- set shortcut availability
+  player.set_shortcut_available("ee-toggle-map-editor", player.admin)
+
+  -- update settings
+  update_player_settings(player, player_table)
+end
+
+local function init_global_data()
+  global.combinators = {}
+  global.flags = {
+    map_editor_toggled = false
+  }
+  global.players = {}
+  for i, p in pairs(game.players) do
+    setup_player(i)
+    refresh_player_data(p, global.players[i])
+    if p.cheat_mode then
+      enable_recipes(p)
+    end
+  end
+end
+
+-- -----------------------------------------------------------------------------
 -- COMMANDS
 
 commands.add_command("EditorExtensions", {"ee-message.command-help"}, function(e)
@@ -282,49 +253,8 @@ commands.add_command("EditorExtensions", {"ee-message.command-help"}, function(e
 end)
 
 -- -----------------------------------------------------------------------------
--- EVENT FILTERS
-
--- Add filters to all events that support them so we can preserve as much performance as possible
-event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built_entity}, {
-  {filter="name", name="ee-infinity-loader-dummy-combinator"},
-  {filter="name", name="ee-infinity-loader-logic-combinator"},
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"},
-  {filter="name", name="ee-tesseract-chest"},
-  {filter="name", name="ee-tesseract-chest-passive-provider"},
-  {filter="name", name="ee-infinity-inserter"},
-  {filter="name", name="ee-infinity-pipe"},
-  {filter="type", type="transport-belt"},
-  {filter="type", type="underground-belt"},
-  {filter="type", type="splitter"},
-  {filter="type", type="loader"},
-  {filter="ghost"},
-  {filter="ghost_name", name="ee-infinity-loader-logic-combinator"}
-})
-event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
-  {filter="name", name="ee-infinity-accumulator-primary-output"},
-  {filter="name", name="ee-infinity-accumulator-primary-input"},
-  {filter="name", name="ee-infinity-accumulator-secondary-output"},
-  {filter="name", name="ee-infinity-accumulator-secondary-input"},
-  {filter="name", name="ee-infinity-accumulator-tertiary"},
-  {filter="name", name="ee-infinity-loader-dummy-combinator"},
-  {filter="name", name="ee-infinity-loader-logic-combinator"},
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"},
-})
-event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"}
-})
-event.set_filters(defines.events.on_cancelled_deconstruction, {
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"}
-})
-
--- -----------------------------------------------------------------------------
 -- MIGRATIONS
 
--- table of migration functions
 local migrations = {
   ["1.1.0"] = function()
     -- enable infinity equipment recipes, hide electric energy interface recipe
@@ -400,8 +330,22 @@ local migrations = {
   end
 }
 
--- handle migrations
-script.on_configuration_changed(function(e)
+-- -----------------------------------------------------------------------------
+-- EVENT HANDLERS
+
+-- BOOTSTRAP
+
+event.on_init(function()
+  gui.on_init()
+  init_global_data()
+  gui.bootstrap_postprocess()
+end)
+
+event.on_load(function()
+  gui.bootstrap_postprocess()
+end)
+
+event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
     for i,  player in pairs(game.players) do
       refresh_player_data(player, global.players[i])
@@ -409,8 +353,29 @@ script.on_configuration_changed(function(e)
   end
 end)
 
--- -----------------------------------------------------------------------------
--- EVENT HANDLERS
+-- PLAYER DATA
+
+event.on_player_created(function(e)
+  setup_player(e.player_index)
+  refresh_player_data(game.get_player(e.player_index), global.players[e.player_index])
+end)
+
+event.on_player_removed(function(e)
+  global.players[e.player_index] = nil
+end)
+
+event.on_runtime_mod_setting_changed(function(e)
+  if string_sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
+    local player = game.get_player(e.player_index)
+    local player_table = global.players[e.player_index]
+    update_player_settings(player, player_table)
+    if e.setting == "ee-inventory-sync" then
+      inventory.toggle_sync(player, player_table)
+    end
+  end
+end)
+
+-- RUNTIME
 
 gui.register_events()
 
@@ -423,3 +388,45 @@ event.on_gui_closed(function(e)
   gui.dispatch_handlers(e)
   inventory.on_gui_closed(e)
 end)
+
+-- -----------------------------------------------------------------------------
+-- EVENT FILTERS
+
+event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built_entity}, {
+  {filter="name", name="ee-infinity-loader-dummy-combinator"},
+  {filter="name", name="ee-infinity-loader-logic-combinator"},
+  {filter="name", name="ee-infinity-cargo-wagon"},
+  {filter="name", name="ee-infinity-fluid-wagon"},
+  {filter="name", name="ee-tesseract-chest"},
+  {filter="name", name="ee-tesseract-chest-passive-provider"},
+  {filter="name", name="ee-infinity-inserter"},
+  {filter="name", name="ee-infinity-pipe"},
+  {filter="type", type="transport-belt"},
+  {filter="type", type="underground-belt"},
+  {filter="type", type="splitter"},
+  {filter="type", type="loader"},
+  {filter="ghost"},
+  {filter="ghost_name", name="ee-infinity-loader-logic-combinator"}
+})
+
+event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
+  {filter="name", name="ee-infinity-accumulator-primary-output"},
+  {filter="name", name="ee-infinity-accumulator-primary-input"},
+  {filter="name", name="ee-infinity-accumulator-secondary-output"},
+  {filter="name", name="ee-infinity-accumulator-secondary-input"},
+  {filter="name", name="ee-infinity-accumulator-tertiary"},
+  {filter="name", name="ee-infinity-loader-dummy-combinator"},
+  {filter="name", name="ee-infinity-loader-logic-combinator"},
+  {filter="name", name="ee-infinity-cargo-wagon"},
+  {filter="name", name="ee-infinity-fluid-wagon"},
+})
+
+event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
+  {filter="name", name="ee-infinity-cargo-wagon"},
+  {filter="name", name="ee-infinity-fluid-wagon"}
+})
+
+event.set_filters(defines.events.on_cancelled_deconstruction, {
+  {filter="name", name="ee-infinity-cargo-wagon"},
+  {filter="name", name="ee-infinity-fluid-wagon"}
+})
