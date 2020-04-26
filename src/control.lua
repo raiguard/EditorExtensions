@@ -7,7 +7,7 @@ local string_find = string.find
 local string_gsub = string.gsub
 local string_sub = string.sub
 
--- require("scripts.infinity-accumulator")
+local infinity_accumulator = require("scripts.entity.infinity-accumulator")
 -- require("scripts.infinity-combinator")
 -- require("scripts.infinity-loader")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
@@ -362,6 +362,8 @@ event.register(
     local entity = e.entity
     if infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.destroy(entity)
+    else
+      infinity_accumulator.on_destroyed(e)
     end
   end
 )
@@ -385,6 +387,7 @@ event.register("ee-mouse-leftclick", function(e)
 end)
 
 event.on_entity_settings_pasted(function(e)
+  infinity_accumulator.on_entity_settings_pasted(e)
   infinity_wagon.on_entity_settings_pasted(e)
 end)
 
@@ -394,6 +397,7 @@ gui.register_events()
 
 event.on_gui_opened(function(e)
   gui.dispatch_handlers(e)
+  infinity_accumulator.on_gui_opened(e)
   infinity_wagon.on_gui_opened(e)
   inventory.on_gui_opened(e)
 end)
