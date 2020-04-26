@@ -11,7 +11,7 @@ local string_sub = string.sub
 -- require("scripts.infinity-combinator")
 -- require("scripts.infinity-loader")
 -- require("scripts.infinity-wagon")
-local tesseract_chest = require("scripts.tesseract-chest")
+local tesseract_chest = require("scripts.entity.tesseract-chest")
 
 local inventory = require("scripts.inventory")
 
