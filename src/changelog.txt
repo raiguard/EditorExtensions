@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: ????
+  Changes:
+    - Complete rewrite of the mod to improve performance
+    - Switched from RaiLuaLib to FLib
+---------------------------------------------------------------------------------------------------
 Version: 1.4.2
 Date: ????
   Features:
