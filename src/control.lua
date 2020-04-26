@@ -10,7 +10,7 @@ local string_sub = string.sub
 -- require("scripts.infinity-accumulator")
 -- require("scripts.infinity-combinator")
 -- require("scripts.infinity-loader")
--- require("scripts.infinity-wagon")
+local infinity_wagon = require("scripts.entity.infinity-wagon")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
 
 local inventory = require("scripts.inventory")
@@ -185,6 +185,7 @@ local function init_global_data()
       enable_recipes(p)
     end
   end
+  global.wagons = {}
 end
 
 -- -----------------------------------------------------------------------------
@@ -337,6 +338,8 @@ event.register(
     local entity = e.entity or e.created_entity
     if string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
       tesseract_chest.set_filters(entity)
+    elseif infinity_wagon.wagon_names[entity.name] then
+      infinity_wagon.build(entity, e.tags)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
       if entity.name == "ee-infinity-inserter" then
@@ -356,9 +359,34 @@ event.register(
     defines.events.script_raised_destroy
   },
   function(e)
-
+    local entity = e.entity
+    if infinity_wagon.wagon_names[entity.name] then
+      infinity_wagon.destroy(entity)
+    end
   end
 )
+
+event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
+  local entity = e.entity
+  if entity.name == "ee-infinity-cargo-wagon" then
+    infinity_wagon.clear_inventory(entity)
+  end
+end)
+
+event.on_cancelled_deconstruction(function(e)
+  local entity = e.entity
+  infinity_wagon.on_cancelled_deconstruction(entity)
+end)
+
+event.register("ee-mouse-leftclick", function(e)
+  local player = game.get_player(e.player_index)
+  local selected = player.selected
+  infinity_wagon.check_and_open(player, selected)
+end)
+
+event.on_entity_settings_pasted(function(e)
+  infinity_wagon.on_entity_settings_pasted(e)
+end)
 
 -- GUI
 
@@ -366,6 +394,7 @@ gui.register_events()
 
 event.on_gui_opened(function(e)
   gui.dispatch_handlers(e)
+  infinity_wagon.on_gui_opened(e)
   inventory.on_gui_opened(e)
 end)
 
@@ -417,14 +446,7 @@ event.register("ee-toggle-map-editor", function(e)
   end
 end)
 
-event.register({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
-    -- lock or unlock the shortcut depending on if they're an admin
-    local player = game.get_player(e.player_index)
-    player.set_shortcut_available("ee-toggle-map-editor", player.admin)
-  end
-)
-
--- PLAYER DATA
+-- PLAYER
 
 event.on_player_created(function(e)
   setup_player(e.player_index)
@@ -433,6 +455,16 @@ end)
 
 event.on_player_removed(function(e)
   global.players[e.player_index] = nil
+end)
+
+event.register({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
+  -- lock or unlock the shortcut depending on if they're an admin
+  local player = game.get_player(e.player_index)
+  player.set_shortcut_available("ee-toggle-map-editor", player.admin)
+end)
+
+event.on_player_setup_blueprint(function(e)
+  infinity_wagon.on_player_setup_blueprint(e)
 end)
 
 -- SETTINGS
@@ -449,6 +481,12 @@ event.on_runtime_mod_setting_changed(function(e)
       inventory.toggle_sync(player, player_table)
     end
   end
+end)
+
+-- TICK
+
+event.on_tick(function(e)
+  infinity_wagon.on_tick()
 end)
 
 -- -----------------------------------------------------------------------------
