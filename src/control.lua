@@ -2,8 +2,6 @@ local event = require("__flib__.control.event")
 local gui = require("__flib__.control.gui")
 local migration = require("__flib__.control.migration")
 
-local string_sub = string.sub
-
 local cheat_mode = require("scripts.cheat-mode")
 local data = require("scripts.data")
 local migrations = require("scripts.migrations")
@@ -18,6 +16,8 @@ local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
+
+local string_sub = string.sub
 
 -- -----------------------------------------------------------------------------
 -- COMMANDS
