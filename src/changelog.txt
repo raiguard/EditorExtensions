@@ -1,16 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.0
 Date: ????
+  Features:
+    - Cheat entities now have a purple map color
   Changes:
     - Complete rewrite of the mod to improve performance
     - Switched from RaiLuaLib to FLib
   Bugfixes:
     - Fixed the infinity pipe not appearing in item filters menu
----------------------------------------------------------------------------------------------------
-Version: 1.4.2
-Date: ????
-  Features:
-    - Cheat entities now have a purple map color
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1
 Date: 2020-04-24
