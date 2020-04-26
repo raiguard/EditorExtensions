@@ -35,6 +35,14 @@ function data.update_player_settings(player, player_table)
 end
 
 function data.refresh_player(player, player_table)
+  -- close any open GUIs
+  for _, name in ipairs{"ia", "il"} do
+    if player_table.gui[name] then
+      player_table.gui[name].window.destroy()
+      player_table.gui[name] = nil
+    end
+  end
+
   -- set shortcut availability
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
 
