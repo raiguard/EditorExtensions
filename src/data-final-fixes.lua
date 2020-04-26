@@ -1,6 +1,3 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- EDITOR EXTENSIONS PROTOTYPES - FINAL FIXES
-
 local util = require("prototypes.util")
 
 -- TESSERACT CHEST

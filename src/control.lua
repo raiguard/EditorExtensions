@@ -3,155 +3,21 @@ local gui = require("__flib__.control.gui")
 local migration = require("__flib__.control.migration")
 local util = require("scripts.util")
 
-local string_find = string.find
 local string_gsub = string.gsub
 local string_sub = string.sub
 
 local infinity_accumulator = require("scripts.entity.infinity-accumulator")
 local infinity_combinator = require("scripts.entity.infinity-combinator")
+local infinity_inserter = require("scripts.entity.infinity-inserter")
 local infinity_loader = require("scripts.entity.infinity-loader")
+local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
 
+local cheat_mode = require("scripts.cheat-mode")
 local inventory = require("scripts.inventory")
 
--- -----------------------------------------------------------------------------
--- GUI
-
-gui.add_templates{
-  titlebar_drag_handle = {type="empty-widget", style="draggable_space_header", style_mods={right_margin=5, height=24, horizontally_stretchable=true},
-    save_as="drag_handle"},
-  close_button = {type="sprite-button", style="close_button", style_mods={top_margin=2, width=20, height=20}, sprite="utility/close_white",
-    hovered_sprite="utility/close_black", clicked_sprite="utility/close_black", mouse_button_filter={"left"}},
-  entity_camera = function(entity, size, zoom, camera_offset, player_display_scale)
-    return
-      {type="frame", style="inside_deep_frame", children={
-        {type="camera", style_mods={width=size, height=size}, position=util.position.add(entity.position, camera_offset), zoom=(zoom * player_display_scale)}
-      }}
-  end,
-  vertically_centered_flow = {type="flow", style_mods={vertical_align="center"}},
-  pushers = {
-    horizontal = {type="empty-widget", style_mods={horizontally_stretchable=true}},
-    vertical = {type="empty-widget", style_mods={vertically_stretchable=true}}
-  }
-}
-
--- -----------------------------------------------------------------------------
--- CHEAT MODE
-
-local function enable_recipes(player, skip_message)
-  local force = player.force
-  -- check if it has already been enabled for this force
-  if force.recipes["ee-infinity-loader"].enabled == false then
-    for n, _ in pairs(game.recipe_prototypes) do
-      if string_find(n, "^ee%-") and force.recipes[n] then force.recipes[n].enabled = true end
-    end
-    if not skip_message then
-      force.print{"ee-message.testing-tools-enabled", player.name}
-    end
-  end
-end
-
-local items_to_remove = {
-  {name="express-loader", count=50},
-  {name="stack-inserter", count=50},
-  {name="substation", count=50},
-  {name="construction-robot", count=100},
-  {name="electric-energy-interface", count=1},
-  {name="infinity-chest", count=20},
-  {name="infinity-pipe", count=10}
-}
-
-local items_to_add = {
-  {name="ee-infinity-accumulator", count=50},
-  {name="ee-infinity-chest", count=50},
-  {name="ee-infinity-construction-robot", count=100},
-  {name="ee-infinity-inserter", count=50},
-  {name="ee-infinity-pipe", count=50},
-  {name="ee-infinity-substation", count=50}
-}
-
-local equipment_to_add = {
-  {name="ee-infinity-fusion-reactor-equipment", position={0,0}},
-  {name="ee-infinity-personal-roboport-equipment", position={1,0}},
-  {name="ee-infinity-exoskeleton-equipment", position={2,0}},
-  {name="ee-infinity-exoskeleton-equipment", position={3,0}},
-  {name="night-vision-equipment", position={0,1}}
-}
-
-local function set_armor(inventory)
-  inventory[1].set_stack{name="power-armor-mk2"}
-  local grid = inventory[1].grid
-  for i=1, #equipment_to_add do
-    grid.put(equipment_to_add[i])
-  end
-end
-
-local function set_cheat_loadout(player)
-  -- remove default items
-  local main_inventory = player.get_main_inventory()
-  for i=1, #items_to_remove do
-    main_inventory.remove(items_to_remove[i])
-  end
-  -- add custom items
-  for i=1, #items_to_add do
-    main_inventory.insert(items_to_add[i])
-  end
-  if player.controller_type == defines.controllers.character then
-    -- increase reach distance
-    player.character_build_distance_bonus = 1000000
-    player.character_reach_distance_bonus = 1000000
-    player.character_resource_reach_distance_bonus = 1000000
-    -- overwrite the default armor loadout
-    set_armor(player.get_inventory(defines.inventory.character_armor))
-  elseif player.controller_type == defines.controllers.editor then
-    -- overwrite the default armor loadout
-    set_armor(player.get_inventory(defines.inventory.editor_armor))
-  end
-end
-
--- -----------------------------------------------------------------------------
--- ENTITY SNAPPING
-
--- set manually built inserters to blacklist mode by default
-local function snap_infinity_inserter(entity)
-  local control = entity.get_control_behavior()
-  if not control then
-    -- this is a new inserter, so set control mode to blacklist by default
-    entity.inserter_filter_mode = "blacklist"
-  end
-end
-
--- snap manually built infinity pipes
-local function snap_infinity_pipe(entity, player_settings)
-  local neighbours = entity.neighbours[1]
-  local own_fb = entity.fluidbox
-  local own_id = entity.unit_number
-  -- snap to adjacent assemblers
-  if player_settings.infinity_pipe_assembler_snapping then
-    for ni=1, #neighbours do
-      local neighbour = neighbours[ni]
-      if neighbour.type == "assembling-machine" and neighbour.fluidbox then
-        local fb = neighbour.fluidbox
-        for i=1, #fb do
-          local connections = fb.get_connections(i)
-          if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == "input") then
-            -- set to fill the pipe with the fluid
-            entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(1), percentage=1, mode="exactly"}
-            return -- don't do default snapping
-          end
-        end
-      end
-    end
-  end
-  -- snap to locked fluid
-  if player_settings.infinity_pipe_snapping then
-    local fluid = own_fb.get_locked_fluid(1)
-    if fluid then
-      entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode="exactly"}
-    end
-  end
-end
+require("scripts.common-gui")
 
 -- -----------------------------------------------------------------------------
 -- GLOBAL DATA
@@ -203,7 +69,7 @@ local function init_global_data()
     setup_player(i)
     refresh_player_data(p, global.players[i])
     if p.cheat_mode then
-      enable_recipes(p)
+      cheat_mode.enable_recipes(p)
     end
   end
   global.wagons = {}
@@ -238,20 +104,15 @@ local migrations = {
     -- enable recipes for any players who already have cheat mode enabled
     for _, player in pairs(game.players) do
       if player.cheat_mode then
-        enable_recipes(player)
+        cheat_mode.enable_recipes(player)
       end
     end
   end,
   ["1.2.0"] = function()
     local player_tables = global.players
-    for i, p in pairs(game.players) do
+    for i, player in pairs(game.players) do
       -- set map editor toggled flag to true
       player_tables[i].flags.map_editor_toggled = true
-      if p.mod_settings["ee-inventory-sync"].value and p.cheat_mode then
-        -- enable events for inventory sync
-        -- REMOVED: the event module no longer exists
-        -- event.enable_group("inventory_sync", i)
-      end
     end
   end,
   ["1.3.0"] = function()
@@ -280,22 +141,6 @@ local migrations = {
       -- we don't have a settings table yet (that will be created in generic migrations) so do it manually
       player_table.flags.inventory_sync_enabled = player.mod_settings["ee-inventory-sync"].value and player.cheat_mode
     end
-    -- REMOVED: the event module no longer exists
-    -- -- remove cursor sync event data
-    -- for _,  name in ipairs{"inventory_sync_pre_toggled_editor", "inventory_sync_toggled_editor"} do
-    --   local __event = global.__lualib.event
-    --   local event_data = __event.conditional_events[name]
-    --   local players = __event.players
-    --   if event_data then
-    --     for _,  player_index in ipairs(event_data.players) do
-    --       players[player_index][name] = nil
-    --       if table_size(players[player_index]) == 0 then
-    --         players[player_index] = nil
-    --       end
-    --     end
-    --     __event.conditional_events[name] = nil
-    --   end
-    -- end
   end
 }
 
@@ -331,7 +176,7 @@ end)
 event.on_player_cheat_mode_enabled(function(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
-  enable_recipes(player)
+  cheat_mode.enable_recipes(player)
   inventory.toggle_sync(player, player_table)
 end)
 
@@ -343,7 +188,7 @@ event.on_console_command(function(e)
   if e.command == "cheat" and e.parameters == "all" then
     local player = game.get_player(e.player_index)
     if player.cheat_mode then
-      set_cheat_loadout(player)
+      cheat_mode.set_loadout(player)
     end
   end
 end)
@@ -368,9 +213,9 @@ event.register(
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
       if entity.name == "ee-infinity-inserter" then
-        snap_infinity_inserter(entity)
+        infinity_inserter.snap(entity)
       elseif entity.name == "ee-infinity-pipe" then
-        snap_infinity_pipe(entity, global.players[e.player_index].settings)
+        infinity_pipe.snap(entity, global.players[e.player_index].settings)
       end
     end
   end
