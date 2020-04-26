@@ -250,7 +250,7 @@ end
 -- GUI
 
 gui.add_templates{
-  il_filter_button = {type="choose-elem-button", style="ee_infinity_loader_filter_button", elem_type="item"}
+  il_filter_button = {type="choose-elem-button", style="ee_il_filter_button", elem_type="item"}
 }
 
 gui.add_handlers{
