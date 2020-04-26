@@ -65,19 +65,6 @@ do
   end
 end
 
--- INFINITY CONSTANT COMBINATOR
-data:extend{
-  {
-    type = "item",
-    name = "ee-infinity-combinator",
-    stack_size = 50,
-    icons = util.recursive_tint({util.extract_icon_info(data.raw["constant-combinator"]["constant-combinator"])}, util.combinator_tint),
-    place_result = "ee-infinity-combinator",
-    subgroup = "ee-electricity",
-    order = "z"
-  }
-}
-
 -- INFINITY EXOSKELETON
 data:extend{
   {

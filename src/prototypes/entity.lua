@@ -150,7 +150,7 @@ do
       }
     }
   }
-  
+
   for _, t in pairs(util.tesseract_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
@@ -168,18 +168,6 @@ do
     data:extend{chest}
   end
 end
-
--- INFINITY COMBINATOR
-local infinity_combinator = table.deepcopy(data.raw["constant-combinator"]["constant-combinator"])
-infinity_combinator.name = "ee-infinity-combinator"
-infinity_combinator.icons = {util.extract_icon_info(infinity_combinator)}
-infinity_combinator.map_color = util.infinity_tint
-infinity_combinator.friendly_map_color = util.infinity_tint
-infinity_combinator.allow_copy_paste = false
-infinity_combinator.minable = {mining_time=0.5, result="ee-infinity-combinator"}
-infinity_combinator.placeable_by = {item="ee-infinity-combinator", count=1}
-util.recursive_tint(infinity_combinator, util.combinator_tint)
-data:extend{infinity_combinator}
 
 -- INFINITY HEAT PIPE
 local infinity_heat_pipe = table.deepcopy(data.raw["heat-interface"]["heat-interface"])

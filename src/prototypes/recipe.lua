@@ -8,7 +8,6 @@ local recipe_names = {
   "ee-infinity-accumulator",
   "ee-infinity-beacon",
   "ee-infinity-cargo-wagon",
-  "ee-infinity-combinator",
   "ee-infinity-construction-robot",
   "ee-infinity-electric-pole",
   "ee-infinity-exoskeleton-equipment",
