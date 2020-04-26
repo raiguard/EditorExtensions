@@ -2,7 +2,6 @@
 -- INFINITY WAGONS
 
 -- dependencies
-local event = require("__RaiLuaLib__.lualib.event")
 local util = require("scripts.util")
 
 -- locals

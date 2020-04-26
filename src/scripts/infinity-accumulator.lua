@@ -1,7 +1,6 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- INFINITY ACCUMULATOR
 
-local event = require("__RaiLuaLib__.lualib.event")
 local util = require("scripts.util")
 
 -- GUI ELEMENTS

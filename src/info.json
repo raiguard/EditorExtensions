@@ -6,6 +6,6 @@
   "contact": "Discord: Raiguard#7402",
   "homepage": "https://github.com/raiguard/Factorio-EditorExtensions",
   "factorio_version": "0.18",
-  "dependencies": ["base >= 0.18.20", "RaiLuaLib >= 0.2.8"],
+  "dependencies": ["base >= 0.18.20", "flib >= 0.1.0"],
   "description": "Extends the map editor with new features and tools, makes tweaks to it to facilitate easier sandbox play, and adds items and entities to assist with testing factories.\n\nThe successor to Infinity Mode, which was inspired by Creative Mode."
 }

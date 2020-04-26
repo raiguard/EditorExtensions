@@ -2,7 +2,7 @@
 -- CONTROL STAGE UTILITIES
 
 local math2d = require("__core__.lualib.math2d")
-local util = table.deepcopy(require("__core__.lualib.util"))
+local util = require("__core__.lualib.util")
 
 -- GENERAL
 

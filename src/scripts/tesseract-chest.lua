@@ -1,7 +1,6 @@
 -- -------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- TESSERACT CHEST
 
-local event = require("__RaiLuaLib__.lualib.event")
 local chest_names = {"ee-tesseract-chest", "ee-tesseract-chest-passive-provider"}
 local util = require("scripts.util")
 

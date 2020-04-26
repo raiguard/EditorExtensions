@@ -1,9 +1,7 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- CONTROL SCRIPTING
-
 -- dependencies
-local event = require("__RaiLuaLib__.lualib.event")
-local migration = require("__RaiLuaLib__.lualib.migration")
+local event = require("__flib__.control.event")
+local gui = require("__flib__.control.gui")
+local migration = require("__flib__.control.migration")
 local util = require("scripts.util")
 
 -- locals
@@ -11,14 +9,12 @@ local string_find = string.find
 local string_gsub = string.gsub
 local string_sub = string.sub
 
--- -----------------------------------------------------------------------------
--- SCRIPTS
-
-require("scripts.infinity-accumulator")
-require("scripts.infinity-combinator")
-require("scripts.infinity-loader")
-require("scripts.infinity-wagon")
-require("scripts.tesseract-chest")
+-- modules
+-- require("scripts.infinity-accumulator")
+-- require("scripts.infinity-combinator")
+-- require("scripts.infinity-loader")
+-- require("scripts.infinity-wagon")
+-- require("scripts.tesseract-chest")
 
 local inventory = require("scripts.inventory")
 
@@ -145,7 +141,7 @@ local function update_player_settings(player, player_table)
 end
 
 local function refresh_player_data(player, player_table)
-  -- set shortcut state
+  -- set shortcut availability
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
 
   -- update settings
@@ -153,6 +149,7 @@ local function refresh_player_data(player, player_table)
 end
 
 event.on_init(function()
+  gui.on_init()
   global.combinators = {}
   global.flags = {
     map_editor_toggled = false
@@ -165,6 +162,11 @@ event.on_init(function()
       enable_recipes(p)
     end
   end
+  gui.bootstrap_postprocess()
+end)
+
+event.on_load(function()
+  gui.bootstrap_postprocess()
 end)
 
 event.on_player_created(function(e)
@@ -225,57 +227,48 @@ event.register({defines.events.on_player_promoted, defines.events.on_player_demo
 end)
 
 -- -----------------------------------------------------------------------------
--- INFINITY INSERTER
+-- ENTITY SNAPPING
 
 -- set manually built inserters to blacklist mode by default
-event.on_built_entity(function(e)
-  local entity = e.created_entity
-  if entity.name == "ee-infinity-inserter" then
-    local control = entity.get_control_behavior()
-    if not control then
-      -- this is a new inserter, so set control mode to blacklist by default
-      entity.inserter_filter_mode = "blacklist"
-    end
+local function on_infinity_inserter_built(entity)
+  local control = entity.get_control_behavior()
+  if not control then
+    -- this is a new inserter, so set control mode to blacklist by default
+    entity.inserter_filter_mode = "blacklist"
   end
-end)
-
--- -----------------------------------------------------------------------------
--- INFINITY PIPE
+end
 
 -- snap manually built infinity pipes
-event.on_built_entity(function(e)
-  local entity = e.created_entity
-  if entity.name == "ee-infinity-pipe" then
-    local settings = global.players[e.player_index].settings
-    local neighbours = entity.neighbours[1]
-    local own_fb = entity.fluidbox
-    local own_id = entity.unit_number
-    -- snap to adjacent assemblers
-    if settings.infinity_pipe_assembler_snapping then
-      for ni=1, #neighbours do
-        local neighbour = neighbours[ni]
-        if neighbour.type == "assembling-machine" and neighbour.fluidbox then
-          local fb = neighbour.fluidbox
-          for i=1, #fb do
-            local connections = fb.get_connections(i)
-            if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == "input") then
-              -- set to fill the pipe with the fluid
-              entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(1), percentage=1, mode="exactly"}
-              return -- don't do default snapping
-            end
+local function on_infinity_pipe_built(entity, player_index)
+  local settings = global.players[player_index].settings
+  local neighbours = entity.neighbours[1]
+  local own_fb = entity.fluidbox
+  local own_id = entity.unit_number
+  -- snap to adjacent assemblers
+  if settings.infinity_pipe_assembler_snapping then
+    for ni=1, #neighbours do
+      local neighbour = neighbours[ni]
+      if neighbour.type == "assembling-machine" and neighbour.fluidbox then
+        local fb = neighbour.fluidbox
+        for i=1, #fb do
+          local connections = fb.get_connections(i)
+          if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == "input") then
+            -- set to fill the pipe with the fluid
+            entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(1), percentage=1, mode="exactly"}
+            return -- don't do default snapping
           end
         end
       end
     end
-    -- snap to locked fluid
-    if settings.infinity_pipe_snapping then
-      local fluid = own_fb.get_locked_fluid(1)
-      if fluid then
-        entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode="exactly"}
-      end
+  end
+  -- snap to locked fluid
+  if settings.infinity_pipe_snapping then
+    local fluid = own_fb.get_locked_fluid(1)
+    if fluid then
+      entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode="exactly"}
     end
   end
-end)
+end
 
 -- -----------------------------------------------------------------------------
 -- COMMANDS
@@ -358,7 +351,8 @@ local migrations = {
       player_tables[i].flags.map_editor_toggled = true
       if p.mod_settings["ee-inventory-sync"].value and p.cheat_mode then
         -- enable events for inventory sync
-        event.enable_group("inventory_sync", i)
+        -- REMOVED: the event module no longer exists
+        -- event.enable_group("inventory_sync", i)
       end
     end
   end,
@@ -407,10 +401,25 @@ local migrations = {
 }
 
 -- handle migrations
-event.on_configuration_changed(function(e)
+script.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
     for i,  player in pairs(game.players) do
       refresh_player_data(player, global.players[i])
     end
   end
-end, nil, {insert_at=1})
+end)
+
+-- -----------------------------------------------------------------------------
+-- EVENT HANDLERS
+
+gui.register_events()
+
+event.on_gui_opened(function(e)
+  gui.dispatch_handlers(e)
+  inventory.on_gui_opened(e)
+end)
+
+event.on_gui_closed(function(e)
+  gui.dispatch_handlers(e)
+  inventory.on_gui_closed(e)
+end)

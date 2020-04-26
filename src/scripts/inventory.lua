@@ -1,12 +1,8 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- INVENTORY
+local inventory = {}
 
--- dependencies
-local event = require("__RaiLuaLib__.lualib.event")
-local gui = require("__RaiLuaLib__.lualib.gui")
-local migration = require("__RaiLuaLib__.lualib.migration")
+local gui = require("__flib__.control.gui")
+-- local migration = require("__RaiLuaLib__.lualib.migration")
 
--- locals
 local math_min = math.min
 local string_find = string.find
 local string_sub = string.sub
@@ -14,10 +10,7 @@ local string_sub = string.sub
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
-event.on_pre_player_toggled_map_editor(function(e)
-  local player_table = global.players[e.player_index]
-  if not player_table.flags.inventory_sync_enabled then return end
-  local player = game.get_player(e.player_index)
+local function create_sync_inventories(player_table, player)
   -- determine prefix based on controller type
   local prefix
   local controller_type = player.controller_type
@@ -52,12 +45,9 @@ event.on_pre_player_toggled_map_editor(function(e)
     inventories[name] = sync_inventory
   end
   player_table.sync_inventories = inventories
-end)
+end
 
-event.on_player_toggled_map_editor(function(e)
-  local player_table = global.players[e.player_index]
-  if not player_table.flags.inventory_sync_enabled then return end
-  local player = game.get_player(e.player_index)
+local function get_from_sync_inventories(player_table, player)
   -- determine prefix based on controller type
   local prefix
   local controller_type = player.controller_type
@@ -87,9 +77,9 @@ event.on_player_toggled_map_editor(function(e)
     sync_inventory.destroy()
   end
   player_table.sync_inventories = nil
-end)
+end
 
-local function toggle_sync(player, player_table, enable)
+function inventory.toggle_sync(player, player_table, enable)
   if enable == nil then
     enable = player_table.settings.inventory_sync and player.cheat_mode
   end
@@ -108,7 +98,7 @@ end
 -- INFINITY INVENTORY FILTERS
 
 local filters_table_version = 0
-local filters_table_migrations = {}
+-- local filters_table_migrations = {}
 
 local function export_filters(player)
   local filters = player.infinity_inventory_filters
@@ -127,9 +117,10 @@ local function import_filters(player, string)
     local _,_,version,json = string_find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
     version = tonumber(version)
     local input = game.json_to_table(json)
-    if version < filters_table_version then
-      migration.generic(version, filters_table_migrations, input)
-    end
+    -- needs some flib features to work
+    -- if version < filters_table_version then
+    --   migration.run(version, filters_table_migrations, input)
+    -- end
     -- sanitise the filters to only include currently existing prototypes
     local item_prototypes = game.item_prototypes
     local output = {}
@@ -149,7 +140,7 @@ local function import_filters(player, string)
   return false
 end
 
-gui.templates:extend{
+gui.add_templates{
   inventory_filters_string = {
     export_nav_flow = {type="flow", style_mods={top_margin=8}, direction="horizontal", children={
       {type="button", style="back_button", caption={"gui.cancel"}, handlers="inventory_filters_string.back_button"},
@@ -164,19 +155,20 @@ gui.templates:extend{
   }
 }
 
-gui.handlers:extend{
+gui.add_handlers{
   inventory_filters_buttons = {
     import_export_button = {
       on_gui_click = function(e)
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
-        if player_table.gui.inventory_filters_string then
-          event.disable_group("gui.inventory_filters_string", e.player_index)
-          player_table.gui.inventory_filters_string.window.destroy()
+        local existing_data = player_table.gui.inventory_filters_string
+        if existing_data then
+          gui.remove_filters(e.player_index, existing_data.filters)
+          existing_data.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
-        local mode = e.element.sprite:find("export") and "export" or "import"
-        local gui_data = gui.build(player.gui.screen, {
+        local mode = (string_sub(e.element.sprite, 4, 9) == "export") and "export" or "import"
+        local gui_data, filters = gui.build(player.gui.screen, {
           {type="frame", style="dialog_frame", direction="vertical", save_as="window", children={
             {type="flow", children={
               {type="label", style="frame_title", caption={"ee-gui."..mode.."-inventory-filters"}},
@@ -197,36 +189,8 @@ gui.handlers:extend{
           gui_data.textbox.select_all()
         end
 
+        gui_data.filters = filters
         player_table.gui.inventory_filters_string = gui_data
-      end
-    },
-    inventory_window = {
-      on_gui_closed = function(e)
-        if e.gui_type and e.gui_type == 3 then
-          local player_table = global.players[e.player_index]
-          event.disable_group("gui.inventory_filters_buttons", e.player_index)
-          player_table.gui.inventory_filters_buttons.window.destroy()
-          player_table.gui.inventory_filters_buttons = nil
-        end
-      end
-    },
-    player = {
-      on_player_toggled_map_editor = function(e)
-        -- close the GUI if the player exits the map editor
-        local player_table = global.players[e.player_index]
-        event.disable_group("gui.inventory_filters_buttons", e.player_index)
-        player_table.gui.inventory_filters_buttons.window.destroy()
-        player_table.gui.inventory_filters_buttons = nil
-        if player_table.gui.inventory_filters_string then
-          event.disable_group("gui.inventory_filters_string", e.player_index)
-          player_table.gui.inventory_filters_string.window.destroy()
-          player_table.gui.inventory_filters_string = nil
-        end
-      end,
-      on_player_display_resolution_changed = function(e)
-        local player = game.get_player(e.player_index)
-        local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
-        gui_data.window.location = {x=0, y=(player.display_resolution.height-(56*player.display_scale))}
       end
     }
   },
@@ -234,7 +198,7 @@ gui.handlers:extend{
     back_button = {
       on_gui_click = function(e)
         local player_table = global.players[e.player_index]
-        event.disable_group("gui.inventory_filters_string", e.player_index)
+        gui.remove_filters(e.player_index, player_table.gui.inventory_filters_string.filters)
         player_table.gui.inventory_filters_string.window.destroy()
         player_table.gui.inventory_filters_string = nil
       end
@@ -245,7 +209,7 @@ gui.handlers:extend{
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.inventory_filters_string
         if import_filters(player, gui_data.textbox.text) then
-          event.disable_group("gui.inventory_filters_string", e.player_index)
+          gui.remove_filters(e.player_index, gui_data.filters)
           gui_data.window.destroy()
           player_table.gui.inventory_filters_string = nil
         else
@@ -266,13 +230,38 @@ gui.handlers:extend{
   }
 }
 
-event.on_gui_opened(function(e)
+local function close_guis(player_table, player_index)
+  local buttons_gui_data = player_table.gui.inventory_filters_buttons
+  if buttons_gui_data then
+    gui.remove_filters(player_index, buttons_gui_data.filters)
+    buttons_gui_data.window.destroy()
+    player_table.gui.inventory_filters_buttons = nil
+  end
+  local string_gui_data = player_table.gui.inventory_filters_string
+  if string_gui_data then
+    gui.remove_filters(player_index, string_gui_data.filters)
+    string_gui_data.window.destroy()
+    player_table.gui.inventory_filters_string = nil
+  end
+end
+
+-- -----------------------------------------------------------------------------
+-- EVENT HANDLERS
+
+function inventory.on_gui_closed(e)
+  if e.gui_type and e.gui_type == 3 then
+    local player_table = global.players[e.player_index]
+    close_guis(player_table, e.player_index)
+  end
+end
+
+function inventory.on_gui_opened(e)
   if e.gui_type and e.gui_type == 3 then
     local player = game.get_player(e.player_index)
     if player.controller_type == defines.controllers.editor then
       -- create buttons GUI
       local player_table = global.players[e.player_index]
-      local gui_data = gui.build(player.gui.screen, {
+      local gui_data, filters = gui.build(player.gui.screen, {
         {type="frame", style="shortcut_bar_window_frame", style_mods={right_padding=4}, save_as="window", children={
           {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
             {type="sprite-button", style="shortcut_bar_button", sprite="ee-import-inventory-filters", tooltip={"ee-gui.import-inventory-filters"},
@@ -281,21 +270,36 @@ event.on_gui_opened(function(e)
               handlers="inventory_filters_buttons.import_export_button", save_as="export_button"}
           }}
         }}
-      }, "inventory_filters_buttons", player.index)
-      -- register events
-      event.enable_group("gui.inventory_filters_buttons", e.player_index)
+      })
       -- add to global
+      gui_data.filters = filters
       player_table.gui.inventory_filters_buttons = gui_data
       -- position GUI
-      gui.handlers.inventory_filters_buttons.player.on_player_display_resolution_changed{player_index=e.player_index}
+      inventory.on_player_display_resolution_changed{player_index=e.player_index}
     end
   end
-end)
+end
+
+function inventory.on_player_display_resolution_changed(e)
+  local player = game.get_player(e.player_index)
+  local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
+  if gui_data then
+    gui_data.window.location = {x=0, y=(player.display_resolution.height-(56*player.display_scale))}
+  end
+end
+
+function inventory.on_player_pre_toggled_map_editor(e)
+  create_sync_inventories(global.players[e.player_index], game.get_player(e.player_index))
+end
+
+function inventory.on_player_toggled_map_editor(e)
+  local player_table = global.players[e.player_index]
+  close_guis(player_table, e.player_index)
+  if player_table.flags.inventory_sync_enabled then
+    get_from_sync_inventories(player_table, game.get_player(e.player_index))
+  end
+end
 
 -- -----------------------------------------------------------------------------
--- OBJECT
 
-return {
-  import_inventory_filters = import_filters,
-  toggle_sync = toggle_sync
-}
+return inventory
