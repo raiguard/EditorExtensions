@@ -1,7 +1,3 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- ITEMS
--- We mostly copy the vanilla definitions instead of creating our own, so many vanilla changes will be immediately reflected in the mod.
-
 local util = require("prototypes.util")
 
 -- INFINITY ACCUMULATOR
