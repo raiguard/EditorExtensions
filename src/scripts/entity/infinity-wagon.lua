@@ -48,7 +48,6 @@ function infinity_wagon.reset(entity)
   global.wagons[entity.unit_number].flip = 0
 end
 
-
 function infinity_wagon.destroy(entity)
   global.wagons[entity.unit_number].proxy.destroy()
   global.wagons[entity.unit_number] = nil
@@ -91,10 +90,8 @@ function infinity_wagon.on_tick()
   end
 end
 
-function infinity_wagon.on_gui_opened(e)
-  if e.entity and infinity_wagon.wagon_names[e.entity.name] then
-    game.players[e.player_index].opened = global.wagons[e.entity.unit_number].proxy
-  end
+function infinity_wagon.open(player_index, entity)
+  game.get_player(player_index).opened = global.wagons[entity.unit_number].proxy
 end
 
 function infinity_wagon.on_entity_settings_pasted(e)
@@ -105,31 +102,20 @@ function infinity_wagon.on_entity_settings_pasted(e)
   end
 end
 
-function infinity_wagon.on_player_setup_blueprint(e)
-  local player = game.get_player(e.player_index)
-  local bp = player.blueprint_to_setup
-  if not bp or not bp.valid_for_read then
-    bp = player.cursor_stack
-  end
-  local entities = bp.get_blueprint_entities()
-  if not entities then return end
-  local chests = player.surface.find_entities_filtered{name="ee-infinity-wagon-chest"}
-  local pipes = player.surface.find_entities_filtered{name="ee-infinity-wagon-pipe"}
-  local chest_index = 0
-  local pipe_index = 0
-  for _, en in pairs(entities) do
-    -- if the entity is an infinity wagon
-    if en.name == "ee-infinity-cargo-wagon" then
-      chest_index = chest_index + 1
-      if not en.tags then en.tags = {} end
-      en.tags.EditorExtensions = chests[chest_index].infinity_container_filters
-    elseif en.name == "ee-infinity-fluid-wagon" then
-      pipe_index = pipe_index + 1
-      if not en.tags then en.tags = {} end
-      en.tags.EditorExtensions = pipes[pipe_index].get_infinity_pipe_filter()
+function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
+    if entity then
+      if not blueprint_entity.tags then blueprint_entity.tags = {} end
+      blueprint_entity.tags.EditorExtensions = global.wagons[entity.unit_number].proxy.infinity_container_filters
     end
+    return blueprint_entity
+end
+
+function infinity_wagon.setup_fluid_blueprint(blueprint_entity, entity)
+  if entity then
+    if not blueprint_entity.tags then blueprint_entity.tags = {} end
+    blueprint_entity.tags.EditorExtensions = global.wagons[entity.unit_number].proxy.get_infinity_pipe_filter()
   end
-  bp.set_blueprint_entities(entities)
+  return blueprint_entity
 end
 
 return infinity_wagon

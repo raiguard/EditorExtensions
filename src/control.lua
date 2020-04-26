@@ -89,7 +89,7 @@ event.register(
   },
   function(e)
     local entity = e.entity or e.created_entity
-    if infinity_loader.on_built(e) then
+    if infinity_loader.on_built(entity) then
       -- pass
     elseif infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.build(entity, e.tags)
@@ -119,8 +119,8 @@ event.register(
       infinity_loader.destroy(entity)
     elseif infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.destroy(entity)
-    else
-      infinity_accumulator.on_destroyed(e)
+    elseif infinity_accumulator.check_name(entity) then
+      infinity_accumulator.close_open_guis(entity)
     end
   end
 )
@@ -131,14 +131,14 @@ end)
 
 event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
   local entity = e.entity
-  if entity.name == "ee-infinity-cargo-wagon" then
-    infinity_wagon.clear_inventory(entity)
-  end
+  infinity_wagon.clear_inventory(entity)
 end)
 
 event.on_cancelled_deconstruction(function(e)
   local entity = e.entity
-  infinity_wagon.on_cancelled_deconstruction(entity)
+  if infinity_wagon.wagon_names[entity.name] then
+    infinity_wagon.reset(entity)
+  end
 end)
 
 event.register("ee-mouse-leftclick", function(e)
@@ -158,11 +158,23 @@ end)
 gui.register_events()
 
 event.on_gui_opened(function(e)
-  gui.dispatch_handlers(e)
-  infinity_accumulator.on_gui_opened(e)
-  infinity_loader.on_gui_opened(e)
-  infinity_wagon.on_gui_opened(e)
-  inventory.on_gui_opened(e)
+  if not gui.dispatch_handlers(e) then
+    local entity = e.entity
+    if entity then
+      if infinity_accumulator.check_name(entity) then
+        infinity_accumulator.open(e.player_index, entity)
+      elseif entity.name == "ee-infinity-loader-logic-combinator" then
+        infinity_loader.open(e.player_index, entity)
+      elseif entity.name == "ee-infinity-cargo-wagon" then
+        infinity_wagon.open(e.player_index, entity)
+      end
+    elseif e.gui_type and e.gui_type == 3 then
+      local player = game.get_player(e.player_index)
+      if player.controller_type == defines.controllers.editor then
+        inventory.create_filters_buttons(player)
+      end
+    end
+  end
 end)
 
 event.on_gui_closed(function(e)
@@ -205,8 +217,25 @@ event.register({defines.events.on_player_promoted, defines.events.on_player_demo
 end)
 
 event.on_player_setup_blueprint(function(e)
-  infinity_loader.on_player_setup_blueprint(e)
-  infinity_wagon.on_player_setup_blueprint(e)
+  local player = game.get_player(e.player_index)
+  local bp = player.blueprint_to_setup
+  if not bp or not bp.valid_for_read then
+    bp = player.cursor_stack
+  end
+  local entities = bp.get_blueprint_entities()
+  if not entities then return end
+  local mapping = e.mapping.get()
+  for i=1,#entities do
+    local entity = entities[i]
+    if entity.name == "ee-infinity-loader-logic-combinator" then
+      entities[i] = infinity_loader.setup_blueprint(entity)
+    elseif entity.name == "ee-infinity-cargo-wagon" then
+      entities[i] = infinity_wagon.setup_cargo_blueprint(entity, mapping[entity.entity_number])
+    elseif entity.name == "ee-infinity-fluid-wagon" then
+      entities[i] = infinity_wagon.setup_fluid_blueprint(entity, mapping[entity.entity_number])
+    end
+  end
+  bp.set_blueprint_entities(entities)
 end)
 
 event.on_pre_player_toggled_map_editor(function(e)
@@ -294,11 +323,9 @@ event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robo
 })
 
 event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"}
+  {filter="name", name="ee-infinity-cargo-wagon"}
 })
 
 event.set_filters(defines.events.on_cancelled_deconstruction, {
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"}
+  {filter="name", name="ee-infinity-cargo-wagon"}
 })

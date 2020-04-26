@@ -28,10 +28,6 @@ for i, v in pairs(constants.power_prefixes) do
   constants.localised_si_suffixes_joule[i] = {"", {"si-prefix-symbol-"..v}, {"si-unit-symbol-joule"}}
 end
 
-local function check_is_accumulator(entity)
-  return string_sub(entity.name, 1, 23) == "ee-infinity-accumulator"
-end
-
 local function get_settings_from_name(name)
   name = string_gsub(name, "(%a+)-(%a+)-(%a+)-", "")
   if name == "tertiary" then return "tertiary", "buffer" end
@@ -239,18 +235,20 @@ local function create_gui(player, player_table, entity)
 end
 
 -- -----------------------------------------------------------------------------
--- EVENT HANDLERS
+-- FUNCTIONS
 
-function infinity_accumulator.on_gui_opened(e)
-  if e.entity and check_is_accumulator(e.entity) then
-    local player = game.get_player(e.player_index)
-    local player_table = global.players[e.player_index]
-    create_gui(player, player_table, e.entity)
-  end
+function infinity_accumulator.check_name(entity)
+  return string_sub(entity.name, 1, 23) == "ee-infinity-accumulator"
+end
+
+function infinity_accumulator.open(player_index, entity)
+  local player = game.get_player(player_index)
+  local player_table = global.players[player_index]
+  create_gui(player, player_table, entity)
 end
 
 function infinity_accumulator.on_entity_settings_pasted(e)
-  if check_is_accumulator(e.source) and check_is_accumulator(e.destination) and e.source.name ~= e.destination.name then
+  if infinity_accumulator.check_name(e.source) and infinity_accumulator.check_name(e.destination) and e.source.name ~= e.destination.name then
     -- get players viewing the destination accumulator
     local to_update = {}
     if global.__lualib.event.ia_close_button_clicked then
@@ -279,13 +277,10 @@ function infinity_accumulator.on_entity_settings_pasted(e)
   end
 end
 
-function infinity_accumulator.on_destroyed(e)
-  if check_is_accumulator(e.entity) then
-    -- close open GUIs
-    for i, t in pairs(global.players) do
-      if t.gui.ia and t.gui.ia.entity == e.entity then
-        gui.handlers.ia.window.on_gui_closed{player_index=i}
-      end
+function infinity_accumulator.close_open_guis(entity)
+  for i, t in pairs(global.players) do
+    if t.gui.ia and t.gui.ia.entity == entity then
+      gui.handlers.ia.window.on_gui_closed{player_index=i}
     end
   end
 end

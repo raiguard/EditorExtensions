@@ -255,29 +255,24 @@ function inventory.on_gui_closed(e)
   end
 end
 
-function inventory.on_gui_opened(e)
-  if e.gui_type and e.gui_type == 3 then
-    local player = game.get_player(e.player_index)
-    if player.controller_type == defines.controllers.editor then
-      -- create buttons GUI
-      local player_table = global.players[e.player_index]
-      local gui_data, filters = gui.build(player.gui.screen, {
-        {type="frame", style="shortcut_bar_window_frame", style_mods={right_padding=4}, save_as="window", children={
-          {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
-            {type="sprite-button", style="shortcut_bar_button", sprite="ee_import_inventory_filters", tooltip={"ee-gui.import-inventory-filters"},
-              handlers="inventory_filters_buttons.import_export_button", save_as="import_button"},
-            {type="sprite-button", style="shortcut_bar_button", sprite="ee_export_inventory_filters", tooltip={"ee-gui.export-inventory-filters"},
-              handlers="inventory_filters_buttons.import_export_button", save_as="export_button"}
-          }}
-        }}
-      })
-      -- add to global
-      gui_data.filters = filters
-      player_table.gui.inventory_filters_buttons = gui_data
-      -- position GUI
-      inventory.on_player_display_resolution_changed{player_index=e.player_index}
-    end
-  end
+function inventory.create_filters_buttons(player)
+  -- create buttons GUI
+  local player_table = global.players[player.index]
+  local gui_data, filters = gui.build(player.gui.screen, {
+    {type="frame", style="shortcut_bar_window_frame", style_mods={right_padding=4}, save_as="window", children={
+      {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
+        {type="sprite-button", style="shortcut_bar_button", sprite="ee_import_inventory_filters", tooltip={"ee-gui.import-inventory-filters"},
+          handlers="inventory_filters_buttons.import_export_button", save_as="import_button"},
+        {type="sprite-button", style="shortcut_bar_button", sprite="ee_export_inventory_filters", tooltip={"ee-gui.export-inventory-filters"},
+          handlers="inventory_filters_buttons.import_export_button", save_as="export_button"}
+      }}
+    }}
+  })
+  -- add to global
+  gui_data.filters = filters
+  player_table.gui.inventory_filters_buttons = gui_data
+  -- position GUI
+  inventory.on_player_display_resolution_changed{player_index=player.index}
 end
 
 function inventory.on_player_display_resolution_changed(e)
@@ -298,7 +293,7 @@ end
 function inventory.on_player_toggled_map_editor(e)
   local player_table = global.players[e.player_index]
   close_guis(player_table, e.player_index)
-  if player_table.flags.inventory_sync_enabled then
+  if player_table.flags.inventory_sync_enabled and player_table.sync_inventories then
     get_from_sync_inventories(player_table, game.get_player(e.player_index))
   end
 end

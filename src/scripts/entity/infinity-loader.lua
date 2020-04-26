@@ -433,10 +433,9 @@ function infinity_loader.register_picker_dollies()
 end
 
 -- -----------------------------------------------------------------------------
--- EVENT HANDLERS
+-- FUNCTIONS
 
-function infinity_loader.on_built(e)
-  local entity = e.created_entity or e.entity
+function infinity_loader.on_built(entity)
   if entity.name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
     -- convert to dummy combinator ghost
     local old_control = entity.get_or_create_control_behavior()
@@ -531,21 +530,10 @@ function infinity_loader.destroy(entity)
   end
 end
 
-function infinity_loader.on_player_setup_blueprint(e)
-  local player = game.get_player(e.player_index)
-  local bp = player.blueprint_to_setup
-  if not bp or not bp.valid_for_read then
-    bp = player.cursor_stack
-  end
-  local entities = bp.get_blueprint_entities()
-  if not entities then return end
-  for i=1, #entities do
-    if entities[i].name == "ee-infinity-loader-logic-combinator" then
-      entities[i].name = "ee-infinity-loader-dummy-combinator"
-      entities[i].direction = entities[i].direction or defines.direction.north
-    end
-  end
-  bp.set_blueprint_entities(entities)
+function infinity_loader.setup_blueprint(blueprint_entity)
+  blueprint_entity.name = "ee-infinity-loader-dummy-combinator"
+  blueprint_entity.direction = blueprint_entity.direction or defines.direction.north
+  return blueprint_entity
 end
 
 function infinity_loader.on_entity_settings_pasted(e)
@@ -566,12 +554,10 @@ function infinity_loader.on_entity_settings_pasted(e)
   end
 end
 
-function infinity_loader.on_gui_opened(e)
-  if e.entity and e.entity.valid and e.entity.name == "ee-infinity-loader-logic-combinator" then
-    local player = game.get_player(e.player_index)
-    local player_table = global.players[e.player_index]
-    create_gui(player, player_table, e.entity)
-  end
+function infinity_loader.open(player_index, entity)
+  local player = game.get_player(player_index)
+  local player_table = global.players[player_index]
+  create_gui(player, player_table, entity)
 end
 
 -- check every single infinity loader on every surface to see if it no longer has a loader entity
