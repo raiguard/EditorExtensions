@@ -6,6 +6,7 @@ Date: ????
   Changes:
     - Complete rewrite of the mod to improve performance
     - Switched from RaiLuaLib to FLib
+    - Use direct entity mapping when creating blueprints, significantly improving performance with infinity wagon blueprinting
     - Removed infinity combinator due to bad performance, clunky internals, and low usage
   Bugfixes:
     - Fixed the infinity pipe not appearing in item filters menu

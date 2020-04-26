@@ -94,12 +94,8 @@ function infinity_wagon.open(player_index, entity)
   game.get_player(player_index).opened = global.wagons[entity.unit_number].proxy
 end
 
-function infinity_wagon.on_entity_settings_pasted(e)
-  if e.source.name == "ee-infinity-cargo-wagon" and e.destination.name == "ee-infinity-cargo-wagon" then
-    global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
-  elseif e.source.name == "ee-infinity-fluid-wagon" and e.destination.name == "ee-infinity-fluid-wagon" then
-    global.wagons[e.destination.unit_number].proxy.copy_settings(global.wagons[e.source.unit_number].proxy)
-  end
+function infinity_wagon.paste_settings(source, destination)
+  global.wagons[destination.unit_number].proxy.copy_settings(global.wagons[source.unit_number].proxy)
 end
 
 function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)

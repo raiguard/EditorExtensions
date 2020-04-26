@@ -98,7 +98,7 @@ local function update_gui_settings(gui_data)
   gui_data.slider_textfield.style = "ee_slider_textfield"
   gui_data.slider_dropdown.selected_index = dropdown_index
   gui_data.last_textfield_value = slider_value
-  gui.update_mode(gui_data, mode)
+  update_gui_mode(gui_data, mode)
 end
 
 gui.add_handlers{
@@ -247,33 +247,27 @@ function infinity_accumulator.open(player_index, entity)
   create_gui(player, player_table, entity)
 end
 
-function infinity_accumulator.on_entity_settings_pasted(e)
-  if infinity_accumulator.check_name(e.source) and infinity_accumulator.check_name(e.destination) and e.source.name ~= e.destination.name then
-    -- get players viewing the destination accumulator
-    local to_update = {}
-    if global.__lualib.event.ia_close_button_clicked then
-      for _, i in ipairs(global.__lualib.event.ia_close_button_clicked.players) do
-        local player_table = global.players[i]
-        -- check if they're viewing this one
-        if player_table.gui.ia.entity == e.destination then
-          table.insert(to_update, i)
-        end
-      end
+function infinity_accumulator.paste_settings(source, destination)
+  -- get players viewing the destination accumulator
+  local to_update = {}
+  for i, player_table in pairs(global.players) do
+    if player_table.gui.ia and player_table.gui.ia.entity == destination then
+      to_update[#to_update+1] = i
     end
-    -- update entity
-    local priority, mode = get_settings_from_name(e.source.name)
-    local new_entity
-    if mode == "buffer" then
-      new_entity = change_entity(e.destination, "tertiary")
-    else
-      new_entity = change_entity(e.destination, priority, mode)
-    end
-    -- update open GUIs
-    for _, i in pairs(to_update) do
-      local player_table = global.players[i]
-      player_table.gui.ia.entity = new_entity
-      update_gui_settings(player_table.gui.ia)
-    end
+  end
+  -- update entity
+  local priority, mode = get_settings_from_name(source.name)
+  local new_entity
+  if mode == "buffer" then
+    new_entity = change_entity(destination, "tertiary")
+  else
+    new_entity = change_entity(destination, priority, mode)
+  end
+  -- update open GUIs
+  for _, i in ipairs(to_update) do
+    local player_table = global.players[i]
+    player_table.gui.ia.entity = new_entity
+    update_gui_settings(player_table.gui.ia)
   end
 end
 

@@ -536,22 +536,21 @@ function infinity_loader.setup_blueprint(blueprint_entity)
   return blueprint_entity
 end
 
-function infinity_loader.on_entity_settings_pasted(e)
-  if e.destination.name == "ee-infinity-loader-logic-combinator" then
-    -- sanitize filters to remove any non-items
-    local parameters = {parameters={}}
-    local items = 0
-    for _, p in pairs(table.deepcopy(e.source.get_control_behavior().parameters.parameters)) do
-      if p.signal and p.signal.type == "item" and items < 2 then
-        items = items + 1
-        p.index = items
-        table.insert(parameters.parameters, p)
-      end
+function infinity_loader.paste_settings(source, destination)
+
+  -- sanitize filters to remove any non-items
+  local parameters = {parameters={}}
+  local items = 0
+  for _, p in pairs(table.deepcopy(source.get_control_behavior().parameters.parameters)) do
+    if p.signal and p.signal.type == "item" and items < 2 then
+      items = items + 1
+      p.index = items
+      table.insert(parameters.parameters, p)
     end
-    e.destination.get_control_behavior().parameters = parameters
-    -- update filters
-    update_filters(e.destination)
   end
+  destination.get_control_behavior().parameters = parameters
+  -- update filters
+  update_filters(destination)
 end
 
 function infinity_loader.open(player_index, entity)

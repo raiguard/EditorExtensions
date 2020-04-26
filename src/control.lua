@@ -62,11 +62,16 @@ event.on_player_cheat_mode_enabled(function(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
   cheat_mode.enable_recipes(player)
-  inventory.toggle_sync(player, player_table)
+  if player_table.settings.inventory_sync then
+    inventory.toggle_sync(player, player_table)
+  end
 end)
 
 event.on_player_cheat_mode_disabled(function(e)
-  inventory.toggle_sync(game.get_player(e.player_index), global.players[e.player_index], false)
+  local player_table = global.players[e.player_index]
+  if player_table.settings.inventory_sync then
+    inventory.toggle_sync(game.get_player(e.player_index), player_table, false)
+  end
 end)
 
 event.on_console_command(function(e)
@@ -130,15 +135,13 @@ event.on_player_rotated_entity(function(e)
 end)
 
 event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
-  local entity = e.entity
-  infinity_wagon.clear_inventory(entity)
+  -- event filter removes the need for a check here
+  infinity_wagon.clear_inventory(e.entity)
 end)
 
 event.on_cancelled_deconstruction(function(e)
-  local entity = e.entity
-  if infinity_wagon.wagon_names[entity.name] then
-    infinity_wagon.reset(entity)
-  end
+  -- event filter removes the need for a check here
+  infinity_wagon.reset(e.entity)
 end)
 
 event.register("ee-mouse-leftclick", function(e)
@@ -148,9 +151,15 @@ event.register("ee-mouse-leftclick", function(e)
 end)
 
 event.on_entity_settings_pasted(function(e)
-  infinity_accumulator.on_entity_settings_pasted(e)
-  infinity_loader.on_entity_settings_pasted(e)
-  infinity_wagon.on_entity_settings_pasted(e)
+  if infinity_accumulator.check_name(e.source) and infinity_accumulator.check_name(e.destination) and e.source.name ~= e.destination.name then
+    infinity_accumulator.paste_settings(e.source, e.destination)
+  elseif e.destination.name == "ee-infinity-loader-logic-combinator" then
+    infinity_loader.paste_settings(e.source, e.destination)
+  elseif (e.source.name == "ee-infinity-cargo-wagon" and e.destination.name == "ee-infinity-cargo-wagon")
+    or e.source.name == "ee-infinity-fluid-wagon" and e.destination.name == "ee-infinity-fluid-wagon"
+  then
+    infinity_wagon.paste_settings(e.source, e.destination)
+  end
 end)
 
 -- GUI
