@@ -270,7 +270,7 @@ local migrations = {
     end
   end,
   ["1.4.0"] = function()
-    -- remove any sync chests that have somehow remained (LuziferSenpai...)
+    -- remove any sync chests that have somehow remained
     for _,  player_table in pairs(global.players) do
       player_table.sync_chests = nil
     end
@@ -280,21 +280,22 @@ local migrations = {
       -- we don't have a settings table yet (that will be created in generic migrations) so do it manually
       player_table.flags.inventory_sync_enabled = player.mod_settings["ee-inventory-sync"].value and player.cheat_mode
     end
-    -- remove cursor sync event data
-    for _,  name in ipairs{"inventory_sync_pre_toggled_editor", "inventory_sync_toggled_editor"} do
-      local __event = global.__lualib.event
-      local event_data = __event.conditional_events[name]
-      local players = __event.players
-      if event_data then
-        for _,  player_index in ipairs(event_data.players) do
-          players[player_index][name] = nil
-          if table_size(players[player_index]) == 0 then
-            players[player_index] = nil
-          end
-        end
-        __event.conditional_events[name] = nil
-      end
-    end
+    -- REMOVED: the event module no longer exists
+    -- -- remove cursor sync event data
+    -- for _,  name in ipairs{"inventory_sync_pre_toggled_editor", "inventory_sync_toggled_editor"} do
+    --   local __event = global.__lualib.event
+    --   local event_data = __event.conditional_events[name]
+    --   local players = __event.players
+    --   if event_data then
+    --     for _,  player_index in ipairs(event_data.players) do
+    --       players[player_index][name] = nil
+    --       if table_size(players[player_index]) == 0 then
+    --         players[player_index] = nil
+    --       end
+    --     end
+    --     __event.conditional_events[name] = nil
+    --   end
+    -- end
   end
 }
 
