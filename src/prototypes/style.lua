@@ -176,8 +176,9 @@ styles.ee_toolbar_frame = {
   }
 }
 
-styles.ee_current_signal_frame = {
+styles.ee_ic_current_signal_frame = {
   type = "frame_style",
+  top_margin = 2,
   graphical_set = {
     base = {
       center = {position={76,8}, size=1},
@@ -188,14 +189,15 @@ styles.ee_current_signal_frame = {
     type = "horizontal_flow_style",
     horizontally_stretchable = "on",
     vertical_align = "center",
-    horizontal_spacing = 6
+    horizontal_spacing = 6,
+    bottom_padding = 2
   }
 }
 
 -- -----------------------------------------------------------------------------
 -- SCROLLPANE STYLES
 
-styles.signal_scroll_pane = {
+styles.ee_ic_signals_scroll_pane = {
   type = "scroll_pane_style",
   parent = "train_schedule_scroll_pane",
   padding = 0,
@@ -239,13 +241,6 @@ styles.signal_scroll_pane = {
       custom_horizontal_tiling_sizes = {32, 32, 32, 32, 32, 32} -- to avoid little bumps in the scrollbar area
     }
   }
-}
-
-styles.signal_slot_table = {
-  type = "table_style",
-  parent = "slot_table",
-  horizontal_spacing = 0,
-  vertical_spacing = 0
 }
 
 -- -----------------------------------------------------------------------------

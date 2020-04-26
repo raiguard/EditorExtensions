@@ -3,7 +3,6 @@ local infinity_accumulator = {}
 local gui = require("__flib__.control.gui")
 local util = require("scripts.util")
 
-local math_min = math.min
 local string_gsub = string.gsub
 local string_sub = string.sub
 
@@ -183,7 +182,7 @@ gui.add_handlers{
   }
 }
 
--- TODO Raiguard: when changing settings, update GUI for everyone to avoid crashes
+-- TODO: when changing settings, update GUI for everyone to avoid crashes
 
 local function create_gui(player, player_table, entity)
   local priority, mode = get_settings_from_name(entity.name)

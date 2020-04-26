@@ -410,16 +410,15 @@ end
 -- PICKER DOLLIES
 
 local function picker_dollies_move(e)
-  local entity = e.moved_entity
-  if entity.name == "ee-infinity-loader-logic-combinator" then
+  if e.moved_entity.name == "ee-infinity-loader-logic-combinator" then
     local loader
     -- move all entities to new position
-    for _, e in pairs(e.moved_entity.surface.find_entities_filtered{type={"loader-1x1", "inserter", "infinity-container"}, position=e.start_pos}) do
-      if check_is_loader(e) then
+    for _, entity in pairs(e.moved_entity.surface.find_entities_filtered{type={"loader-1x1", "inserter", "infinity-container"}, position=e.start_pos}) do
+      if check_is_loader(entity) then
         -- loaders don't support teleportation, so destroy and recreate it
-        loader = update_loader_type(e, get_belt_type(e), {position=entity.position})
+        loader = update_loader_type(entity, get_belt_type(entity), {position=entity.position})
       else
-        e.teleport(entity.position)
+        entity.teleport(entity.position)
       end
     end
     -- snap loader

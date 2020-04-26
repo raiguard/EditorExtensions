@@ -8,7 +8,7 @@ local string_gsub = string.gsub
 local string_sub = string.sub
 
 local infinity_accumulator = require("scripts.entity.infinity-accumulator")
--- require("scripts.infinity-combinator")
+local infinity_combinator = require("scripts.entity.infinity-combinator")
 local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
@@ -430,6 +430,7 @@ gui.register_events()
 event.on_gui_opened(function(e)
   gui.dispatch_handlers(e)
   infinity_accumulator.on_gui_opened(e)
+  infinity_combinator.on_gui_opened(e)
   infinity_loader.on_gui_opened(e)
   infinity_wagon.on_gui_opened(e)
   inventory.on_gui_opened(e)
