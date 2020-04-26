@@ -1,3 +1,5 @@
+local gui = require("__flib__.control.gui")
+
 local cheat_mode = require("scripts.cheat-mode")
 
 return {
@@ -52,5 +54,11 @@ return {
       -- we don't have a settings table yet (that will be created in generic migrations) so do it manually
       player_table.flags.inventory_sync_enabled = player.mod_settings["ee-inventory-sync"].value and player.cheat_mode
     end
+  end,
+  ["2.0.0"] = function()
+    -- remove old lualib info
+    global.__lualib = nil
+    -- initialize GUI module
+    gui.init()
   end
 }

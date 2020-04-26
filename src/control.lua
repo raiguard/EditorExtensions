@@ -35,8 +35,8 @@ end)
 -- BOOTSTRAP
 
 event.on_init(function()
+  gui.init()
   data.init()
-  gui.on_init()
   tesseract_chest.update_data()
   gui.bootstrap_postprocess()
 end)
