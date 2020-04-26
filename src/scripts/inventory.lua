@@ -264,9 +264,9 @@ function inventory.on_gui_opened(e)
       local gui_data, filters = gui.build(player.gui.screen, {
         {type="frame", style="shortcut_bar_window_frame", style_mods={right_padding=4}, save_as="window", children={
           {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
-            {type="sprite-button", style="shortcut_bar_button", sprite="ee-import-inventory-filters", tooltip={"ee-gui.import-inventory-filters"},
+            {type="sprite-button", style="shortcut_bar_button", sprite="ee_import_inventory_filters", tooltip={"ee-gui.import-inventory-filters"},
               handlers="inventory_filters_buttons.import_export_button", save_as="import_button"},
-            {type="sprite-button", style="shortcut_bar_button", sprite="ee-export-inventory-filters", tooltip={"ee-gui.export-inventory-filters"},
+            {type="sprite-button", style="shortcut_bar_button", sprite="ee_export_inventory_filters", tooltip={"ee-gui.export-inventory-filters"},
               handlers="inventory_filters_buttons.import_export_button", save_as="export_button"}
           }}
         }}
