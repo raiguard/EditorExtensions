@@ -1,13 +1,10 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- INFINITY LOADER
+local infinity_loader = {}
 
+local event = require("__flib__.control.event")
+local gui = require("__flib__.control.gui")
 local util = require("scripts.util")
 
--- GUI ELEMENTS
-local entity_camera = require("scripts.gui-elems.entity-camera")
-local titlebar = require("scripts.gui-elems.titlebar")
-
-local gui = {}
+local string_sub = string.sub
 
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
@@ -252,77 +249,88 @@ end
 -- -----------------------------------------------------------------------------
 -- GUI
 
--- ----------------------------------------
--- GUI HANDLERS
-
-local function close_button_clicked(e)
-  -- invoke GUI closed event
-  event.raise(defines.events.on_gui_closed, {element=e.element.parent.parent, gui_type=16, player_index=e.player_index, tick=game.tick})
-end
-
-local function state_switch_state_changed(e)
-  local entity = global.players[e.player_index].gui.il.entity
-  entity.get_or_create_control_behavior().enabled = e.element.switch_state == "left"
-  update_filters(entity)
-end
-
-local function filter_button_elem_changed(e)
-  local index = e.element.name:gsub("ee_il_filter_button_", "")
-  local entity = global.players[e.player_index].gui.il.entity
-  local control = entity.get_or_create_control_behavior()
-  control.set_signal(index, e.element.elem_value and {signal={type="item", name=e.element.elem_value}, count=1} or nil)
-  update_filters(entity)
-end
-
-event.register_conditional{
-  il_close_button_clicked = {id=defines.events.on_gui_click, handler=close_button_clicked, group="il_gui"},
-  il_state_switch_state_changed = {id=defines.events.on_gui_switch_state_changed, handler=state_switch_state_changed, group="il_gui"},
-  il_filter_button_elem_changed = {id=defines.events.on_gui_elem_changed, handler=filter_button_elem_changed, group="il_gui"}
+gui.add_templates{
+  il_filter_button = {type="choose-elem-button", style="ee_infinity_loader_filter_button", elem_type="item"}
 }
 
--- ----------------------------------------
--- GUI MANAGEMENT
+gui.add_handlers{
+  il = {
+    close_button = {
+      on_gui_click = function(e)
+        gui.handlers.il.window.on_gui_closed(e)
+      end
+    },
+    state_switch = {
+      on_gui_switch_state_changed = function(e)
+        local entity = global.players[e.player_index].gui.il.entity
+        entity.get_or_create_control_behavior().enabled = e.element.switch_state == "left"
+        update_filters(entity)
+      end
+    },
+    filter_button = {
+      on_gui_elem_changed = function(e)
+        local name = e.element.name
+        local index = tonumber(string_sub(name, #name, #name))
+        local entity = global.players[e.player_index].gui.il.entity
+        local control = entity.get_or_create_control_behavior()
+        control.set_signal(index, e.element.elem_value and {signal={type="item", name=e.element.elem_value}, count=1} or nil)
+        update_filters(entity)
+      end
+    },
+    window = {
+      on_gui_closed = function(e)
+        local player_table = global.players[e.player_index]
+        local gui_data = player_table.gui.il
+        gui.remove_filters(e.player_index, gui_data.filters)
+        gui_data.window.destroy()
+        player_table.gui.il = nil
+      end
+    }
+  }
+}
 
-function gui.create(parent, entity, player)
+-- TODO: update GUI state when any other players change something
+
+local function create_gui(player, player_table, entity)
   local control = entity.get_or_create_control_behavior()
   local parameters = control.parameters.parameters
-  local window = parent.add{type="frame", name="ee_il_window", style="dialog_frame", direction="vertical"}
-  local titlebar = titlebar.create(window, "ee_il_titlebar", {
-    draggable = true,
-    label = {"entity-name.ee-infinity-loader"},
-    buttons = {util.constants.close_button_def}
+  local gui_data, filters = gui.build(player.gui.screen, {
+    {type="frame", style="dialog_frame", direction="vertical", handlers="il.window", save_as="window", children={
+      {type="flow", children={
+        {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}},
+        {template="titlebar_drag_handle"},
+        {template="close_button", handlers="il.close_button"}
+      }},
+      {type="flow", style="ee_entity_window_content_flow", children={
+        gui.templates.entity_camera(entity, 90, 1, {0,0}, player.display_scale),
+        {type="frame", style="ee_ia_page_frame", direction="vertical", children={
+          {template="vertically_centered_flow", children={
+            {type="label", caption={"ee-gui.state"}},
+            {template="pushers.horizontal"},
+            {type="switch", left_label_caption={"gui-constant.on"}, right_label_caption={"gui-constant.off"},
+              switch_state=control.enabled and "left" or "right", handlers="il.state_switch"}
+          }},
+          {template="pushers.vertical"},
+          {template="vertically_centered_flow", children={
+            {type="label", caption={"", {"ee-gui.filters"}, " [img=info]"}, tooltip={"ee-gui.il-filters-description"}},
+            {type="empty-widget", style_mods={width=20}},
+            {template="il_filter_button", name="ee_il_filter_button_1", item=parameters[1].signal.name, handlers="il.filter_button", save_as="filter_button_1"},
+            {template="il_filter_button", name="ee_il_filter_button_2", item=parameters[2].signal.name, handlers="il.filter_button", save_as="filter_button_2"}
+          }}
+        }}
+      }}
+    }}
   })
-  event.enable("il_close_button_clicked", player.index, titlebar.children[3].index)
-  local content_flow = window.add{type="flow", name="ee_il_content_flow", style="ee_entity_window_content_flow", direction="horizontal"}
-  local camera = entity_camera.create(content_flow, "ee_il_camera", 90, {player=player, entity=entity, camera_zoom=1})
-  local page_frame = content_flow.add{type="frame", name="ee_il_page_frame", style="ee_ia_page_frame", direction="vertical"}
-  page_frame.style.width = 160
-  local state_flow = page_frame.add{type="flow", name="ee_il_state_flow", style="ee_vertically_centered_flow", direction="horizontal"}
-  state_flow.add{type="label", name="ee_il_state_label", caption={"", {"gui-infinity-loader.state-label-caption"}, " [img=info]"},
-    tooltip={"gui-infinity-loader.state-label-tooltip"}}
-  state_flow.add{type="empty-widget", name="ee_il_state_pusher", style="ee_invisible_horizontal_pusher"}
-  local state_switch = state_flow.add{type="switch", name="ee_il_state_switch", left_label_caption={"gui-constant.on"},
-    right_label_caption={"gui-constant.off"}, switch_state=control.enabled and "left" or "right"}
-  event.enable("il_state_switch_state_changed", player.index, state_switch.index)
-  page_frame.add{type="empty-widget", name="ee_il_page_pusher", style="ee_invisible_vertical_pusher"}
-  local filters_flow = page_frame.add{type="flow", name="ee_il_filters_flow", style="ee_vertically_centered_flow", direction="horizontal"}
-  filters_flow.add{type="label", name="ee_il_filters_label", caption={"", {"gui-infinity-loader.filters-label-caption"}, " [img=info]"},
-    tooltip={"gui-infinity-loader.filters-label-tooltip"}}
-  filters_flow.add{type="empty-widget", name="ee_il_filters_pusher", style="ee_invisible_horizontal_pusher", direction="horizontal"}
-  event.enable("il_filter_button_elem_changed", player.index, {
-    filters_flow.add{type="choose-elem-button", name="ee_il_filter_button_1", style="ee_infinity_loader_filter_button", elem_type="item",
-      item=parameters[1].signal.name}.index,
-    filters_flow.add{type="choose-elem-button", name="ee_il_filter_button_2", style="ee_infinity_loader_filter_button", elem_type="item",
-      item=parameters[2].signal.name}.index
-  })
-  window.force_auto_center()
-  return {window=window, camera=camera}
-end
 
-function gui.destroy(player_index, player_table)
-  event.disable_group("il_gui", player_index)
-  player_table.gui.il.elems.window.destroy()
-  player_table.gui.il = nil
+  gui_data.window.force_auto_center()
+  gui_data.drag_handle.drag_target = gui_data.window
+
+  player.opened = gui_data.window
+
+  gui_data.filters = filters
+  gui_data.entity = entity
+
+  player_table.gui.il = gui_data
 end
 
 -- -----------------------------------------------------------------------------
@@ -399,9 +407,7 @@ end
 -- -----------------------------------------------------------------------------
 -- COMPATIBILITY
 
---
 -- PICKER DOLLIES
---
 
 local function picker_dollies_move(e)
   local entity = e.moved_entity
@@ -420,22 +426,17 @@ local function picker_dollies_move(e)
     snap_loader(loader)
   end
 end
-event.on_init(function()
+
+function infinity_loader.register_picker_dollies()
   if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
     event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), picker_dollies_move)
   end
-end)
-event.on_load(function()
-  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
-    event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), picker_dollies_move)
-  end
-end)
+end
 
 -- -----------------------------------------------------------------------------
--- STATIC HANDLERS
+-- EVENT HANDLERS
 
--- when an entity is built in-game of through script, or constructed or revived through script
-event.register(util.constants.entity_built_events, function(e)
+function infinity_loader.on_built(e)
   local entity = e.created_entity or e.entity
   if entity.name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
     -- convert to dummy combinator ghost
@@ -454,8 +455,7 @@ event.register(util.constants.entity_built_events, function(e)
     new_control.parameters = old_control.parameters
     new_control.enabled = old_control.enabled
     entity.destroy()
-    -- raise event
-    event.raise(defines.events.script_raised_built, {entity=new_entity, tick=game.tick})
+    return true
   elseif entity.name == "ee-infinity-loader-dummy-combinator" or entity.name == "ee-infinity-loader-logic-combinator" then
     -- create the loader with default belt type, we will snap it later
     local loader, inserters, chest, combinator = create_loader("express", "output", entity.surface, entity.position, entity.direction, entity.force)
@@ -467,23 +467,27 @@ event.register(util.constants.entity_built_events, function(e)
     entity.destroy()
     -- snap new loader
     snap_loader(loader)
+    return true
   elseif entity.type == "transport-belt" then
     -- snap neighbors
     snap_tile_neighbors(entity)
+    return true
   elseif entity.type == "underground-belt" then
     -- snap neighbors of both sides
     snap_tile_neighbors(entity)
     if entity.neighbours then
       snap_tile_neighbors(entity)
     end
+    return true
   elseif entity.type == "splitter" or entity.type == "loader-1x1" then
     -- snap belt neighbors
     snap_belt_neighbors(entity)
+    return true
   end
-end)
+  return false
+end
 
--- when an entity is rotated
-event.register(defines.events.on_player_rotated_entity, function(e)
+function infinity_loader.on_rotated(e)
   local entity = e.entity
   if entity.name == "ee-infinity-loader-logic-combinator" then
     -- rotate loader instead of combinator
@@ -492,47 +496,43 @@ event.register(defines.events.on_player_rotated_entity, function(e)
     loader.rotate()
     update_inserters(loader)
     update_filters(entity, {loader=loader})
+    return true
   elseif entity.type == "transport-belt" then
     -- snap neighbors
     snap_tile_neighbors(entity)
+    return true
   elseif entity.type == "underground-belt" then
     -- snap neighbors of both sides
     snap_tile_neighbors(entity)
     if entity.neighbours then
       snap_tile_neighbors(entity.neighbours)
     end
+    return true
   elseif entity.type == "splitter" or entity.type == "loader-1x1" then
     -- snap belt neighbors
     snap_belt_neighbors(entity)
+    return true
   end
-end)
+  return false
+end
 
--- when an entity is destroyed
-event.register(util.constants.entity_destroyed_events, function(e)
-  local entity = e.entity
-  if entity.name == "ee-infinity-loader-logic-combinator" then
-    -- close open GUIs
-    if global.__lualib.event.il_close_button_clicked then
-      for _, i in ipairs(global.__lualib.event.il_close_button_clicked.players) do
-        local player_table = global.players[i]
-        -- check if they're viewing this one
-        if player_table.gui.il.entity == entity then
-          gui.destroy(player_table.gui.il.elems.window, e.player_index)
-          player_table.gui.il = nil
-        end
-      end
-    end
-    local entities = entity.surface.find_entities_filtered{position=entity.position}
-    for _, e in pairs(entities) do
-      if e.name:find("infinity%-loader") then
-        e.destroy()
-      end
+function infinity_loader.destroy(entity)
+  -- close open GUIs
+  for i, t in pairs(global.players) do
+    if t.gui.il and t.gui.il.entity == entity then
+      gui.handlers.il.window.on_gui_closed{player_index=i}
     end
   end
-end)
+  -- destroy entities
+  local entities = entity.surface.find_entities_filtered{position=entity.position}
+  for _, sub_entity in pairs(entities) do
+    if string_sub(sub_entity.name, 1, 18) == "ee-infinity-loader" then
+      sub_entity.destroy()
+    end
+  end
+end
 
--- when a player selects an area for blueprinting
-event.register(defines.events.on_player_setup_blueprint, function(e)
+function infinity_loader.on_player_setup_blueprint(e)
   local player = game.get_player(e.player_index)
   local bp = player.blueprint_to_setup
   if not bp or not bp.valid_for_read then
@@ -547,10 +547,9 @@ event.register(defines.events.on_player_setup_blueprint, function(e)
     end
   end
   bp.set_blueprint_entities(entities)
-end)
+end
 
--- when an entity settings copy/paste occurs
-event.register(defines.events.on_entity_settings_pasted, function(e)
+function infinity_loader.on_entity_settings_pasted(e)
   if e.destination.name == "ee-infinity-loader-logic-combinator" then
     -- sanitize filters to remove any non-items
     local parameters = {parameters={}}
@@ -566,29 +565,19 @@ event.register(defines.events.on_entity_settings_pasted, function(e)
     -- update filters
     update_filters(e.destination)
   end
-end)
+end
 
--- when a player opens a GUI
-event.register(defines.events.on_gui_opened, function(e)
-  if e.entity and e.entity.name == "ee-infinity-loader-logic-combinator" then
+function infinity_loader.on_gui_opened(e)
+  if e.entity and e.entity.valid and e.entity.name == "ee-infinity-loader-logic-combinator" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
-    local elems = gui.create(player.gui.screen, e.entity, player)
-    player.opened = elems.window
-    player_table.gui.il = {elems=elems, entity=e.entity}
+    create_gui(player, player_table, e.entity)
   end
-end)
+end
 
--- when a GUI is closed
-event.register(defines.events.on_gui_closed, function(e)
-  if e.gui_type == 16 and e.element and e.element.name == "ee_il_window" then
-    gui.destroy(e.player_index, global.players[e.player_index])
-  end
-end)
-
--- when mod configuration changes
-event.on_configuration_changed(function(e)
-  -- check every single infinity loader on every surface to see if it no longer has a loader entity
+-- check every single infinity loader on every surface to see if it no longer has a loader entity
+-- called in on_configuration_changed
+function infinity_loader.check_loaders()
   for _, surface in pairs(game.surfaces) do
     for _, entity in ipairs(surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator"}) do
       -- if its loader is gone, give it a new one with default settings
@@ -600,25 +589,6 @@ event.on_configuration_changed(function(e)
       end
     end
   end
-end)
-
--- -----------------------------------------------------------------------------
--- OBJECT
-
-local self = {}
-
--- for use in migrations, takes a lonesome logic combinator and builds the internals
-function self.build_loader(entity)
-  -- create the loader with default belt type, we will snap it later
-  local loader, inserters, chest, combinator = create_loader("express", "output", entity.surface, entity.position, entity.direction, entity.force)
-  -- get and set previous filters, if any
-  local old_control = entity.get_or_create_control_behavior()
-  local new_control = combinator.get_or_create_control_behavior()
-  new_control.parameters = old_control.parameters
-  new_control.enabled = old_control.enabled
-  entity.destroy()
-  -- snap new loader
-  snap_loader(loader)
 end
 
-return self
+return infinity_loader

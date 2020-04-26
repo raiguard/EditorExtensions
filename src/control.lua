@@ -9,11 +9,32 @@ local string_sub = string.sub
 
 local infinity_accumulator = require("scripts.entity.infinity-accumulator")
 -- require("scripts.infinity-combinator")
--- require("scripts.infinity-loader")
+local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
 
 local inventory = require("scripts.inventory")
+
+-- -----------------------------------------------------------------------------
+-- GUI
+
+gui.add_templates{
+  titlebar_drag_handle = {type="empty-widget", style="draggable_space_header", style_mods={right_margin=5, height=24, horizontally_stretchable=true},
+    save_as="drag_handle"},
+  close_button = {type="sprite-button", style="close_button", style_mods={top_margin=2, width=20, height=20}, sprite="utility/close_white",
+    hovered_sprite="utility/close_black", clicked_sprite="utility/close_black", mouse_button_filter={"left"}},
+  entity_camera = function(entity, size, zoom, camera_offset, player_display_scale)
+    return
+      {type="frame", style="inside_deep_frame", children={
+        {type="camera", style_mods={width=size, height=size}, position=util.position.add(entity.position, camera_offset), zoom=(zoom * player_display_scale)}
+      }}
+  end,
+  vertically_centered_flow = {type="flow", style_mods={vertical_align="center"}},
+  pushers = {
+    horizontal = {type="empty-widget", style_mods={horizontally_stretchable=true}},
+    vertical = {type="empty-widget", style_mods={vertically_stretchable=true}}
+  }
+}
 
 -- -----------------------------------------------------------------------------
 -- CHEAT MODE
@@ -298,6 +319,7 @@ event.on_configuration_changed(function(e)
     for i,  player in pairs(game.players) do
       refresh_player_data(player, global.players[i])
     end
+    infinity_loader.check_loaders()
     tesseract_chest.update_data()
     tesseract_chest.update_all_filters()
   end
@@ -336,10 +358,12 @@ event.register(
   },
   function(e)
     local entity = e.entity or e.created_entity
-    if string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
-      tesseract_chest.set_filters(entity)
+    if infinity_loader.on_built(e) then
+      -- pass
     elseif infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.build(entity, e.tags)
+    elseif string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
+      tesseract_chest.set_filters(entity)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
       if entity.name == "ee-infinity-inserter" then
@@ -360,13 +384,19 @@ event.register(
   },
   function(e)
     local entity = e.entity
-    if infinity_wagon.wagon_names[entity.name] then
+    if entity.name == "ee-infinity-loader-logic-combinator" then
+      infinity_loader.destroy(entity)
+    elseif infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.destroy(entity)
     else
       infinity_accumulator.on_destroyed(e)
     end
   end
 )
+
+event.on_player_rotated_entity(function(e)
+  infinity_loader.on_rotated(e)
+end)
 
 event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
   local entity = e.entity
@@ -388,6 +418,7 @@ end)
 
 event.on_entity_settings_pasted(function(e)
   infinity_accumulator.on_entity_settings_pasted(e)
+  infinity_loader.on_entity_settings_pasted(e)
   infinity_wagon.on_entity_settings_pasted(e)
 end)
 
@@ -398,6 +429,7 @@ gui.register_events()
 event.on_gui_opened(function(e)
   gui.dispatch_handlers(e)
   infinity_accumulator.on_gui_opened(e)
+  infinity_loader.on_gui_opened(e)
   infinity_wagon.on_gui_opened(e)
   inventory.on_gui_opened(e)
 end)
@@ -442,6 +474,7 @@ event.register({defines.events.on_player_promoted, defines.events.on_player_demo
 end)
 
 event.on_player_setup_blueprint(function(e)
+  infinity_loader.on_player_setup_blueprint(e)
   infinity_wagon.on_player_setup_blueprint(e)
 end)
 
