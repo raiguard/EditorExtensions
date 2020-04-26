@@ -1,10 +1,14 @@
 local event = require("__flib__.control.event")
 local gui = require("__flib__.control.gui")
 local migration = require("__flib__.control.migration")
-local util = require("scripts.util")
 
-local string_gsub = string.gsub
 local string_sub = string.sub
+
+local cheat_mode = require("scripts.cheat-mode")
+local data = require("scripts.data")
+local inventory = require("scripts.inventory")
+
+require("scripts.common-gui")
 
 local infinity_accumulator = require("scripts.entity.infinity-accumulator")
 local infinity_combinator = require("scripts.entity.infinity-combinator")
@@ -13,67 +17,6 @@ local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
-
-local cheat_mode = require("scripts.cheat-mode")
-local inventory = require("scripts.inventory")
-
-require("scripts.common-gui")
-
--- -----------------------------------------------------------------------------
--- GLOBAL DATA
-
-local function setup_player(index)
-  local data = {
-    flags = {
-      inventory_sync_enabled = false,
-      map_editor_toggled = false
-    },
-    gui = {
-      ic = {
-        network_color = "red",
-        sort_mode = "numerical",
-        sort_direction = "descending",
-        update_divider = 30
-      }
-    }
-  }
-  global.players[index] = data
-end
-
-local function update_player_settings(player, player_table)
-  local settings = {}
-  for name,  t in pairs(player.mod_settings) do
-    if string_sub(name, 1,3) == "ee-" then
-      name = string_gsub(name, "^ee%-", "")
-      settings[string_gsub(name, "%-", "_")] = t.value
-    end
-  end
-  player_table.settings = settings
-end
-
-local function refresh_player_data(player, player_table)
-  -- set shortcut availability
-  player.set_shortcut_available("ee-toggle-map-editor", player.admin)
-
-  -- update settings
-  update_player_settings(player, player_table)
-end
-
-local function init_global_data()
-  global.combinators = {}
-  global.flags = {
-    map_editor_toggled = false
-  }
-  global.players = {}
-  for i, p in pairs(game.players) do
-    setup_player(i)
-    refresh_player_data(p, global.players[i])
-    if p.cheat_mode then
-      cheat_mode.enable_recipes(p)
-    end
-  end
-  global.wagons = {}
-end
 
 -- -----------------------------------------------------------------------------
 -- COMMANDS
@@ -150,8 +93,8 @@ local migrations = {
 -- BOOTSTRAP
 
 event.on_init(function()
+  data.init()
   gui.on_init()
-  init_global_data()
   tesseract_chest.update_data()
   gui.bootstrap_postprocess()
 end)
@@ -163,7 +106,7 @@ end)
 event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
     for i,  player in pairs(game.players) do
-      refresh_player_data(player, global.players[i])
+      data.refresh_player(player, global.players[i])
     end
     infinity_loader.check_loaders()
     tesseract_chest.update_data()
@@ -306,8 +249,8 @@ end)
 -- PLAYER
 
 event.on_player_created(function(e)
-  setup_player(e.player_index)
-  refresh_player_data(game.get_player(e.player_index), global.players[e.player_index])
+  data.setup_player(e.player_index)
+  data.refresh_player(game.get_player(e.player_index), global.players[e.player_index])
 end)
 
 event.on_player_removed(function(e)
@@ -364,7 +307,7 @@ event.on_runtime_mod_setting_changed(function(e)
   elseif string_sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
-    update_player_settings(player, player_table)
+    data.update_player_settings(player, player_table)
     if e.setting == "ee-inventory-sync" then
       inventory.toggle_sync(player, player_table)
     end
