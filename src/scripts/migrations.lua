@@ -60,5 +60,12 @@ return {
     global.__lualib = nil
     -- initialize GUI module
     gui.init()
+    -- destroy any infinity combinator GUIs
+    for _, player_table in pairs(global.players) do
+      if player_table.gui.ic then
+        player_table.gui.ic.window.destroy()
+        player_table.gui.ic = nil
+      end
+    end
   end
 }
