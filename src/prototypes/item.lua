@@ -208,6 +208,7 @@ infinity_pipe.subgroup = "ee-misc"
 infinity_pipe.order = "ba"
 infinity_pipe.stack_size = 50
 infinity_pipe.place_result = "ee-infinity-pipe"
+infinity_pipe.flags = {}
 data:extend{infinity_pipe}
 
 -- INFINITY PUMP

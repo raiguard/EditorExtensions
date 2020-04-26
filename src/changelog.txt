@@ -4,6 +4,8 @@ Date: ????
   Changes:
     - Complete rewrite of the mod to improve performance
     - Switched from RaiLuaLib to FLib
+  Bugfixes:
+    - Fixed the infinity pipe not appearing in item filters menu
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.2
 Date: ????
