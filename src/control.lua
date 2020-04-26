@@ -403,32 +403,6 @@ event.on_gui_closed(function(e)
   inventory.on_gui_closed(e)
 end)
 
--- MAP EDITOR
-
-event.on_player_toggled_map_editor(function(e)
-  -- the first time someone toggles the map editor, unpause the current tick
-  if global.flags.map_editor_toggled == false then
-    global.flags.map_editor_toggled = true
-    game.tick_paused = false
-  end
-
-  local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
-  local to_state = player.controller_type == defines.controllers.editor
-
-  -- update shortcut toggled state
-  player.set_shortcut_toggled("ee-toggle-map-editor", to_state)
-
-  -- apply default inventory filters if this is their first time in the editor
-  if to_state and not player_table.flags.map_editor_toggled then
-    player_table.flags.map_editor_toggled = true
-    local default_filters = player_table.settings.default_inventory_filters
-    if default_filters ~= "" then
-      inventory.import_inventory_filters(player, default_filters)
-    end
-  end
-end)
-
 -- SHORTCUT
 
 event.on_lua_shortcut(function(e)
@@ -465,6 +439,36 @@ end)
 
 event.on_player_setup_blueprint(function(e)
   infinity_wagon.on_player_setup_blueprint(e)
+end)
+
+event.on_pre_player_toggled_map_editor(function(e)
+  inventory.on_pre_player_toggled_map_editor(e)
+end)
+
+event.on_player_toggled_map_editor(function(e)
+  -- the first time someone toggles the map editor, unpause the current tick
+  if global.flags.map_editor_toggled == false then
+    global.flags.map_editor_toggled = true
+    game.tick_paused = false
+  end
+
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  local to_state = player.controller_type == defines.controllers.editor
+
+  -- update shortcut toggled state
+  player.set_shortcut_toggled("ee-toggle-map-editor", to_state)
+
+  -- apply default inventory filters if this is their first time in the editor
+  if to_state and not player_table.flags.map_editor_toggled then
+    player_table.flags.map_editor_toggled = true
+    local default_filters = player_table.settings.default_inventory_filters
+    if default_filters ~= "" then
+      inventory.import_inventory_filters(player, default_filters)
+    end
+  end
+
+  inventory.on_player_toggled_map_editor(e)
 end)
 
 -- SETTINGS

@@ -288,8 +288,11 @@ function inventory.on_player_display_resolution_changed(e)
   end
 end
 
-function inventory.on_player_pre_toggled_map_editor(e)
-  create_sync_inventories(global.players[e.player_index], game.get_player(e.player_index))
+function inventory.on_pre_player_toggled_map_editor(e)
+  local player_table = global.players[e.player_index]
+  if player_table.flags.inventory_sync_enabled then
+    create_sync_inventories(player_table, game.get_player(e.player_index))
+  end
 end
 
 function inventory.on_player_toggled_map_editor(e)
