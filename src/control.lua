@@ -66,67 +66,26 @@ local function set_armor(inventory)
   end
 end
 
-local function on_cheat_command(e)
-  if e.command == "cheat" and e.parameters == "all" then
-    local player = game.get_player(e.player_index)
-    if player.cheat_mode then
-      -- remove default items
-      local main_inventory = player.get_main_inventory()
-      for i=1, #items_to_remove do
-        main_inventory.remove(items_to_remove[i])
-      end
-      -- add custom items
-      for i=1, #items_to_add do
-        main_inventory.insert(items_to_add[i])
-      end
-      if player.controller_type == defines.controllers.character then
-        -- increase reach distance
-        player.character_build_distance_bonus = 1000000
-        player.character_reach_distance_bonus = 1000000
-        player.character_resource_reach_distance_bonus = 1000000
-        -- overwrite the default armor loadout
-        set_armor(player.get_inventory(defines.inventory.character_armor))
-      elseif player.controller_type == defines.controllers.editor then
-        -- overwrite the default armor loadout
-        set_armor(player.get_inventory(defines.inventory.editor_armor))
-      end
-    end
+local function set_cheat_loadout(player)
+  -- remove default items
+  local main_inventory = player.get_main_inventory()
+  for i=1, #items_to_remove do
+    main_inventory.remove(items_to_remove[i])
   end
-end
-
--- -----------------------------------------------------------------------------
--- MAP EDITOR SHORTCUT
-
-local function toggle_map_editor(e)
-  local player = game.get_player(e.player_index)
-  player.toggle_map_editor()
-  player.set_shortcut_toggled("ee-toggle-map-editor", player.controller_type == defines.controllers.editor)
-  -- the first time someone toggles the map editor, unpause the current tick
-  if global.flags.map_editor_toggled == false then
-    global.flags.map_editor_toggled = true
-    game.tick_paused = false
+  -- add custom items
+  for i=1, #items_to_add do
+    main_inventory.insert(items_to_add[i])
   end
-end
-
-local function set_shortcut_state(e)
-  -- set map editor shortcut state
-  local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
-  local new_state = player.controller_type == defines.controllers.editor
-  player.set_shortcut_toggled("ee-toggle-map-editor", new_state)
-end
-
--- lock or unlock the editor depending on if the player is an admin
-local function set_shortcut_available(e)
-  local player = game.get_player(e.player_index)
-  player.set_shortcut_available("ee-toggle-map-editor", player.admin)
-end
-
-local function apply_default_filters(player, player_table)
-  player_table.flags.map_editor_toggled = true
-  local default_filters = player_table.settings.default_inventory_filters
-  if default_filters ~= "" then
-    inventory.import_inventory_filters(player, default_filters)
+  if player.controller_type == defines.controllers.character then
+    -- increase reach distance
+    player.character_build_distance_bonus = 1000000
+    player.character_reach_distance_bonus = 1000000
+    player.character_resource_reach_distance_bonus = 1000000
+    -- overwrite the default armor loadout
+    set_armor(player.get_inventory(defines.inventory.character_armor))
+  elseif player.controller_type == defines.controllers.editor then
+    -- overwrite the default armor loadout
+    set_armor(player.get_inventory(defines.inventory.editor_armor))
   end
 end
 
@@ -134,7 +93,7 @@ end
 -- ENTITY SNAPPING
 
 -- set manually built inserters to blacklist mode by default
-local function on_infinity_inserter_built(entity)
+local function snap_infinity_inserter(entity)
   local control = entity.get_control_behavior()
   if not control then
     -- this is a new inserter, so set control mode to blacklist by default
@@ -143,13 +102,12 @@ local function on_infinity_inserter_built(entity)
 end
 
 -- snap manually built infinity pipes
-local function on_infinity_pipe_built(entity, player_index)
-  local settings = global.players[player_index].settings
+local function snap_infinity_pipe(entity, player_settings)
   local neighbours = entity.neighbours[1]
   local own_fb = entity.fluidbox
   local own_id = entity.unit_number
   -- snap to adjacent assemblers
-  if settings.infinity_pipe_assembler_snapping then
+  if player_settings.infinity_pipe_assembler_snapping then
     for ni=1, #neighbours do
       local neighbour = neighbours[ni]
       if neighbour.type == "assembling-machine" and neighbour.fluidbox then
@@ -166,7 +124,7 @@ local function on_infinity_pipe_built(entity, player_index)
     end
   end
   -- snap to locked fluid
-  if settings.infinity_pipe_snapping then
+  if player_settings.infinity_pipe_snapping then
     local fluid = own_fb.get_locked_fluid(1)
     if fluid then
       entity.set_infinity_pipe_filter{name=fluid, percentage=0, mode="exactly"}
@@ -356,6 +314,16 @@ end)
 event.on_player_cheat_mode_disabled(function(e)
   inventory.toggle_sync(game.get_player(e.player_index), global.players[e.player_index], false)
 end)
+
+event.on_console_command(function(e)
+  if e.command == "cheat" and e.parameters == "all" then
+    local player = game.get_player(e.player_index)
+    if player.cheat_mode then
+      set_cheat_loadout(player)
+    end
+  end
+end)
+
 -- ENTITIES
 
 event.register(
@@ -369,6 +337,13 @@ event.register(
     local entity = e.entity or e.created_entity
     if string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
       tesseract_chest.set_filters(entity)
+    -- only snap manually built entities
+    elseif e.name == defines.events.on_built_entity then
+      if entity.name == "ee-infinity-inserter" then
+        snap_infinity_inserter(entity)
+      elseif entity.name == "ee-infinity-pipe" then
+        snap_infinity_pipe(entity, global.players[e.player_index].settings)
+      end
     end
   end
 )
@@ -398,6 +373,56 @@ event.on_gui_closed(function(e)
   gui.dispatch_handlers(e)
   inventory.on_gui_closed(e)
 end)
+
+-- MAP EDITOR
+
+event.on_player_toggled_map_editor(function(e)
+  -- the first time someone toggles the map editor, unpause the current tick
+  if global.flags.map_editor_toggled == false then
+    global.flags.map_editor_toggled = true
+    game.tick_paused = false
+  end
+
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  local to_state = player.controller_type == defines.controllers.editor
+
+  -- update shortcut toggled state
+  player.set_shortcut_toggled("ee-toggle-map-editor", to_state)
+
+  -- apply default inventory filters if this is their first time in the editor
+  if to_state and not player_table.flags.map_editor_toggled then
+    player_table.flags.map_editor_toggled = true
+    local default_filters = player_table.settings.default_inventory_filters
+    if default_filters ~= "" then
+      inventory.import_inventory_filters(player, default_filters)
+    end
+  end
+end)
+
+-- SHORTCUT
+
+event.on_lua_shortcut(function(e)
+  if e.prototype_name == "ee-toggle-map-editor" then
+    game.get_player(e.player_index).toggle_map_editor()
+  end
+end)
+
+event.register("ee-toggle-map-editor", function(e)
+  local player = game.get_player(e.player_index)
+  if player.admin then
+    player.toggle_map_editor()
+  else
+    player.print{"ee-message.map-editor-denied"}
+  end
+end)
+
+event.register({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
+    -- lock or unlock the shortcut depending on if they're an admin
+    local player = game.get_player(e.player_index)
+    player.set_shortcut_available("ee-toggle-map-editor", player.admin)
+  end
+)
 
 -- PLAYER DATA
 
