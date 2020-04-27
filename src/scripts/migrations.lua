@@ -9,9 +9,9 @@ return {
       local recipes = force.recipes
       if recipes["ee-infinity-loader"].enabled then
         recipes["electric-energy-interface"].enabled = false
-        recipes["ee-infinity-exoskeleton-equipment"].enabled = true
+        recipes["ee-super-exoskeleton-equipment"].enabled = true
         recipes["ee-infinity-fusion-reactor-equipment"].enabled = true
-        recipes["ee-infinity-personal-roboport-equipment"].enabled = true
+        recipes["ee-super-personal-roboport-equipment"].enabled = true
       end
     end
     -- enable recipes for any players who already have cheat mode enabled
@@ -63,7 +63,9 @@ return {
     -- destroy any infinity combinator GUIs
     for _, player_table in pairs(global.players) do
       if player_table.gui.ic then
-        player_table.gui.ic.window.destroy()
+        if player_table.gui.ic.window then
+          player_table.gui.ic.window.destroy()
+        end
         player_table.gui.ic = nil
       end
     end

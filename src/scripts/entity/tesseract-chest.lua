@@ -19,7 +19,7 @@ end
 function tesseract_chest.update_all_filters()
   for _, surface in pairs(game.surfaces) do
     for _, entity in pairs(surface.find_entities_filtered{name=chest_names}) do
-      tesseract_chest.set_chest_filters(entity)
+      tesseract_chest.set_filters(entity)
     end
   end
 end

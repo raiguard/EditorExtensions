@@ -10,10 +10,10 @@ local inventory = require("scripts.inventory")
 require("scripts.common-gui")
 
 local infinity_accumulator = require("scripts.entity.infinity-accumulator")
-local infinity_inserter = require("scripts.entity.infinity-inserter")
 local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
+local super_inserter = require("scripts.entity.super-inserter")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
 
 local string_sub = string.sub
@@ -102,8 +102,8 @@ event.register(
       tesseract_chest.set_filters(entity)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
-      if entity.name == "ee-infinity-inserter" then
-        infinity_inserter.snap(entity)
+      if entity.name == "ee-super-inserter" then
+        super_inserter.snap(entity)
       elseif entity.name == "ee-infinity-pipe" then
         infinity_pipe.snap(entity, global.players[e.player_index].settings)
       end
@@ -309,7 +309,7 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter="name", name="ee-infinity-fluid-wagon"},
   {filter="name", name="ee-tesseract-chest"},
   {filter="name", name="ee-tesseract-chest-passive-provider"},
-  {filter="name", name="ee-infinity-inserter"},
+  {filter="name", name="ee-super-inserter"},
   {filter="name", name="ee-infinity-pipe"},
   {filter="type", type="transport-belt"},
   {filter="type", type="underground-belt"},

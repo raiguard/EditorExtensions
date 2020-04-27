@@ -28,18 +28,18 @@ local items_to_remove = {
 local items_to_add = {
   {name="ee-infinity-accumulator", count=50},
   {name="ee-infinity-chest", count=50},
-  {name="ee-infinity-construction-robot", count=100},
-  {name="ee-infinity-inserter", count=50},
+  {name="ee-super-construction-robot", count=100},
+  {name="ee-super-inserter", count=50},
   {name="ee-infinity-pipe", count=50},
-  {name="ee-infinity-substation", count=50}
+  {name="ee-super-substation", count=50}
 }
 
 local equipment_to_add = {
   {name="ee-infinity-fusion-reactor-equipment", position={0,0}},
-  {name="ee-infinity-personal-roboport-equipment", position={1,0}},
-  {name="ee-infinity-exoskeleton-equipment", position={2,0}},
-  {name="ee-infinity-exoskeleton-equipment", position={3,0}},
-  {name="ee-infinity-energy-shield-equipment", position={4,0}},
+  {name="ee-super-personal-roboport-equipment", position={1,0}},
+  {name="ee-super-exoskeleton-equipment", position={2,0}},
+  {name="ee-super-exoskeleton-equipment", position={3,0}},
+  {name="ee-super-energy-shield-equipment", position={4,0}},
   {name="ee-super-night-vision-equipment", position={5,0}}
 }
 
