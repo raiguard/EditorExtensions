@@ -40,11 +40,16 @@ local equipment_to_add = {
   {name="ee-super-exoskeleton-equipment", position={2,0}},
   {name="ee-super-exoskeleton-equipment", position={3,0}},
   {name="ee-super-energy-shield-equipment", position={4,0}},
-  {name="ee-super-night-vision-equipment", position={5,0}}
+  {name="ee-super-night-vision-equipment", position={5,0}},
+  {name="belt-immunity-equipment", position={6,0}}
 }
 
 local function set_armor(inventory)
-  inventory[1].set_stack{name="power-armor-mk2"}
+  if inventory[1] and inventory[1].name == "power-armor-mk2" then
+    inventory[1].grid.clear()
+  else
+    inventory[1].set_stack{name="power-armor-mk2"}
+  end
   local grid = inventory[1].grid
   for i=1, #equipment_to_add do
     grid.put(equipment_to_add[i])
