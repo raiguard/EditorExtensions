@@ -1,32 +1,29 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- RECIPES
--- For use in cheat mode so you can use the tools outside of the editor
-
 local util = require("prototypes.util")
 
 local recipe_names = {
   "ee-infinity-accumulator",
-  "ee-infinity-beacon",
+  "ee-super-beacon",
   "ee-infinity-cargo-wagon",
-  "ee-infinity-combinator",
-  "ee-infinity-construction-robot",
-  "ee-infinity-electric-pole",
-  "ee-infinity-exoskeleton-equipment",
+  "ee-super-construction-robot",
+  "ee-super-electric-pole",
+  "ee-super-energy-shield-equipment",
+  "ee-super-exoskeleton-equipment",
   "ee-infinity-fluid-wagon",
-  "ee-infinity-fuel",
+  "ee-super-fuel",
   "ee-infinity-fusion-reactor-equipment",
   "ee-infinity-heat-pipe",
-  "ee-infinity-inserter",
-  "ee-infinity-lab",
+  "ee-super-inserter",
+  "ee-super-lab",
   "ee-infinity-loader",
-  "ee-infinity-locomotive",
-  "ee-infinity-logistic-robot",
-  "ee-infinity-personal-roboport-equipment",
+  "ee-super-locomotive",
+  "ee-super-logistic-robot",
+  "ee-super-personal-roboport-equipment",
   "ee-infinity-pipe",
-  "ee-infinity-pump",
-  "ee-infinity-radar",
-  "ee-infinity-roboport",
-  "ee-infinity-substation",
+  "ee-super-pump",
+  "ee-super-radar",
+  "ee-super-roboport",
+  "ee-super-substation",
+  "ee-super-night-vision-equipment"
 }
 local function register_recipes(t)
   for _, k in ipairs(t) do

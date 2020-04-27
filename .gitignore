@@ -1,3 +1,4 @@
 .vscode
 *.code-workspace
 *.zip
+src/scripts/entity/ic-gui.lua

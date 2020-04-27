@@ -1,6 +1,3 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- EDITOR EXTENSIONS PROTOTYPES - FINAL FIXES
-
 local util = require("prototypes.util")
 
 -- TESSERACT CHEST
@@ -39,7 +36,7 @@ for _, p in pairs(data.raw["infinity-container"]) do
 end
 
 -- INFINITY LAB
-local lab = data.raw["lab"]["ee-infinity-lab"]
+local lab = data.raw["lab"]["ee-super-lab"]
 -- fill this table with any future science pack names that don't match the pattern
 local pattern_overrides = {}
 local packs = {}
@@ -61,7 +58,7 @@ for _, t in pairs(data.raw["equipment-category"]) do
   table.insert(categories, t.name)
 end
 data.raw["generator-equipment"]["ee-infinity-fusion-reactor-equipment"].categories = categories
-data.raw["roboport-equipment"]["ee-infinity-personal-roboport-equipment"].categories = categories
+data.raw["roboport-equipment"]["ee-super-personal-roboport-equipment"].categories = categories
 
 -- MODULES
 local modules = {

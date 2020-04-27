@@ -1,0 +1,35 @@
+{
+  "entity": [
+    ["ee-infinity-beacon", "ee-super-beacon"],
+    ["ee-infinity-construction-robot", "ee-super-construction-robot"],
+    ["ee-infinity-electric-pole", "ee-super-electric-pole"],
+    ["ee-infinity-inserter", "ee-super-inserter"],
+    ["ee-infinity-lab", "ee-super-lab"],
+    ["ee-infinity-locomotive", "ee-super-locomotive"],
+    ["ee-infinity-logistic-robot", "ee-super-logistic-robot"],
+    ["ee-infinity-pump", "ee-super-pump"],
+    ["ee-infinity-roboport", "ee-super-roboport"],
+    ["ee-infinity-substation", "ee-super-substation"],
+    ["ee-infinity-radar", "ee-super-radar"]
+  ],
+  "equipment": [
+    ["ee-infinity-exoskeleton-equipment", "ee-super-exoskeleton-equipment"],
+    ["ee-infinity-personal-roboport-equipment", "ee-super-personal-roboport-equipment"]
+  ],
+  "item": [
+    ["ee-infinity-beacon", "ee-super-beacon"],
+    ["ee-infinity-construction-robot", "ee-super-construction-robot"],
+    ["ee-infinity-electric-pole", "ee-super-electric-pole"],
+    ["ee-infinity-exoskeleton-equipment", "ee-super-exoskeleton-equipment"],
+    ["ee-infinity-fuel", "ee-super-fuel"],
+    ["ee-infinity-inserter", "ee-super-inserter"],
+    ["ee-infinity-lab", "ee-super-lab"],
+    ["ee-infinity-locomotive", "ee-super-locomotive"],
+    ["ee-infinity-logistic-robot", "ee-super-logistic-robot"],
+    ["ee-infinity-personal-roboport-equipment", "ee-super-personal-roboport-equipment"],
+    ["ee-infinity-pump", "ee-super-pump"],
+    ["ee-infinity-roboport", "ee-super-roboport"],
+    ["ee-infinity-substation", "ee-super-substation"],
+    ["ee-infinity-radar", "ee-super-radar"]
+  ]
+}

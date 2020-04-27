@@ -1,8 +1,21 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.4.2
+Version: 2.0.0
 Date: ????
   Features:
+    - Added super energy shield
+    - Added super night vision
+    - Added a super energy shield and super night vision to the /cheat all loadout
     - Cheat entities now have a purple map color
+  Changes:
+    - Completely rewrote the mod to improve performance and code structure
+    - Switched from RaiLuaLib to FLib
+    - Updated item / entity naming scheme to more accurately reflect what they do
+    - Use direct entity mapping when creating blueprints, significantly improving performance with infinity wagon blueprinting
+    - Removed infinity combinator due to bad performance, clunky internals, and low usage
+  Bugfixes:
+    - Fixed the infinity pipe not appearing in item filters menu
+    - Fixed that entering cheat mode with inventory-expanding armor equipped would unequip the armor for a split second, causing items to spill on the ground
+    - Fixed a crash with inventory sync when in god mode
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1
 Date: 2020-04-24

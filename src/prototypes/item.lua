@@ -1,10 +1,6 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- ITEMS
--- We mostly copy the vanilla definitions instead of creating our own, so many vanilla changes will be immediately reflected in the mod.
-
 local util = require("prototypes.util")
 
--- INFINITY ACCUMULATOR
+-- infinity accumulator
 data:extend{
   {
     type = "item",
@@ -18,18 +14,17 @@ data:extend{
   }
 }
 
--- INFINITY BEACON
-local infinity_beacon = table.deepcopy(data.raw["item"]["beacon"])
-infinity_beacon.name = "ee-infinity-beacon"
-infinity_beacon.icons = util.recursive_tint{util.extract_icon_info(infinity_beacon)}
-infinity_beacon.place_result = "ee-infinity-beacon"
-infinity_beacon.subgroup="ee-modules"
-infinity_beacon.order = "aa"
-data:extend{infinity_beacon}
+local infinity_cargo_wagon = table.deepcopy(data.raw["item-with-entity-data"]["cargo-wagon"])
+infinity_cargo_wagon.name = "ee-infinity-cargo-wagon"
+infinity_cargo_wagon.icons = util.recursive_tint{util.extract_icon_info(infinity_cargo_wagon)}
+infinity_cargo_wagon.place_result = "ee-infinity-cargo-wagon"
+infinity_cargo_wagon.subgroup = "ee-trains"
+infinity_cargo_wagon.order = "ba"
+infinity_cargo_wagon.stack_size = 50
+data:extend{infinity_cargo_wagon}
 
--- INFINITY AND TESSERACT CHESTS
+-- infinity and tesseract chests
 do
-  -- create infinity chest items
   local ic_item = table.deepcopy(data.raw["item"]["infinity-chest"])
   for _, t in pairs(util.infinity_chest_data) do
     local lm = t.lm
@@ -47,7 +42,6 @@ do
     data:extend{chest}
   end
 
-  -- create tesseract chest items
   for _, t in pairs(util.tesseract_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
@@ -65,34 +59,16 @@ do
   end
 end
 
--- INFINITY CONSTANT COMBINATOR
-data:extend{
-  {
-    type = "item",
-    name = "ee-infinity-combinator",
-    stack_size = 50,
-    icons = util.recursive_tint({util.extract_icon_info(data.raw["constant-combinator"]["constant-combinator"])}, util.combinator_tint),
-    place_result = "ee-infinity-combinator",
-    subgroup = "ee-electricity",
-    order = "z"
-  }
-}
+local infinity_fluid_wagon = table.deepcopy(data.raw["item-with-entity-data"]["fluid-wagon"])
+infinity_fluid_wagon.name = "ee-infinity-fluid-wagon"
+infinity_fluid_wagon.icons = util.recursive_tint{util.extract_icon_info(infinity_fluid_wagon)}
+infinity_fluid_wagon.place_result = "ee-infinity-fluid-wagon"
+infinity_fluid_wagon.subgroup = "ee-trains"
+infinity_fluid_wagon.order = "bb"
+infinity_fluid_wagon.stack_size = 50
+data:extend{infinity_fluid_wagon}
 
--- INFINITY EXOSKELETON
-data:extend{
-  {
-    type = "item",
-    name = "ee-infinity-exoskeleton-equipment",
-    icon_size = 32,
-    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["exoskeleton-equipment"])},
-    subgroup = "ee-equipment",
-    order = "ac",
-    placed_as_equipment_result = "ee-infinity-exoskeleton-equipment",
-    stack_size = 50
-  }
-}
-
--- INFINITY FUSION REACTOR
+-- infinity fusion reactor
 data:extend{
   {
     type = "item",
@@ -106,32 +82,6 @@ data:extend{
   }
 }
 
--- INFINITY ELECTRIC POLES
-local infinity_electric_pole = table.deepcopy(data.raw["item"]["big-electric-pole"])
-infinity_electric_pole.name = "ee-infinity-electric-pole"
-infinity_electric_pole.icons = util.recursive_tint{util.extract_icon_info(infinity_electric_pole)}
-infinity_electric_pole.place_result = "ee-infinity-electric-pole"
-infinity_electric_pole.subgroup = "ee-electricity"
-infinity_electric_pole.order = "ba"
-local infinity_substation = table.deepcopy(data.raw["item"]["substation"])
-infinity_substation.name = "ee-infinity-substation"
-infinity_substation.icons = util.recursive_tint{util.extract_icon_info(infinity_substation)}
-infinity_substation.place_result = "ee-infinity-substation"
-infinity_substation.subgroup = "ee-electricity"
-infinity_substation.order = "bb"
-data:extend{infinity_electric_pole, infinity_substation}
-
--- INFINITY FUEL
-local infinity_fuel = table.deepcopy(data.raw["item"]["nuclear-fuel"])
-infinity_fuel.name = "ee-infinity-fuel"
-infinity_fuel.icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["rocket-fuel"])}
-infinity_fuel.stack_size = 100
-infinity_fuel.fuel_value = "1000YJ"
-infinity_fuel.subgroup = "ee-trains"
-infinity_fuel.order = "c"
-data:extend{infinity_fuel}
-
--- INFINITY HEAT PIPE
 local infinity_heat_pipe = table.deepcopy(data.raw["item"]["heat-interface"])
 infinity_heat_pipe.name = "ee-infinity-heat-pipe"
 infinity_heat_pipe.localised_description = {"entity-description.ee-infinity-heat-pipe"}
@@ -143,25 +93,7 @@ infinity_heat_pipe.icons = util.recursive_tint{util.extract_icon_info(data.raw["
 infinity_heat_pipe.place_result = "ee-infinity-heat-pipe"
 data:extend{infinity_heat_pipe}
 
--- INFINITY INSERTER
-local infinity_inserter = table.deepcopy(data.raw["item"]["filter-inserter"])
-infinity_inserter.name = "ee-infinity-inserter"
-infinity_inserter.icons = util.recursive_tint{util.extract_icon_info(infinity_inserter)}
-infinity_inserter.place_result = "ee-infinity-inserter"
-infinity_inserter.subgroup = "ee-misc"
-infinity_inserter.order = "ab"
-data:extend{infinity_inserter}
-
--- INFINITY LAB
-local infinity_lab = table.deepcopy(data.raw["item"]["lab"])
-infinity_lab.name = "ee-infinity-lab"
-infinity_lab.icons = util.recursive_tint{util.extract_icon_info(infinity_lab)}
-infinity_lab.place_result = "ee-infinity-lab"
-infinity_lab.subgroup = "ee-misc"
-infinity_lab.order = "ea"
-data:extend{infinity_lab}
-
--- INFINITY LOADER
+-- infinity loader
 data:extend{
   {
     type = "item",
@@ -176,31 +108,29 @@ data:extend{
   }
 }
 
--- INFINITY LOCOMOTIVE
-local infinity_locomotive = table.deepcopy(data.raw["item-with-entity-data"]["locomotive"])
-infinity_locomotive.name = "ee-infinity-locomotive"
-infinity_locomotive.icons = util.recursive_tint{util.extract_icon_info(infinity_locomotive)}
-infinity_locomotive.place_result = "ee-infinity-locomotive"
-infinity_locomotive.subgroup = "ee-trains"
-infinity_locomotive.order = "aa"
-infinity_locomotive.stack_size = 50
-data:extend{infinity_locomotive}
+local super_locomotive = table.deepcopy(data.raw["item-with-entity-data"]["locomotive"])
+super_locomotive.name = "ee-super-locomotive"
+super_locomotive.icons = util.recursive_tint{util.extract_icon_info(super_locomotive)}
+super_locomotive.place_result = "ee-super-locomotive"
+super_locomotive.subgroup = "ee-trains"
+super_locomotive.order = "aa"
+super_locomotive.stack_size = 50
+data:extend{super_locomotive}
 
--- INFINITY PERSONAL ROBOPORT
+-- super personal roboport
 data:extend{
   {
     type = "item",
-    name = "ee-infinity-personal-roboport-equipment",
+    name = "ee-super-personal-roboport-equipment",
     icon_size = 32,
     icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["personal-roboport-equipment"])},
     subgroup = "ee-equipment",
     order = "ab",
-    placed_as_equipment_result = "ee-infinity-personal-roboport-equipment",
+    placed_as_equipment_result = "ee-super-personal-roboport-equipment",
     stack_size = 50
   }
 }
 
--- INFINITY PIPE
 local infinity_pipe = table.deepcopy(data.raw["item"]["infinity-pipe"])
 infinity_pipe.name = "ee-infinity-pipe"
 infinity_pipe.icons = util.recursive_tint{infinity_pipe.icons[1]}
@@ -208,66 +138,139 @@ infinity_pipe.subgroup = "ee-misc"
 infinity_pipe.order = "ba"
 infinity_pipe.stack_size = 50
 infinity_pipe.place_result = "ee-infinity-pipe"
+infinity_pipe.flags = {}
 data:extend{infinity_pipe}
 
--- INFINITY PUMP
-local infinity_pump = table.deepcopy(data.raw["item"]["pump"])
-infinity_pump.name = "ee-infinity-pump"
-infinity_pump.icons = util.recursive_tint{util.extract_icon_info(infinity_pump)}
-infinity_pump.place_result = "ee-infinity-pump"
-infinity_pump.subgroup = "ee-misc"
-infinity_pump.order = "bb"
-data:extend{infinity_pump}
+local super_beacon = table.deepcopy(data.raw["item"]["beacon"])
+super_beacon.name = "ee-super-beacon"
+super_beacon.icons = util.recursive_tint{util.extract_icon_info(super_beacon)}
+super_beacon.place_result = "ee-super-beacon"
+super_beacon.subgroup="ee-modules"
+super_beacon.order = "aa"
+data:extend{super_beacon}
 
--- INFINITY RADAR
-local infinity_radar = table.deepcopy(data.raw["item"]["radar"])
-infinity_radar.name = "ee-infinity-radar"
-infinity_radar.icons = util.recursive_tint{util.extract_icon_info(infinity_radar)}
-infinity_radar.place_result = "ee-infinity-radar"
-infinity_radar.subgroup = "ee-misc"
-infinity_radar.order = "da"
-data:extend{infinity_radar}
+local super_construction_robot = table.deepcopy(data.raw["item"]["construction-robot"])
+super_construction_robot.name = "ee-super-construction-robot"
+super_construction_robot.icons = util.recursive_tint{util.extract_icon_info(super_construction_robot)}
+super_construction_robot.place_result = "ee-super-construction-robot"
+super_construction_robot.subgroup = "ee-robots"
+super_construction_robot.order = "ba"
+super_construction_robot.stack_size = 100
+data:extend{super_construction_robot}
 
--- INFINITY ROBOPORT
-local infinity_roboport = table.deepcopy(data.raw["item"]["roboport"])
-infinity_roboport.name = "ee-infinity-roboport"
-infinity_roboport.icons = util.recursive_tint{util.extract_icon_info(infinity_roboport)}
-infinity_roboport.place_result = "ee-infinity-roboport"
-infinity_roboport.subgroup = "ee-robots"
-infinity_roboport.order = "a"
-infinity_roboport.stack_size = 50
-data:extend{infinity_roboport}
+local super_electric_pole = table.deepcopy(data.raw["item"]["big-electric-pole"])
+super_electric_pole.name = "ee-super-electric-pole"
+super_electric_pole.icons = util.recursive_tint{util.extract_icon_info(super_electric_pole)}
+super_electric_pole.place_result = "ee-super-electric-pole"
+super_electric_pole.subgroup = "ee-electricity"
+super_electric_pole.order = "ba"
+data:extend{super_electric_pole}
 
--- INFINITY ROBOTS
-local infinity_construction_robot = table.deepcopy(data.raw["item"]["construction-robot"])
-infinity_construction_robot.name = "ee-infinity-construction-robot"
-infinity_construction_robot.icons = util.recursive_tint{util.extract_icon_info(infinity_construction_robot)}
-infinity_construction_robot.place_result = "ee-infinity-construction-robot"
-infinity_construction_robot.subgroup = "ee-robots"
-infinity_construction_robot.order = "ba"
-infinity_construction_robot.stack_size = 100
-local infinity_logistic_robot = table.deepcopy(data.raw["item"]["logistic-robot"])
-infinity_logistic_robot.name = "ee-infinity-logistic-robot"
-infinity_logistic_robot.icons = util.recursive_tint{util.extract_icon_info(infinity_logistic_robot)}
-infinity_logistic_robot.place_result = "ee-infinity-logistic-robot"
-infinity_logistic_robot.subgroup = "ee-robots"
-infinity_logistic_robot.order = "bb"
-infinity_logistic_robot.stack_size = 100
-data:extend{infinity_construction_robot, infinity_logistic_robot}
+-- super energy shield
+data:extend{
+  {
+    type = "item",
+    name = "ee-super-energy-shield-equipment",
+    icon_size = 32,
+    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["energy-shield-equipment"])},
+    subgroup = "ee-equipment",
+    order = "ad",
+    placed_as_equipment_result = "ee-super-energy-shield-equipment",
+    stack_size = 50
+  }
+}
 
--- INFINITY WAGONS
-local infinity_cargo_wagon = table.deepcopy(data.raw["item-with-entity-data"]["cargo-wagon"])
-infinity_cargo_wagon.name = "ee-infinity-cargo-wagon"
-infinity_cargo_wagon.icons = util.recursive_tint{util.extract_icon_info(infinity_cargo_wagon)}
-infinity_cargo_wagon.place_result = "ee-infinity-cargo-wagon"
-infinity_cargo_wagon.subgroup = "ee-trains"
-infinity_cargo_wagon.order = "ba"
-infinity_cargo_wagon.stack_size = 50
-local infinity_fluid_wagon = table.deepcopy(data.raw["item-with-entity-data"]["fluid-wagon"])
-infinity_fluid_wagon.name = "ee-infinity-fluid-wagon"
-infinity_fluid_wagon.icons = util.recursive_tint{util.extract_icon_info(infinity_fluid_wagon)}
-infinity_fluid_wagon.place_result = "ee-infinity-fluid-wagon"
-infinity_fluid_wagon.subgroup = "ee-trains"
-infinity_fluid_wagon.order = "bb"
-infinity_fluid_wagon.stack_size = 50
-data:extend{infinity_cargo_wagon, infinity_fluid_wagon}
+-- super exoskeleton
+data:extend{
+  {
+    type = "item",
+    name = "ee-super-exoskeleton-equipment",
+    icon_size = 32,
+    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["exoskeleton-equipment"])},
+    subgroup = "ee-equipment",
+    order = "ac",
+    placed_as_equipment_result = "ee-super-exoskeleton-equipment",
+    stack_size = 50
+  }
+}
+
+local super_fuel = table.deepcopy(data.raw["item"]["nuclear-fuel"])
+super_fuel.name = "ee-super-fuel"
+super_fuel.icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["rocket-fuel"])}
+super_fuel.stack_size = 100
+super_fuel.fuel_value = "1000YJ"
+super_fuel.subgroup = "ee-trains"
+super_fuel.order = "c"
+data:extend{super_fuel}
+
+local super_inserter = table.deepcopy(data.raw["item"]["filter-inserter"])
+super_inserter.name = "ee-super-inserter"
+super_inserter.icons = util.recursive_tint{util.extract_icon_info(super_inserter)}
+super_inserter.place_result = "ee-super-inserter"
+super_inserter.subgroup = "ee-misc"
+super_inserter.order = "ab"
+data:extend{super_inserter}
+
+local super_lab = table.deepcopy(data.raw["item"]["lab"])
+super_lab.name = "ee-super-lab"
+super_lab.icons = util.recursive_tint{util.extract_icon_info(super_lab)}
+super_lab.place_result = "ee-super-lab"
+super_lab.subgroup = "ee-misc"
+super_lab.order = "ea"
+data:extend{super_lab}
+
+local super_logistic_robot = table.deepcopy(data.raw["item"]["logistic-robot"])
+super_logistic_robot.name = "ee-super-logistic-robot"
+super_logistic_robot.icons = util.recursive_tint{util.extract_icon_info(super_logistic_robot)}
+super_logistic_robot.place_result = "ee-super-logistic-robot"
+super_logistic_robot.subgroup = "ee-robots"
+super_logistic_robot.order = "bb"
+super_logistic_robot.stack_size = 100
+data:extend{super_logistic_robot}
+
+-- super night vision
+data:extend{
+  {
+    type = "item",
+    name = "ee-super-night-vision-equipment",
+    icon_size = 32,
+    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["night-vision-equipment"])},
+    subgroup = "ee-equipment",
+    order = "ae",
+    placed_as_equipment_result = "ee-super-night-vision-equipment",
+    stack_size = 50
+  }
+}
+
+local super_pump = table.deepcopy(data.raw["item"]["pump"])
+super_pump.name = "ee-super-pump"
+super_pump.icons = util.recursive_tint{util.extract_icon_info(super_pump)}
+super_pump.place_result = "ee-super-pump"
+super_pump.subgroup = "ee-misc"
+super_pump.order = "bb"
+data:extend{super_pump}
+
+local super_radar = table.deepcopy(data.raw["item"]["radar"])
+super_radar.name = "ee-super-radar"
+super_radar.icons = util.recursive_tint{util.extract_icon_info(super_radar)}
+super_radar.place_result = "ee-super-radar"
+super_radar.subgroup = "ee-misc"
+super_radar.order = "da"
+data:extend{super_radar}
+
+local super_roboport = table.deepcopy(data.raw["item"]["roboport"])
+super_roboport.name = "ee-super-roboport"
+super_roboport.icons = util.recursive_tint{util.extract_icon_info(super_roboport)}
+super_roboport.place_result = "ee-super-roboport"
+super_roboport.subgroup = "ee-robots"
+super_roboport.order = "a"
+super_roboport.stack_size = 50
+data:extend{super_roboport}
+
+local super_substation = table.deepcopy(data.raw["item"]["substation"])
+super_substation.name = "ee-super-substation"
+super_substation.icons = util.recursive_tint{util.extract_icon_info(super_substation)}
+super_substation.place_result = "ee-super-substation"
+super_substation.subgroup = "ee-electricity"
+super_substation.order = "bb"
+data:extend{super_substation}

@@ -1,6 +1,3 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- ITEM GROUPS
-
 local function add_group(name, order)
   data:extend{
     {
@@ -20,7 +17,7 @@ add_group("ee-robots", "e")
 add_group("ee-modules", "f")
 add_group("ee-equipment", "g")
 
-data:extend {
+data:extend{
   {
     type = "item-group",
     name = "ee-tools",

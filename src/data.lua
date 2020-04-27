@@ -1,7 +1,3 @@
--- -------------------------------------------------------------------------------------------------------------------------------------------------------------
--- EDITOR EXTENSIONS PROTOTYPES
-
--- EDITOR CONTROLLER
 local editor_controller = data.raw["editor-controller"].default
 for n, t in pairs(settings.startup) do
   if n:match("ee%-controller") then
@@ -9,7 +5,6 @@ for n, t in pairs(settings.startup) do
   end
 end
 
--- to save room
 local function shortcut_sprite(suffix, size)
   return {
     filename = "__EditorExtensions__/graphics/shortcut-bar/map-editor-"..suffix,
@@ -22,7 +17,6 @@ local function shortcut_sprite(suffix, size)
 end
 
 data:extend{
-  -- SHORTCUTS
   {
     type = "shortcut",
     name = "ee-toggle-map-editor",
@@ -34,7 +28,6 @@ data:extend{
     associated_control_input = "ee-toggle-map-editor",
     toggleable = true
   },
-  -- CUSTOM INPUTS
   {
     type = "custom-input",
     name = "ee-toggle-map-editor",
@@ -49,7 +42,6 @@ data:extend{
   }
 }
 
--- THE REST
 require("prototypes.entity")
 require("prototypes.equipment")
 require("prototypes.item-group")
