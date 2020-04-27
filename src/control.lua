@@ -4,8 +4,8 @@ local migration = require("__flib__.control.migration")
 
 local cheat_mode = require("scripts.cheat-mode")
 local data = require("scripts.data")
-local migrations = require("scripts.migrations")
 local inventory = require("scripts.inventory")
+local migrations = require("scripts.migrations")
 
 require("scripts.common-gui")
 
@@ -35,6 +35,9 @@ end)
 -- BOOTSTRAP
 
 event.on_init(function()
+  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
+    event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
+  end
   gui.init()
   data.init()
   tesseract_chest.update_data()
@@ -42,6 +45,9 @@ event.on_init(function()
 end)
 
 event.on_load(function()
+  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
+    event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
+  end
   gui.bootstrap_postprocess()
 end)
 

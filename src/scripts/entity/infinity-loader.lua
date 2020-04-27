@@ -377,10 +377,10 @@ local function snap_loader(loader, entity)
   ::skip_belt_type::
   -- update internals
   update_inserters(loader)
-  update_filters(
-    loader.surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator", position=loader.position}[1],
-    {loader=loader}
-  )
+  -- update_filters(
+  --   loader.surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator", position=loader.position}[1],
+  --   {loader=loader}
+  -- )
 end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
@@ -409,26 +409,22 @@ end
 
 -- PICKER DOLLIES
 
-local function picker_dollies_move(e)
-  if e.moved_entity.name == "ee-infinity-loader-logic-combinator" then
+function infinity_loader.picker_dollies_move(e)
+  local moved_entity = e.moved_entity
+  if moved_entity and moved_entity.name == "ee-infinity-loader-logic-combinator" then
     local loader
     -- move all entities to new position
     for _, entity in pairs(e.moved_entity.surface.find_entities_filtered{type={"loader-1x1", "inserter", "infinity-container"}, position=e.start_pos}) do
       if check_is_loader(entity) then
-        -- loaders don't support teleportation, so destroy and recreate it
-        loader = update_loader_type(entity, get_belt_type(entity), {position=entity.position})
+        -- we need to move the loader very last, after all of the other entities are in the new position
+        loader = entity
       else
-        entity.teleport(entity.position)
+        entity.teleport(moved_entity.position)
       end
     end
+    loader = update_loader_type(loader, get_belt_type(loader), {position=moved_entity.position})
     -- snap loader
     snap_loader(loader)
-  end
-end
-
-function infinity_loader.register_picker_dollies()
-  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
-    event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), picker_dollies_move)
   end
 end
 
