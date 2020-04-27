@@ -1,6 +1,6 @@
 local util = require("prototypes.util")
 
--- TESSERACT CHEST
+-- set tesseract chest inventory size
 local to_check = {
   "ammo",
   "armor",
@@ -35,9 +35,8 @@ for _, p in pairs(data.raw["infinity-container"]) do
   end
 end
 
--- INFINITY LAB
+-- allow all science packs to be placed in the super lab
 local lab = data.raw["lab"]["ee-super-lab"]
--- fill this table with any future science pack names that don't match the pattern
 local pattern_overrides = {}
 local packs = {}
 for _, p in pairs(data.raw["lab"]) do
@@ -51,7 +50,6 @@ for p, _ in pairs(packs) do
 end
 lab.inputs = over
 
--- INFINITY EQUIPMENT
 -- allow equipment to be placed in all existing grid categories
 local categories = {}
 for _, t in pairs(data.raw["equipment-category"]) do
@@ -60,7 +58,7 @@ end
 data.raw["generator-equipment"]["ee-infinity-fusion-reactor-equipment"].categories = categories
 data.raw["roboport-equipment"]["ee-super-personal-roboport-equipment"].categories = categories
 
--- MODULES
+-- reset all modules to be able to be used in all recipes
 local modules = {
   "ee-super-speed-module",
   "ee-super-effectivity-module",
@@ -70,7 +68,6 @@ local modules = {
   "ee-super-ineffectivity-module",
   "ee-super-dirty-module"
 }
--- reset all modules to be able to be used in all recipes
 for _, name in pairs(modules) do
   data.raw["module"][name].limitation = nil
 end
