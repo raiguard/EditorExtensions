@@ -63,18 +63,21 @@ local function get_from_sync_inventories(player_table, player)
   local inventories = player_table.sync_inventories
   for _, name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
     local sync_inventory = inventories[name]
-    if name == "cursor" then
-      player.cursor_stack.set_stack(sync_inventory[1])
-    else
-      local inventory_def = defines.inventory[prefix..name]
-      if inventory_def then
-        local destination_inventory = player.get_inventory(inventory_def)
-        for i=1, math_min(#destination_inventory, #sync_inventory) do
-          destination_inventory[i].set_stack(sync_inventory[i])
+    -- god mode doesn't have every inventory
+    if sync_inventory then
+      if name == "cursor" then
+        player.cursor_stack.set_stack(sync_inventory[1])
+      else
+        local inventory_def = defines.inventory[prefix..name]
+        if inventory_def then
+          local destination_inventory = player.get_inventory(inventory_def)
+          for i=1, math_min(#destination_inventory, #sync_inventory) do
+            destination_inventory[i].set_stack(sync_inventory[i])
+          end
         end
       end
+      sync_inventory.destroy()
     end
-    sync_inventory.destroy()
   end
   player_table.sync_inventories = nil
 end
