@@ -2,10 +2,13 @@
 Version: 2.0.0
 Date: ????
   Features:
+    - Added infinity energy shield
+    - Added super night vision
     - Cheat entities now have a purple map color
   Changes:
-    - Complete rewrite of the mod to improve performance
+    - Completely rewrote the mod to improve performance and code structure
     - Switched from RaiLuaLib to FLib
+    - Default /cheat all loadout now includes an infinity energy shield and super night vision
     - Use direct entity mapping when creating blueprints, significantly improving performance with infinity wagon blueprinting
     - Removed infinity combinator due to bad performance, clunky internals, and low usage
   Bugfixes:

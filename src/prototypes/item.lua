@@ -61,6 +61,20 @@ do
   end
 end
 
+-- INFINITY ENERGY SHIELD
+data:extend{
+  {
+    type = "item",
+    name = "ee-infinity-energy-shield-equipment",
+    icon_size = 32,
+    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["energy-shield-equipment"])},
+    subgroup = "ee-equipment",
+    order = "ad",
+    placed_as_equipment_result = "ee-infinity-energy-shield-equipment",
+    stack_size = 50
+  }
+}
+
 -- INFINITY EXOSKELETON
 data:extend{
   {
@@ -255,3 +269,17 @@ infinity_fluid_wagon.subgroup = "ee-trains"
 infinity_fluid_wagon.order = "bb"
 infinity_fluid_wagon.stack_size = 50
 data:extend{infinity_cargo_wagon, infinity_fluid_wagon}
+
+-- SUPER NIGHT VISION
+data:extend{
+  {
+    type = "item",
+    name = "ee-super-night-vision-equipment",
+    icon_size = 32,
+    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["night-vision-equipment"])},
+    subgroup = "ee-equipment",
+    order = "ae",
+    placed_as_equipment_result = "ee-super-night-vision-equipment",
+    stack_size = 50
+  }
+}

@@ -39,7 +39,8 @@ local equipment_to_add = {
   {name="ee-infinity-personal-roboport-equipment", position={1,0}},
   {name="ee-infinity-exoskeleton-equipment", position={2,0}},
   {name="ee-infinity-exoskeleton-equipment", position={3,0}},
-  {name="night-vision-equipment", position={0,1}}
+  {name="ee-infinity-energy-shield-equipment", position={4,0}},
+  {name="ee-super-night-vision-equipment", position={5,0}}
 }
 
 local function set_armor(inventory)

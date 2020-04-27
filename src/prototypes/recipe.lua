@@ -6,6 +6,7 @@ local recipe_names = {
   "ee-infinity-cargo-wagon",
   "ee-infinity-construction-robot",
   "ee-infinity-electric-pole",
+  "ee-infinity-energy-shield-equipment",
   "ee-infinity-exoskeleton-equipment",
   "ee-infinity-fluid-wagon",
   "ee-infinity-fuel",
@@ -22,6 +23,7 @@ local recipe_names = {
   "ee-infinity-radar",
   "ee-infinity-roboport",
   "ee-infinity-substation",
+  "ee-super-night-vision-equipment"
 }
 local function register_recipes(t)
   for _, k in ipairs(t) do
