@@ -281,7 +281,7 @@ gui.add_handlers{
       on_gui_closed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.il
-        gui.remove_filters(e.player_index, gui_data.filters)
+        gui.update_filters("il", e.player_index, nil, "remove")
         gui_data.window.destroy()
         player_table.gui.il = nil
       end
@@ -294,7 +294,7 @@ gui.add_handlers{
 local function create_gui(player, player_table, entity)
   local control = entity.get_or_create_control_behavior()
   local parameters = control.parameters.parameters
-  local gui_data, filters = gui.build(player.gui.screen, {
+  local gui_data = gui.build(player.gui.screen, {
     {type="frame", style="dialog_frame", direction="vertical", handlers="il.window", save_as="window", children={
       {type="flow", children={
         {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}},
@@ -327,7 +327,6 @@ local function create_gui(player, player_table, entity)
 
   player.opened = gui_data.window
 
-  gui_data.filters = filters
   gui_data.entity = entity
 
   player_table.gui.il = gui_data

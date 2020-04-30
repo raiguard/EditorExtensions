@@ -170,7 +170,7 @@ gui.add_handlers{
       on_gui_closed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
-        gui.remove_filters(e.player_index, gui_data.filters)
+        gui.update_filters("ia", e.player_index, nil, "remove")
         gui_data.window.destroy()
         player_table.gui.ia = nil
       end
@@ -184,7 +184,7 @@ local function create_gui(player, player_table, entity)
   local priority, mode = get_settings_from_name(entity.name)
   local is_buffer = mode == "buffer"
   local slider_value, dropdown_index = rev_parse_energy(entity.electric_buffer_size)
-  local gui_data, filters = gui.build(player.gui.screen, {
+  local gui_data = gui.build(player.gui.screen, {
     {type="frame", style="dialog_frame", direction="vertical", handlers="ia.window", save_as="window", children={
       {type="flow", children={
         {type="label", style="frame_title", caption={"entity-name.ee-infinity-accumulator"}},
@@ -227,7 +227,6 @@ local function create_gui(player, player_table, entity)
 
   player.opened = gui_data.window
 
-  gui_data.filters = filters
   gui_data.entity = entity
   gui_data.last_textfield_value = gui_data.slider_textfield.text
 

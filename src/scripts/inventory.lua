@@ -166,12 +166,12 @@ gui.add_handlers{
         local player_table = global.players[e.player_index]
         local existing_data = player_table.gui.inventory_filters_string
         if existing_data then
-          gui.remove_filters(e.player_index, existing_data.filters)
+          gui.update_filters("inventory_filters_string", e.player_index, nil, "remove")
           existing_data.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
         local mode = (string_sub(e.element.sprite, 4, 9) == "export") and "export" or "import"
-        local gui_data, filters = gui.build(player.gui.screen, {
+        local gui_data = gui.build(player.gui.screen, {
           {type="frame", style="dialog_frame", direction="vertical", save_as="window", children={
             {type="flow", children={
               {type="label", style="frame_title", caption={"ee-gui."..mode.."-inventory-filters"}},
@@ -192,16 +192,15 @@ gui.add_handlers{
           gui_data.textbox.select_all()
         end
 
-        gui_data.filters = filters
         player_table.gui.inventory_filters_string = gui_data
       end
     }
   },
   inventory_filters_string = {
     back_button = {
-      on_gui_click = function(e)
-        local player_table = global.players[e.player_index]
-        gui.remove_filters(e.player_index, player_table.gui.inventory_filters_string.filters)
+      on_gui_click = function(e, player_table)
+        player_table = player_table or global.players[e.player_index]
+        gui.update_filters("inventory_filters_string", e.player_index, nil, "remove")
         player_table.gui.inventory_filters_string.window.destroy()
         player_table.gui.inventory_filters_string = nil
       end
@@ -212,9 +211,7 @@ gui.add_handlers{
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.inventory_filters_string
         if import_filters(player, gui_data.textbox.text) then
-          gui.remove_filters(e.player_index, gui_data.filters)
-          gui_data.window.destroy()
-          player_table.gui.inventory_filters_string = nil
+          gui.handlers.inventory_filters_string.back_button.on_gui_click(e, player_table)
         else
           player.print{"ee-message.invalid-inventory-filters-string"}
         end
@@ -236,13 +233,13 @@ gui.add_handlers{
 local function close_guis(player_table, player_index)
   local buttons_gui_data = player_table.gui.inventory_filters_buttons
   if buttons_gui_data then
-    gui.remove_filters(player_index, buttons_gui_data.filters)
+    gui.update_filters("inventory_filters_buttons", player_index, nil, "remove")
     buttons_gui_data.window.destroy()
     player_table.gui.inventory_filters_buttons = nil
   end
   local string_gui_data = player_table.gui.inventory_filters_string
   if string_gui_data then
-    gui.remove_filters(player_index, string_gui_data.filters)
+    gui.update_filters("inventory_filters_string", player_index, nil, "remove")
     string_gui_data.window.destroy()
     player_table.gui.inventory_filters_string = nil
   end
@@ -261,7 +258,7 @@ end
 function inventory.create_filters_buttons(player)
   -- create buttons GUI
   local player_table = global.players[player.index]
-  local gui_data, filters = gui.build(player.gui.screen, {
+  local gui_data = gui.build(player.gui.screen, {
     {type="frame", style="shortcut_bar_window_frame", style_mods={right_padding=4}, save_as="window", children={
       {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
         {type="sprite-button", style="shortcut_bar_button", sprite="ee_import_inventory_filters", tooltip={"ee-gui.import-inventory-filters"},
@@ -272,7 +269,6 @@ function inventory.create_filters_buttons(player)
     }}
   })
   -- add to global
-  gui_data.filters = filters
   player_table.gui.inventory_filters_buttons = gui_data
   -- position GUI
   inventory.on_player_display_resolution_changed{player_index=player.index}

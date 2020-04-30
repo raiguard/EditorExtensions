@@ -41,14 +41,14 @@ event.on_init(function()
   gui.init()
   data.init()
   tesseract_chest.update_data()
-  gui.bootstrap_postprocess()
+  gui.build_lookup_tables()
 end)
 
 event.on_load(function()
   if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
     event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
   end
-  gui.bootstrap_postprocess()
+  gui.build_lookup_tables()
 end)
 
 event.on_configuration_changed(function(e)
