@@ -170,7 +170,7 @@ end)
 
 -- GUI
 
-gui.register_events()
+gui.register_handlers()
 
 event.on_gui_opened(function(e)
   if not gui.dispatch_handlers(e) then

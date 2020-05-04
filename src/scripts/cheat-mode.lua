@@ -69,6 +69,7 @@ function cheat_mode.set_loadout(player)
   if player.controller_type == defines.controllers.character then
     -- increase reach distance
     player.character_build_distance_bonus = 1000000
+    player.character_mining_speed_modifier = 2
     player.character_reach_distance_bonus = 1000000
     player.character_resource_reach_distance_bonus = 1000000
     -- overwrite the default armor loadout
