@@ -3,9 +3,10 @@ local gui = require("__flib__.control.gui")
 local migration = require("__flib__.control.migration")
 
 local cheat_mode = require("scripts.cheat-mode")
-local data = require("scripts.data")
+local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
+local player_data = require("scripts.player-data")
 
 require("scripts.common-gui")
 
@@ -41,7 +42,7 @@ event.on_init(function()
     event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
   end
   gui.init()
-  data.init()
+  global_data.init()
   tesseract_chest.update_data()
   gui.build_lookup_tables()
 end)
@@ -56,7 +57,7 @@ end)
 event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
     for i,  player in pairs(game.players) do
-      data.refresh_player(player, global.players[i])
+      player_data.refresh(player, global.players[i])
     end
     infinity_loader.check_loaders()
     tesseract_chest.update_data()
@@ -219,8 +220,7 @@ end)
 -- PLAYER
 
 event.on_player_created(function(e)
-  data.setup_player(e.player_index)
-  data.refresh_player(game.get_player(e.player_index), global.players[e.player_index])
+  player_data.init(e.player_index)
 end)
 
 event.on_player_removed(function(e)
