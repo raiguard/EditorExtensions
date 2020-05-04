@@ -1,5 +1,7 @@
 local player_data = {}
 
+local gui = require("__flib__.control.gui")
+
 local string = string
 
 function player_data.init(index)
@@ -38,6 +40,7 @@ function player_data.refresh(player, player_table)
   for _, name in ipairs{"ia", "il"} do
     if player_table.gui[name] then
       player_table.gui[name].window.destroy()
+      gui.update_filters(name, player.index, nil, "remove")
       player_table.gui[name] = nil
     end
   end
