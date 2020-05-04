@@ -26,6 +26,8 @@ commands.add_command("EditorExtensions", {"ee-message.command-help"}, function(e
   local player_table = global.players[e.player_index]
   if e.parameter == "toggle-inventory-sync" then
     inventory.toggle_sync(player, player_table, not player_table.flags.inventory_sync_enabled)
+  elseif e.parameter == "disable-cheat-mode" and player.cheat_mode then
+    cheat_mode.disable(player, player_table)
   end
 end)
 

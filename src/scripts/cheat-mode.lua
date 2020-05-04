@@ -1,16 +1,34 @@
 local cheat_mode = {}
 
-local string_find = string.find
+local inventory = require("scripts.inventory")
+
+local string = string
 
 function cheat_mode.enable_recipes(player, skip_message)
   local force = player.force
+  local recipes = force.recipes
   -- check if it has already been enabled for this force
-  if force.recipes["ee-infinity-loader"].enabled == false then
-    for n, _ in pairs(game.recipe_prototypes) do
-      if string_find(n, "^ee%-") and force.recipes[n] then force.recipes[n].enabled = true end
+  if recipes["ee-infinity-loader"].enabled == false then
+    for name in pairs(game.recipe_prototypes) do
+      if string.find(name, "^ee%-") and recipes[name] then recipes[name].enabled = true end
     end
     if not skip_message then
       force.print{"ee-message.testing-tools-enabled", player.name}
+    end
+  end
+end
+
+function cheat_mode.disable_recipes(player, skip_message)
+  local force = player.force
+  local recipes = force.recipes
+  if recipes["ee-infinity-loader"].enabled then
+    for name in pairs(game.recipe_prototypes) do
+      if string.sub(name, 1, 3) == "ee-" and recipes[name] then
+        recipes[name].enabled = false
+      end
+    end
+    if not skip_message then
+      force.print{"ee-message.testing-tools-disabled", player.name}
     end
   end
 end
@@ -67,7 +85,7 @@ function cheat_mode.set_loadout(player)
     main_inventory.insert(items_to_add[i])
   end
   if player.controller_type == defines.controllers.character then
-    -- increase reach distance
+    -- apply bonuses
     player.character_build_distance_bonus = 1000000
     player.character_mining_speed_modifier = 2
     player.character_reach_distance_bonus = 1000000
@@ -78,6 +96,21 @@ function cheat_mode.set_loadout(player)
     -- overwrite the default armor loadout
     set_armor(player.get_inventory(defines.inventory.editor_armor))
   end
+end
+
+function cheat_mode.disable(player, player_table)
+  -- reset bonuses and disable cheat mode
+  player.character_build_distance_bonus = 0
+  player.character_mining_speed_modifier = 0
+  player.character_reach_distance_bonus = 0
+  player.character_resource_reach_distance_bonus = 0
+  player.cheat_mode = false
+
+  -- remove recipes
+  cheat_mode.disable_recipes(player)
+
+  -- disable inventory sync
+  inventory.toggle_sync(player, player_table)
 end
 
 return cheat_mode

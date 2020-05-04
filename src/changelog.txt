@@ -5,6 +5,7 @@ Date: ????
     - Added super energy shield
     - Added super night vision
     - Added a super energy shield and super night vision to the /cheat all loadout
+    - Added /EditorExtensions disable-cheat-mode command, which disables cheat mode and removes the testing tools recipes
     - Cheat entities now have a purple map color
   Changes:
     - Refactored the mod to improve performance and code structure
