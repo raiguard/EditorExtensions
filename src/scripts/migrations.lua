@@ -55,7 +55,7 @@ return {
       player_table.flags.inventory_sync_enabled = player.mod_settings["ee-inventory-sync"].value and player.cheat_mode
     end
   end,
-  ["2.0.0"] = function()
+  ["1.5.0"] = function()
     -- remove old lualib info
     global.__lualib = nil
     -- initialize GUI module

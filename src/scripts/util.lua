@@ -4,30 +4,6 @@ local math2d = require("__core__.lualib.math2d")
 
 -- GENERAL
 
-util.constants = {
-  -- commonly-used set of events for when an entity is built
-  entity_built_events = {
-    defines.events.on_built_entity,
-    defines.events.on_robot_built_entity,
-    defines.events.script_raised_built,
-    defines.events.script_raised_revive
-  },
-  -- commonly-used set of events for when an entity is destroyed
-  entity_destroyed_events = {
-    defines.events.on_player_mined_entity,
-    defines.events.on_robot_mined_entity,
-    defines.events.on_entity_died,
-    defines.events.script_raised_destroy
-  },
-  -- close button for frames,  as defined in the titlebar submodule
-  close_button_def = {
-    name = "close",
-    sprite = "utility/close_white",
-    hovered_sprite = "utility/close_black",
-    clicked_sprite = "utility/close_black"
-  }
-}
-
 util.direction = {}
 util.direction.opposite = util.oppositedirection
 
@@ -47,16 +23,6 @@ function util.direction.to_vector(direction, longitudinal, orthogonal)
     return {x=longitudinal, y=orthogonal}
   elseif direction == defines.direction.west then
     return {x=-longitudinal, y=-orthogonal}
-  end
-end
-
-util.gui = {}
-
-function util.gui.add_pusher(parent, name, vertical)
-  if vertical then
-    return parent.add{type="empty-widget", name=name, style="ee_invisible_vertical_pusher"}
-  else
-    return parent.add{type="empty-widget", name=name, style="ee_invisible_horizontal_pusher"}
   end
 end
 
