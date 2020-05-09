@@ -196,8 +196,9 @@ event.on_gui_opened(function(e)
 end)
 
 event.on_gui_closed(function(e)
-  gui.dispatch_handlers(e)
-  inventory.on_gui_closed(e)
+  if not gui.dispatch_handlers(e) then
+    inventory.on_gui_closed(e)
+  end
 end)
 
 -- SHORTCUT
@@ -228,8 +229,8 @@ event.on_player_removed(function(e)
 end)
 
 event.register({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
-  -- lock or unlock the shortcut depending on if they're an admin
   local player = game.get_player(e.player_index)
+  -- lock or unlock the shortcut depending on if they're an admin
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
 end)
 

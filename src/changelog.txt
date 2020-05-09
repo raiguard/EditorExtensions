@@ -10,13 +10,14 @@ Date: ????
   Changes:
     - Refactored the mod to improve performance and code structure
     - Switched from RaiLuaLib to FLib
-    - Updated item / entity naming scheme to more accurately reflect what they do
-    - Use direct entity mapping when creating blueprints, significantly improving performance with infinity wagon blueprinting
     - Removed infinity combinator due to bad performance, clunky internals, and low usage
+    - Significantly optimized infinity wagon blueprinting logic
+    - Updated item / entity naming scheme to more accurately reflect what they do
   Bugfixes:
-    - Fixed the infinity pipe not appearing in item filters menu
-    - Fixed that entering cheat mode with inventory-expanding armor equipped would unequip the armor for a split second, causing items to spill on the ground
+    - Fixed a crash when connecting an infinity pipe to a crafting machine with no set recipe
     - Fixed a crash with inventory sync when in god mode
+    - Fixed that entering cheat mode with inventory-expanding armor equipped would unequip the armor for a split second, causing items to spill on the ground
+    - Fixed the infinity pipe not appearing in item filters menu
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1
 Date: 2020-04-24

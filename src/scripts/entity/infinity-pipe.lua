@@ -13,8 +13,11 @@ function infinity_pipe.snap(entity, player_settings)
         for i=1, #fb do
           local connections = fb.get_connections(i)
           if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == "input") then
-            -- set to fill the pipe with the fluid
-            entity.set_infinity_pipe_filter{name=own_fb.get_locked_fluid(1), percentage=1, mode="exactly"}
+            local fluid = own_fb.get_locked_fluid(1)
+            if fluid then
+              -- set to fill the pipe with the fluid
+              entity.set_infinity_pipe_filter{name=fluid, percentage=1, mode="exactly"}
+            end
             return -- don't do default snapping
           end
         end
