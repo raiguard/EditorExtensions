@@ -10,6 +10,7 @@ Date: ????
   Changes:
     - Refactored the mod to improve performance and code structure
     - Switched from RaiLuaLib to FLib
+    - New infinity loader icon
     - Removed infinity combinator due to bad performance, clunky internals, and low usage
     - Significantly optimized infinity wagon blueprinting logic
     - Updated item / entity naming scheme to more accurately reflect what they do
