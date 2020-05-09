@@ -31,7 +31,7 @@ data:extend{
   {
     type = "custom-input",
     name = "ee-toggle-map-editor",
-    key_sequence = "CONTROL + SHIFT + E",
+    key_sequence = "CONTROL + E",
     action = "lua"
   },
   {
