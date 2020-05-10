@@ -1,7 +1,7 @@
 local infinity_loader = {}
 
-local event = require("__flib__.control.event")
-local gui = require("__flib__.control.gui")
+local event = require("__flib__.event")
+local gui = require("__flib__.gui")
 local util = require("scripts.util")
 
 local string_sub = string.sub

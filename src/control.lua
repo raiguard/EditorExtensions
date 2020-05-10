@@ -1,6 +1,6 @@
-local event = require("__flib__.control.event")
-local gui = require("__flib__.control.gui")
-local migration = require("__flib__.control.migration")
+local event = require("__flib__.event")
+local gui = require("__flib__.gui")
+local migration = require("__flib__.migration")
 
 local cheat_mode = require("scripts.cheat-mode")
 local global_data = require("scripts.global-data")

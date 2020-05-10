@@ -1,6 +1,6 @@
 local inventory = {}
 
-local gui = require("__flib__.control.gui")
+local gui = require("__flib__.gui")
 -- local migration = require("__RaiLuaLib__.lualib.migration")
 
 local math_min = math.min

@@ -1,4 +1,4 @@
-local gui = require("__flib__.control.gui")
+local gui = require("__flib__.gui")
 
 gui.add_templates{
   titlebar_drag_handle = {type="empty-widget", style="draggable_space_header", style_mods={right_margin=5, height=24, horizontally_stretchable=true},

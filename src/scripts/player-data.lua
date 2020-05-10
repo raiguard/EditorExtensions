@@ -1,6 +1,6 @@
 local player_data = {}
 
-local gui = require("__flib__.control.gui")
+local gui = require("__flib__.gui")
 
 local string = string
 
