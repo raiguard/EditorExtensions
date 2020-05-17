@@ -10,7 +10,9 @@ function cheat_mode.enable_recipes(player, skip_message)
   -- check if it has already been enabled for this force
   if recipes["ee-infinity-loader"].enabled == false then
     for name in pairs(game.recipe_prototypes) do
-      if string.find(name, "^ee%-") and recipes[name] then recipes[name].enabled = true end
+      if string.sub(name, 1, 3) == "ee-" and recipes[name] then
+        recipes[name].enabled = true
+      end
     end
     if not skip_message then
       force.print{"ee-message.testing-tools-enabled", player.name}

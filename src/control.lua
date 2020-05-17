@@ -38,12 +38,19 @@ end)
 -- BOOTSTRAP
 
 event.on_init(function()
+  gui.init()
+
   if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
     event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
   end
-  gui.init()
+
   global_data.init()
+  for i in pairs(game.players) do
+    player_data.init(i)
+  end
+
   tesseract_chest.update_data()
+
   gui.build_lookup_tables()
 end)
 
@@ -56,12 +63,21 @@ end)
 
 event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
-    for i,  player in pairs(game.players) do
+    for i, player in pairs(game.players) do
       player_data.refresh(player, global.players[i])
+      if player.cheat_mode then
+        cheat_mode.enable_recipes(player)
+      end
     end
     infinity_loader.check_loaders()
     tesseract_chest.update_data()
     tesseract_chest.update_all_filters()
+  else -- post-init setup
+    for _, player in pairs(game.players) do
+      if player.cheat_mode then
+        cheat_mode.enable_recipes(player)
+      end
+    end
   end
 end)
 

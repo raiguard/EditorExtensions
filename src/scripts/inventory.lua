@@ -1,7 +1,6 @@
 local inventory = {}
 
 local gui = require("__flib__.gui")
--- local migration = require("__RaiLuaLib__.lualib.migration")
 
 local math = math
 local string = string
