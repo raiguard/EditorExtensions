@@ -3,9 +3,8 @@ local inventory = {}
 local gui = require("__flib__.gui")
 -- local migration = require("__RaiLuaLib__.lualib.migration")
 
-local math_min = math.min
-local string_find = string.find
-local string_sub = string.sub
+local math = math
+local string = string
 
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
@@ -24,7 +23,7 @@ local function create_sync_inventories(player_table, player)
   end
   -- iterate all inventories
   local inventories = {}
-  for _, name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
+  for _, name in ipairs{"main", "guns", "cursor", "armor", "ammo"} do
     local sync_inventory
     if name == "cursor" then
       sync_inventory = game.create_inventory(1)
@@ -37,9 +36,10 @@ local function create_sync_inventories(player_table, player)
       if inventory_def then
         local source_inventory = player.get_inventory(inventory_def)
         sync_inventory = game.create_inventory(#source_inventory)
-        for i=1, #source_inventory do
+        for i = 1, #source_inventory do
           sync_inventory[i].set_stack(source_inventory[i])
         end
+        source_inventory.clear()
       end
     end
     inventories[name] = sync_inventory
@@ -61,7 +61,7 @@ local function get_from_sync_inventories(player_table, player)
   end
   -- iterate all inventories
   local inventories = player_table.sync_inventories
-  for _, name in ipairs{"cursor", "main", "guns", "ammo", "armor"} do
+  for _, name in ipairs{"ammo", "armor", "cursor", "guns", "main"} do
     local sync_inventory = inventories[name]
     -- god mode doesn't have every inventory
     if sync_inventory then
@@ -71,7 +71,7 @@ local function get_from_sync_inventories(player_table, player)
         local inventory_def = defines.inventory[prefix..name]
         if inventory_def then
           local destination_inventory = player.get_inventory(inventory_def)
-          for i=1, math_min(#destination_inventory, #sync_inventory) do
+          for i = 1, math.min(#destination_inventory, #sync_inventory) do
             destination_inventory[i].set_stack(sync_inventory[i])
           end
         end
@@ -115,9 +115,9 @@ end
 local function import_filters(player, string)
   local decoded_string = game.decode_string(string)
   if not decoded_string then return false end
-  if string_sub(decoded_string, 1, 16) == "EditorExtensions" and string_sub(decoded_string, 18, 34) == "inventory_filters" then
+  if string.sub(decoded_string, 1, 16) == "EditorExtensions" and string.sub(decoded_string, 18, 34) == "inventory_filters" then
     -- extract version for migrations
-    local _,_,version,json = string_find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
+    local _,_,version,json = string.find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
     version = tonumber(version)
     local input = game.json_to_table(json)
     -- needs some flib features to work
@@ -170,7 +170,7 @@ gui.add_handlers{
           existing_data.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
-        local mode = (string_sub(e.element.sprite, 4, 9) == "export") and "export" or "import"
+        local mode = (string.sub(e.element.sprite, 4, 9) == "export") and "export" or "import"
         local gui_data = gui.build(player.gui.screen, {
           {type="frame", style="dialog_frame", direction="vertical", save_as="window", children={
             {type="flow", children={
