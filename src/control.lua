@@ -105,6 +105,7 @@ event.on_console_command(function(e)
     local player = game.get_player(e.player_index)
     if player.cheat_mode then
       cheat_mode.set_loadout(player)
+      game.print{"ee-message.time-frozen"}
     end
   end
 end)
