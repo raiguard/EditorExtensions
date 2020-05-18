@@ -73,9 +73,10 @@ event.on_configuration_changed(function(e)
     tesseract_chest.update_data()
     tesseract_chest.update_all_filters()
   else -- post-init setup
-    for _, player in pairs(game.players) do
+    for i, player in pairs(game.players) do
       if player.cheat_mode then
         cheat_mode.enable_recipes(player)
+        inventory.toggle_sync(player, global.players[i])
       end
     end
   end
