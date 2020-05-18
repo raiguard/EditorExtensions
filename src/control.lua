@@ -6,6 +6,7 @@ local cheat_mode = require("scripts.cheat-mode")
 local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
+local on_tick = require("scripts.on-tick")
 local player_data = require("scripts.player-data")
 
 require("scripts.common-gui")
@@ -34,6 +35,7 @@ end)
 
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
+-- on_tick event handler is kept in scripts.on-tick
 
 -- BOOTSTRAP
 
@@ -49,6 +51,7 @@ event.on_init(function()
     player_data.init(i)
   end
 
+  on_tick.update()
   tesseract_chest.update_data()
 
   gui.build_lookup_tables()
@@ -58,6 +61,9 @@ event.on_load(function()
   if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
     event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
   end
+
+  on_tick.update()
+
   gui.build_lookup_tables()
 end)
 
@@ -125,6 +131,7 @@ event.register(
       -- pass
     elseif infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.build(entity, e.tags)
+      on_tick.update()
     elseif string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
       tesseract_chest.set_filters(entity)
     -- only snap manually built entities
@@ -318,12 +325,6 @@ event.on_runtime_mod_setting_changed(function(e)
       inventory.toggle_sync(player, player_table)
     end
   end
-end)
-
--- TICK
-
-event.on_tick(function(e)
-  infinity_wagon.on_tick()
 end)
 
 -- -----------------------------------------------------------------------------
