@@ -78,7 +78,6 @@ local function get_from_sync_inventories(player_table, player)
         local inventory_def = defines.inventory[prefix..name]
         if inventory_def then
           local destination_inventory = player.get_inventory(inventory_def)
-          local supports_filters = destination_inventory.supports_filters()
           local set_filter = destination_inventory.set_filter
           for i = 1, math.min(#destination_inventory, #sync_inventory) do
             if sync_filters[i] then
