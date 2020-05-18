@@ -62,6 +62,7 @@ return {
     gui.init()
     -- destroy any infinity combinator GUIs
     for _, player_table in pairs(global.players) do
+      player_table.sync_inventories = nil
       if player_table.gui.ic then
         if player_table.gui.ic.window then
           player_table.gui.ic.window.destroy()

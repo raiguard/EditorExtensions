@@ -7,6 +7,7 @@ Date: ????
     - Added a super energy shield and super night vision to the /cheat all loadout
     - Added /EditorExtensions disable-cheat-mode command, which disables cheat mode and removes the testing tools recipes
     - Cheat entities now have a purple map color
+    - Inventory sync now syncs slot filters as well as contents
   Changes:
     - Refactored the mod to improve performance and code structure
     - Switched from RaiLuaLib to FLib

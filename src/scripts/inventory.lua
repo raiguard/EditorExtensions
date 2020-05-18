@@ -21,8 +21,9 @@ local function create_sync_inventories(player_table, player)
     prefix = "character_"
   end
   -- iterate all inventories
-  local inventories = {}
+  local sync_tables = {}
   for _, name in ipairs{"main", "guns", "cursor", "armor", "ammo"} do
+    local sync_filters = {}
     local sync_inventory
     if name == "cursor" then
       sync_inventory = game.create_inventory(1)
@@ -34,16 +35,21 @@ local function create_sync_inventories(player_table, player)
       local inventory_def = defines.inventory[prefix..name]
       if inventory_def then
         local source_inventory = player.get_inventory(inventory_def)
-        sync_inventory = game.create_inventory(#source_inventory)
-        for i = 1, #source_inventory do
+        local get_filter = source_inventory.get_filter
+        local supports_filters = source_inventory.supports_filters()
+        local source_inventory_len = #source_inventory
+        sync_inventory = game.create_inventory(source_inventory_len)
+        for i = 1, source_inventory_len do
           sync_inventory[i].set_stack(source_inventory[i])
+          if supports_filters then
+            sync_filters[i] = get_filter(i)
+          end
         end
-        source_inventory.clear()
       end
     end
-    inventories[name] = sync_inventory
+    sync_tables[name] = {filters=sync_filters, inventory=sync_inventory}
   end
-  player_table.sync_inventories = inventories
+  player_table.sync_data = sync_tables
 end
 
 local function get_from_sync_inventories(player_table, player)
@@ -59,18 +65,25 @@ local function get_from_sync_inventories(player_table, player)
     prefix = "character_"
   end
   -- iterate all inventories
-  local inventories = player_table.sync_inventories
+  local sync_tables = player_table.sync_data
   for _, name in ipairs{"ammo", "armor", "cursor", "guns", "main"} do
-    local sync_inventory = inventories[name]
+    local sync_data = sync_tables[name]
     -- god mode doesn't have every inventory
-    if sync_inventory then
+    if sync_data then
+      local sync_filters = sync_data.filters
+      local sync_inventory = sync_data.inventory
       if name == "cursor" then
         player.cursor_stack.set_stack(sync_inventory[1])
       else
         local inventory_def = defines.inventory[prefix..name]
         if inventory_def then
           local destination_inventory = player.get_inventory(inventory_def)
+          local supports_filters = destination_inventory.supports_filters()
+          local set_filter = destination_inventory.set_filter
           for i = 1, math.min(#destination_inventory, #sync_inventory) do
+            if sync_filters[i] then
+              set_filter(i, sync_filters[i])
+            end
             destination_inventory[i].set_stack(sync_inventory[i])
           end
         end
@@ -78,7 +91,7 @@ local function get_from_sync_inventories(player_table, player)
       sync_inventory.destroy()
     end
   end
-  player_table.sync_inventories = nil
+  player_table.sync_data = nil
 end
 
 function inventory.toggle_sync(player, player_table, enable)
@@ -291,7 +304,7 @@ end
 function inventory.on_player_toggled_map_editor(e)
   local player_table = global.players[e.player_index]
   close_guis(player_table, e.player_index)
-  if player_table.flags.inventory_sync_enabled and player_table.sync_inventories then
+  if player_table.flags.inventory_sync_enabled and player_table.sync_data then
     get_from_sync_inventories(player_table, game.get_player(e.player_index))
   end
 end
