@@ -247,6 +247,10 @@ end)
 
 event.on_player_created(function(e)
   player_data.init(e.player_index)
+
+  if global.flags.in_testing_scenario then
+    cheat_mode.enable(game.get_player(e.player_index), global.players[e.player_index])
+  end
 end)
 
 event.on_player_removed(function(e)

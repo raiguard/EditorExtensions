@@ -65,7 +65,7 @@ local equipment_to_add = {
 }
 
 local function set_armor(inventory)
-  if inventory[1] and inventory[1].name == "power-armor-mk2" then
+  if inventory[1] and inventory[1].valid_for_read and inventory[1].name == "power-armor-mk2" then
     inventory[1].grid.clear()
   else
     inventory[1].set_stack{name="power-armor-mk2"}
@@ -98,6 +98,14 @@ function cheat_mode.set_loadout(player)
     -- overwrite the default armor loadout
     set_armor(player.get_inventory(defines.inventory.editor_armor))
   end
+end
+
+function cheat_mode.enable(player)
+  -- enabling cheat mode will cause the recipes to be unlocked, and sync to be enabled
+  player.cheat_mode = true
+
+  player.force.research_all_technologies()
+  cheat_mode.set_loadout(player)
 end
 
 function cheat_mode.disable(player, player_table)
