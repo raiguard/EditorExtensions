@@ -292,18 +292,22 @@ gui.add_handlers{
 -- TODO: update GUI state when any other players change something
 
 local function create_gui(player, player_table, entity)
+  local preview_entity = entity.surface.find_entities_filtered{position=entity.position, type="loader-1x1"}[1]
   local control = entity.get_or_create_control_behavior()
   local parameters = control.parameters.parameters
   local gui_data = gui.build(player.gui.screen, {
-    {type="frame", style="dialog_frame", direction="vertical", handlers="il.window", save_as="window", children={
+    {type="frame", style="inner_frame_in_outer_frame", direction="vertical", handlers="il.window", save_as="window", children={
       {type="flow", children={
-        {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}},
+        {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}, save_as="window_title"},
         {template="titlebar_drag_handle"},
         {template="close_button", handlers="il.close_button"}
       }},
-      {type="flow", style="ee_entity_window_content_flow", children={
-        gui.templates.entity_camera(entity, 90, 1, {0,0}, player.display_scale),
-        {type="frame", style="ee_ia_page_frame", direction="vertical", children={
+      {type="frame", style="ee_inside_shallow_frame_for_entity", children={
+        {type="frame", style="deep_frame_in_shallow_frame", children={
+          {type="entity-preview", style_mods={width=85, height=85}, elem_mods={entity=preview_entity}}
+        }},
+        -- gui.templates.entity_camera(entity, 90, 1, {0,0}, player.display_scale),
+        {type="flow", direction="vertical", children={
           {template="vertically_centered_flow", children={
             {type="label", caption={"ee-gui.state"}},
             {template="pushers.horizontal"},
@@ -314,8 +318,10 @@ local function create_gui(player, player_table, entity)
           {template="vertically_centered_flow", children={
             {type="label", caption={"", {"ee-gui.filters"}, " [img=info]"}, tooltip={"ee-gui.il-filters-description"}},
             {type="empty-widget", style_mods={width=20}},
-            {template="il_filter_button", name="ee_il_filter_button_1", item=parameters[1].signal.name, handlers="il.filter_button", save_as="filter_button_1"},
-            {template="il_filter_button", name="ee_il_filter_button_2", item=parameters[2].signal.name, handlers="il.filter_button", save_as="filter_button_2"}
+            {type="frame", style="slot_button_deep_frame", children={
+              {template="il_filter_button", name="ee_il_filter_button_1", item=parameters[1].signal.name, handlers="il.filter_button", save_as="filter_button_1"},
+              {template="il_filter_button", name="ee_il_filter_button_2", item=parameters[2].signal.name, handlers="il.filter_button", save_as="filter_button_2"}
+            }}
           }}
         }}
       }}
@@ -323,6 +329,7 @@ local function create_gui(player, player_table, entity)
   })
 
   gui_data.window.force_auto_center()
+  gui_data.window_title.drag_target = gui_data.window
   gui_data.drag_handle.drag_target = gui_data.window
 
   player.opened = gui_data.window
@@ -335,6 +342,8 @@ end
 -- -----------------------------------------------------------------------------
 -- SNAPPING
 -- "Snapping" in this case usually means matching both direction and belt type
+
+--! FIXME placing a belt that then causes a loader to switch directions doesn't work properly
 
 -- snapping blacklist - see remote interface documentation
 local snapping_blacklist = {}
@@ -532,7 +541,6 @@ function infinity_loader.setup_blueprint(blueprint_entity)
 end
 
 function infinity_loader.paste_settings(source, destination)
-
   -- sanitize filters to remove any non-items
   local parameters = {parameters={}}
   local items = 0
@@ -549,6 +557,7 @@ function infinity_loader.paste_settings(source, destination)
 end
 
 function infinity_loader.open(player_index, entity)
+  -- TODO play sound after opening GUI
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)

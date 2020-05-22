@@ -15,6 +15,7 @@ Date: ????
     - Removed infinity combinator due to bad performance, clunky internals, and low usage
     - Significantly optimized infinity wagon blueprinting logic
     - Updated item / entity naming scheme to more accurately reflect what they do
+    - Updated GUI styling to match the 0.18.27 style overhaul
   Bugfixes:
     - Fixed a crash when connecting an infinity pipe to a crafting machine with no set recipe
     - Fixed a crash with inventory sync when in god mode

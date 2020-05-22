@@ -154,21 +154,6 @@ local function import_filters(player, string)
   return false
 end
 
-gui.add_templates{
-  inventory_filters_string = {
-    export_nav_flow = {type="flow", style_mods={top_margin=8}, direction="horizontal", children={
-      {type="button", style="back_button", caption={"gui.cancel"}, handlers="inventory_filters_string.back_button"},
-      {type="empty-widget", style="draggable_space_header", style_mods={height=32, horizontally_stretchable=true}, save_as="lower_drag_handle"}
-    }},
-    import_nav_flow = {type="flow", style_mods={top_margin=8}, direction="horizontal", children={
-      {type="button", style="back_button", caption={"gui.cancel"}, handlers="inventory_filters_string.back_button"},
-      {type="empty-widget", style="draggable_space_header", style_mods={height=32, horizontally_stretchable=true}, save_as="lower_drag_handle"},
-      {type="button", style="confirm_button", caption={"gui.confirm"}, mods={enabled=false}, handlers="inventory_filters_string.confirm_button",
-        save_as="confirm_button"}
-    }}
-  }
-}
-
 gui.add_handlers{
   inventory_filters_buttons = {
     import_export_button = {
@@ -176,29 +161,42 @@ gui.add_handlers{
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         local existing_data = player_table.gui.inventory_filters_string
+        local mode = (string.sub(e.element.sprite, 4, 9) == "export") and "export" or "import"
+
         if existing_data then
           gui.update_filters("inventory_filters_string", e.player_index, nil, "remove")
           existing_data.window.destroy()
           player_table.gui.inventory_filters_string = nil
         end
-        local mode = (string.sub(e.element.sprite, 4, 9) == "export") and "export" or "import"
+
         local gui_data = gui.build(player.gui.screen, {
-          {type="frame", style="dialog_frame", direction="vertical", save_as="window", children={
+          {type="frame", style="inner_frame_in_outer_frame", direction="vertical", save_as="window", children={
             {type="flow", children={
               {type="label", style="frame_title", caption={"ee-gui."..mode.."-inventory-filters"}},
               {type="empty-widget", style="draggable_space_header", style_mods={height=24, horizontally_stretchable=true}, save_as="drag_handle"}
             }},
-            {type="text-box", style_mods={width=400, height=300}, clear_and_focus_on_right_click=true, mods={word_wrap=true},
+            {type="text-box", style_mods={width=400, height=300}, clear_and_focus_on_right_click=true, elem_mods={word_wrap=true},
               handlers=(mode == "import" and "inventory_filters_string.textbox" or nil), save_as="textbox"},
-            {template="inventory_filters_string."..mode.."_nav_flow"}
+            {type="flow", style_mods={top_margin=8}, direction="horizontal", children={
+              {type="button", style="back_button", caption={"gui.cancel"}, handlers="inventory_filters_string.back_button"},
+              {type="empty-widget", style="draggable_space", style_mods={height=32, horizontally_stretchable=true}, save_as="lower_drag_handle"},
+              {type="condition", condition=(mode=="import"), children={
+                {type="button", style="confirm_button", caption={"gui.confirm"}, elem_mods={enabled=false}, handlers="inventory_filters_string.confirm_button",
+                  save_as="confirm_button"}
+              }}
+            }}
           }}
         })
+
         gui_data.drag_handle.drag_target = gui_data.window
         gui_data.lower_drag_handle.drag_target = gui_data.window
         gui_data.window.force_auto_center()
         gui_data.textbox.focus()
 
+        gui_data.mode = mode
+
         if mode == "export" then
+          gui_data.lower_drag_handle.style.right_margin = 0
           gui_data.textbox.text = export_filters(player)
           gui_data.textbox.select_all()
         end
@@ -231,10 +229,12 @@ gui.add_handlers{
     textbox = {
       on_gui_text_changed = function(e)
         local gui_data = global.players[e.player_index].gui.inventory_filters_string
-        if e.element.text == "" then
-          gui_data.confirm_button.enabled = false
-        else
-          gui_data.confirm_button.enabled = true
+        if gui_data.mode == "import" then
+          if e.element.text == "" then
+            gui_data.confirm_button.enabled = false
+          else
+            gui_data.confirm_button.enabled = true
+          end
         end
       end
     }
@@ -270,7 +270,7 @@ function inventory.create_filters_buttons(player)
   -- create buttons GUI
   local player_table = global.players[player.index]
   local gui_data = gui.build(player.gui.screen, {
-    {type="frame", style="shortcut_bar_window_frame", style_mods={right_padding=4}, save_as="window", children={
+    {type="frame", style="quick_bar_window_frame", save_as="window", children={
       {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
         {type="sprite-button", style="shortcut_bar_button", sprite="ee_import_inventory_filters", tooltip={"ee-gui.import-inventory-filters"},
           handlers="inventory_filters_buttons.import_export_button", save_as="import_button"},

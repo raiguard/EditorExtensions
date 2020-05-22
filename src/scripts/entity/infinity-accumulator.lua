@@ -185,15 +185,18 @@ local function create_gui(player, player_table, entity)
   local is_buffer = mode == "buffer"
   local slider_value, dropdown_index = rev_parse_energy(entity.electric_buffer_size)
   local gui_data = gui.build(player.gui.screen, {
-    {type="frame", style="dialog_frame", direction="vertical", handlers="ia.window", save_as="window", children={
+    {type="frame", style="inner_frame_in_outer_frame", direction="vertical", handlers="ia.window", save_as="window", children={
       {type="flow", children={
-        {type="label", style="frame_title", caption={"entity-name.ee-infinity-accumulator"}},
+        {type="label", style="frame_title", caption={"entity-name.ee-infinity-accumulator"}, save_as="window_title"},
         {template="titlebar_drag_handle"},
         {template="close_button", handlers="ia.close_button"}
       }},
-      {type="flow", style="ee_entity_window_content_flow", children={
-        gui.templates.entity_camera(entity, 112, 1, {0,-0.5}, player.display_scale),
-        {type="frame", style="ee_ia_page_frame", direction="vertical", children={
+      {type="frame", style="ee_inside_shallow_frame_for_entity", children={
+        {type="frame", style="deep_frame_in_shallow_frame", children={
+          -- TODO changing settings invalidates the entity preview
+          {type="entity-preview", style_mods={width=100, height=100}, elem_mods={entity=entity}}
+        }},
+        {type="flow", direction="vertical", children={
           {template="vertically_centered_flow", children={
             {type="label", caption={"ee-gui.mode"}},
             {template="pushers.horizontal"},
@@ -204,9 +207,9 @@ local function create_gui(player, player_table, entity)
           {template="vertically_centered_flow", children={
             {type="label", caption={"", {"ee-gui.priority"}, " [img=info]"}, tooltip={"ee-gui.ia-priority-description"}},
             {template="pushers.horizontal"},
-            {type="drop-down", items=constants.localised_priorities, selected_index=constants.priority_to_index[priority], mods={visible=not is_buffer},
+            {type="drop-down", items=constants.localised_priorities, selected_index=constants.priority_to_index[priority], elem_mods={visible=not is_buffer},
               handlers="ia.priority_dropdown", save_as="priority_dropdown"},
-            {type="button", style="ee_disabled_dropdown_button", caption={"ee-gui.tertiary"}, mods={enabled=false, visible=is_buffer},
+            {type="button", style="ee_disabled_dropdown_button", caption={"ee-gui.tertiary"}, elem_mods={enabled=false, visible=is_buffer},
               save_as="priority_dropdown_dummy"}
           }},
           {template="pushers.vertical"},
@@ -223,6 +226,7 @@ local function create_gui(player, player_table, entity)
   })
 
   gui_data.window.force_auto_center()
+  gui_data.window_title.drag_target = gui_data.window
   gui_data.drag_handle.drag_target = gui_data.window
 
   player.opened = gui_data.window
@@ -241,6 +245,7 @@ function infinity_accumulator.check_name(entity)
 end
 
 function infinity_accumulator.open(player_index, entity)
+  -- TODO play sound after opening GUI
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
