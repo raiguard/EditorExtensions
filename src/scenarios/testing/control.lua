@@ -7,7 +7,7 @@ local event = require("__flib__.event")
 event.on_init(function()
   -- set lab tiles
   local nauvis = game.surfaces.nauvis
-  -- nauvis.generate_with_lab_tiles = true
+  nauvis.generate_with_lab_tiles = true
   nauvis.clear(true)
 
   -- freeze time at noonday
