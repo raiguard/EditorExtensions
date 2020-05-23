@@ -185,7 +185,7 @@ local function create_gui(player, player_table, entity)
   local is_buffer = mode == "buffer"
   local slider_value, dropdown_index = rev_parse_energy(entity.electric_buffer_size)
   local gui_data = gui.build(player.gui.screen, {
-    {type="frame", style="inner_frame_in_outer_frame", direction="vertical", handlers="ia.window", save_as="window", children={
+    {type="frame", style="standalone_inner_frame_in_outer_frame", direction="vertical", handlers="ia.window", save_as="window", children={
       {type="flow", children={
         {type="label", style="frame_title", caption={"entity-name.ee-infinity-accumulator"}, save_as="window_title"},
         {template="titlebar_drag_handle"},

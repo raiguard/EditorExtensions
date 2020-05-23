@@ -170,7 +170,7 @@ gui.add_handlers{
         end
 
         local gui_data = gui.build(player.gui.screen, {
-          {type="frame", style="inner_frame_in_outer_frame", direction="vertical", save_as="window", children={
+          {type="frame", style="standalone_inner_frame_in_outer_frame", direction="vertical", save_as="window", children={
             {type="flow", children={
               {type="label", style="frame_title", caption={"ee-gui."..mode.."-inventory-filters"}},
               {type="empty-widget", style="draggable_space_header", style_mods={height=24, horizontally_stretchable=true}, save_as="drag_handle"}
