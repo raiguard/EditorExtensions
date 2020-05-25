@@ -343,11 +343,6 @@ end
 -- SNAPPING
 -- "Snapping" in this case usually means matching both direction and belt type
 
---! FIXME placing a belt that then causes a loader to switch directions doesn't work properly
-
--- snapping blacklist - see remote interface documentation
-local snapping_blacklist = {}
-
 -- snaps the loader to the transport-belt-connectable entity that it's facing
 -- if entity is supplied, it will check against that entity, and will not snap if it cannot connect to it (is not facing it)
 local function snap_loader(loader, entity)
@@ -360,9 +355,8 @@ local function snap_loader(loader, entity)
       type = {"transport-belt", "underground-belt", "splitter", "loader-1x1"}
     }[1]
   end
-  local snapped = false
   -- if the entity exists and is not on the blacklist
-  if entity and not snapping_blacklist[entity.name] then
+  if entity then
     -- snap direction
     local belt_neighbors = loader.belt_neighbours
     if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
@@ -380,15 +374,14 @@ local function snap_loader(loader, entity)
     if get_belt_type(loader) ~= belt_type then
       loader = update_loader_type(loader, belt_type)
     end
-    snapped = true -- this will be skipped if the snapping did not occur, so it will be false
   end
   ::skip_belt_type::
   -- update internals
   update_inserters(loader)
-  -- update_filters(
-  --   loader.surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator", position=loader.position}[1],
-  --   {loader=loader}
-  -- )
+  update_filters(
+    loader.surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator", position=loader.position}[1],
+    {loader=loader}
+  )
 end
 
 -- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
