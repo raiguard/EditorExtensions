@@ -47,7 +47,9 @@ local function create_sync_inventories(player_table, player)
         end
       end
     end
-    sync_tables[name] = {filters=sync_filters, inventory=sync_inventory}
+    if sync_inventory then
+      sync_tables[name] = {filters=sync_filters, inventory=sync_inventory}
+    end
   end
   player_table.sync_data = sync_tables
 end
