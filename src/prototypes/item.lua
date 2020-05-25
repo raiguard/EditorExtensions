@@ -123,7 +123,7 @@ data:extend{
     type = "item",
     name = "ee-super-personal-roboport-equipment",
     icon_size = 32,
-    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["personal-roboport-equipment"])},
+    icons = util.recursive_tint{util.extract_icon_info(data.raw["item"]["personal-roboport-mk2-equipment"])},
     subgroup = "ee-equipment",
     order = "ab",
     placed_as_equipment_result = "ee-super-personal-roboport-equipment",
