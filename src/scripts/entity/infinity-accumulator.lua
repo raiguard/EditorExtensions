@@ -85,6 +85,8 @@ local function update_gui_mode(gui_data, mode)
     gui_data.priority_dropdown_dummy.visible = false
   end
   gui_data.slider_dropdown.items = constants["localised_si_suffixes_"..constants.power_suffixes_by_mode[mode]]
+
+  gui_data.preview.entity = gui_data.entity
 end
 
 local function update_gui_settings(gui_data)
@@ -129,6 +131,7 @@ gui.add_handlers{
         local mode = constants.index_to_mode[gui_data.mode_dropdown.selected_index]
         local priority = constants.index_to_priority[e.element.selected_index]
         gui_data.entity = change_entity(gui_data.entity, priority, mode)
+        gui_data.preview.entity = gui_data.entity
       end
     },
     slider = {
@@ -193,22 +196,21 @@ local function create_gui(player, player_table, entity)
       }},
       {type="frame", style="ee_inside_shallow_frame_for_entity", children={
         {type="frame", style="deep_frame_in_shallow_frame", children={
-          -- TODO changing settings invalidates the entity preview
-          {type="entity-preview", style_mods={width=100, height=100}, elem_mods={entity=entity}}
+          {type="entity-preview", style_mods={width=100, height=100}, elem_mods={entity=entity}, save_as="preview"}
         }},
         {type="flow", direction="vertical", children={
           {template="vertically_centered_flow", children={
             {type="label", caption={"ee-gui.mode"}},
             {template="pushers.horizontal"},
-            {type="drop-down", items=constants.localised_modes, selected_index=constants.mode_to_index[mode], handlers="ia.mode_dropdown",
-              save_as="mode_dropdown"}
+            {type="drop-down", style="ee_ia_dropdown", items=constants.localised_modes, selected_index=constants.mode_to_index[mode],
+              handlers="ia.mode_dropdown", save_as="mode_dropdown"}
           }},
           {template="pushers.vertical"},
           {template="vertically_centered_flow", children={
             {type="label", caption={"", {"ee-gui.priority"}, " [img=info]"}, tooltip={"ee-gui.ia-priority-description"}},
             {template="pushers.horizontal"},
-            {type="drop-down", items=constants.localised_priorities, selected_index=constants.priority_to_index[priority], elem_mods={visible=not is_buffer},
-              handlers="ia.priority_dropdown", save_as="priority_dropdown"},
+            {type="drop-down", style="ee_ia_dropdown", items=constants.localised_priorities, selected_index=constants.priority_to_index[priority],
+              elem_mods={visible=not is_buffer}, handlers="ia.priority_dropdown", save_as="priority_dropdown"},
             {type="button", style="ee_disabled_dropdown_button", caption={"ee-gui.tertiary"}, elem_mods={enabled=false, visible=is_buffer},
               save_as="priority_dropdown_dummy"}
           }},
@@ -217,7 +219,7 @@ local function create_gui(player, player_table, entity)
             {type="slider", minimum_value=0, maximum_value=999, value=slider_value, handlers="ia.slider", save_as="slider"},
             {type="textfield", style="ee_slider_textfield", text=slider_value, numeric=true, lose_focus_on_confirm=true, clear_and_focus_on_right_click=true,
               handlers="ia.slider_textfield", save_as="slider_textfield"},
-            {type="drop-down", style_mods={width=63}, selected_index=dropdown_index,
+            {type="drop-down", style_mods={width=69}, selected_index=dropdown_index,
               items=constants["localised_si_suffixes_"..constants.power_suffixes_by_mode[mode]], handlers="ia.slider_dropdown", save_as="slider_dropdown"}
           }}
         }}
