@@ -21,6 +21,7 @@ Date: ????
     - Fixed a crash with inventory sync when in god mode
     - Fixed that entering cheat mode with inventory-expanding armor equipped would unequip the armor for a split second, causing items to spill on the ground
     - Fixed the infinity pipe not appearing in item filters menu
+    - Fixed that super exoskeletons could not be placed in every equipment grid
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1
 Date: 2020-04-24

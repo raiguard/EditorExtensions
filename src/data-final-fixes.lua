@@ -24,39 +24,40 @@ local to_check = {
 }
 -- start with four extra slots to account for inserter interactions
 local slot_count = 4
-for _, n in pairs(to_check) do
-  slot_count = slot_count + table_size(data.raw[n])
+for _, category in pairs(to_check) do
+  slot_count = slot_count + table_size(data.raw[category])
 end
 -- apply to tesseract chests
-for _, p in pairs(data.raw["infinity-container"]) do
-  if p.name:find("tesseract") then
+for _, container in pairs(data.raw["infinity-container"]) do
+  if string.find(container.name, "tesseract") then
     -- set tesseract chest inventory size to the number of item prototypes
-    p.inventory_size = slot_count
+    container.inventory_size = slot_count
   end
 end
 
 -- allow all science packs to be placed in the super lab
-local lab = data.raw["lab"]["ee-super-lab"]
-local pattern_overrides = {}
-local packs = {}
-for _, p in pairs(data.raw["lab"]) do
-  for _,  input in pairs(p.inputs) do
-    packs[input] = true
+local packs_build = {}
+for _, lab in pairs(data.raw["lab"]) do
+  for _,  input in pairs(lab.inputs) do
+    packs_build[input] = true
   end
 end
-local over = {}
-for p, _ in pairs(packs) do
-  table.insert(over, p)
+local packs = {}
+for pack in pairs(packs_build) do
+  table.insert(packs, pack)
 end
-lab.inputs = over
+data.raw["lab"]["ee-super-lab"].inputs = packs
 
 -- allow equipment to be placed in all existing grid categories
 local categories = {}
-for _, t in pairs(data.raw["equipment-category"]) do
-  table.insert(categories, t.name)
+for _, category in pairs(data.raw["equipment-category"]) do
+  table.insert(categories, category.name)
 end
 data.raw["generator-equipment"]["ee-infinity-fusion-reactor-equipment"].categories = categories
 data.raw["roboport-equipment"]["ee-super-personal-roboport-equipment"].categories = categories
+data.raw["movement-bonus-equipment"]["ee-super-exoskeleton-equipment"].categories = categories
+data.raw["energy-shield-equipment"]["ee-super-energy-shield-equipment"].categories = categories
+data.raw["night-vision-equipment"]["ee-super-night-vision-equipment"].categories = categories
 
 -- reset all modules to be able to be used in all recipes
 local modules = {
