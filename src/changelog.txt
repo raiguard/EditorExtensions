@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.0
-Date: ????
+Date: 2020-05-26
   Features:
     - Added super energy shield
     - Added super night vision
