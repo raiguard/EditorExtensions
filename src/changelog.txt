@@ -2,6 +2,7 @@
 Version: 1.5.1
 Date: ????
   Changes:
+    - Removed testing scenario - it doesn't work yet!
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.0
 Date: 2020-05-26
