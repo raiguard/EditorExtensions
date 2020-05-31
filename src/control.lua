@@ -18,7 +18,7 @@ local infinity_wagon = require("scripts.entity.infinity-wagon")
 local super_inserter = require("scripts.entity.super-inserter")
 local tesseract_chest = require("scripts.entity.tesseract-chest")
 
-local string_sub = string.sub
+local string = string
 
 -- -----------------------------------------------------------------------------
 -- COMMANDS
@@ -132,7 +132,7 @@ event.register(
     elseif infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.build(entity, e.tags)
       on_tick.update()
-    elseif string_sub(entity.name, 1, 18) == "ee-tesseract-chest" then
+    elseif string.sub(entity.name, 1, 18) == "ee-tesseract-chest" then
       tesseract_chest.set_filters(entity)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
@@ -321,7 +321,7 @@ event.on_runtime_mod_setting_changed(function(e)
   if e.setting == "ee-tesseract-include-hidden" then
     tesseract_chest.update_data()
     tesseract_chest.update_all_filters()
-  elseif string_sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
+  elseif string.sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     data.update_player_settings(player, player_table)

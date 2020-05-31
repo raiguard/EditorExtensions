@@ -1,5 +1,3 @@
-local util = require("prototypes.util")
-
 -- set tesseract chest inventory size
 local to_check = {
   "ammo",

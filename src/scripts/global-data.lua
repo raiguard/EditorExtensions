@@ -1,13 +1,8 @@
 local global_data = {}
 
 function global_data.init()
-  local in_testing_scenario = false
-  if remote.interfaces["EditorExtensions_TestingScenario"] then
-    in_testing_scenario = true
-  end
-
   global.flags = {
-    in_testing_scenario = in_testing_scenario,
+    in_testing_scenario = remote.interfaces["EditorExtensions_TestingScenario"] and true or false,
     map_editor_toggled = false
   }
   global.players = {}
