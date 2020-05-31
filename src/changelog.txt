@@ -2,6 +2,7 @@
 Version: 1.5.3
 Date: ????
   Changes:
+    - Changed window titlebar drag behavior to be in line with vanilla (you can drag anywhere on the titlebar's flow)
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.2
 Date: 2020-05-28

@@ -297,8 +297,8 @@ local function create_gui(player, player_table, entity)
   local parameters = control.parameters.parameters
   local gui_data = gui.build(player.gui.screen, {
     {type="frame", style="standalone_inner_frame_in_outer_frame", direction="vertical", handlers="il.window", save_as="window", children={
-      {type="flow", children={
-        {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}, save_as="window_title"},
+      {type="flow", save_as="titlebar_flow", children={
+        {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}, elem_mods={ignored_by_interaction=true}},
         {template="titlebar_drag_handle"},
         {template="close_button", handlers="il.close_button"}
       }},
@@ -329,8 +329,7 @@ local function create_gui(player, player_table, entity)
   })
 
   gui_data.window.force_auto_center()
-  gui_data.window_title.drag_target = gui_data.window
-  gui_data.drag_handle.drag_target = gui_data.window
+  gui_data.titlebar_flow.drag_target = gui_data.window
 
   player.opened = gui_data.window
 
