@@ -1,4 +1,5 @@
 .vscode
 *.code-workspace
 *.zip
+!src/scenarios/testing/blueprint.zip
 src/scripts/entity/ic-gui.lua

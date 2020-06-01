@@ -3,6 +3,7 @@ Version: 1.5.3
 Date: ????
   Changes:
     - Changed window titlebar drag behavior to be in line with vanilla (you can drag anywhere on the titlebar's flow)
+    - Testing scenario is now a pre-generated world, vastly speeding up load time
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.2
 Date: 2020-05-28
