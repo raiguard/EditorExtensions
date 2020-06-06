@@ -498,12 +498,13 @@ data:extend{super_roboport}
 -- super robots
 do
   local modifiers = {
-    speed = 1,
-    max_energy = "0kJ",
-    energy_per_tick = "0kJ",
     energy_per_move = "0kJ",
-    min_to_charge = 0,
+    energy_per_tick = "0kJ",
+    max_energy = "0kJ",
+    max_payload_size = 1000,
     max_to_charge = 0,
+    min_to_charge = 0,
+    speed = 1000000,
     speed_multiplier_when_out_of_energy = 1
   }
 

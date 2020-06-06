@@ -2,6 +2,8 @@
 Version: 1.5.5
 Date: ????
   Changes:
+    - Super robots are now 1 million times faster
+    - Super robots can carry up to 1000 items at a time
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.4
 Date: 2020-06-01
