@@ -11,12 +11,12 @@ local player_data = require("scripts.player-data")
 
 require("scripts.common-gui")
 
+local aggregate_chest = require("scripts.entity.aggregate-chest")
 local infinity_accumulator = require("scripts.entity.infinity-accumulator")
 local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local super_inserter = require("scripts.entity.super-inserter")
-local tesseract_chest = require("scripts.entity.tesseract-chest")
 
 local string = string
 
@@ -52,7 +52,7 @@ event.on_init(function()
   end
 
   on_tick.update()
-  tesseract_chest.update_data()
+  aggregate_chest.update_data()
 
   gui.build_lookup_tables()
 end)
@@ -76,8 +76,8 @@ event.on_configuration_changed(function(e)
       end
     end
     infinity_loader.check_loaders()
-    tesseract_chest.update_data()
-    tesseract_chest.update_all_filters()
+    aggregate_chest.update_data()
+    aggregate_chest.update_all_filters()
   else -- post-init setup
     for i, player in pairs(game.players) do
       if player.cheat_mode then
@@ -132,8 +132,8 @@ event.register(
     elseif infinity_wagon.wagon_names[entity.name] then
       infinity_wagon.build(entity, e.tags)
       on_tick.update()
-    elseif string.sub(entity.name, 1, 18) == "ee-tesseract-chest" then
-      tesseract_chest.set_filters(entity)
+    elseif string.sub(entity.name, 1, 18) == "ee-aggregate-chest" then
+      aggregate_chest.set_filters(entity)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
       if entity.name == "ee-super-inserter" then
@@ -318,9 +318,9 @@ end)
 -- SETTINGS
 
 event.on_runtime_mod_setting_changed(function(e)
-  if e.setting == "ee-tesseract-include-hidden" then
-    tesseract_chest.update_data()
-    tesseract_chest.update_all_filters()
+  if e.setting == "ee-aggregate-include-hidden" then
+    aggregate_chest.update_data()
+    aggregate_chest.update_all_filters()
   elseif string.sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
@@ -339,8 +339,8 @@ event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built
   {filter="name", name="ee-infinity-loader-logic-combinator"},
   {filter="name", name="ee-infinity-cargo-wagon"},
   {filter="name", name="ee-infinity-fluid-wagon"},
-  {filter="name", name="ee-tesseract-chest"},
-  {filter="name", name="ee-tesseract-chest-passive-provider"},
+  {filter="name", name="ee-aggregate-chest"},
+  {filter="name", name="ee-aggregate-chest-passive-provider"},
   {filter="name", name="ee-super-inserter"},
   {filter="name", name="ee-infinity-pipe"},
   {filter="type", type="transport-belt"},

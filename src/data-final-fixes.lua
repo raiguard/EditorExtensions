@@ -1,4 +1,4 @@
--- set tesseract chest inventory size
+-- set aggregate chest inventory size
 local to_check = {
   "ammo",
   "armor",
@@ -25,10 +25,10 @@ local slot_count = 4
 for _, category in pairs(to_check) do
   slot_count = slot_count + table_size(data.raw[category])
 end
--- apply to tesseract chests
+-- apply to aggregate chests
 for _, container in pairs(data.raw["infinity-container"]) do
-  if string.find(container.name, "tesseract") then
-    -- set tesseract chest inventory size to the number of item prototypes
+  if string.find(container.name, "aggregate") then
+    -- set aggregate chest inventory size to the number of item prototypes
     container.inventory_size = slot_count
   end
 end

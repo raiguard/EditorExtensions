@@ -5,6 +5,7 @@ Date: ????
     - Added a super roboport setup to testing scenario map
   Changes:
     - Testing scenario no longer has clouds
+    - Renamed tesseract chest to aggregate chest, to avoid confusion with its functionality
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.5
 Date: 2020-06-08

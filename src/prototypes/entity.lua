@@ -26,7 +26,7 @@ do
   end
 end
 
--- INFINITY AND TESSERACT CHESTS
+-- INFINITY AND AGGREGATE CHESTS
 do
   local infinity_chest_picture = {
     layers = {
@@ -92,19 +92,19 @@ do
     data:extend{chest}
   end
 
-  -- tesseract chests
+  -- aggregate chests
   -- create the chests here to let other mods modify them. increase their inventory size in data-final-fixes
-  local tesseract_chest_picture = {
+  local aggregate_chest_picture = {
     layers = {
       {
-        filename = "__EditorExtensions__/graphics/entity/tesseract-chest/tesseract-chest.png",
+        filename = "__EditorExtensions__/graphics/entity/aggregate-chest/aggregate-chest.png",
         priority = "extra-high",
         width = 34,
         height = 42,
         shift = util.by_pixel(0, -3),
         hr_version =
         {
-          filename = "__EditorExtensions__/graphics/entity/tesseract-chest/hr-tesseract-chest.png",
+          filename = "__EditorExtensions__/graphics/entity/aggregate-chest/hr-aggregate-chest.png",
           priority = "extra-high",
           width = 68,
           height = 84,
@@ -113,7 +113,7 @@ do
         }
       },
       {
-        filename = "__EditorExtensions__/graphics/entity/tesseract-chest/tesseract-chest-shadow.png",
+        filename = "__EditorExtensions__/graphics/entity/aggregate-chest/aggregate-chest-shadow.png",
         priority = "extra-high",
         width = 58,
         height = 24,
@@ -121,7 +121,7 @@ do
         draw_as_shadow = true,
         hr_version =
         {
-          filename = "__EditorExtensions__/graphics/entity/tesseract-chest/hr-tesseract-chest-shadow.png",
+          filename = "__EditorExtensions__/graphics/entity/aggregate-chest/hr-aggregate-chest-shadow.png",
           priority = "extra-high",
           width = 116,
           height = 48,
@@ -133,17 +133,17 @@ do
     }
   }
 
-  for _, t in pairs(util.tesseract_chest_data) do
+  for _, t in pairs(util.aggregate_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest"..suffix])
-    chest.name = "ee-tesseract-chest"..suffix
+    chest.name = "ee-aggregate-chest"..suffix
     chest.localised_description = util.chest_description(suffix, true)
     chest.order = t.o
-    chest.icons = {table.deepcopy(util.tesseract_chest_icon)}
-    chest.picture = table.deepcopy(tesseract_chest_picture)
+    chest.icons = {table.deepcopy(util.aggregate_chest_icon)}
+    chest.picture = table.deepcopy(aggregate_chest_picture)
     chest.logistic_slots_count = 0
-    chest.minable.result = "ee-tesseract-chest"..suffix
+    chest.minable.result = "ee-aggregate-chest"..suffix
     chest.enable_inventory_bar = false
     chest.flags = {"player-creation", "hide-alt-info"}
     util.recursive_tint(chest, t.t)

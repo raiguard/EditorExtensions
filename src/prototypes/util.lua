@@ -27,10 +27,10 @@ function util.extract_icon_info(obj)
 end
 
 -- generate the localised description of a chest
-function util.chest_description(suffix, is_tesseract)
-  if is_tesseract then
-    return {"", {"entity-description.ee-tesseract-chest"}, suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or "",
-      "\n[color=255,57,48]", {"entity-description.ee-tesseract-chest-warning"}, "[/color]"}
+function util.chest_description(suffix, is_aggregate)
+  if is_aggregate then
+    return {"", {"entity-description.ee-aggregate-chest"}, suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or "",
+      "\n[color=255,57,48]", {"entity-description.ee-aggregate-chest-warning"}, "[/color]"}
   else
     return {"", {"entity-description.ee-infinity-chest"}, suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or ""}
   end
@@ -45,7 +45,7 @@ util.infinity_chest_data = {
   {lm="buffer", s=30, t={114,255,135}, o="ae"},
   {lm="requester", s=30, t={114,236,255}, o="af"}
 }
-util.tesseract_chest_data = {
+util.aggregate_chest_data = {
   {t={255,255,225}, o="ba"},
   {lm="passive-provider", t={255,141,114}, o="bb"}
 }
@@ -81,8 +81,8 @@ util.infinity_chest_icon = {
   icon_size = 64,
   icon_mipmaps = 4
 }
-util.tesseract_chest_icon = {
-  icon = "__EditorExtensions__/graphics/item/tesseract-chest.png",
+util.aggregate_chest_icon = {
+  icon = "__EditorExtensions__/graphics/item/aggregate-chest.png",
   icon_size = 64,
   icon_mipmaps = 4
 }

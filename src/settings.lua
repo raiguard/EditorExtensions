@@ -80,7 +80,7 @@ data:extend{
   -- MAP SETTINGS
   {
     type = "bool-setting",
-    name = "ee-tesseract-include-hidden",
+    name = "ee-aggregate-include-hidden",
     setting_type = "runtime-global",
     default_value = false,
     order = "a"

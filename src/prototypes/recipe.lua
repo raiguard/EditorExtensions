@@ -43,8 +43,8 @@ register_recipes(recipe_names)
 for _, t in pairs(util.infinity_chest_data) do
   register_recipes{"ee-infinity-chest"..(t.lm and "-"..t.lm or "")}
 end
-for _, t in pairs(util.tesseract_chest_data) do
-  register_recipes{"ee-tesseract-chest"..(t.lm and "-"..t.lm or "")}
+for _, t in pairs(util.aggregate_chest_data) do
+  register_recipes{"ee-aggregate-chest"..(t.lm and "-"..t.lm or "")}
 end
 for _, t in ipairs(util.module_data) do
   register_recipes{t.name}
