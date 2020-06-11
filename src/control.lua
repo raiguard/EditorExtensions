@@ -53,9 +53,6 @@ event.on_init(function()
 
   on_tick.update()
   aggregate_chest.update_data()
-  if global.flags.in_testing_scenario then
-    aggregate_chest.update_all_filters()
-  end
 
   gui.build_lookup_tables()
 end)
