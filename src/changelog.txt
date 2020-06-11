@@ -2,10 +2,11 @@
 Version: 1.5.6
 Date: ????
   Features:
-    - Added a super roboport setup to testing scenario map
+    - Added a setting for preventing the initial pause when entering the editor for the first time
+    - Added a super roboport setup to the testing scenario map
   Changes:
-    - Testing scenario no longer has clouds
     - Renamed tesseract chest to aggregate chest, to avoid confusion with its functionality
+    - Testing scenario no longer has clouds
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.5
 Date: 2020-06-08

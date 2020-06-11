@@ -82,8 +82,15 @@ data:extend{
     type = "bool-setting",
     name = "ee-aggregate-include-hidden",
     setting_type = "runtime-global",
-    default_value = false,
+    default_value = true,
     order = "a"
+  },
+  {
+    type = "bool-setting",
+    name = "ee-prevent-initial-pause",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "b"
   },
   -- PLAYER SETTINGS
   {

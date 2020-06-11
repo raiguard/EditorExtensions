@@ -53,6 +53,9 @@ event.on_init(function()
 
   on_tick.update()
   aggregate_chest.update_data()
+  if global.flags.in_testing_scenario then
+    aggregate_chest.update_all_filters()
+  end
 
   gui.build_lookup_tables()
 end)
@@ -293,7 +296,9 @@ event.on_player_toggled_map_editor(function(e)
   -- the first time someone toggles the map editor, unpause the current tick
   if global.flags.map_editor_toggled == false then
     global.flags.map_editor_toggled = true
-    game.tick_paused = false
+    if settings.global["ee-prevent-initial-pause"].value then
+      game.tick_paused = false
+    end
   end
 
   local player = game.get_player(e.player_index)
