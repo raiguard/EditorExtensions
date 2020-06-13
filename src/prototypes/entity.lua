@@ -325,6 +325,12 @@ data:extend{infinity_pipe}
 do
   local cargo_wagon = table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
   cargo_wagon.name = "ee-infinity-cargo-wagon"
+  cargo_wagon.localised_description = {
+    "",
+    {"entity-description.ee-infinity-cargo-wagon"},
+    "\n[color=255,57,48]",
+    {"entity-description.ee-performance-warning"},"[/color]"
+  }
   cargo_wagon.icons = {util.extract_icon_info(cargo_wagon)}
   cargo_wagon.inventory_size = 100
   cargo_wagon.minable.result = "ee-infinity-cargo-wagon"
@@ -344,6 +350,12 @@ do
 
   local fluid_wagon = table.deepcopy(data.raw["fluid-wagon"]["fluid-wagon"])
   fluid_wagon.name = "ee-infinity-fluid-wagon"
+  fluid_wagon.localised_description = {
+    "",
+    {"entity-description.ee-infinity-fluid-wagon"},
+    "\n[color=255,57,48]",
+    {"entity-description.ee-performance-warning"},"[/color]"
+  }
   fluid_wagon.icons = {util.extract_icon_info(fluid_wagon)}
   fluid_wagon.minable.result = "ee-infinity-fluid-wagon"
   fluid_wagon.minimap_representation = {
