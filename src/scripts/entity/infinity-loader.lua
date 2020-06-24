@@ -296,7 +296,7 @@ local function create_gui(player, player_table, entity)
   local control = entity.get_or_create_control_behavior()
   local parameters = control.parameters.parameters
   local gui_data = gui.build(player.gui.screen, {
-    {type="frame", style="standalone_inner_frame_in_outer_frame", direction="vertical", handlers="il.window", save_as="window", children={
+    {type="frame", direction="vertical", handlers="il.window", save_as="window", children={
       {type="flow", save_as="titlebar_flow", children={
         {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}, elem_mods={ignored_by_interaction=true}},
         {template="titlebar_drag_handle"},
