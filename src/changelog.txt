@@ -2,6 +2,7 @@
 Version: 1.5.8
 Date: ????
   Changes:
+    - Krastorio 2 crash site is now disabled when entering testing scenario
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.7
 Date: 2020-06-24

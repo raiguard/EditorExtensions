@@ -4,6 +4,12 @@ end
 
 local event = require("__flib__.event")
 
+event.on_init(function()
+  if remote.interfaces["kr-crash-site"] then
+    remote.call("kr-crash-site", "crash_site_enabled", false)
+  end
+end)
+
 event.on_player_created(function(e)
   local player = game.get_player(e.player_index)
 
