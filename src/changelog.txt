@@ -5,8 +5,10 @@ Date: ????
     - Entering an unrecognized command will print a message saying so
   Changes:
     - Split testing tool recipes into their own category
+    - Hid Krastorio 2 dependency
   Bugfixes:
     - Fixed a crash with aggregate chests when there was more than one "mining-tool" prototype in the game
+    - Fixed the Transport Drones mod causing aggregate chests to have one less extra slot for inserters
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.8
 Date: 2020-07-09
