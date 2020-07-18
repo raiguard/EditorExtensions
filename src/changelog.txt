@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.9
 Date: ????
+  Features:
+    - Entering an unrecognized command will print a message saying so
   Changes:
     - Split testing tool recipes into their own category
   Bugfixes:

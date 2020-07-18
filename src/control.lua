@@ -26,10 +26,12 @@ local string = string
 commands.add_command("EditorExtensions", {"ee-message.command-help"}, function(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
-  if e.parameter == "toggle-inventory-sync" then
-    inventory.toggle_sync(player, player_table, not player_table.flags.inventory_sync_enabled)
-  elseif e.parameter == "disable-cheat-mode" and player.cheat_mode then
+  if e.parameter == "disable-cheat-mode" and player.cheat_mode then
     cheat_mode.disable(player, player_table)
+  elseif e.parameter == "toggle-inventory-sync" then
+    inventory.toggle_sync(player, player_table, not player_table.flags.inventory_sync_enabled)
+  else
+    player.print{"ee-message.unknown-command"}
   end
 end)
 
