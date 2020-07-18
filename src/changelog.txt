@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.9
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed a crash with aggregate chests when there was more than one "mining-tool" prototype in the game
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.8
 Date: 2020-07-09

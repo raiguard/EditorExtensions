@@ -29,12 +29,10 @@ function aggregate_chest.update_data()
   local include_hidden = settings.global["ee-aggregate-include-hidden"].value
   local data = {}
   for name, prototype in pairs(game.item_prototypes) do
-    if include_hidden or not prototype.has_flag("hidden") then
+    if prototype.type ~= "mining-tool" and include_hidden or not prototype.has_flag("hidden") then
       data[name] = prototype.stack_size
     end
   end
-  -- remove dummy-steel-axe, since trying to include it will crash the game
-  data["dummy-steel-axe"] = nil
   global.aggregate_data = data
 end
 
