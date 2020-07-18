@@ -2,16 +2,14 @@ local cheat_mode = {}
 
 local inventory = require("scripts.inventory")
 
-local string = string
-
 function cheat_mode.enable_recipes(player, skip_message)
   local force = player.force
   local recipes = force.recipes
   -- check if it has already been enabled for this force
   if recipes["ee-infinity-loader"].enabled == false then
-    for name in pairs(game.recipe_prototypes) do
-      if string.sub(name, 1, 3) == "ee-" and recipes[name] then
-        recipes[name].enabled = true
+    for _, recipe in pairs(recipes) do
+      if recipe.category == "ee-testing-tool" then
+        recipe.enabled = true
       end
     end
     if not skip_message then
@@ -24,9 +22,9 @@ function cheat_mode.disable_recipes(player, skip_message)
   local force = player.force
   local recipes = force.recipes
   if recipes["ee-infinity-loader"].enabled then
-    for name in pairs(game.recipe_prototypes) do
-      if string.sub(name, 1, 3) == "ee-" and recipes[name] then
-        recipes[name].enabled = false
+    for _, recipe in pairs(recipes) do
+      if recipe.category == "ee-testing-tool" then
+        recipe.enabled = false
       end
     end
     if not skip_message then

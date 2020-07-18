@@ -1,6 +1,6 @@
 data:extend{
   {
     type = "recipe-category",
-    name = "ee-testing-tools"
+    name = "ee-testing-tool"
   }
 }

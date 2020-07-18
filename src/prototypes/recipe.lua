@@ -32,7 +32,7 @@ local function register_recipes(t)
         type = "recipe",
         name = k,
         ingredients = {},
-        category = "ee-testing-tools",
+        category = "ee-testing-tool",
         enabled = false,
         result = k
       }
