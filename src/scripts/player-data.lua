@@ -26,7 +26,7 @@ end
 
 function player_data.update_settings(player, player_table)
   local settings = {}
-  for name,  t in pairs(player.mod_settings) do
+  for name, t in pairs(player.mod_settings) do
     if string.sub(name, 1,3) == "ee-" then
       name = string.gsub(name, "^ee%-", "")
       settings[string.gsub(name, "%-", "_")] = t.value

@@ -70,3 +70,8 @@ local modules = {
 for _, name in pairs(modules) do
   data.raw["module"][name].limitation = nil
 end
+
+-- allow all character prototypes to craft testing tools
+for _, character in pairs(data.raw["character"]) do
+  character.crafting_categories[#character.crafting_categories+1] = "ee-testing-tools"
+end

@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.9
 Date: ????
+  Changes:
+    - Split testing tool recipes into their own category
   Bugfixes:
     - Fixed a crash with aggregate chests when there was more than one "mining-tool" prototype in the game
 ---------------------------------------------------------------------------------------------------
