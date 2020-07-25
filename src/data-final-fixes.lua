@@ -73,5 +73,6 @@ end
 
 -- allow all character prototypes to craft testing tools
 for _, character in pairs(data.raw["character"]) do
+  character.crafting_categories = character.crafting_categories or {}
   character.crafting_categories[#character.crafting_categories+1] = "ee-testing-tool"
 end
