@@ -80,6 +80,8 @@ event.on_configuration_changed(function(e)
     infinity_loader.check_loaders()
     aggregate_chest.update_data()
     aggregate_chest.update_all_filters()
+
+    gui.check_filter_validity()
   else -- post-init setup
     for i, player in pairs(game.players) do
       if player.cheat_mode then
