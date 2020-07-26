@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.9
-Date: ????
+Date: 2020-07-26
   Features:
     - Entering an unrecognized command will print a message saying so
   Changes:
