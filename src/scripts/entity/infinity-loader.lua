@@ -189,6 +189,8 @@ local function create_loader(type, mode, surface, position, direction, force)
     type = mode,
     create_build_effect_smoke = false
   }
+  -- fail-out if the loader was not successfully built
+  if not loader then return end
   local inserters = {}
   for i=1, num_inserters(loader) do
       inserters[i] = surface.create_entity{
@@ -453,6 +455,8 @@ function infinity_loader.on_built(entity)
   elseif entity.name == "ee-infinity-loader-dummy-combinator" or entity.name == "ee-infinity-loader-logic-combinator" then
     -- create the loader with default belt type, we will snap it later
     local loader, inserters, chest, combinator = create_loader("express", "output", entity.surface, entity.position, entity.direction, entity.force)
+    -- if the loader failed to build, skip the rest of the logic
+    if not loader then return end
     -- get and set previous filters, if any
     local old_control = entity.get_or_create_control_behavior()
     local new_control = combinator.get_or_create_control_behavior()
