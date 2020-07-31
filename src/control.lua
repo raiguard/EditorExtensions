@@ -71,17 +71,18 @@ end)
 
 event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
+    gui.check_filter_validity()
+
+    aggregate_chest.update_data()
+    aggregate_chest.update_all_filters()
+    infinity_loader.check_loaders()
+
     for i, player in pairs(game.players) do
       player_data.refresh(player, global.players[i])
       if player.cheat_mode then
         cheat_mode.enable_recipes(player)
       end
     end
-    infinity_loader.check_loaders()
-    aggregate_chest.update_data()
-    aggregate_chest.update_all_filters()
-
-    gui.check_filter_validity()
   else -- post-init setup
     for i, player in pairs(game.players) do
       if player.cheat_mode then
