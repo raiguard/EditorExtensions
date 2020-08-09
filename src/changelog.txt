@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.10
-Date: ????
+Date: 2020-08-09
   Features:
     - Added infinity loader support for Omnicompression
   Changes:
