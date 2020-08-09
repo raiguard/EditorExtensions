@@ -1,6 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.10
 Date: ????
+  Features:
+    - Added infinity loader support for Omnicompression
+  Changes:
+    - Moved infinity loader generation to data-final-fixes to catch absolutely all belt types
   Bugfixes:
     - Fixed a potential crash if any GUI handlers were removed between versions
 ---------------------------------------------------------------------------------------------------
