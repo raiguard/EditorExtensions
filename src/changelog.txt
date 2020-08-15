@@ -2,6 +2,9 @@
 Version: 1.5.11
 Date: ????
   Changes:
+    - Updated to Factorio 1.0
+  Bugfixes:
+    - Fixed a crash with Artisanal Reskins
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.10
 Date: 2020-08-09
