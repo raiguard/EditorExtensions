@@ -23,7 +23,7 @@ end
 
 -- consolidate icon information into a table to use in "icons"
 function util.extract_icon_info(obj)
-  return {icon=obj.icon, icon_size=obj.icon_size, icon_mipmaps=obj.icon_mipmaps}
+  return obj.icons or {{icon=obj.icon, icon_size=obj.icon_size, icon_mipmaps=obj.icon_mipmaps}}
 end
 
 -- generate the localised description of a chest
