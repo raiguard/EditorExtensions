@@ -19,6 +19,7 @@ local to_check = {
   "rail-planner",
   "repair-tool",
   "selection-tool",
+  "spidertron-remote",
   "tool",
   "upgrade-item"
 }

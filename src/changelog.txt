@@ -3,6 +3,7 @@ Version: 1.5.12
 Date: ????
   Bugfixes:
     - Fixed infinity loaders not snapping when facing directly into another loader
+    - Fixed aggregate chests not counting spidertron remotes when setting their inventory size
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.11
 Date: 2020-08-15
