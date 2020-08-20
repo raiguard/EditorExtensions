@@ -494,6 +494,8 @@ function infinity_loader.on_rotated(e)
     loader.rotate()
     update_inserters(loader)
     update_filters(entity, {loader=loader})
+    -- snap if a loader happens to be facing directly into this loader
+    snap_belt_neighbors(loader)
     return true
   elseif entity.type == "transport-belt" then
     -- snap neighbors
@@ -506,7 +508,7 @@ function infinity_loader.on_rotated(e)
       snap_tile_neighbors(entity.neighbours)
     end
     return true
-  elseif entity.type == "splitter" or entity.type == "loader-1x1" then
+  elseif entity.type == "splitter" or entity.type == "loader" or entity.type == "loader-1x1" then
     -- snap belt neighbors
     snap_belt_neighbors(entity)
     return true
