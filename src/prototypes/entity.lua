@@ -275,6 +275,8 @@ do
   dummy_combinator.sprites = sprites
   data:extend{dummy_combinator}
 
+  -- local filter_inserter = data.raw["inserter"]["stack-filter-inserter"]
+
   -- inserter
   data:extend{
     {
