@@ -130,7 +130,7 @@ local function import_filters(player, string)
   if not decoded_string then return false end
   if string.sub(decoded_string, 1, 16) == "EditorExtensions" and string.sub(decoded_string, 18, 34) == "inventory_filters" then
     -- extract version for migrations
-    local _,_,version,json = string.find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
+    local _, _, version, json = string.find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
     version = tonumber(version)
     local input = game.json_to_table(json)
     -- needs some flib features to work

@@ -31,7 +31,7 @@ end
 local function get_settings_from_name(name)
   name = string_gsub(name, "(%a+)-(%a+)-(%a+)-", "")
   if name == "tertiary" then return "tertiary", "buffer" end
-  local _,_,priority,mode = string.find(name, "(%a+)-(%a+)")
+  local _, _, priority, mode = string.find(name, "(%a+)-(%a+)")
   return priority, mode
 end
 
