@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.12
-Date: ????
+Date: 2020-08-22
   Features:
     - Inventory sync now syncs the "hand" position as well
   Bugfixes:
