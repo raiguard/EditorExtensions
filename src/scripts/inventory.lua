@@ -20,35 +20,39 @@ local function create_sync_inventories(player_table, player)
   else
     prefix = "character_"
   end
+  -- hand location
+  local hand_location = player.hand_location or {}
   -- iterate all inventories
   local sync_tables = {}
-  for _, name in ipairs{"main", "guns", "cursor", "armor", "ammo"} do
+  for _, name in ipairs{"cursor", "main", "guns", "armor", "ammo"} do
     local sync_filters = {}
     local sync_inventory
+    local inventory_def = defines.inventory[prefix..name]
     if name == "cursor" then
       sync_inventory = game.create_inventory(1)
       local cursor_stack = player.cursor_stack
       if cursor_stack and cursor_stack.valid_for_read then
-        sync_inventory[1].set_stack(cursor_stack)
+        sync_inventory[1].transfer_stack(cursor_stack)
       end
-    else
-      local inventory_def = defines.inventory[prefix..name]
-      if inventory_def then
-        local source_inventory = player.get_inventory(inventory_def)
-        local get_filter = source_inventory.get_filter
-        local supports_filters = source_inventory.supports_filters()
-        local source_inventory_len = #source_inventory
-        sync_inventory = game.create_inventory(source_inventory_len)
-        for i = 1, source_inventory_len do
-          sync_inventory[i].set_stack(source_inventory[i])
-          if supports_filters then
-            sync_filters[i] = get_filter(i)
-          end
+    elseif inventory_def then
+      local source_inventory = player.get_inventory(inventory_def)
+      local get_filter = source_inventory.get_filter
+      local supports_filters = source_inventory.supports_filters()
+      local source_inventory_len = #source_inventory
+      sync_inventory = game.create_inventory(source_inventory_len)
+      for i = 1, source_inventory_len do
+        sync_inventory[i].transfer_stack(source_inventory[i])
+        if supports_filters then
+          sync_filters[i] = get_filter(i)
         end
       end
     end
     if sync_inventory then
-      sync_tables[name] = {filters=sync_filters, inventory=sync_inventory}
+      sync_tables[name] = {
+        filters = sync_filters,
+        hand_location = (hand_location.inventory == inventory_def and hand_location.slot or nil),
+        inventory=sync_inventory
+      }
     end
   end
   player_table.sync_data = sync_tables
@@ -67,15 +71,15 @@ local function get_from_sync_inventories(player_table, player)
     prefix = "character_"
   end
   -- iterate all inventories
-  local sync_tables = player_table.sync_data
+  local sync_data = player_table.sync_data
   for _, name in ipairs{"ammo", "armor", "cursor", "guns", "main"} do
-    local sync_data = sync_tables[name]
+    local sync_table = sync_data[name]
     -- god mode doesn't have every inventory
-    if sync_data then
-      local sync_filters = sync_data.filters
-      local sync_inventory = sync_data.inventory
+    if sync_table then
+      local sync_filters = sync_table.filters
+      local sync_inventory = sync_table.inventory
       if name == "cursor" then
-        player.cursor_stack.set_stack(sync_inventory[1])
+        player.cursor_stack.transfer_stack(sync_inventory[1])
       else
         local inventory_def = defines.inventory[prefix..name]
         if inventory_def then
@@ -85,7 +89,11 @@ local function get_from_sync_inventories(player_table, player)
             if sync_filters[i] then
               set_filter(i, sync_filters[i])
             end
-            destination_inventory[i].set_stack(sync_inventory[i])
+            destination_inventory[i].transfer_stack(sync_inventory[i])
+          end
+          local hand_location = sync_table.hand_location
+          if hand_location then
+            player.hand_location = {inventory=inventory_def, slot=hand_location}
           end
         end
       end
