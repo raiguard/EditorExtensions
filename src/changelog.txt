@@ -3,6 +3,8 @@ Version: 1.5.13
 Date: ????
   Changes:
     - Changed snap-to-pipe behavior of infinity pipes to just set their fluid filter, but not void their contents
+  Optimizations:
+    - Improved performance of aggregate chest setup by 10x
   Bugfixes:
     - Fixed infinity pipe snapping not working at all
 ---------------------------------------------------------------------------------------------------
