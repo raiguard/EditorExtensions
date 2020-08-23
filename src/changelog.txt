@@ -2,6 +2,9 @@
 Version: 1.5.13
 Date: ????
   Changes:
+    - Changed snap-to-pipe behavior of infinity pipes to just set their fluid filter, but not void their contents
+  Bugfixes:
+    - Fixed infinity pipe snapping not working at all
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.12
 Date: 2020-08-22
