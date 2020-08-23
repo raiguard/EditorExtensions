@@ -70,5 +70,12 @@ return {
         player_table.gui.ic = nil
       end
     end
+  end,
+  ["1.5.13"] = function()
+    -- is now called aggregate_filters
+    global.aggregate_data = nil
+    -- these were never removed when they were supposed to be
+    global.combinators = nil
+    global.tesseract_data = nil
   end
 }

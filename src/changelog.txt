@@ -8,6 +8,7 @@ Date: ????
   Bugfixes:
     - Fixed infinity loaders not snapping to newly built standard loaders
     - Fixed infinity pipe snapping not working at all
+    - Fixed several missing migrations, leaving behind useless data in global
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.12
 Date: 2020-08-22
