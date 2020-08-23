@@ -6,6 +6,7 @@ Date: ????
   Optimizations:
     - Improved performance of aggregate chest setup by 10x
   Bugfixes:
+    - Fixed infinity loaders not snapping to newly built standard loaders
     - Fixed infinity pipe snapping not working at all
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.12

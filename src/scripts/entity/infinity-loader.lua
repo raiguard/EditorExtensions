@@ -353,7 +353,7 @@ local function snap_loader(loader, entity)
   if not entity then
     entity = loader.surface.find_entities_filtered{
       area = util.position.to_tile_area(util.position.add(loader.position, util.direction.to_vector(get_loader_direction(loader), 1))),
-      type = {"transport-belt", "underground-belt", "splitter", "loader-1x1"}
+      type = {"transport-belt", "underground-belt", "splitter", "loader", "loader-1x1"}
     }[1]
   end
   -- if the entity exists and is not on the blacklist
@@ -477,7 +477,7 @@ function infinity_loader.on_built(entity)
       snap_tile_neighbors(entity)
     end
     return true
-  elseif entity.type == "splitter" or entity.type == "loader-1x1" then
+  elseif entity.type == "splitter" or entity.type == "loader" or entity.type == "loader-1x1" then
     -- snap belt neighbors
     snap_belt_neighbors(entity)
     return true
