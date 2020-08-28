@@ -2,6 +2,7 @@
 Version: 1.5.14
 Date: ????
   Changes:
+    - Aggregate chest filters are now un-editable
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.13
 Date: 2020-08-23
