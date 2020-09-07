@@ -132,18 +132,37 @@ event.register(
   },
   function(e)
     local entity = e.entity or e.created_entity
-    if infinity_loader.on_built(entity) then
-      -- pass
-    elseif infinity_wagon.wagon_names[entity.name] then
+    local entity_name = entity.name
+
+    -- infinity loader
+    if entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
+      infinity_loader.build_from_ghost(entity)
+    elseif entity_name == "ee-infinity-loader-dummy-combinator" or entity_name == "ee-infinity-loader-logic-combinator" then
+      infinity_loader.build(entity)
+    elseif entity.type == "transport-belt" then
+      -- snap neighbors
+      infinity_loader.snap_tile_neighbors(entity)
+    elseif entity.type == "underground-belt" then
+      -- snap neighbors of both sides
+      infinity_loader.snap_tile_neighbors(entity)
+      if entity.neighbours then
+        infinity_loader.snap_tile_neighbors(entity.neighbours)
+      end
+    elseif entity.type == "splitter" or entity.type == "loader" or entity.type == "loader-1x1" then
+      -- snap belt neighbors
+      infinity_loader.snap_belt_neighbors(entity)
+    -- infinity wagon
+    elseif infinity_wagon.wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
       on_tick.update()
-    elseif string.sub(entity.name, 1, 18) == "ee-aggregate-chest" then
+    -- aggregate chest
+    elseif aggregate_chest.chest_names[entity_name] then
       aggregate_chest.set_filters(entity)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
-      if entity.name == "ee-super-inserter" then
+      if entity_name == "ee-super-inserter" then
         super_inserter.snap(entity)
-      elseif entity.name == "ee-infinity-pipe" then
+      elseif entity_name == "ee-infinity-pipe" then
         infinity_pipe.snap(entity, global.players[e.player_index].settings)
       end
     end
@@ -170,7 +189,22 @@ event.register(
 )
 
 event.on_player_rotated_entity(function(e)
-  infinity_loader.on_rotated(e)
+  local entity = e.entity
+  if entity.name == "ee-infinity-loader-logic-combinator" then
+    infinity_loader.rotate(entity, e.previous_direction)
+  elseif entity.type == "transport-belt" then
+    -- snap neighbors
+    infinity_loader.snap_tile_neighbors(entity)
+  elseif entity.type == "underground-belt" then
+    -- snap neighbors of both sides
+    infinity_loader.snap_tile_neighbors(entity)
+    if entity.neighbours then
+      infinity_loader.snap_tile_neighbors(entity.neighbours)
+    end
+  elseif entity.type == "splitter" or entity.type == "loader" or entity.type == "loader-1x1" then
+    -- snap belt neighbors
+    infinity_loader.snap_belt_neighbors(entity)
+  end
 end)
 
 event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
