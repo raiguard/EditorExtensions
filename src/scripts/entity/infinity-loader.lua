@@ -1,10 +1,7 @@
 local infinity_loader = {}
 
-local event = require("__flib__.event")
 local gui = require("__flib__.gui")
 local util = require("scripts.util")
-
-local string_sub = string.sub
 
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
@@ -272,7 +269,7 @@ gui.add_handlers{
     filter_button = {
       on_gui_elem_changed = function(e)
         local name = e.element.name
-        local index = tonumber(string_sub(name, #name, #name))
+        local index = tonumber(string.sub(name, #name, #name))
         local entity = global.players[e.player_index].gui.il.entity
         local control = entity.get_or_create_control_behavior()
         control.set_signal(index, e.element.elem_value and {signal={type="item", name=e.element.elem_value}, count=1} or nil)
@@ -490,7 +487,7 @@ function infinity_loader.destroy(entity)
   -- destroy entities
   local entities = entity.surface.find_entities_filtered{position=entity.position}
   for _, sub_entity in pairs(entities) do
-    if string_sub(sub_entity.name, 1, 18) == "ee-infinity-loader" then
+    if string.sub(sub_entity.name, 1, 18) == "ee-infinity-loader" then
       sub_entity.destroy()
     end
   end

@@ -6,7 +6,7 @@ local infinity_wagon = require("scripts.entity.infinity-wagon")
 
 function on_tick.handler()
   if next(global.wagons) then
-    infinity_wagon.on_tick()
+    infinity_wagon.flip_inventories()
   else
     event.on_tick(nil)
   end

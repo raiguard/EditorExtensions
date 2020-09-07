@@ -261,7 +261,9 @@ end)
 
 event.on_gui_closed(function(e)
   if not gui.dispatch_handlers(e) then
-    inventory.on_gui_closed(e)
+    if e.gui_type and e.gui_type == 3 then
+      inventory.close_guis(global.players[e.player_index], e.player_index)
+    end
   end
 end)
 
@@ -304,14 +306,20 @@ end)
 
 event.on_player_setup_blueprint(function(e)
   local player = game.get_player(e.player_index)
+
+  -- get blueprint
   local bp = player.blueprint_to_setup
   if not bp or not bp.valid_for_read then
     bp = player.cursor_stack
   end
+
+  -- get blueprint entities and mapping
   local entities = bp.get_blueprint_entities()
   if not entities then return end
   local mapping = e.mapping.get()
-  for i=1,#entities do
+
+  -- iterate each entity
+  for i = 1, #entities do
     local entity = entities[i]
     if entity.name == "ee-infinity-loader-logic-combinator" then
       entities[i] = infinity_loader.setup_blueprint(entity)
@@ -321,11 +329,16 @@ event.on_player_setup_blueprint(function(e)
       entities[i] = infinity_wagon.setup_fluid_blueprint(entity, mapping[entity.entity_number])
     end
   end
+
+  -- set entities
   bp.set_blueprint_entities(entities)
 end)
 
 event.on_pre_player_toggled_map_editor(function(e)
-  inventory.on_pre_player_toggled_map_editor(e)
+  local player_table = global.players[e.player_index]
+  if player_table.flags.inventory_sync_enabled then
+    inventory.create_sync_inventories(player_table, game.get_player(e.player_index))
+  end
 end)
 
 event.on_player_toggled_map_editor(function(e)
@@ -353,7 +366,20 @@ event.on_player_toggled_map_editor(function(e)
     end
   end
 
-  inventory.on_player_toggled_map_editor(e)
+  -- close inventory filters GUIs if they're open
+  inventory.close_guis(player_table, e.player_index)
+  -- finish inventory sync
+  if player_table.flags.inventory_sync_enabled and player_table.sync_data then
+    inventory.get_from_sync_inventories(player_table, player)
+  end
+end)
+
+event.on_player_display_resolution_changed(function(e)
+  local player = game.get_player(e.player_index)
+  local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
+  if gui_data then
+    inventory.set_filters_gui_location(player, gui_data)
+  end
 end)
 
 -- SETTINGS

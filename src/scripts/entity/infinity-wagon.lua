@@ -61,7 +61,8 @@ function infinity_wagon.check_and_open(player, selected)
   end
 end
 
-function infinity_wagon.on_tick()
+-- called during `on_tick`
+function infinity_wagon.flip_inventories()
   for _, t in pairs(global.wagons) do
     if t.wagon.valid and t.proxy.valid then
       if t.wagon_name == "ee-infinity-cargo-wagon" then

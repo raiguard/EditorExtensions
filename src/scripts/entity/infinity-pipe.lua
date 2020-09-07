@@ -17,15 +17,15 @@ function infinity_pipe.snap(entity, player_settings)
   local pipe_snapping = player_settings.infinity_pipe_snapping
 
   if assembler_snapping or pipe_snapping then
-    for ni=1, #neighbours do
-      local neighbour = neighbours[ni]
+    for i = 1, #neighbours do
+      local neighbour = neighbours[i]
       local fb = neighbour.fluidbox
       if fb then
         -- snap to adjacent assemblers
         if assembler_snapping and neighbour.type == "assembling-machine" then
-          for i = 1, #fb do
-            local connections = fb.get_connections(i)
-            if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(i).production_type == "input") then
+          for j = 1, #fb do
+            local connections = fb.get_connections(j)
+            if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(j).production_type == "input") then
               local fluid = fb.get_locked_fluid(1)
               if fluid then
                 -- set to fill the pipe with the fluid

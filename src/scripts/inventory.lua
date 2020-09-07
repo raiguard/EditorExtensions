@@ -8,7 +8,7 @@ local string = string
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
-local function create_sync_inventories(player_table, player)
+function inventory.create_sync_inventories(player_table, player)
   -- determine prefix based on controller type
   local prefix
   local controller_type = player.controller_type
@@ -58,7 +58,7 @@ local function create_sync_inventories(player_table, player)
   player_table.sync_data = sync_tables
 end
 
-local function get_from_sync_inventories(player_table, player)
+function inventory.get_from_sync_inventories(player_table, player)
   -- determine prefix based on controller type
   local prefix
   local controller_type = player.controller_type
@@ -251,7 +251,7 @@ gui.add_handlers{
   }
 }
 
-local function close_guis(player_table, player_index)
+function inventory.close_guis(player_table, player_index)
   local buttons_gui_data = player_table.gui.inventory_filters_buttons
   if buttons_gui_data then
     gui.update_filters("inventory_filters_buttons", player_index, nil, "remove")
@@ -263,16 +263,6 @@ local function close_guis(player_table, player_index)
     gui.update_filters("inventory_filters_string", player_index, nil, "remove")
     string_gui_data.window.destroy()
     player_table.gui.inventory_filters_string = nil
-  end
-end
-
--- -----------------------------------------------------------------------------
--- EVENT HANDLERS
-
-function inventory.on_gui_closed(e)
-  if e.gui_type and e.gui_type == 3 then
-    local player_table = global.players[e.player_index]
-    close_guis(player_table, e.player_index)
   end
 end
 
@@ -289,35 +279,17 @@ function inventory.create_filters_buttons(player)
       }}
     }}
   })
+  -- position GUI
+  inventory.set_filters_gui_location(player, gui_data)
   -- add to global
   player_table.gui.inventory_filters_buttons = gui_data
-  -- position GUI
-  inventory.on_player_display_resolution_changed{player_index=player.index}
 end
 
-function inventory.on_player_display_resolution_changed(e)
-  local player = game.get_player(e.player_index)
-  local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
-  if gui_data then
-    gui_data.window.location = {x=0, y=(player.display_resolution.height-(56*player.display_scale))}
-  end
+function inventory.set_filters_gui_location(player, gui_data)
+  gui_data.window.location = {
+    x = 0,
+    y = player.display_resolution.height - (56 * player.display_scale)
+  }
 end
-
-function inventory.on_pre_player_toggled_map_editor(e)
-  local player_table = global.players[e.player_index]
-  if player_table.flags.inventory_sync_enabled then
-    create_sync_inventories(player_table, game.get_player(e.player_index))
-  end
-end
-
-function inventory.on_player_toggled_map_editor(e)
-  local player_table = global.players[e.player_index]
-  close_guis(player_table, e.player_index)
-  if player_table.flags.inventory_sync_enabled and player_table.sync_data then
-    get_from_sync_inventories(player_table, game.get_player(e.player_index))
-  end
-end
-
--- -----------------------------------------------------------------------------
 
 return inventory
