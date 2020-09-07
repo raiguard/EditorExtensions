@@ -10,8 +10,9 @@
     "base >= 1.0.0",
     "flib >= 0.2.0",
     "(?) Krastorio2",
-    "(?) Transport_Drones",
-    "(?) omnimatter_compression"
+    "(?) omnimatter_compression",
+    "(?) space-exploration",
+    "(?) Transport_Drones"
   ],
   "description": "Extends the map editor with new features and tools, makes tweaks to it to facilitate easier sandbox play, and adds items and entities to assist with testing factories.\n\nThe successor to Infinity Mode, which was inspired by Creative Mode."
 }

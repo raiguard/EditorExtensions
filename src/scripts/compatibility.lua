@@ -10,4 +10,8 @@ function compatibility.register_picker_dollies()
   end
 end
 
+function compatibility.check_space_exploration()
+  return script.active_mods["space-exploration"]
+end
+
 return compatibility

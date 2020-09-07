@@ -2,8 +2,8 @@ local event = require("__flib__.event")
 local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
 
-local compatibility = require("scripts.compatibility")
 local cheat_mode = require("scripts.cheat-mode")
+local compatibility = require("scripts.compatibility")
 local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
@@ -18,8 +18,6 @@ local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local super_inserter = require("scripts.entity.super-inserter")
-
-local string = string
 
 -- -----------------------------------------------------------------------------
 -- COMMANDS
@@ -95,6 +93,13 @@ end)
 event.on_player_cheat_mode_enabled(function(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
+
+  -- space exploration - if they are in god mode, they are in the satellite view, so don't unlock recipes
+  if compatibility.check_space_exploration() and player.controller_type == defines.controllers.god then
+    player_table.flags.in_satellite_view = true
+    return
+  end
+
   cheat_mode.enable_recipes(player)
   if player_table.settings.inventory_sync then
     inventory.toggle_sync(player, player_table)
@@ -103,6 +108,13 @@ end)
 
 event.on_player_cheat_mode_disabled(function(e)
   local player_table = global.players[e.player_index]
+
+  -- space exploration - don't do anything if they're returning from the satellite view
+  if player_table.flags.in_satellite_view then
+    player_table.flags.in_satellite_view = false
+    return
+  end
+
   if player_table.settings.inventory_sync then
     inventory.toggle_sync(game.get_player(e.player_index), player_table, false)
   end
