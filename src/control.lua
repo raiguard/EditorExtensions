@@ -2,6 +2,7 @@ local event = require("__flib__.event")
 local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
 
+local compatibility = require("scripts.compatibility")
 local cheat_mode = require("scripts.cheat-mode")
 local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
@@ -44,25 +45,21 @@ end)
 event.on_init(function()
   gui.init()
 
-  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
-    event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
-  end
-
   global_data.init()
   for i in pairs(game.players) do
     player_data.init(i)
   end
 
-  on_tick.update()
+  compatibility.register_picker_dollies()
+
   aggregate_chest.update_data()
+  on_tick.update()
 
   gui.build_lookup_tables()
 end)
 
 event.on_load(function()
-  if remote.interfaces["PickerDollies"] and remote.interfaces["PickerDollies"]["dolly_moved_entity_id"] then
-    event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
-  end
+  compatibility.register_picker_dollies()
 
   on_tick.update()
 
