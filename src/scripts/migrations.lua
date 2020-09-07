@@ -2,6 +2,12 @@ local gui = require("__flib__.gui")
 
 local cheat_mode = require("scripts.cheat-mode")
 
+local function update_scenario()
+  if remote.interfaces["EditorExtensions_TestingScenario"] then
+    game.reload_script()
+  end
+end
+
 return {
   ["1.1.0"] = function()
     -- enable infinity equipment recipes, hide electric energy interface recipe
@@ -77,5 +83,8 @@ return {
     -- these were never removed when they were supposed to be
     global.combinators = nil
     global.tesseract_data = nil
+  end,
+  ["1.5.14"] = function()
+    update_scenario()
   end
 }

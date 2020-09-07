@@ -98,14 +98,6 @@ function cheat_mode.set_loadout(player)
   end
 end
 
-function cheat_mode.enable(player)
-  -- enabling cheat mode will cause the recipes to be unlocked, and sync to be enabled
-  player.cheat_mode = true
-
-  player.force.research_all_technologies()
-  cheat_mode.set_loadout(player)
-end
-
 function cheat_mode.disable(player, player_table)
   -- reset bonuses and disable cheat mode
   player.character_build_distance_bonus = 0

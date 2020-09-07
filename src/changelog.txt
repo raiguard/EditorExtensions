@@ -2,6 +2,10 @@
 Version: 1.5.14
 Date: ????
   Changes:
+    - Testing scenario will only chart once, rather than on every player join
+    - Removed dialog message when first loading the testing scenario
+  Bugfixes:
+    - Fixed that the infinity inventory filters buttons would not update their location on a display resolution or scale change
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.13
 Date: 2020-08-23

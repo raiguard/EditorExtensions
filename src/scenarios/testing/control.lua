@@ -4,26 +4,24 @@ end
 
 local event = require("__flib__.event")
 
+local radius = 200
+local function setup_force(force)
+  force.chart("nauvis", {{-radius, -radius}, {radius, radius}})
+  force.research_all_technologies()
+end
+
 event.on_init(function()
   if remote.interfaces["kr-crash-site"] then
     remote.call("kr-crash-site", "crash_site_enabled", false)
   end
+
+  for _, force in pairs(game.forces) do
+    setup_force(force)
+  end
 end)
 
-event.on_player_created(function(e)
-  local player = game.get_player(e.player_index)
-
-  -- chart area
-  local player_pos = player.position
-  local radius = 200
-  player.force.chart(player.surface, {{player_pos.x - radius, player_pos.y - radius}, {player_pos.x + radius, player_pos.y + radius}})
-
-  -- show message
-  if game.is_multiplayer() then
-    player.print{"description"}
-  else
-    game.show_message_dialog{text={"description"}, point_to={type="position", position={0,-1.5}}}
-  end
+event.on_force_created(function(e)
+  setup_force(e.force)
 end)
 
 remote.add_interface("EditorExtensions_TestingScenario", {})

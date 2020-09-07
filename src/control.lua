@@ -121,7 +121,7 @@ event.on_console_command(function(e)
   end
 end)
 
--- ENTITIES
+-- ENTITY
 
 event.register(
   {
@@ -290,7 +290,11 @@ event.on_player_created(function(e)
   player_data.init(e.player_index)
 
   if global.flags.in_testing_scenario then
-    cheat_mode.enable(game.get_player(e.player_index))
+    local player = game.get_player(e.player_index)
+    -- enabling cheat mode will cause the recipes to be unlocked, and sync to be enabled
+    player.cheat_mode = true
+    -- set loadout as if they typed `/cheat all`
+    cheat_mode.set_loadout(player)
   end
 end)
 
@@ -374,7 +378,7 @@ event.on_player_toggled_map_editor(function(e)
   end
 end)
 
-event.on_player_display_resolution_changed(function(e)
+event.register({defines.events.on_player_display_resolution_changed, defines.events.on_player_display_scale_changed}, function(e)
   local player = game.get_player(e.player_index)
   local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
   if gui_data then
