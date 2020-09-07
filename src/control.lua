@@ -126,12 +126,13 @@ end)
 event.register(
   {
     defines.events.on_built_entity,
+    defines.events.on_entity_cloned,
     defines.events.on_robot_built_entity,
     defines.events.script_raised_built,
-    defines.events.script_raised_revive
+    defines.events.script_raised_revive,
   },
   function(e)
-    local entity = e.entity or e.created_entity
+    local entity = e.entity or e.created_entity or e.destination
     local entity_name = entity.name
 
     -- infinity loader
@@ -405,7 +406,7 @@ end)
 -- -----------------------------------------------------------------------------
 -- EVENT FILTERS
 
-event.set_filters({defines.events.on_built_entity, defines.events.on_robot_built_entity}, {
+event.set_filters({defines.events.on_built_entity, defines.events.on_entity_cloned, defines.events.on_robot_built_entity}, {
   {filter="name", name="ee-infinity-loader-dummy-combinator"},
   {filter="name", name="ee-infinity-loader-logic-combinator"},
   {filter="name", name="ee-infinity-cargo-wagon"},
