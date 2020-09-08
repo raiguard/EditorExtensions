@@ -9,6 +9,7 @@
   "dependencies": [
     "base >= 1.0.0",
     "flib >= 0.2.0",
+    "(?) aai-industry",
     "(?) Krastorio2",
     "(?) omnimatter_compression",
     "(?) space-exploration",

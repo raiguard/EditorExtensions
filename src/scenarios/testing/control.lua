@@ -1,4 +1,4 @@
-if (__DebugAdapter or __Profiler) then
+if __DebugAdapter or __Profiler then
   (__DebugAdapter or __Profiler).levelPath("EditorExtensions", "scenarios/testing/")
 end
 
@@ -24,4 +24,7 @@ event.on_force_created(function(e)
   setup_force(e.force)
 end)
 
-remote.add_interface("EditorExtensions_TestingScenario", {})
+-- interface is used by EE to detect the scenario, and to disable AAI Industry's crash site
+remote.add_interface("EditorExtensions_TestingScenario", {
+  allow_aai_crash_sequence = function() return {allow = false, weight = 1} end
+})
