@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.14
-Date: ????
+Date: 2020-09-08
   Changes:
     - Testing scenario will only chart once, rather than on every player join
     - Removed dialog message when first loading the testing scenario
