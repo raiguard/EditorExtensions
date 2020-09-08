@@ -402,10 +402,10 @@ event.on_runtime_mod_setting_changed(function(e)
   if e.setting == "ee-aggregate-include-hidden" then
     aggregate_chest.update_data()
     aggregate_chest.update_all_filters()
-  elseif string.sub(e.setting, 1, 3) == "ee-" and e.setting_type == "runtime-per-user" then
+  elseif game.mod_setting_prototypes[e.setting].mod == "EditorExtensions" and e.setting_type == "runtime-per-user" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
-    data.update_player_settings(player, player_table)
+    player_data.update_settings(player, player_table)
     if e.setting == "ee-inventory-sync" then
       inventory.toggle_sync(player, player_table)
     end

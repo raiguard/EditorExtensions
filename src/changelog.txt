@@ -6,6 +6,7 @@ Date: ????
     - Removed dialog message when first loading the testing scenario
     - Disabled AAI Industry's crash site in the testing scenario
   Bugfixes:
+    - Fixed a crash when changing player settings
     - Fixed that activating Space Exploration's satellite view would unlock testing tools and toggle inventory sync
     - Fixed that the infinity inventory filters buttons would not update their location on a display resolution or scale change
     - Fixed that the mod did not listen for entity cloning events
