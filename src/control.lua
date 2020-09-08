@@ -95,7 +95,7 @@ event.on_player_cheat_mode_enabled(function(e)
   local player_table = global.players[e.player_index]
 
   -- space exploration - if they are in god mode, they are in the satellite view, so don't unlock recipes
-  if compatibility.check_space_exploration() and player.controller_type == defines.controllers.god then
+  if compatibility.check_for_space_exploration() and player.controller_type == defines.controllers.god then
     player_table.flags.in_satellite_view = true
     return
   end

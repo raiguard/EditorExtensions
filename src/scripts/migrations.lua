@@ -1,9 +1,10 @@
 local gui = require("__flib__.gui")
 
 local cheat_mode = require("scripts.cheat-mode")
+local compatibility = require("scripts.compatibility")
 
 local function update_scenario()
-  if remote.interfaces["EditorExtensions_TestingScenario"] then
+  if compatibility.check_for_testing_scenario() then
     game.reload_script()
   end
 end
@@ -86,5 +87,9 @@ return {
   end,
   ["1.5.14"] = function()
     update_scenario()
+    -- destroy remaining infinity combinator GUI data - it was still being created
+    for _, player_table in pairs(global.players) do
+      player_table.gui.ic = nil
+    end
   end
 }

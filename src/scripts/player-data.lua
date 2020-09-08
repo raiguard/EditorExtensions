@@ -11,14 +11,7 @@ function player_data.init(index)
       inventory_sync_enabled = false,
       map_editor_toggled = false
     },
-    gui = {
-      ic = {
-        network_color = "red",
-        sort_mode = "numerical",
-        sort_direction = "descending",
-        update_divider = 30
-      }
-    }
+    gui = {}
   }
   global.players[index] = player_table
 
