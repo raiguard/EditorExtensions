@@ -4,8 +4,11 @@ local event = require("__flib__.event")
 
 local infinity_loader = require("scripts.entity.infinity-loader")
 
+local supported_interface_version = 1
 function compatibility.add_cursor_enhancements_overrides()
-  if script.active_mods["CursorEnhancements"] then
+  if script.active_mods["CursorEnhancements"]
+    and remote.call("CursorEnhancements", "version") == supported_interface_version
+  then
     remote.call("CursorEnhancements", "add_overrides", {
       -- chests
       ["ee-infinity-chest"] = "ee-infinity-chest-active-provider",
