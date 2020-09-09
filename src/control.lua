@@ -267,7 +267,7 @@ event.on_gui_opened(function(e)
       elseif entity.name == "ee-infinity-cargo-wagon" then
         infinity_wagon.open(e.player_index, entity)
       end
-    elseif e.gui_type and e.gui_type == 3 then
+    elseif e.gui_type and e.gui_type == defines.gui_type.controller then
       local player = game.get_player(e.player_index)
       if player.controller_type == defines.controllers.editor then
         inventory.create_filters_buttons(player)
