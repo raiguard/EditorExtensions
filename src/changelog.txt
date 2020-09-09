@@ -3,6 +3,8 @@ Version: 1.5.15
 Date: ????
   Features:
     - Added Cursor Enhancements overrides for testing tools
+  Bugfixes:
+    - Fixed some broken migrations when converting to EE from Infinity Mode
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.14
 Date: 2020-09-08

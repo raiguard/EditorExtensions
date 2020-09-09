@@ -81,6 +81,11 @@ event.on_configuration_changed(function(e)
       end
     end
   else -- post-init setup
+    -- if coming from infinity mode, fix infinity loaders
+    if e.mod_changes["InfinityMode"] then
+      infinity_loader.check_loaders()
+    end
+    -- enable recipes for those with cheat mode enabled
     for i, player in pairs(game.players) do
       if player.cheat_mode then
         cheat_mode.enable_recipes(player)
