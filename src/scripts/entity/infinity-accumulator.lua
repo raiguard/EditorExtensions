@@ -138,8 +138,14 @@ gui.add_handlers{
       on_gui_value_changed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
-        local buffer_size = util.parse_energy(e.element.slider_value..constants.si_suffixes_joule[gui_data.slider_dropdown.selected_index])
-        set_entity_settings(gui_data.entity, constants.index_to_mode[gui_data.mode_dropdown.selected_index], buffer_size)
+        local buffer_size = util.parse_energy(
+          e.element.slider_value..constants.si_suffixes_joule[gui_data.slider_dropdown.selected_index]
+        )
+        set_entity_settings(
+          gui_data.entity,
+          constants.index_to_mode[gui_data.mode_dropdown.selected_index],
+          buffer_size
+        )
         gui_data.slider_textfield.text = e.element.slider_value
       end
     },
@@ -157,16 +163,28 @@ gui.add_handlers{
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
         util.textfield.set_last_valid_value(e.element, player_table.gui.ia.last_textfield_value)
-        local buffer_size = util.parse_energy(e.element.text..constants.si_suffixes_joule[gui_data.slider_dropdown.selected_index])
-        set_entity_settings(gui_data.entity, constants.index_to_mode[gui_data.mode_dropdown.selected_index], buffer_size)
+        local buffer_size = util.parse_energy(
+          e.element.text..constants.si_suffixes_joule[gui_data.slider_dropdown.selected_index]
+        )
+        set_entity_settings(
+          gui_data.entity,
+          constants.index_to_mode[gui_data.mode_dropdown.selected_index],
+          buffer_size
+        )
       end
     },
     slider_dropdown = {
       on_gui_selection_state_changed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
-        local buffer_size = util.parse_energy(gui_data.slider.slider_value..constants.si_suffixes_joule[e.element.selected_index])
-        set_entity_settings(gui_data.entity, constants.index_to_mode[gui_data.mode_dropdown.selected_index], buffer_size)
+        local buffer_size = util.parse_energy(
+          gui_data.slider.slider_value..constants.si_suffixes_joule[e.element.selected_index]
+        )
+        set_entity_settings(
+          gui_data.entity,
+          constants.index_to_mode[gui_data.mode_dropdown.selected_index],
+          buffer_size
+        )
       end
     },
     window = {
@@ -190,7 +208,11 @@ local function create_gui(player, player_table, entity)
   local gui_data = gui.build(player.gui.screen, {
     {type="frame", direction="vertical", handlers="ia.window", save_as="window", children={
       {type="flow", save_as="titlebar_flow", children={
-        {type="label", style="frame_title", caption={"entity-name.ee-infinity-accumulator"}, elem_mods={ignored_by_interaction=true}},
+        {type="label",
+          style="frame_title",
+          caption={"entity-name.ee-infinity-accumulator"},
+          elem_mods={ignored_by_interaction=true}
+        },
         {template="titlebar_drag_handle"},
         {template="close_button", handlers="ia.close_button"}
       }},
@@ -202,25 +224,61 @@ local function create_gui(player, player_table, entity)
           {template="vertically_centered_flow", children={
             {type="label", caption={"ee-gui.mode"}},
             {template="pushers.horizontal"},
-            {type="drop-down", style="ee_ia_dropdown", items=constants.localised_modes, selected_index=constants.mode_to_index[mode],
-              handlers="ia.mode_dropdown", save_as="mode_dropdown"}
+            {type="drop-down",
+              style="ee_ia_dropdown",
+              items=constants.localised_modes,
+              selected_index=constants.mode_to_index[mode],
+              handlers="ia.mode_dropdown",
+              save_as="mode_dropdown"
+            }
           }},
           {template="pushers.vertical"},
           {template="vertically_centered_flow", children={
-            {type="label", caption={"", {"ee-gui.priority"}, " [img=info]"}, tooltip={"ee-gui.ia-priority-description"}},
+            {type="label",
+              caption={"", {"ee-gui.priority"}, " [img=info]"},
+              tooltip={"ee-gui.ia-priority-description"}
+            },
             {template="pushers.horizontal"},
-            {type="drop-down", style="ee_ia_dropdown", items=constants.localised_priorities, selected_index=constants.priority_to_index[priority],
-              elem_mods={visible=not is_buffer}, handlers="ia.priority_dropdown", save_as="priority_dropdown"},
-            {type="button", style="ee_disabled_dropdown_button", caption={"ee-gui.tertiary"}, elem_mods={enabled=false, visible=is_buffer},
-              save_as="priority_dropdown_dummy"}
+            {type="drop-down",
+              style="ee_ia_dropdown",
+              items=constants.localised_priorities,
+              selected_index=constants.priority_to_index[priority],
+              elem_mods={visible=(not is_buffer)},
+              handlers="ia.priority_dropdown",
+              save_as="priority_dropdown"
+            },
+            {type="button",
+              style="ee_disabled_dropdown_button",
+              caption={"ee-gui.tertiary"},
+              elem_mods={enabled=false, visible=is_buffer},
+              save_as="priority_dropdown_dummy"
+            }
           }},
           {template="pushers.vertical"},
           {template="vertically_centered_flow", children={
-            {type="slider", minimum_value=0, maximum_value=999, value=slider_value, handlers="ia.slider", save_as="slider"},
-            {type="textfield", style="ee_slider_textfield", text=slider_value, numeric=true, lose_focus_on_confirm=true, clear_and_focus_on_right_click=true,
-              handlers="ia.slider_textfield", save_as="slider_textfield"},
-            {type="drop-down", style_mods={width=69}, selected_index=dropdown_index,
-              items=constants["localised_si_suffixes_"..constants.power_suffixes_by_mode[mode]], handlers="ia.slider_dropdown", save_as="slider_dropdown"}
+            {type="slider",
+              minimum_value=0,
+              maximum_value=999,
+              value=slider_value,
+              handlers="ia.slider",
+              save_as="slider"
+            },
+            {type="textfield",
+              style="ee_slider_textfield",
+              text=slider_value,
+              numeric=true,
+              lose_focus_on_confirm=true,
+              clear_and_focus_on_right_click=true,
+              handlers="ia.slider_textfield",
+              save_as="slider_textfield"
+            },
+            {type="drop-down",
+              style_mods={width=69},
+              selected_index=dropdown_index,
+              items=constants["localised_si_suffixes_"..constants.power_suffixes_by_mode[mode]],
+              handlers="ia.slider_dropdown",
+              save_as="slider_dropdown"
+            }
           }}
         }}
       }}

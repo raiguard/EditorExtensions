@@ -154,7 +154,10 @@ event.register(
     -- infinity loader
     if entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
       infinity_loader.build_from_ghost(entity)
-    elseif entity_name == "ee-infinity-loader-dummy-combinator" or entity_name == "ee-infinity-loader-logic-combinator" then
+    elseif
+      entity_name == "ee-infinity-loader-dummy-combinator"
+      or entity_name == "ee-infinity-loader-logic-combinator"
+    then
       infinity_loader.build(entity)
     elseif entity.type == "transport-belt" then
       -- snap neighbors
@@ -241,11 +244,16 @@ event.register("ee-mouse-leftclick", function(e)
 end)
 
 event.on_entity_settings_pasted(function(e)
-  if infinity_accumulator.check_name(e.source) and infinity_accumulator.check_name(e.destination) and e.source.name ~= e.destination.name then
+  if
+    infinity_accumulator.check_name(e.source)
+    and infinity_accumulator.check_name(e.destination)
+    and e.source.name ~= e.destination.name
+  then
     infinity_accumulator.paste_settings(e.source, e.destination)
   elseif e.destination.name == "ee-infinity-loader-logic-combinator" then
     infinity_loader.paste_settings(e.source, e.destination)
-  elseif (e.source.name == "ee-infinity-cargo-wagon" and e.destination.name == "ee-infinity-cargo-wagon")
+  elseif
+    e.source.name == "ee-infinity-cargo-wagon" and e.destination.name == "ee-infinity-cargo-wagon"
     or e.source.name == "ee-infinity-fluid-wagon" and e.destination.name == "ee-infinity-fluid-wagon"
   then
     infinity_wagon.paste_settings(e.source, e.destination)
@@ -395,13 +403,19 @@ event.on_player_toggled_map_editor(function(e)
   end
 end)
 
-event.register({defines.events.on_player_display_resolution_changed, defines.events.on_player_display_scale_changed}, function(e)
-  local player = game.get_player(e.player_index)
-  local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
-  if gui_data then
-    inventory.set_filters_gui_location(player, gui_data)
+event.register(
+  {
+    defines.events.on_player_display_resolution_changed,
+    defines.events.on_player_display_scale_changed
+  },
+  function(e)
+    local player = game.get_player(e.player_index)
+    local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
+    if gui_data then
+      inventory.set_filters_gui_location(player, gui_data)
+    end
   end
-end)
+)
 
 -- SETTINGS
 
@@ -422,22 +436,29 @@ end)
 -- -----------------------------------------------------------------------------
 -- EVENT FILTERS
 
-event.set_filters({defines.events.on_built_entity, defines.events.on_entity_cloned, defines.events.on_robot_built_entity}, {
-  {filter="name", name="ee-infinity-loader-dummy-combinator"},
-  {filter="name", name="ee-infinity-loader-logic-combinator"},
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"},
-  {filter="name", name="ee-aggregate-chest"},
-  {filter="name", name="ee-aggregate-chest-passive-provider"},
-  {filter="name", name="ee-super-inserter"},
-  {filter="name", name="ee-infinity-pipe"},
-  {filter="type", type="transport-belt"},
-  {filter="type", type="underground-belt"},
-  {filter="type", type="splitter"},
-  {filter="type", type="loader"},
-  {filter="ghost"},
-  {filter="ghost_name", name="ee-infinity-loader-logic-combinator"}
-})
+event.set_filters(
+  {
+    defines.events.on_built_entity,
+    defines.events.on_entity_cloned,
+    defines.events.on_robot_built_entity
+  },
+  {
+    {filter="name", name="ee-infinity-loader-dummy-combinator"},
+    {filter="name", name="ee-infinity-loader-logic-combinator"},
+    {filter="name", name="ee-infinity-cargo-wagon"},
+    {filter="name", name="ee-infinity-fluid-wagon"},
+    {filter="name", name="ee-aggregate-chest"},
+    {filter="name", name="ee-aggregate-chest-passive-provider"},
+    {filter="name", name="ee-super-inserter"},
+    {filter="name", name="ee-infinity-pipe"},
+    {filter="type", type="transport-belt"},
+    {filter="type", type="underground-belt"},
+    {filter="type", type="splitter"},
+    {filter="type", type="loader"},
+    {filter="ghost"},
+    {filter="ghost_name", name="ee-infinity-loader-logic-combinator"}
+  }
+)
 
 event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
   {filter="name", name="ee-infinity-accumulator-primary-output"},

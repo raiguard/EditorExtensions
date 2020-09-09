@@ -195,7 +195,9 @@ data:extend{super_inserter}
 -- infinity loader
 -- create everything except the actual loaders here. We create those in data-updates so they can get every belt type
 do
-  local loader_icon = util.recursive_tint{{icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}}
+  local loader_icon = util.recursive_tint{
+    {icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}
+  }
   local loader_base = table.deepcopy(data.raw["underground-belt"]["underground-belt"])
   loader_base.icons = loader_icon
 
@@ -239,9 +241,18 @@ do
 
   -- create spritesheet for dummy combinator
   local sprite_files = {
-    {base_loader_path.."underground-belt-structure-back-patch.png", base_loader_path.."hr-underground-belt-structure-back-patch.png"},
-    {"__EditorExtensions__/graphics/entity/infinity-loader/infinity-loader.png", "__EditorExtensions__/graphics/entity/infinity-loader/hr-infinity-loader.png"},
-    {base_loader_path.."underground-belt-structure-front-patch.png", base_loader_path.."hr-underground-belt-structure-front-patch.png"},
+    {
+      base_loader_path.."underground-belt-structure-back-patch.png",
+      base_loader_path.."hr-underground-belt-structure-back-patch.png"
+    },
+    {
+      "__EditorExtensions__/graphics/entity/infinity-loader/infinity-loader.png",
+      "__EditorExtensions__/graphics/entity/infinity-loader/hr-infinity-loader.png"
+    },
+    {
+      base_loader_path.."underground-belt-structure-front-patch.png",
+      base_loader_path.."hr-underground-belt-structure-front-patch.png"
+    }
   }
   local sprite_x = {south=96*0, west=96*1, north=96*2, east=96*3}
   local sprites = {}

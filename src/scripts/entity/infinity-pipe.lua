@@ -25,7 +25,11 @@ function infinity_pipe.snap(entity, player_settings)
         if assembler_snapping and neighbour.type == "assembling-machine" then
           for j = 1, #fb do
             local connections = fb.get_connections(j)
-            if connections[1] and (connections[1].owner.unit_number == own_id) and (fb.get_prototype(j).production_type == "input") then
+            if
+              connections[1]
+              and connections[1].owner.unit_number == own_id
+              and fb.get_prototype(j).production_type == "input"
+            then
               local fluid = fb.get_locked_fluid(1)
               if fluid then
                 -- set to fill the pipe with the fluid

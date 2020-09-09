@@ -342,7 +342,7 @@ end
 -- "Snapping" in this case usually means matching both direction and belt type
 
 -- snaps the loader to the transport-belt-connectable entity that it's facing
--- if `entity` is supplied, it will check against that entity, and will not snap if it cannot connect to it (is not facing it)
+-- if `entity` is supplied, it will check against that entity, and will not snap if it cannot connect to it
 local function snap_loader(loader, entity)
   -- in case the loader got snapped before in the same neighbors function, don't do anything
   if loader and not loader.valid then return end
@@ -350,7 +350,9 @@ local function snap_loader(loader, entity)
   -- if the entity was not supplied, find it
   if not entity then
     entity = loader.surface.find_entities_filtered{
-      area = util.position.to_tile_area(util.position.add(loader.position, util.direction.to_vector(get_loader_direction(loader), 1))),
+      area = util.position.to_tile_area(
+        util.position.add(loader.position, util.direction.to_vector(get_loader_direction(loader), 1))
+      ),
       type = {"transport-belt", "underground-belt", "splitter", "loader", "loader-1x1"}
     }[1]
   end
@@ -391,7 +393,8 @@ function infinity_loader.snap_tile_neighbors(entity)
   end
 end
 
--- checks belt neighbors for both rotations of the source entity for infinity loaders, and calls the snapping function on them
+-- checks belt neighbors for both rotations of the source entity for infinity loaders, and calls the snapping function
+-- on them
 function infinity_loader.snap_belt_neighbors(entity)
   local belt_neighbors = check_belt_neighbors(entity, check_is_loader, true)
   entity.rotate()
@@ -415,7 +418,12 @@ function infinity_loader.picker_dollies_move(e)
   if moved_entity and moved_entity.name == "ee-infinity-loader-logic-combinator" then
     local loader
     -- move all entities to new position
-    for _, entity in pairs(e.moved_entity.surface.find_entities_filtered{type={"loader-1x1", "inserter", "infinity-container"}, position=e.start_pos}) do
+    for _, entity in pairs(
+      e.moved_entity.surface.find_entities_filtered{
+        type = {"loader-1x1", "inserter", "infinity-container"},
+        position = e.start_pos
+      }
+    ) do
       if check_is_loader(entity) then
         -- we need to move the loader very last, after all of the other entities are in the new position
         loader = entity
@@ -453,7 +461,14 @@ end
 
 function infinity_loader.build(entity)
   -- create the loader with default belt type, we will snap it later
-  local loader, _, _, combinator = create_loader("express", "output", entity.surface, entity.position, entity.direction, entity.force)
+  local loader, _, _, combinator = create_loader(
+    "express",
+    "output",
+    entity.surface,
+    entity.position,
+    entity.direction,
+    entity.force
+  )
   -- if the loader failed to build, skip the rest of the logic
   if not loader then return end
   -- get and set previous filters, if any
@@ -530,8 +545,18 @@ function infinity_loader.check_loaders()
       -- if its loader is gone, give it a new one with default settings
       if #surface.find_entities_filtered{type="loader-1x1", position=entity.position} == 0 then
         snap_loader(
-          update_loader_type(nil, "express", {position=entity.position, direction=entity.direction, force=entity.force, last_user=entity.last_user or "",
-            loader_type="output", surface=entity.surface})
+          update_loader_type(
+            nil,
+            "express",
+            {
+              position = entity.position,
+              direction = entity.direction,
+              force = entity.force,
+              last_user = entity.last_user or "",
+              loader_type = "output",
+              surface = entity.surface
+            }
+          )
         )
       end
     end

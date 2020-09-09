@@ -130,13 +130,21 @@ local function export_filters(player)
     filters = filters,
     remove_unfiltered_items = player.remove_unfiltered_items
   }
-  return game.encode_string("EditorExtensions-inventory_filters-"..filters_table_version.."-"..game.table_to_json(output))
+  return game.encode_string(
+    "EditorExtensions-inventory_filters-"
+    ..filters_table_version
+    .."-"
+    ..game.table_to_json(output)
+  )
 end
 
 local function import_filters(player, string)
   local decoded_string = game.decode_string(string)
   if not decoded_string then return false end
-  if string.sub(decoded_string, 1, 16) == "EditorExtensions" and string.sub(decoded_string, 18, 34) == "inventory_filters" then
+  if
+    string.sub(decoded_string, 1, 16) == "EditorExtensions"
+    and string.sub(decoded_string, 18, 34) == "inventory_filters"
+  then
     -- extract version for migrations
     local _, _, version, json = string.find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
     version = tonumber(version)
@@ -183,16 +191,38 @@ gui.add_handlers{
           {type="frame", direction="vertical", save_as="window", children={
             {type="flow", children={
               {type="label", style="frame_title", caption={"ee-gui."..mode.."-inventory-filters"}},
-              {type="empty-widget", style="draggable_space_header", style_mods={height=24, horizontally_stretchable=true}, save_as="drag_handle"}
+              {type="empty-widget",
+                style="draggable_space_header",
+                style_mods={height=24, horizontally_stretchable=true},
+                save_as="drag_handle"
+              }
             }},
-            {type="text-box", style_mods={width=400, height=300}, clear_and_focus_on_right_click=true, elem_mods={word_wrap=true},
-              handlers=(mode == "import" and "inventory_filters_string.textbox" or nil), save_as="textbox"},
+            {type="text-box",
+              style_mods={width=400, height=300},
+              clear_and_focus_on_right_click=true,
+              elem_mods={word_wrap=true},
+              handlers=(mode == "import" and "inventory_filters_string.textbox" or nil),
+              save_as="textbox"
+            },
             {type="flow", style_mods={top_margin=8}, direction="horizontal", children={
-              {type="button", style="back_button", caption={"gui.cancel"}, handlers="inventory_filters_string.back_button"},
-              {type="empty-widget", style="draggable_space", style_mods={height=32, horizontally_stretchable=true}, save_as="lower_drag_handle"},
+              {type="button",
+                style="back_button",
+                caption={"gui.cancel"},
+                handlers="inventory_filters_string.back_button"
+              },
+              {type="empty-widget",
+                style="draggable_space",
+                style_mods={height=32, horizontally_stretchable=true},
+                save_as="lower_drag_handle"
+              },
               {type="condition", condition=(mode=="import"), children={
-                {type="button", style="confirm_button", caption={"gui.confirm"}, elem_mods={enabled=false}, handlers="inventory_filters_string.confirm_button",
-                  save_as="confirm_button"}
+                {type="button",
+                  style="confirm_button",
+                  caption={"gui.confirm"},
+                  elem_mods={enabled=false},
+                  handlers="inventory_filters_string.confirm_button",
+                  save_as="confirm_button"
+                }
               }}
             }}
           }}
@@ -272,10 +302,20 @@ function inventory.create_filters_buttons(player)
   local gui_data = gui.build(player.gui.screen, {
     {type="frame", style="quick_bar_window_frame", save_as="window", children={
       {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
-        {type="sprite-button", style="shortcut_bar_button", sprite="ee_import_inventory_filters", tooltip={"ee-gui.import-inventory-filters"},
-          handlers="inventory_filters_buttons.import_export_button", save_as="import_button"},
-        {type="sprite-button", style="shortcut_bar_button", sprite="ee_export_inventory_filters", tooltip={"ee-gui.export-inventory-filters"},
-          handlers="inventory_filters_buttons.import_export_button", save_as="export_button"}
+        {type="sprite-button",
+          style="shortcut_bar_button",
+          sprite="ee_import_inventory_filters",
+          tooltip={"ee-gui.import-inventory-filters"},
+          handlers="inventory_filters_buttons.import_export_button",
+          save_as="import_button"
+        },
+        {type="sprite-button",
+          style="shortcut_bar_button",
+          sprite="ee_export_inventory_filters",
+          tooltip={"ee-gui.export-inventory-filters"},
+          handlers="inventory_filters_buttons.import_export_button",
+          save_as="export_button"
+        }
       }}
     }}
   })

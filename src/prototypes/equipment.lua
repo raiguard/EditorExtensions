@@ -44,7 +44,12 @@ energy_shield.background_color = util.equipment_background_color
 energy_shield.sprite.tint = util.infinity_tint
 energy_shield.shape = {width=1, height=1, type="full"}
 energy_shield.max_shield_value = 1000000
-energy_shield.energy_source = {type="electric", usage_priority="primary-input", input_flow_limit="100YW", buffer_capacity="100YJ"}
+energy_shield.energy_source = {
+  type = "electric",
+  usage_priority = "primary-input",
+  input_flow_limit = "100YW",
+  buffer_capacity = "100YJ"
+}
 energy_shield.take_result = "ee-super-energy-shield-equipment"
 data:extend{energy_shield}
 
@@ -67,7 +72,12 @@ personal_roboport.charging_energy = "1000GJ"
 personal_roboport.charging_station_count = 1000
 personal_roboport.robot_limit = 1000
 personal_roboport.construction_radius = 100
-personal_roboport.energy_source = {type="electric", usage_priority="secondary-input", buffer_capacity="100YJ", input_flow_limit="100YW"}
+personal_roboport.energy_source = {
+  type = "electric",
+  usage_priority = "secondary-input",
+  buffer_capacity = "100YJ",
+  input_flow_limit = "100YW"
+}
 personal_roboport.take_result = "ee-super-personal-roboport-equipment"
 personal_roboport.flags = {"hidden"}
 data:extend{personal_roboport}

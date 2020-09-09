@@ -29,10 +29,18 @@ end
 -- generate the localised description of a chest
 function util.chest_description(suffix, is_aggregate)
   if is_aggregate then
-    return {"", {"entity-description.ee-aggregate-chest"}, suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or "",
-      "\n[color=255,57,48]", {"entity-description.ee-performance-warning"}, "[/color]"}
+    return {
+      "",
+      {"entity-description.ee-aggregate-chest"},
+      suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or "",
+      "\n[color=255,57,48]", {"entity-description.ee-performance-warning"}, "[/color]"
+    }
   else
-    return {"", {"entity-description.ee-infinity-chest"}, suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or ""}
+    return {
+      "",
+      {"entity-description.ee-infinity-chest"},
+      suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or ""
+    }
   end
 end
 
@@ -50,16 +58,69 @@ util.aggregate_chest_data = {
   {lm="passive-provider", t={255,141,114}, o="bb"}
 }
 util.module_data = {
-  {name="ee-super-speed-module", icon_ref="speed-module-3", order="ba", category = "speed", tier=50, effect={speed={bonus=2.5}}, tint={r=0.5,g=0.5,b=1}},
-  {name="ee-super-effectivity-module", icon_ref="effectivity-module-3", order="bb", category="effectivity", tier=50, effect={consumption={bonus=-2.5}},
-    tint={r=0.5,g=1,b=0.5}},
-  {name="ee-super-productivity-module", icon_ref="productivity-module-3", order="bc", category="productivity", tier=50, effect={productivity={bonus=2.5}},
-    tint={r=1,g=0.5,b=0.5}},
-  {name="ee-super-clean-module", icon_ref="speed-module-3", order="bd", category="effectivity", tier=50, effect={pollution={bonus=-2.5}}, tint={r=0.5,g=1,b=1}},
-  {name="ee-super-slow-module", icon_ref="speed-module", order="ca", category = "speed", tier=50, effect={speed={bonus=-2.5}}, tint={r=0.5,g=0.5,b=1}},
-  {name="ee-super-ineffectivity-module", icon_ref="effectivity-module", order="cb", category = "effectivity", tier=50, effect={consumption={bonus=2.5}},
-    tint={r=0.5,g=1,b=0.5}},
-  {name="ee-super-dirty-module", icon_ref="speed-module", order="cc", category="effectivity", tier=50, effect={pollution={bonus=2.5}}, tint={r=0.5,g=1,b=1}}
+  {
+    name = "ee-super-speed-module",
+    icon_ref = "speed-module-3",
+    order = "ba",
+    category = "speed",
+    tier = 50,
+    effect = {speed={bonus=2.5}},
+    tint = {r=0.5,g=0.5,b=1}
+  },
+  {
+    name = "ee-super-effectivity-module",
+    icon_ref = "effectivity-module-3",
+    order = "bb",
+    category = "effectivity",
+    tier = 50,
+    effect = {consumption={bonus=-2.5}},
+    tint = {r=0.5,g=1,b=0.5}
+  },
+  {
+    name = "ee-super-productivity-module",
+    icon_ref = "productivity-module-3",
+    order = "bc",
+    category = "productivity",
+    tier = 50,
+    effect = {productivity={bonus=2.5}},
+    tint = {r=1,g=0.5,b=0.5}
+  },
+  {
+    name = "ee-super-clean-module",
+    icon_ref = "speed-module-3",
+    order = "bd",
+    category = "effectivity",
+    tier = 50,
+    effect = {pollution={bonus=-2.5}},
+    tint = {r=0.5,g=1,b=1}
+  },
+  {
+    name = "ee-super-slow-module",
+    icon_ref = "speed-module",
+    order = "ca",
+    category = "speed",
+    tier = 50,
+    effect = {speed={bonus=-2.5}},
+    tint = {r=0.5,g=0.5,b=1}
+  },
+  {
+    name = "ee-super-ineffectivity-module",
+    icon_ref = "effectivity-module",
+    order = "cb",
+    category = "effectivity",
+    tier = 50,
+    effect = {consumption={bonus=2.5}},
+    tint = {r=0.5,g=1,b=0.5}
+  },
+  {
+    name = "ee-super-dirty-module",
+    icon_ref = "speed-module",
+    order = "cc",
+    category = "effectivity",
+    tier = 50,
+    effect = {pollution={bonus=2.5}},
+    tint = {r=0.5,g=1,b=1}
+  }
 }
 
 -- definitions
