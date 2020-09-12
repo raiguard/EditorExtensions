@@ -5,8 +5,6 @@ local util = require("scripts.util")
 
 local constants = require("scripts.constants")
 
--- TODO restrict to 120 chars properly
-
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
@@ -46,9 +44,17 @@ end
 -- update inserter and chest filters
 local function update_filters(combinator, entities)
   entities = entities or {}
-  local loader = entities.loader or combinator.surface.find_entities_filtered{type="loader-1x1", position=combinator.position}[1]
-  local inserters = entities.inserters or combinator.surface.find_entities_filtered{name="ee-infinity-loader-inserter", position=combinator.position}
-  local chest = entities.chest or combinator.surface.find_entities_filtered{name="ee-infinity-loader-chest", position=combinator.position}[1]
+  local loader = entities.loader or combinator.surface.find_entities_filtered{
+    type = "loader-1x1",
+    position = combinator.position
+  }[1]
+  local inserters = entities.inserters or combinator.surface.find_entities_filtered{
+    name = "ee-infinity-loader-inserter", position = combinator.position
+  }
+  local chest = entities.chest or combinator.surface.find_entities_filtered{
+    name = "ee-infinity-loader-chest",
+    position = combinator.position
+  }[1]
   local control = combinator.get_control_behavior()
   local enabled = control.enabled
   local filters = control.parameters.parameters
@@ -68,7 +74,10 @@ local function update_filters(combinator, entities)
   -- update chest filters
   for i=1, 2 do
     local name = filters[i].signal.name
-    chest.set_infinity_container_filter(i, name and {name=name, count=game.item_prototypes[name].stack_size, mode="exactly", index=i} or nil)
+    chest.set_infinity_container_filter(
+      i,
+      name and {name=name, count=game.item_prototypes[name].stack_size, mode="exactly", index=i} or nil
+    )
   end
   chest.remove_unfiltered_items = true
 end
@@ -77,8 +86,14 @@ end
 local function update_inserters(loader, entities)
   entities = entities or {}
   local surface = loader.surface
-  local inserters = entities.inserters or surface.find_entities_filtered{name="ee-infinity-loader-inserter", position=loader.position}
-  local chest = entities.chest or surface.find_entities_filtered{name="ee-infinity-loader-chest", position=loader.position}[1]
+  local inserters = entities.inserters or surface.find_entities_filtered{
+    name = "ee-infinity-loader-inserter",
+    position = loader.position
+  }
+  local chest = entities.chest or surface.find_entities_filtered{
+    name = "ee-infinity-loader-chest",
+    position = loader.position
+  }[1]
   local e_type = loader.loader_type
   local e_position = loader.position
   local e_direction = loader.direction
@@ -110,7 +125,10 @@ local function update_inserters(loader, entities)
     if e_type == "input" then
       -- pickup on belt, drop in chest
       inserter.pickup_target = loader
-      inserter.pickup_position = util.position.add(e_position, util.direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal))
+      inserter.pickup_position = util.position.add(
+        e_position,
+        util.direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal)
+      )
       inserter.drop_target = chest
       inserter.drop_position = e_position
     elseif e_type == "output" then
@@ -118,7 +136,10 @@ local function update_inserters(loader, entities)
       inserter.pickup_target = chest
       inserter.pickup_position = chest.position
       inserter.drop_target = loader
-      inserter.drop_position = util.position.add(e_position, util.direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal))
+      inserter.drop_position = util.position.add(
+        e_position,
+        util.direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal)
+      )
     end
   end
 end
@@ -151,7 +172,9 @@ end
 -- create an infinity loader
 local function create_loader(type, mode, surface, position, direction, force)
   local name = "ee-infinity-loader-loader"..(type == "" and "" or "-"..type)
-  if not game.entity_prototypes[name] then error("Attempted to create an infinity loader with an invalid belt type.") end
+  if not game.entity_prototypes[name] then
+    error("Attempted to create an infinity loader with an invalid belt type.")
+  end
   local loader = surface.create_entity{
     name = name,
     position = position,
@@ -189,7 +212,7 @@ local function create_loader(type, mode, surface, position, direction, force)
   return loader, inserters, chest, combinator
 end
 
--- apply the function to each belt neighbor connected to this entity, and return entities for which the function returned true
+-- apply the function to each belt neighbor connected to this entity, and return entities that the callback matched
 local function check_belt_neighbors(entity, func, type_agnostic)
   local belt_neighbors = entity.belt_neighbours
   local matched_entities = {}
@@ -204,15 +227,17 @@ local function check_belt_neighbors(entity, func, type_agnostic)
   return matched_entities
 end
 
--- apply the function to each entity on neighboring tiles, returning entities for which the function returned true
-local function check_tile_neighbors(entity, func, eight_way, dir_agnostic)
+-- apply the function to each entity on neighboring tiles, returning entities that the callback matched
+local function check_tile_neighbors(entity, func, eight_way, directon_agnostic)
   local matched_entities = {}
-  for i=0, 7,eight_way and 1 or 2 do
-    if not dir_agnostic then matched_entities[i] = {} end
-    local entities = entity.surface.find_entities(util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1))))
+  for i= 0, 7, eight_way and 1 or 2 do
+    if not directon_agnostic then matched_entities[i] = {} end
+    local entities = entity.surface.find_entities(
+      util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1)))
+    )
     for _, e in ipairs(entities) do
       if func(e) then
-        table.insert(dir_agnostic and matched_entities or matched_entities[i], e)
+        table.insert(directon_agnostic and matched_entities or matched_entities[i], e)
       end
     end
   end
@@ -246,7 +271,10 @@ gui.add_handlers{
         local index = tonumber(string.sub(name, #name, #name))
         local entity = global.players[e.player_index].gui.il.entity
         local control = entity.get_or_create_control_behavior()
-        control.set_signal(index, e.element.elem_value and {signal={type="item", name=e.element.elem_value}, count=1} or nil)
+        control.set_signal(
+          index,
+          e.element.elem_value and {signal={type="item", name=e.element.elem_value}, count=1} or nil
+        )
         update_filters(entity)
       end
     },
@@ -271,7 +299,11 @@ local function create_gui(player, player_table, entity)
   local gui_data = gui.build(player.gui.screen, {
     {type="frame", direction="vertical", handlers="il.window", save_as="window", children={
       {type="flow", save_as="titlebar_flow", children={
-        {type="label", style="frame_title", caption={"entity-name.ee-infinity-loader"}, elem_mods={ignored_by_interaction=true}},
+        {type="label",
+          style="frame_title",
+          caption={"entity-name.ee-infinity-loader"},
+          elem_mods={ignored_by_interaction=true}
+        },
         {template="titlebar_drag_handle"},
         {template="close_button", handlers="il.close_button"}
       }},
@@ -284,16 +316,30 @@ local function create_gui(player, player_table, entity)
           {template="vertically_centered_flow", children={
             {type="label", caption={"ee-gui.state"}},
             {template="pushers.horizontal"},
-            {type="switch", left_label_caption={"gui-constant.on"}, right_label_caption={"gui-constant.off"},
-              switch_state=control.enabled and "left" or "right", handlers="il.state_switch"}
+            {type="switch",
+              left_label_caption={"gui-constant.on"},
+              right_label_caption={"gui-constant.off"},
+              switch_state=control.enabled and "left" or "right",
+              handlers="il.state_switch"
+            }
           }},
           {template="pushers.vertical"},
           {template="vertically_centered_flow", children={
             {type="label", caption={"", {"ee-gui.filters"}, " [img=info]"}, tooltip={"ee-gui.il-filters-description"}},
             {type="empty-widget", style_mods={width=20}},
             {type="frame", style="slot_button_deep_frame", children={
-              {template="il_filter_button", name="ee_il_filter_button_1", item=parameters[1].signal.name, handlers="il.filter_button", save_as="filter_button_1"},
-              {template="il_filter_button", name="ee_il_filter_button_2", item=parameters[2].signal.name, handlers="il.filter_button", save_as="filter_button_2"}
+              {template="il_filter_button",
+                name="ee_il_filter_button_1",
+                item=parameters[1].signal.name,
+                handlers="il.filter_button",
+                save_as="filter_button_1"
+              },
+              {template="il_filter_button",
+                name="ee_il_filter_button_2",
+                item=parameters[2].signal.name,
+                handlers="il.filter_button",
+                save_as="filter_button_2"
+              }
             }}
           }}
         }}
