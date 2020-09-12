@@ -43,7 +43,7 @@ end)
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
 -- `on_tick` event handler is kept in `scripts.on-tick`
--- picker dollies event handler is kept in `scripts.entity.intinity-loader`
+-- picker dollies event handler is kept in `scripts.entity.infinity-loader`
 -- all other event handlers are here
 
 -- BOOTSTRAP
