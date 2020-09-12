@@ -3,6 +3,7 @@ Version: 1.5.15
 Date: ????
   Features:
     - Added Cursor Enhancements overrides for testing tools
+    - Added Russian translation by Apareshka
   Bugfixes:
     - Fixed some broken migrations when converting to EE from Infinity Mode
 ---------------------------------------------------------------------------------------------------
