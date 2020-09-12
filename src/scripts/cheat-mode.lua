@@ -1,5 +1,7 @@
 local cheat_mode = {}
 
+local reverse_defines = require("__flib__.reverse-defines")
+
 local inventory = require("scripts.inventory")
 
 function cheat_mode.enable_recipes(player, skip_message)
@@ -33,6 +35,7 @@ function cheat_mode.disable_recipes(player, skip_message)
   end
 end
 
+-- TODO tap freeplay interface for these counts
 local items_to_remove = {
   {name="express-loader", count=50},
   {name="stack-inserter", count=50},
@@ -85,25 +88,54 @@ function cheat_mode.set_loadout(player)
     main_inventory.insert(items_to_add[i])
   end
   if player.controller_type == defines.controllers.character then
-    -- apply bonuses
-    player.character_build_distance_bonus = 1000000
-    player.character_mining_speed_modifier = 2
-    player.character_reach_distance_bonus = 1000000
-    player.character_resource_reach_distance_bonus = 1000000
     -- overwrite the default armor loadout
     set_armor(player.get_inventory(defines.inventory.character_armor))
+    -- apply character cheats
+    cheat_mode.enable_character_cheats(player)
   elseif player.controller_type == defines.controllers.editor then
     -- overwrite the default armor loadout
     set_armor(player.get_inventory(defines.inventory.editor_armor))
+    -- if the player uses a character, apply cheats to it upon exit
+    if player.stashed_controller_type == defines.controllers.character then
+      global.players[player.index].flags.apply_character_cheats_on_exit = true
+    end
+  end
+end
+
+function cheat_mode.enable_character_cheats(player)
+  -- get all associated characters as well as the active one
+  local associated_characters = player.get_associated_characters()
+  associated_characters[#associated_characters+1] = player.character
+  -- apply bonuses
+  for _, character in pairs(associated_characters) do
+    character.character_build_distance_bonus = 1000000
+    character.character_mining_speed_modifier = 2
+    character.character_reach_distance_bonus = 1000000
+    character.character_resource_reach_distance_bonus = 1000000
+  end
+end
+
+function cheat_mode.disable_character_cheats(player)
+  -- get all associated characters as well as the active one
+  local associated_characters = player.get_associated_characters()
+  associated_characters[#associated_characters+1] = player.character
+  -- negate bonuses
+  for _, character in pairs(associated_characters) do
+    character.character_build_distance_bonus = character.character_build_distance_bonus - 1000000
+    character.character_mining_speed_modifier = character.character_mining_speed_modifier - 2
+    character.character_reach_distance_bonus = character.character_reach_distance_bonus - 1000000
+    character.character_resource_reach_distance_bonus = character.character_resource_reach_distance_bonus - 1000000
   end
 end
 
 function cheat_mode.disable(player, player_table)
-  -- reset bonuses and disable cheat mode
-  player.character_build_distance_bonus = 0
-  player.character_mining_speed_modifier = 0
-  player.character_reach_distance_bonus = 0
-  player.character_resource_reach_distance_bonus = 0
+  -- reset bonuses or set a flag to do so
+  if player.controller_type == defines.controllers.character then
+    cheat_mode.disable_character_cheats(player)
+  elseif player.stashed_controller_type == defines.controllers.character then
+    player_table.flags.update_character_cheats_when_possible = true
+  end
+
   player.cheat_mode = false
 
   -- remove recipes

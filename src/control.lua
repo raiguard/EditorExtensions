@@ -394,9 +394,25 @@ event.on_player_toggled_map_editor(function(e)
 
   -- close inventory filters GUIs if they're open
   inventory.close_guis(player_table, e.player_index)
+
   -- finish inventory sync
   if player_table.flags.inventory_sync_enabled and player_table.sync_data then
     inventory.get_from_sync_inventories(player_table, player)
+  end
+
+  -- update character cheats if necessary
+  if
+    player.controller_type == defines.controllers.character
+    and player_table.flags.update_character_cheats_when_possible
+  then
+    -- negate flag
+    player_table.flags.update_character_cheats_when_possible = false
+    -- enable or disable cheats
+    if player.cheat_mode then
+      cheat_mode.enable_character_cheats(player)
+    else
+      cheat_mode.disable_character_cheats(player)
+    end
   end
 end)
 

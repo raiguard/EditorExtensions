@@ -7,6 +7,7 @@ local string = string
 function player_data.init(index)
   local player_table = {
     flags = {
+      update_character_cheats_when_possible = false,
       in_satellite_view = false, -- space exploration compatibility
       inventory_sync_enabled = false,
       map_editor_toggled = false

@@ -5,7 +5,9 @@ Date: ????
     - Added Cursor Enhancements overrides for testing tools
     - Added Russian translation by Apareshka
   Bugfixes:
+    - Fixed a crash when disabling cheat mode while in the map editor
     - Fixed some broken migrations when converting to EE from Infinity Mode
+    - Fixed that enabling cheat mode while in the map editor would not apply character cheats
     - Fixed that if a scenario enabled cheat mode by default, the testing tools wouldn't be unlocked
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.14

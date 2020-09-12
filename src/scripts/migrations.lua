@@ -91,5 +91,10 @@ return {
     for _, player_table in pairs(global.players) do
       player_table.gui.ic = nil
     end
+  end,
+  ["1.5.15"] = function()
+    for _, player_table in pairs(global.players) do
+      player_table.flags.update_character_cheats_when_possible = false
+    end
   end
 }
