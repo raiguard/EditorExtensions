@@ -58,6 +58,7 @@ constants.cursor_enhancements_overrides = {
   ["ee-infinity-chest-passive-provider"] = "ee-infinity-chest-storage",
   ["ee-infinity-chest-storage"] = "ee-infinity-chest-buffer",
   ["ee-infinity-chest-buffer"] = "ee-infinity-chest-requester",
+  ["ee-infinity-chest-requester"] = "ee-aggregate-chest",
   ["ee-aggregate-chest"] = "ee-aggregate-chest-passive-provider",
   -- electric poles
   ["ee-super-electric-pole"] = "ee-super-substation",
