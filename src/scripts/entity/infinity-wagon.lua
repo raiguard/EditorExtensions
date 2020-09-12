@@ -1,7 +1,5 @@
 local infinity_wagon = {}
 
-local constants = require("scripts.constants")
-
 local util = require("scripts.util")
 
 function infinity_wagon.build(entity, tags)

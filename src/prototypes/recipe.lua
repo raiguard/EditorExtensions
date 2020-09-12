@@ -1,5 +1,4 @@
 local constants = require("prototypes.constants")
-local util = require("prototypes.util")
 
 local recipe_names = {
   "ee-infinity-accumulator",

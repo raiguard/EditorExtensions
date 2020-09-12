@@ -3,7 +3,6 @@ local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
 
 local constants = require("scripts.constants")
-
 local cheat_mode = require("scripts.cheat-mode")
 local compatibility = require("scripts.compatibility")
 local global_data = require("scripts.global-data")

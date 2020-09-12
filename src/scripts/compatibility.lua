@@ -3,7 +3,6 @@ local compatibility = {}
 local event = require("__flib__.event")
 
 local constants = require("scripts.constants")
-
 local infinity_loader = require("scripts.entity.infinity-loader")
 
 function compatibility.add_cursor_enhancements_overrides()
