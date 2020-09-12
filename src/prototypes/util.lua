@@ -1,19 +1,26 @@
-local util = table.deepcopy(require("__core__.lualib.util"))
+local constants = require("prototypes.constants")
+local util = {}
 
--- tints
-util.infinity_tint = {r=1, g=0.5, b=1, a=1}
-util.equipment_background_color = {r=0.5, g=0.25, b=0.5, a=1}
+local core_util = require("__core__.lualib.util")
+
+util.by_pixel = core_util.by_pixel
 
 -- recursive tinting - tint all sprite definitions in the given table
 local function is_sprite_def(array)
   return array.width and array.height and (array.filename or array.stripes or array.filenames)
 end
 function util.recursive_tint(array, tint)
-  tint = tint or util.infinity_tint
+  if tint ~= false then
+    tint = tint or constants.infinity_tint
+  end
   for _, v in pairs(array) do
     if type(v) == "table" then
       if is_sprite_def(v) or v.icon then
-        v.tint = tint
+        if tint == false then
+          v.tint = nil
+        else
+          v.tint = tint
+        end
       end
       v = util.recursive_tint(v, tint)
     end

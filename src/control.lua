@@ -132,11 +132,13 @@ event.on_player_cheat_mode_disabled(function(e)
 end)
 
 event.on_console_command(function(e)
-  if e.command == "cheat" and e.parameters == "all" then
+  if e.command == "cheat" then
     local player = game.get_player(e.player_index)
     if player.cheat_mode then
-      cheat_mode.set_loadout(player)
       game.print{"ee-message.time-frozen"}
+      if e.parameters == "all" then
+        cheat_mode.set_loadout(player)
+      end
     end
   end
 end)

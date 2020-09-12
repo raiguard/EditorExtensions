@@ -18,8 +18,8 @@ do
     entity.localised_name = {"entity-name.ee-infinity-accumulator"}
     entity.localised_description = {"entity-description.ee-infinity-accumulator"}
     entity.icons = accumulator_icons
-    entity.map_color = util.infinity_tint
-    entity.friendly_map_color = util.infinity_tint
+    entity.map_color = constants.infinity_tint
+    entity.friendly_map_color = constants.infinity_tint
     entity.energy_source = {type="electric", usage_priority=t, buffer_capacity="500GJ"}
     entity.subgroup = "ee-electricity"
     entity.order = "a"
@@ -78,8 +78,8 @@ do
     chest.name = "ee-infinity-chest"..suffix
     chest.localised_description = util.chest_description(suffix)
     chest.icons = {table.deepcopy(constants.infinity_chest_icon)}
-    chest.map_color = util.infinity_tint
-    chest.friendly_map_color = util.infinity_tint
+    chest.map_color = constants.infinity_tint
+    chest.friendly_map_color = constants.infinity_tint
     chest.picture = table.deepcopy(infinity_chest_picture)
     chest.order = t.o
     chest.subgroup = "ee-inventories"
@@ -159,8 +159,8 @@ infinity_heat_pipe.name = "ee-infinity-heat-pipe"
 infinity_heat_pipe.localised_description = {"entity-description.ee-infinity-heat-pipe"}
 infinity_heat_pipe.gui_mode = "all"
 infinity_heat_pipe.icons = util.extract_icon_info(data.raw["item"]["heat-pipe"])
-infinity_heat_pipe.map_color = util.infinity_tint
-infinity_heat_pipe.friendly_map_color = util.infinity_tint
+infinity_heat_pipe.map_color = constants.infinity_tint
+infinity_heat_pipe.friendly_map_color = constants.infinity_tint
 infinity_heat_pipe.picture = {
   filename = "__base__/graphics/entity/heat-pipe/heat-pipe-t-1.png",
   width = 32,
@@ -182,8 +182,8 @@ data:extend{infinity_heat_pipe}
 local super_inserter = table.deepcopy(data.raw["inserter"]["filter-inserter"])
 super_inserter.name = "ee-super-inserter"
 super_inserter.icons = util.extract_icon_info(super_inserter)
-super_inserter.map_color = util.infinity_tint
-super_inserter.friendly_map_color = util.infinity_tint
+super_inserter.map_color = constants.infinity_tint
+super_inserter.friendly_map_color = constants.infinity_tint
 super_inserter.placeable_by = {item="ee-super-inserter", count=1}
 super_inserter.minable.result = "ee-super-inserter"
 super_inserter.energy_source = {type="void"}
@@ -225,8 +225,8 @@ do
       icons = loader_icon,
       localised_name = {"entity-name.ee-infinity-loader"},
       localised_description = {"entity-description.ee-infinity-loader"},
-      map_color = util.infinity_tint,
-      friendly_map_color = util.infinity_tint,
+      map_color = constants.infinity_tint,
+      friendly_map_color = constants.infinity_tint,
       order = "a",
       collision_box = loader_base.collision_box,
       selection_box = loader_base.selection_box,
@@ -328,8 +328,8 @@ end
 local infinity_pipe = table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
 infinity_pipe.name = "ee-infinity-pipe"
 infinity_pipe.localised_description = {"entity-description.ee-infinity-pipe"}
-infinity_pipe.map_color = util.infinity_tint
-infinity_pipe.friendly_map_color = util.infinity_tint
+infinity_pipe.map_color = constants.infinity_tint
+infinity_pipe.friendly_map_color = constants.infinity_tint
 infinity_pipe.gui_mode = "all"
 infinity_pipe.icons = infinity_pipe.icons
 infinity_pipe.minable = {mining_time=0.5, result="ee-infinity-pipe"}
@@ -418,21 +418,29 @@ end
 local super_beacon = table.deepcopy(data.raw["beacon"]["beacon"])
 super_beacon.name = "ee-super-beacon"
 super_beacon.icons = util.extract_icon_info(super_beacon)
-super_beacon.map_color = util.infinity_tint
-super_beacon.friendly_map_color = util.infinity_tint
+super_beacon.map_color = constants.infinity_tint
+super_beacon.friendly_map_color = constants.infinity_tint
 super_beacon.minable.result = "ee-super-beacon"
 super_beacon.energy_source = {type="void"}
 super_beacon.allowed_effects = {"consumption", "speed", "productivity", "pollution"}
 super_beacon.supply_area_distance = 64
 super_beacon.module_specification = {module_slots=12}
-util.recursive_tint(super_beacon)
+util.recursive_tint(super_beacon, constants.infinity_tint)
+-- undo the tint of the module slots, except for the base
+for _, slot in ipairs(super_beacon.graphics_set.module_visualisations[1].slots) do
+  for _, def in ipairs(slot) do
+    if not def.has_empty_slot then
+      util.recursive_tint(def, false)
+    end
+  end
+end
 data:extend{super_beacon}
 
 local super_electric_pole = table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])
 super_electric_pole.name = "ee-super-electric-pole"
 super_electric_pole.icons = util.extract_icon_info(super_electric_pole)
-super_electric_pole.map_color = util.infinity_tint
-super_electric_pole.friendly_map_color = util.infinity_tint
+super_electric_pole.map_color = constants.infinity_tint
+super_electric_pole.friendly_map_color = constants.infinity_tint
 super_electric_pole.subgroup = "ee-electricity"
 super_electric_pole.order = "ba"
 super_electric_pole.minable.result = "ee-super-electric-pole"
@@ -443,8 +451,8 @@ data:extend{super_electric_pole}
 local super_lab = table.deepcopy(data.raw["lab"]["lab"])
 super_lab.name = "ee-super-lab"
 super_lab.icons = util.extract_icon_info(super_lab)
-super_lab.map_color = util.infinity_tint
-super_lab.friendly_map_color = util.infinity_tint
+super_lab.map_color = constants.infinity_tint
+super_lab.friendly_map_color = constants.infinity_tint
 super_lab.minable.result = "ee-super-lab"
 super_lab.energy_source = {type="void"}
 super_lab.energy_usage = "1W"
@@ -456,8 +464,8 @@ data:extend{super_lab}
 local super_locomotive = table.deepcopy(data.raw["locomotive"]["locomotive"])
 super_locomotive.name = "ee-super-locomotive"
 super_locomotive.icons = util.extract_icon_info(super_locomotive)
-super_locomotive.map_color = util.infinity_tint
-super_locomotive.friendly_map_color = util.infinity_tint
+super_locomotive.map_color = constants.infinity_tint
+super_locomotive.friendly_map_color = constants.infinity_tint
 super_locomotive.max_power = "10MW"
 super_locomotive.energy_source = {type="void"}
 super_locomotive.max_speed = 10
@@ -472,8 +480,8 @@ data:extend{super_locomotive}
 local super_substation = table.deepcopy(data.raw["electric-pole"]["substation"])
 super_substation.name = "ee-super-substation"
 super_substation.icons = util.extract_icon_info(super_substation)
-super_substation.map_color = util.infinity_tint
-super_substation.friendly_map_color = util.infinity_tint
+super_substation.map_color = constants.infinity_tint
+super_substation.friendly_map_color = constants.infinity_tint
 super_substation.subgroup = "ee-electricity"
 super_substation.order = "bb"
 super_substation.minable.result = "ee-super-substation"
@@ -485,8 +493,8 @@ data:extend{super_substation}
 local super_pump = table.deepcopy(data.raw["pump"]["pump"])
 super_pump.name = "ee-super-pump"
 super_pump.icons = util.extract_icon_info(super_pump)
-super_pump.map_color = util.infinity_tint
-super_pump.friendly_map_color = util.infinity_tint
+super_pump.map_color = constants.infinity_tint
+super_pump.friendly_map_color = constants.infinity_tint
 super_pump.placeable_by = {item="ee-super-pump", count=1}
 super_pump.minable = {result="ee-super-pump", mining_time=0.1}
 super_pump.energy_source = {type="void"}
@@ -498,8 +506,8 @@ data:extend{super_pump}
 local super_radar = table.deepcopy(data.raw["radar"]["radar"])
 super_radar.name = "ee-super-radar"
 super_radar.icons = util.extract_icon_info(super_radar)
-super_radar.map_color = util.infinity_tint
-super_radar.friendly_map_color = util.infinity_tint
+super_radar.map_color = constants.infinity_tint
+super_radar.friendly_map_color = constants.infinity_tint
 super_radar.minable.result = "ee-super-radar"
 super_radar.energy_source = {type="void"}
 super_radar.max_distance_of_sector_revealed = 20
@@ -510,8 +518,8 @@ data:extend{super_radar}
 local super_roboport = table.deepcopy(data.raw["roboport"]["roboport"])
 super_roboport.name = "ee-super-roboport"
 super_roboport.icons = util.extract_icon_info(super_roboport)
-super_roboport.map_color = util.infinity_tint
-super_roboport.friendly_map_color = util.infinity_tint
+super_roboport.map_color = constants.infinity_tint
+super_roboport.friendly_map_color = constants.infinity_tint
 super_roboport.logistics_radius = 200
 super_roboport.construction_radius = 400
 super_roboport.energy_source = {type="void"}
@@ -539,8 +547,8 @@ do
   local construction_robot = table.deepcopy(data.raw["construction-robot"]["construction-robot"])
   construction_robot.name = "ee-super-construction-robot"
   construction_robot.icons = util.extract_icon_info(construction_robot)
-  -- construction_robot.map_color = util.infinity_tint
-  -- construction_robot.friendly_map_color = util.infinity_tint
+  -- construction_robot.map_color = constants.infinity_tint
+  -- construction_robot.friendly_map_color = constants.infinity_tint
   construction_robot.minable.result = "ee-super-construction-robot"
   for k, v in pairs(modifiers) do construction_robot[k] = v end
   util.recursive_tint(construction_robot)
@@ -548,8 +556,8 @@ do
   local logistic_robot = table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
   logistic_robot.name = "ee-super-logistic-robot"
   logistic_robot.icons = util.extract_icon_info(logistic_robot)
-  -- logistic_robot.map_color = util.infinity_tint
-  -- logistic_robot.friendly_map_color = util.infinity_tint
+  -- logistic_robot.map_color = constants.infinity_tint
+  -- logistic_robot.friendly_map_color = constants.infinity_tint
   logistic_robot.minable.result = "ee-super-logistic-robot"
   for k, v in pairs(modifiers) do logistic_robot[k] = v end
   util.recursive_tint(logistic_robot)

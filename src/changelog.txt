@@ -2,18 +2,22 @@
 Version: 1.5.15
 Date: ????
   Features:
-    - Added sounds when opening/closing infintity accumulators and infinity loaders
+    - Added beacon slot picture definitions for the super modules
     - Added Cursor Enhancements overrides for testing tools
     - Added Russian translation by Apareshka
+    - Added sounds when opening/closing infintity accumulators and infinity loaders
+  Changes:
+    - Super module icons are now tinted from a greyscale base, significantly improving their appearance
   Bugfixes:
     - Fixed a crash when disabling cheat mode while in the map editor
     - Fixed a crash with inventory sync when toggling the map editor from the ghost controller
     - Fixed aggregate chests not setting their filters when placed
+    - Fixed character cheats not being applied when the character enables cheat mode in a non-character controller
     - Fixed incorrect error message when typing `/EditorExtensions disable-cheat-mode` while cheat mode was already disabled
+    - Fixed inventory sync destroying items if the non-editor controller doesn't have all of the corresponding inventories
     - Fixed some broken migrations when converting to EE from Infinity Mode
-    - Fixed that enabling cheat mode while in the map editor would not apply character cheats
-    - Fixed that if a scenario enabled cheat mode by default, the testing tools wouldn't be unlocked
-    - Fixed that inventory sync would destroy items if the non-editor controller doesn't have all of the corresponding inventories
+    - Fixed the super beacon discoloring the modules in its slots
+    - Fixed the testing tool recipes not being unlocked if a scenario starts the player in cheat mode
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.14
 Date: 2020-09-08
