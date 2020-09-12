@@ -53,7 +53,7 @@ constants.module_data = {
     category = "speed",
     tier = 50,
     effect = {speed={bonus=2.5}},
-    tint = {r=0.4,g=0.4,b=1}
+    tint = {r=0.4,g=0.6,b=1}
   },
   {
     name = "ee-super-effectivity-module",
@@ -89,7 +89,7 @@ constants.module_data = {
     category = "speed",
     tier = 50,
     effect = {speed={bonus=-2.5}},
-    tint = {r=0.4,g=0.4,b=1}
+    tint = {r=0.4,g=0.6,b=1}
   },
   {
     name = "ee-super-ineffectivity-module",
