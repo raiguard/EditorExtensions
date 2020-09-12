@@ -43,7 +43,7 @@ local function set_armor(inventory)
   end
   local grid = inventory[1].grid
   local equipment_to_add = constants.cheat_mode.equipment_to_add
-  for i=1, #equipment_to_add do
+  for i = 1, #equipment_to_add do
     grid.put(equipment_to_add[i])
   end
 end
@@ -52,12 +52,12 @@ function cheat_mode.set_loadout(player)
   -- remove default items
   local main_inventory = player.get_main_inventory()
   local items_to_remove = constants.cheat_mode.items_to_remove
-  for i=1, #items_to_remove do
+  for i = 1, #items_to_remove do
     main_inventory.remove(items_to_remove[i])
   end
   -- add custom items
   local items_to_add = constants.cheat_mode.items_to_add
-  for i=1, #items_to_add do
+  for i = 1, #items_to_add do
     main_inventory.insert(items_to_add[i])
   end
   if player.controller_type == defines.controllers.character then
