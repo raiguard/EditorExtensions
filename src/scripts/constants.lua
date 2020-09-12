@@ -40,6 +40,13 @@ constants.cheat_mode.items_to_remove = {
   {name="infinity-pipe", count=10}
 }
 
+constants.cheat_mode.modifiers = {
+  character_build_distance_bonus = 1000000,
+  character_mining_speed_modifier = 2,
+  character_reach_distance_bonus = 1000000,
+  character_resource_reach_distance_bonus = 1000000
+}
+
 -- CURSOR ENHANCEMENTS
 
 constants.cursor_enhancements_interface_version = 1

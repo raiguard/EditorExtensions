@@ -410,11 +410,7 @@ event.on_player_toggled_map_editor(function(e)
     -- negate flag
     player_table.flags.update_character_cheats_when_possible = false
     -- enable or disable cheats
-    if player.cheat_mode then
-      cheat_mode.enable_character_cheats(player)
-    else
-      cheat_mode.disable_character_cheats(player)
-    end
+    cheat_mode.update_character_cheats(player)
   end
 end)
 

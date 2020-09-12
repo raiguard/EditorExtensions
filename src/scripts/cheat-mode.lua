@@ -64,7 +64,7 @@ function cheat_mode.set_loadout(player)
     -- overwrite the default armor loadout
     set_armor(player.get_inventory(defines.inventory.character_armor))
     -- apply character cheats
-    cheat_mode.enable_character_cheats(player)
+    cheat_mode.update_character_cheats(player)
   elseif player.controller_type == defines.controllers.editor then
     -- overwrite the default armor loadout
     set_armor(player.get_inventory(defines.inventory.editor_armor))
@@ -75,40 +75,21 @@ function cheat_mode.set_loadout(player)
   end
 end
 
-function cheat_mode.enable_character_cheats(player)
+function cheat_mode.update_character_cheats(player)
   -- get all associated characters as well as the active one
   local associated_characters = player.get_associated_characters()
   associated_characters[#associated_characters+1] = player.character
+  local multiplier = player.cheat_mode and 1 or -1
   -- apply bonuses
   for _, character in pairs(associated_characters) do
-    character.character_build_distance_bonus = 1000000
-    character.character_mining_speed_modifier = 2
-    character.character_reach_distance_bonus = 1000000
-    character.character_resource_reach_distance_bonus = 1000000
-  end
-end
-
-function cheat_mode.disable_character_cheats(player)
-  -- get all associated characters as well as the active one
-  local associated_characters = player.get_associated_characters()
-  associated_characters[#associated_characters+1] = player.character
-  -- negate bonuses
-  for _, character in pairs(associated_characters) do
-    character.character_build_distance_bonus = character.character_build_distance_bonus - 1000000
-    character.character_mining_speed_modifier = character.character_mining_speed_modifier - 2
-    character.character_reach_distance_bonus = character.character_reach_distance_bonus - 1000000
-    character.character_resource_reach_distance_bonus = character.character_resource_reach_distance_bonus - 1000000
+    for modifier, amount in pairs(constants.cheat_mode.modifiers) do
+      character[modifier] = character[modifier] + (amount * multiplier)
+    end
   end
 end
 
 function cheat_mode.disable(player, player_table)
-  -- reset bonuses or set a flag to do so
-  if player.controller_type == defines.controllers.character then
-    cheat_mode.disable_character_cheats(player)
-  elseif player.stashed_controller_type == defines.controllers.character then
-    player_table.flags.update_character_cheats_when_possible = true
-  end
-
+  -- disable cheat mode
   player.cheat_mode = false
 
   -- remove recipes
@@ -116,6 +97,13 @@ function cheat_mode.disable(player, player_table)
 
   -- disable inventory sync
   inventory.toggle_sync(player, player_table)
+
+  -- reset bonuses or set a flag to do so
+  if player.controller_type == defines.controllers.character then
+    cheat_mode.update_character_cheats(player)
+  elseif player.stashed_controller_type == defines.controllers.character then
+    player_table.flags.update_character_cheats_when_possible = true
+  end
 end
 
 return cheat_mode
