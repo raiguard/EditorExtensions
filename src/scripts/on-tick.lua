@@ -12,11 +12,9 @@ function on_tick.handler()
   end
 end
 
-function on_tick.update()
+function on_tick.register()
   if next(global.wagons) then
     event.on_tick(on_tick.handler)
-  else
-    event.on_tick(nil)
   end
 end
 

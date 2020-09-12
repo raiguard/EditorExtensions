@@ -42,7 +42,9 @@ end)
 
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
--- on_tick event handler is kept in scripts.on-tick
+-- `on_tick` event handler is kept in `scripts.on-tick`
+-- picker dollies event handler is kept in `scripts.entity.intinity-loader`
+-- all other event handlers are here
 
 -- BOOTSTRAP
 
@@ -63,7 +65,7 @@ event.on_init(function()
   compatibility.register_picker_dollies()
 
   aggregate_chest.update_data()
-  on_tick.update()
+  on_tick.register()
 
   gui.build_lookup_tables()
 end)
@@ -72,7 +74,7 @@ event.on_load(function()
   compatibility.add_cursor_enhancements_overrides()
   compatibility.register_picker_dollies()
 
-  on_tick.update()
+  on_tick.register()
 
   gui.build_lookup_tables()
 end)
@@ -177,7 +179,7 @@ event.register(
     -- infinity wagon
     elseif constants.infinity_wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
-      on_tick.update()
+      on_tick.register()
     -- aggregate chest
     elseif constants.aggregate_chest_names[entity_name] then
       aggregate_chest.set_filters(entity)
