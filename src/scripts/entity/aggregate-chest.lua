@@ -1,9 +1,6 @@
 local aggregate_chest = {}
 
-aggregate_chest.chest_names = {
-  "ee-aggregate-chest",
-  "ee-aggregate-chest-passive-provider"
-}
+local constants = require("scripts.constants")
 
 -- set the filters for the given aggregate chest
 function aggregate_chest.set_filters(entity)
@@ -14,7 +11,7 @@ end
 -- update the filters of all existing aggregate chests
 function aggregate_chest.update_all_filters()
   for _, surface in pairs(game.surfaces) do
-    for _, entity in pairs(surface.find_entities_filtered{name=aggregate_chest.chest_names}) do
+    for _, entity in pairs(surface.find_entities_filtered{name=constants.aggregate_chest_names}) do
       aggregate_chest.set_filters(entity)
     end
   end

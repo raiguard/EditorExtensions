@@ -1,5 +1,7 @@
 local cheat_mode = {}
 
+local constants = require("scripts.constants")
+
 local inventory = require("scripts.inventory")
 
 function cheat_mode.enable_recipes(player, skip_message)
@@ -33,35 +35,6 @@ function cheat_mode.disable_recipes(player, skip_message)
   end
 end
 
-local items_to_remove = {
-  {name="express-loader", count=50},
-  {name="stack-inserter", count=50},
-  {name="substation", count=50},
-  {name="construction-robot", count=100},
-  {name="electric-energy-interface", count=1},
-  {name="infinity-chest", count=20},
-  {name="infinity-pipe", count=10}
-}
-
-local items_to_add = {
-  {name="ee-infinity-accumulator", count=50},
-  {name="ee-infinity-chest", count=50},
-  {name="ee-super-construction-robot", count=100},
-  {name="ee-super-inserter", count=50},
-  {name="ee-infinity-pipe", count=50},
-  {name="ee-super-substation", count=50}
-}
-
-local equipment_to_add = {
-  {name="ee-infinity-fusion-reactor-equipment", position={0,0}},
-  {name="ee-super-personal-roboport-equipment", position={1,0}},
-  {name="ee-super-exoskeleton-equipment", position={2,0}},
-  {name="ee-super-exoskeleton-equipment", position={3,0}},
-  {name="ee-super-energy-shield-equipment", position={4,0}},
-  {name="ee-super-night-vision-equipment", position={5,0}},
-  {name="belt-immunity-equipment", position={6,0}}
-}
-
 local function set_armor(inventory)
   if inventory[1] and inventory[1].valid_for_read and inventory[1].name == "power-armor-mk2" then
     inventory[1].grid.clear()
@@ -69,6 +42,7 @@ local function set_armor(inventory)
     inventory[1].set_stack{name="power-armor-mk2"}
   end
   local grid = inventory[1].grid
+  local equipment_to_add = constants.cheat_mode.equipment_to_add
   for i=1, #equipment_to_add do
     grid.put(equipment_to_add[i])
   end
@@ -77,10 +51,12 @@ end
 function cheat_mode.set_loadout(player)
   -- remove default items
   local main_inventory = player.get_main_inventory()
+  local items_to_remove = constants.cheat_mode.items_to_remove
   for i=1, #items_to_remove do
     main_inventory.remove(items_to_remove[i])
   end
   -- add custom items
+  local items_to_add = constants.cheat_mode.items_to_add
   for i=1, #items_to_add do
     main_inventory.insert(items_to_add[i])
   end

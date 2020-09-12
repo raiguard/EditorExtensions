@@ -1,3 +1,6 @@
+local data_util = require("__flib__.data-util")
+
+local constants = require("prototypes.constants")
 local util = require("prototypes.util")
 
 -- INFINITY ACCUMULATOR
@@ -68,13 +71,13 @@ do
   }
 
   local base_entity = table.deepcopy(data.raw["infinity-container"]["infinity-chest"])
-  for _, t in pairs(util.infinity_chest_data) do
+  for _, t in pairs(constants.infinity_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(base_entity)
     chest.name = "ee-infinity-chest"..suffix
     chest.localised_description = util.chest_description(suffix)
-    chest.icons = {table.deepcopy(util.infinity_chest_icon)}
+    chest.icons = {table.deepcopy(constants.infinity_chest_icon)}
     chest.map_color = util.infinity_tint
     chest.friendly_map_color = util.infinity_tint
     chest.picture = table.deepcopy(infinity_chest_picture)
@@ -133,14 +136,14 @@ do
     }
   }
 
-  for _, t in pairs(util.aggregate_chest_data) do
+  for _, t in pairs(constants.aggregate_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest"..suffix])
     chest.name = "ee-aggregate-chest"..suffix
     chest.localised_description = util.chest_description(suffix, true)
     chest.order = t.o
-    chest.icons = {table.deepcopy(util.aggregate_chest_icon)}
+    chest.icons = {table.deepcopy(constants.aggregate_chest_icon)}
     chest.picture = table.deepcopy(aggregate_chest_picture)
     chest.logistic_slots_count = 0
     chest.minable.result = "ee-aggregate-chest"..suffix
@@ -212,7 +215,7 @@ do
       erase_contents_when_mined = true,
       inventory_size = 10,
       flags = {"hide-alt-info"},
-      picture = util.empty_sheet,
+      picture = constants.empty_sheet,
       collision_box = {{-0.05,-0.05},{0.05,0.05}}
     },
     -- logic combinator (what you actually interact with)
@@ -232,10 +235,10 @@ do
       minable = {result="ee-infinity-loader", mining_time=0.1},
       flags = {"player-creation", "hidden"},
       item_slot_count = 2,
-      sprites = util.empty_sheet,
-      activity_led_sprites = util.empty_sheet,
+      sprites = constants.empty_sheet,
+      activity_led_sprites = constants.empty_sheet,
       activity_led_light_offsets = {{0,0}, {0,0}, {0,0}, {0,0}},
-      circuit_wire_connection_points = util.empty_circuit_wire_connection_points
+      circuit_wire_connection_points = constants.empty_circuit_wire_connection_points
     }
   }
 
@@ -309,10 +312,10 @@ do
       insert_position = {0, 0.2},
       filter_count = 1,
       draw_held_item = false,
-      platform_picture = util.empty_sheet,
-      hand_base_picture = util.empty_sheet,
-      hand_open_picture = util.empty_sheet,
-      hand_closed_picture = util.empty_sheet,
+      platform_picture = constants.empty_sheet,
+      hand_base_picture = constants.empty_sheet,
+      hand_open_picture = constants.empty_sheet,
+      hand_closed_picture = constants.empty_sheet,
       -- hand_base_picture = filter_inserter.hand_base_picture,
       -- hand_open_picture = filter_inserter.hand_open_picture,
       -- hand_closed_picture = filter_inserter.hand_closed_picture,
@@ -390,7 +393,7 @@ do
   infinity_wagon_chest.name = "ee-infinity-wagon-chest"
   infinity_wagon_chest.icons = util.recursive_tint(util.extract_icon_info(infinity_wagon_chest))
   infinity_wagon_chest.subgroup = nil
-  infinity_wagon_chest.picture = util.empty_sheet
+  infinity_wagon_chest.picture = constants.empty_sheet
   infinity_wagon_chest.collision_mask = {"layer-15"}
   infinity_wagon_chest.selection_box = nil
   infinity_wagon_chest.selectable_in_game = false
@@ -406,7 +409,7 @@ do
   infinity_wagon_pipe.flags = {"hide-alt-info", "hidden"}
 
   for k, t in pairs(infinity_wagon_pipe.pictures) do
-    infinity_wagon_pipe.pictures[k] = util.empty_sheet
+    infinity_wagon_pipe.pictures[k] = constants.empty_sheet
   end
 
   data:extend{cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe}

@@ -1,13 +1,11 @@
 local infinity_wagon = {}
 
+local constants = require("scripts.constants")
+
 local util = require("scripts.util")
 
+-- TODO
 local math_abs = math.abs
-
-infinity_wagon.wagon_names = {
-  ["ee-infinity-cargo-wagon"] = true,
-  ["ee-infinity-fluid-wagon"] = true
-}
 
 function infinity_wagon.build(entity, tags)
   local proxy = entity.surface.create_entity{

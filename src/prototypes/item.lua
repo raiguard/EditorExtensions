@@ -1,3 +1,4 @@
+local constants = require("prototypes.constants")
 local util = require("prototypes.util")
 
 -- infinity accumulator
@@ -26,13 +27,13 @@ data:extend{infinity_cargo_wagon}
 -- infinity and aggregate chests
 do
   local ic_item = table.deepcopy(data.raw["item"]["infinity-chest"])
-  for _, t in pairs(util.infinity_chest_data) do
+  for _, t in pairs(constants.infinity_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(ic_item)
     chest.name = "ee-infinity-chest"..suffix
     chest.localised_description = util.chest_description(suffix)
-    chest.icons = {table.deepcopy(util.infinity_chest_icon)}
+    chest.icons = {table.deepcopy(constants.infinity_chest_icon)}
     chest.icons[1].tint = t.t
     chest.stack_size = 50
     chest.place_result = "ee-infinity-chest"..suffix
@@ -42,13 +43,13 @@ do
     data:extend{chest}
   end
 
-  for _, t in pairs(util.aggregate_chest_data) do
+  for _, t in pairs(constants.aggregate_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
     local chest = table.deepcopy(ic_item)
     chest.name = "ee-aggregate-chest"..suffix
     chest.localised_description = util.chest_description(suffix, true)
-    chest.icons = {table.deepcopy(util.aggregate_chest_icon)}
+    chest.icons = {table.deepcopy(constants.aggregate_chest_icon)}
     chest.icons[1].tint = t.t
     chest.stack_size = 50
     chest.place_result = "ee-aggregate-chest"..suffix

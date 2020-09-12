@@ -2,28 +2,16 @@ local compatibility = {}
 
 local event = require("__flib__.event")
 
+local constants = require("scripts.constants")
+
 local infinity_loader = require("scripts.entity.infinity-loader")
 
-local supported_interface_version = 1
 function compatibility.add_cursor_enhancements_overrides()
   if
     script.active_mods["CursorEnhancements"]
-    and remote.call("CursorEnhancements", "version") == supported_interface_version
+    and remote.call("CursorEnhancements", "version") == constants.cursor_enhancements_interface_version
   then
-    remote.call("CursorEnhancements", "add_overrides", {
-      -- chests
-      ["ee-infinity-chest"] = "ee-infinity-chest-active-provider",
-      ["ee-infinity-chest-active-provider"] = "ee-infinity-chest-passive-provider",
-      ["ee-infinity-chest-passive-provider"] = "ee-infinity-chest-storage",
-      ["ee-infinity-chest-storage"] = "ee-infinity-chest-buffer",
-      ["ee-infinity-chest-buffer"] = "ee-infinity-chest-requester",
-      ["ee-aggregate-chest"] = "ee-aggregate-chest-passive-provider",
-      -- electric poles
-      ["ee-super-electric-pole"] = "ee-super-substation",
-      -- trains
-      ["ee-super-locomotive"] = "ee-infinity-cargo-wagon",
-      ["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon"
-    })
+    remote.call("CursorEnhancements", "add_overrides", constants.cursor_enhancements_overrides)
   end
 end
 

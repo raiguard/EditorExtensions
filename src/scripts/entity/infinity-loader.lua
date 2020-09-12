@@ -3,40 +3,16 @@ local infinity_loader = {}
 local gui = require("__flib__.gui")
 local util = require("scripts.util")
 
+local constants = require("scripts.constants")
+
+-- TODO restrict to 120 chars properly
+
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
--- pattern -> replacement
--- iterate through all of these to result in the belt type
-local belt_type_patterns = {
-  -- editor extensions :D
-  ["ee%-infinity%-loader%-loader%-?"] = "",
-  -- beltlayer: https://mods.factorio.com/mod/beltlayer
-  ["layer%-connector"] = "",
-  -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
-  ["ultimate%-belt"] = "original-ultimate",
-  -- krastorio legacy: https://mods.factorio.com/mod/Krastorio
-  ["%-?kr%-01"] = "",
-  ["%-?kr%-02"] = "fast",
-  ["%-?kr%-03"] = "express",
-  ["%-?kr%-04"] = "k",
-  -- replicating belts: https://mods.factorio.com/mod/replicating-belts
-  ["replicating%-?"] = "",
-  -- subterranean: https://mods.factorio.com/mod/Subterranean
-  ["subterranean"] = "",
-  -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
-  ["%-to%-ground"] = "",
-  -- vanilla
-  ["%-?belt"] = "",
-  ["%-?transport"] = "",
-  ["%-?underground"] = "",
-  ["%-?splitter"] = "",
-  ["%-?loader"] = ""
-}
-
 local function get_belt_type(entity)
   local type = entity.name
-  for pattern, replacement in pairs(belt_type_patterns) do
+  for pattern, replacement in pairs(constants.belt_type_patterns) do
     type = type:gsub(pattern, replacement)
   end
   -- check to see if the loader prototype exists
@@ -63,10 +39,8 @@ local function get_loader_direction(loader)
   return loader.direction
 end
 
--- 60 items/second / 60 ticks/second / 8 items/tile = X tiles/tick
-local BELT_SPEED_FOR_60_PER_SECOND = 60/60/8
 local function num_inserters(entity)
-  return math.ceil(entity.prototype.belt_speed / BELT_SPEED_FOR_60_PER_SECOND) * 2
+  return math.ceil(entity.prototype.belt_speed / constants.belt_speed_for_60_per_second) * 2
 end
 
 -- update inserter and chest filters

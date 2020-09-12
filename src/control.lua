@@ -2,6 +2,8 @@ local event = require("__flib__.event")
 local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
 
+local constants = require("scripts.constants")
+
 local cheat_mode = require("scripts.cheat-mode")
 local compatibility = require("scripts.compatibility")
 local global_data = require("scripts.global-data")
@@ -169,11 +171,11 @@ event.register(
       -- snap belt neighbors
       infinity_loader.snap_belt_neighbors(entity)
     -- infinity wagon
-    elseif infinity_wagon.wagon_names[entity_name] then
+    elseif constants.infinity_wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
       on_tick.update()
     -- aggregate chest
-    elseif aggregate_chest.chest_names[entity_name] then
+    elseif constants.aggregate_chest_names[entity_name] then
       aggregate_chest.set_filters(entity)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
@@ -197,7 +199,7 @@ event.register(
     local entity = e.entity
     if entity.name == "ee-infinity-loader-logic-combinator" then
       infinity_loader.destroy(entity)
-    elseif infinity_wagon.wagon_names[entity.name] then
+    elseif constants.infinity_wagon_names[entity.name] then
       infinity_wagon.destroy(entity)
     elseif infinity_accumulator.check_name(entity) then
       infinity_accumulator.close_open_guis(entity)

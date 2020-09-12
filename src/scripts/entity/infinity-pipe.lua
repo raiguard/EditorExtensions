@@ -1,13 +1,6 @@
 local infinity_pipe = {}
 
-local pipe_snapping_types = {
-  ["infinity-pipe"] = true,
-  ["offshore-pump"] = true,
-  ["pipe-to-ground"] = true,
-  ["pipe"] = true,
-  ["pump"] = true,
-  ["storage-tank"] = true
-}
+local constants = require("scripts.constants")
 
 function infinity_pipe.snap(entity, player_settings)
   local neighbours = entity.neighbours[1]
@@ -39,7 +32,7 @@ function infinity_pipe.snap(entity, player_settings)
             end
           end
         -- snap to locked fluid
-        elseif pipe_snapping and pipe_snapping_types[neighbour.type] then
+        elseif pipe_snapping and constants.pipe_snapping_types[neighbour.type] then
           local fluid = fb[1]
           if fluid then
             -- set filter to that fluid, but don't do anything with it
