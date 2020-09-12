@@ -2,6 +2,7 @@
 Version: 1.5.15
 Date: ????
   Features:
+    - Added sounds when opening/closing infintity accumulators and infinity loaders
     - Added Cursor Enhancements overrides for testing tools
     - Added Russian translation by Apareshka
   Bugfixes:

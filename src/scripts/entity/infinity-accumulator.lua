@@ -174,6 +174,7 @@ gui.add_handlers{
         gui.update_filters("ia", e.player_index, nil, "remove")
         gui_data.window.destroy()
         player_table.gui.ia = nil
+        game.get_player(e.player_index).play_sound{path="entity-close/ee-infinity-accumulator-tertiary"}
       end
     }
   }
@@ -280,10 +281,10 @@ end
 -- FUNCTIONS
 
 function infinity_accumulator.open(player_index, entity)
-  -- TODO play sound after opening GUI
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
+  player.play_sound{path="entity-open/ee-infinity-accumulator-tertiary"}
 end
 
 function infinity_accumulator.paste_settings(source, destination)

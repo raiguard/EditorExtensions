@@ -285,6 +285,7 @@ gui.add_handlers{
         gui.update_filters("il", e.player_index, nil, "remove")
         gui_data.window.destroy()
         player_table.gui.il = nil
+        game.get_player(e.player_index).play_sound{path="entity-close/express-loader"}
       end
     }
   }
@@ -555,6 +556,7 @@ function infinity_loader.open(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
+  player.play_sound{path="entity-open/express-loader"}
 end
 
 -- check every single infinity loader on every surface to see if it no longer has a loader entity
