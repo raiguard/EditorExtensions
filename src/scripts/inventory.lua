@@ -1,6 +1,7 @@
 local inventory = {}
 
 local gui = require("__flib__.gui")
+local migration = require("__flib__.migration")
 
 local math = math
 local string = string
@@ -122,7 +123,7 @@ end
 -- INFINITY INVENTORY FILTERS
 
 local filters_table_version = 0
--- local filters_table_migrations = {}
+local filters_table_migrations = {}
 
 local function export_filters(player)
   local filters = player.infinity_inventory_filters
@@ -140,19 +141,16 @@ end
 
 local function import_filters(player, string)
   local decoded_string = game.decode_string(string)
-  if not decoded_string then return false end
   if
-    string.sub(decoded_string, 1, 16) == "EditorExtensions"
+    decoded_string
+    and string.sub(decoded_string, 1, 16) == "EditorExtensions"
     and string.sub(decoded_string, 18, 34) == "inventory_filters"
   then
     -- extract version for migrations
     local _, _, version, json = string.find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
-    version = tonumber(version)
     local input = game.json_to_table(json)
-    -- needs some flib features to work
-    -- if version < filters_table_version then
-    --   migration.run(version, filters_table_migrations, input)
-    -- end
+    -- run migrations
+    migration.run(version, filters_table_migrations, nil, input)
     -- sanitise the filters to only include currently existing prototypes
     local item_prototypes = game.item_prototypes
     local output = {}
