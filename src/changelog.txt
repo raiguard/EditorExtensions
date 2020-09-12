@@ -6,6 +6,7 @@ Date: ????
     - Added Russian translation by Apareshka
   Bugfixes:
     - Fixed some broken migrations when converting to EE from Infinity Mode
+    - Fixed that if a scenario enabled cheat mode by default, the testing tools wouldn't be unlocked
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.14
 Date: 2020-09-08

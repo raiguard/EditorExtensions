@@ -44,8 +44,13 @@ event.on_init(function()
   gui.init()
 
   global_data.init()
-  for i in pairs(game.players) do
+  for i, player in pairs(game.players) do
     player_data.init(i)
+    -- enable recipes for cheat mode
+    if player.cheat_mode then
+      cheat_mode.enable_recipes(player)
+      inventory.toggle_sync(player, global.players[i])
+    end
   end
 
   compatibility.add_cursor_enhancements_overrides()
@@ -70,6 +75,8 @@ event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
     gui.check_filter_validity()
 
+    compatibility.add_cursor_enhancements_overrides()
+
     aggregate_chest.update_data()
     aggregate_chest.update_all_filters()
     infinity_loader.check_loaders()
@@ -80,18 +87,8 @@ event.on_configuration_changed(function(e)
         cheat_mode.enable_recipes(player)
       end
     end
-  else -- post-init setup
-    -- if coming from infinity mode, fix infinity loaders
-    if e.mod_changes["InfinityMode"] then
-      infinity_loader.check_loaders()
-    end
-    -- enable recipes for those with cheat mode enabled
-    for i, player in pairs(game.players) do
-      if player.cheat_mode then
-        cheat_mode.enable_recipes(player)
-        inventory.toggle_sync(player, global.players[i])
-      end
-    end
+  elseif e.mod_changes["InfinityMode"] then -- if coming from infinity mode, fix infinity loaders
+    infinity_loader.check_loaders()
   end
 end)
 
