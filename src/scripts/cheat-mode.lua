@@ -1,7 +1,5 @@
 local cheat_mode = {}
 
-local reverse_defines = require("__flib__.reverse-defines")
-
 local inventory = require("scripts.inventory")
 
 function cheat_mode.enable_recipes(player, skip_message)
@@ -35,7 +33,6 @@ function cheat_mode.disable_recipes(player, skip_message)
   end
 end
 
--- TODO tap freeplay interface for these counts
 local items_to_remove = {
   {name="express-loader", count=50},
   {name="stack-inserter", count=50},
