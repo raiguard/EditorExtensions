@@ -2,6 +2,7 @@ local inventory = {}
 
 local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
+local reverse_defines = require("__flib__.reverse-defines")
 
 local math = math
 local string = string
@@ -11,16 +12,7 @@ local string = string
 
 function inventory.create_sync_inventories(player_table, player)
   -- determine prefix based on controller type
-  local prefix
-  local controller_type = player.controller_type
-  local controllers = defines.controllers
-  if controller_type == controllers.editor then
-    prefix = "editor_"
-  elseif controller_type == controllers.god then
-    prefix = "god_"
-  else
-    prefix = "character_"
-  end
+  local prefix = reverse_defines.controllers[player.controller_type].."_"
   -- hand location
   local hand_location = player.hand_location or {}
   -- iterate all inventories
@@ -33,7 +25,7 @@ function inventory.create_sync_inventories(player_table, player)
       sync_inventory = game.create_inventory(1)
       local cursor_stack = player.cursor_stack
       if cursor_stack and cursor_stack.valid_for_read then
-        sync_inventory[1].transfer_stack(cursor_stack)
+        sync_inventory[1].set_stack(cursor_stack)
       end
     elseif inventory_def then
       local source_inventory = player.get_inventory(inventory_def)
@@ -42,7 +34,7 @@ function inventory.create_sync_inventories(player_table, player)
       local source_inventory_len = #source_inventory
       sync_inventory = game.create_inventory(source_inventory_len)
       for i = 1, source_inventory_len do
-        sync_inventory[i].transfer_stack(source_inventory[i])
+        sync_inventory[i].set_stack(source_inventory[i])
         if supports_filters then
           sync_filters[i] = get_filter(i)
         end
@@ -61,16 +53,7 @@ end
 
 function inventory.get_from_sync_inventories(player_table, player)
   -- determine prefix based on controller type
-  local prefix
-  local controller_type = player.controller_type
-  local controllers = defines.controllers
-  if controller_type == controllers.editor then
-    prefix = "editor_"
-  elseif controller_type == controllers.god then
-    prefix = "god_"
-  else
-    prefix = "character_"
-  end
+  local prefix = reverse_defines.controllers[player.controller_type].."_"
   -- iterate all inventories
   local sync_data = player_table.sync_data
   for _, name in ipairs{"ammo", "armor", "cursor", "guns", "main"} do
@@ -79,8 +62,8 @@ function inventory.get_from_sync_inventories(player_table, player)
     if sync_table then
       local sync_filters = sync_table.filters
       local sync_inventory = sync_table.inventory
-      if name == "cursor" then
-        player.cursor_stack.transfer_stack(sync_inventory[1])
+      if name == "cursor" and player.cursor_stack then
+        player.cursor_stack.set_stack(sync_inventory[1])
       else
         local inventory_def = defines.inventory[prefix..name]
         if inventory_def then
@@ -90,7 +73,7 @@ function inventory.get_from_sync_inventories(player_table, player)
             if sync_filters[i] then
               set_filter(i, sync_filters[i])
             end
-            destination_inventory[i].transfer_stack(sync_inventory[i])
+            destination_inventory[i].set_stack(sync_inventory[i])
           end
           local hand_location = sync_table.hand_location
           if hand_location then
