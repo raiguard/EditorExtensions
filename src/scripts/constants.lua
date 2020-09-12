@@ -63,6 +63,14 @@ constants.cursor_enhancements_overrides = {
 
 constants.ia = {}
 
+constants.ia.entity_names = {
+  ["ee-infinity-accumulator-primary-output"] = true,
+  ["ee-infinity-accumulator-primary-input"] = true,
+  ["ee-infinity-accumulator-secondary-output"] = true,
+  ["ee-infinity-accumulator-secondary-input"] = true,
+  ["ee-infinity-accumulator-tertiary"] = true
+}
+
 constants.ia.index_to_mode = {"output", "input", "buffer"}
 constants.ia.index_to_priority = {"primary", "secondary"}
 

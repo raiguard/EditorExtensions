@@ -201,7 +201,7 @@ event.register(
       infinity_loader.destroy(entity)
     elseif constants.infinity_wagon_names[entity.name] then
       infinity_wagon.destroy(entity)
-    elseif infinity_accumulator.check_name(entity) then
+    elseif constants.ia.entity_names[entity.name] then
       infinity_accumulator.close_open_guis(entity)
     end
   end
@@ -244,8 +244,8 @@ end)
 
 event.on_entity_settings_pasted(function(e)
   if
-    infinity_accumulator.check_name(e.source)
-    and infinity_accumulator.check_name(e.destination)
+    constants.ia.entity_names[e.source.name]
+    and constants.ia.entity_names[e.destination.name]
     and e.source.name ~= e.destination.name
   then
     infinity_accumulator.paste_settings(e.source, e.destination)
@@ -267,7 +267,7 @@ event.on_gui_opened(function(e)
   if not gui.dispatch_handlers(e) then
     local entity = e.entity
     if entity then
-      if infinity_accumulator.check_name(entity) then
+      if constants.ia.entity_names[entity.name] then
         infinity_accumulator.open(e.player_index, entity)
       elseif entity.name == "ee-infinity-loader-logic-combinator" then
         infinity_loader.open(e.player_index, entity)

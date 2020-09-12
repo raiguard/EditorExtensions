@@ -4,9 +4,6 @@ local constants = require("scripts.constants")
 
 local util = require("scripts.util")
 
--- TODO
-local math_abs = math.abs
-
 function infinity_wagon.build(entity, tags)
   local proxy = entity.surface.create_entity{
     name = "ee-infinity-wagon-"..(entity.name == "ee-infinity-cargo-wagon" and "chest" or "pipe"),
@@ -61,6 +58,7 @@ end
 
 -- called during `on_tick`
 function infinity_wagon.flip_inventories()
+  local abs = math.abs
   for _, t in pairs(global.wagons) do
     if t.wagon.valid and t.proxy.valid then
       if t.wagon_name == "ee-infinity-cargo-wagon" then
@@ -77,14 +75,14 @@ function infinity_wagon.flip_inventories()
         if t.flip == 0 then
           local fluid = t.proxy_fluidbox[1]
           t.wagon_fluidbox[1] = fluid and fluid.amount > 0
-            and {name=fluid.name, amount=(math_abs(fluid.amount) * 250), temperature=fluid.temperature}
+            and {name=fluid.name, amount=(abs(fluid.amount) * 250), temperature=fluid.temperature}
             or nil
           t.flip = 1
         elseif t.flip == 1 then
           local fluid = t.wagon_fluidbox[1]
           t.proxy_fluidbox[1] = fluid
             and fluid.amount > 0
-            and {name=fluid.name, amount=(math_abs(fluid.amount) / 250), temperature=fluid.temperature}
+            and {name=fluid.name, amount=(abs(fluid.amount) / 250), temperature=fluid.temperature}
             or nil
           t.flip = 0
         end

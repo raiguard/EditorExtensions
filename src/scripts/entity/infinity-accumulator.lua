@@ -5,15 +5,11 @@ local util = require("scripts.util")
 
 local constants = require("scripts.constants")
 
--- TODO
-local string_gsub = string.gsub
-local string_sub = string.sub
-
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
 local function get_settings_from_name(name)
-  name = string_gsub(name, "(%a+)-(%a+)-(%a+)-", "")
+  name = string.gsub(name, "(%a+)-(%a+)-(%a+)-", "")
   if name == "tertiary" then return "tertiary", "buffer" end
   local _, _, priority, mode = string.find(name, "(%a+)-(%a+)")
   return priority, mode
@@ -282,10 +278,6 @@ end
 
 -- -----------------------------------------------------------------------------
 -- FUNCTIONS
-
-function infinity_accumulator.check_name(entity)
-  return string_sub(entity.name, 1, 23) == "ee-infinity-accumulator"
-end
 
 function infinity_accumulator.open(player_index, entity)
   -- TODO play sound after opening GUI
