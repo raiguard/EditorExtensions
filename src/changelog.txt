@@ -7,6 +7,7 @@ Date: ????
   Bugfixes:
     - Fixed a crash when disabling cheat mode while in the map editor
     - Fixed aggregate chests not setting their filters when placed
+    - Fixed incorrect error message when typing `/EditorExtensions disable-cheat-mode` while cheat mode was already disabled
     - Fixed some broken migrations when converting to EE from Infinity Mode
     - Fixed that enabling cheat mode while in the map editor would not apply character cheats
     - Fixed that if a scenario enabled cheat mode by default, the testing tools wouldn't be unlocked
