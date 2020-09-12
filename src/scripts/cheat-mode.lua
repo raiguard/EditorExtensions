@@ -70,7 +70,7 @@ function cheat_mode.set_loadout(player)
     set_armor(player.get_inventory(defines.inventory.editor_armor))
     -- if the player uses a character, apply cheats to it upon exit
     if player.stashed_controller_type == defines.controllers.character then
-      global.players[player.index].flags.apply_character_cheats_on_exit = true
+      global.players[player.index].flags.update_character_cheats_when_possible = true
     end
   end
 end
