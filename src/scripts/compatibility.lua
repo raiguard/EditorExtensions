@@ -7,7 +7,7 @@ local infinity_loader = require("scripts.entity.infinity-loader")
 
 function compatibility.add_cursor_enhancements_overrides()
   if
-    script.active_mods["CursorEnhancements"]
+    remote.interfaces["CursorEnhancements"]
     and remote.call("CursorEnhancements", "version") == constants.cursor_enhancements_interface_version
   then
     remote.call("CursorEnhancements", "add_overrides", constants.cursor_enhancements_overrides)
@@ -23,7 +23,7 @@ function compatibility.check_for_testing_scenario()
 end
 
 function compatibility.register_picker_dollies()
-  if script.active_mods["PickerDollies"] then
+  if remote.interfaces["PickerDollies"] then
     event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
   end
 end
