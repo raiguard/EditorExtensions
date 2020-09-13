@@ -2,6 +2,9 @@
 Version: 1.5.16
 Date: ????
   Changes:
+    - The testing scenario now enables cheat mode for new players itself, rather than EE doing it
+  Bugfixes:
+    - Fixed a crash when the scenario would enable cheat mode for a new player
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.15
 Date: 2020-09-13

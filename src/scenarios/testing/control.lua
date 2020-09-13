@@ -24,7 +24,11 @@ event.on_force_created(function(e)
   setup_force(e.force)
 end)
 
--- interface is used by EE to detect the scenario, and to disable AAI Industry's crash site
+event.on_player_created(function(e)
+  game.get_player(e.player_index).cheat_mode = true
+end)
+
+-- disable AAI industry crash site
 remote.add_interface("EditorExtensions_TestingScenario", {
   allow_aai_crash_sequence = function() return {allow = false, weight = 1} end
 })

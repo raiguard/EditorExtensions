@@ -96,5 +96,8 @@ return {
     for _, player_table in pairs(global.players) do
       player_table.flags.update_character_cheats_when_possible = false
     end
+  end,
+  ["1.5.16"] = function()
+    update_scenario()
   end
 }

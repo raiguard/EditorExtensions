@@ -105,6 +105,9 @@ event.on_player_cheat_mode_enabled(function(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
 
+  -- if the scenario enabled it, the player hasn't been initialized yet
+  if not player_table then return end
+
   -- space exploration - if they are in god mode, they are in the satellite view, so don't unlock recipes
   if compatibility.check_for_space_exploration() and player.controller_type == defines.controllers.god then
     player_table.flags.in_satellite_view = true
@@ -320,10 +323,15 @@ end)
 event.on_player_created(function(e)
   player_data.init(e.player_index)
 
-  if global.flags.in_testing_scenario then
-    local player = game.get_player(e.player_index)
-    -- enabling cheat mode will cause the recipes to be unlocked, and sync to be enabled
-    player.cheat_mode = true
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+
+  if player.cheat_mode then
+    -- enable recipes and inventory sync
+    cheat_mode.enable_recipes(player)
+    if player_table.settings.inventory_sync then
+      inventory.toggle_sync(player, player_table)
+    end
     -- set loadout as if they typed `/cheat all`
     cheat_mode.set_loadout(player)
   end
