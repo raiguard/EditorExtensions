@@ -332,8 +332,10 @@ event.on_player_created(function(e)
     if player_table.settings.inventory_sync then
       inventory.toggle_sync(player, player_table)
     end
-    -- set loadout as if they typed `/cheat all`
-    cheat_mode.set_loadout(player)
+    -- give them the loadout if they are in EE's scenario
+    if compatibility.check_for_testing_scenario() then
+      cheat_mode.set_loadout(player)
+    end
   end
 end)
 

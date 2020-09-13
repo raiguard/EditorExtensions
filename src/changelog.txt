@@ -2,6 +2,7 @@
 Version: 1.5.17
 Date: ????
   Changes:
+    - The mod will only give super equipment by default if the player is in EE's testing scenario
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.16
 Date: 2020-09-13
