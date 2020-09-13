@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.15
-Date: ????
+Date: 2020-09-13
   Features:
     - Added beacon slot picture definitions for the super modules
     - Added Cursor Enhancements overrides for testing tools
