@@ -1,5 +1,3 @@
-local data_util = require("__flib__.data-util")
-
 local constants = require("prototypes.constants")
 local util = require("prototypes.util")
 
