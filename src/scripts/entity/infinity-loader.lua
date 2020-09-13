@@ -552,7 +552,6 @@ function infinity_loader.paste_settings(source, destination)
 end
 
 function infinity_loader.open(player_index, entity)
-  -- TODO play sound after opening GUI
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
