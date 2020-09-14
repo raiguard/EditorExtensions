@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.17
-Date: ????
+Date: 2020-09-14
   Changes:
     - Adjusted Cursor Enhancements overrides
     - The mod will only give the `/cheat all` loadout if in EE's testing scenario
