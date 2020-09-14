@@ -60,8 +60,9 @@ constants.cursor_enhancements_overrides = {
   ["ee-infinity-chest-buffer"] = "ee-infinity-chest-requester",
   ["ee-infinity-chest-requester"] = "ee-aggregate-chest",
   ["ee-aggregate-chest"] = "ee-aggregate-chest-passive-provider",
-  -- electric poles
+  -- electricity
   ["ee-super-electric-pole"] = "ee-super-substation",
+  ["ee-super-substation"] = "ee-infinity-accumulator",
   -- trains
   ["ee-super-locomotive"] = "ee-infinity-cargo-wagon",
   ["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon"
