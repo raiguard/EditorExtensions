@@ -1,7 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.18
 Date: ????
+  Features:
+    - Added rocket launch tracking to the testing scenario
   Changes:
+    - Testing scenario will chart around a force's spawnpoint if it is changed, rather than always 0,0
+    - Testing scenario now buffs each force's construction order speed
+      - This can be reverted using the `force editor -> edit other properties`
+  Bugfixes:
+    - Fixed that mod settings would not be preserved when entering the testing scenario
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.17
 Date: 2020-09-14

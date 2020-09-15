@@ -1,13 +1,6 @@
 local gui = require("__flib__.gui")
 
 local cheat_mode = require("scripts.cheat-mode")
-local compatibility = require("scripts.compatibility")
-
-local function update_scenario()
-  if compatibility.check_for_testing_scenario() then
-    game.reload_script()
-  end
-end
 
 return {
   ["1.1.0"] = function()
@@ -86,7 +79,6 @@ return {
     global.tesseract_data = nil
   end,
   ["1.5.14"] = function()
-    update_scenario()
     -- destroy remaining infinity combinator GUI data - it was still being created
     for _, player_table in pairs(global.players) do
       player_table.gui.ic = nil
@@ -96,8 +88,5 @@ return {
     for _, player_table in pairs(global.players) do
       player_table.flags.update_character_cheats_when_possible = false
     end
-  end,
-  ["1.5.16"] = function()
-    update_scenario()
   end
 }

@@ -1,0 +1,1 @@
+require("migrations.scripts.update-scenario")
