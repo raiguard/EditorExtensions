@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.18
-Date: ????
+Date: 2020-09-15
   Features:
     - Added rocket launch tracking to the testing scenario
   Changes:
