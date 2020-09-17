@@ -138,13 +138,10 @@ constants.belt_type_patterns = {
 
 -- INFINITY PIPE
 
-constants.pipe_snapping_types = {
-  ["infinity-pipe"] = true,
-  ["offshore-pump"] = true,
-  ["pipe-to-ground"] = true,
-  ["pipe"] = true,
-  ["pump"] = true,
-  ["storage-tank"] = true
+constants.ip_crafter_snapping_types = {
+  ["assembling-machine"] = true,
+  ["furnace"] = true,
+  ["rocket-silo"] = true
 }
 
 -- INFINITY WAGON

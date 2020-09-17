@@ -95,17 +95,10 @@ data:extend{
   -- PLAYER SETTINGS
   {
     type = "bool-setting",
-    name = "ee-infinity-pipe-snapping",
+    name = "ee-infinity-pipe-crafter-snapping",
     setting_type = "runtime-per-user",
     default_value = true,
     order = "aa"
-  },
-  {
-    type = "bool-setting",
-    name = "ee-infinity-pipe-assembler-snapping",
-    setting_type = "runtime-per-user",
-    default_value = true,
-    order = "ab"
   },
   {
     type = "string-setting",

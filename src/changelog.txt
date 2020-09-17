@@ -1,7 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.19
 Date: ????
+  Changes:
+    - Changed infinity pipe crafter input snapping to work on furnaces and rocket silos as well as assembling machines
+    - Removed defunct infinity pipe snapping, which hasn't worked since fluid mixing was re-introduced
   Bugfixes:
+    - Fixed edge-cases where infinity pipe crafter snapping did not work correctly
     - Fixed the default forces in the testing scenario not having the bot buffs
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.18
