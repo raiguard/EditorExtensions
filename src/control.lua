@@ -70,7 +70,6 @@ event.on_init(function()
 end)
 
 event.on_load(function()
-  compatibility.add_cursor_enhancements_overrides()
   compatibility.register_picker_dollies()
 
   on_tick.register()
