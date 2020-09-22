@@ -1,0 +1,63 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "factoriomod",
+      "request": "launch",
+      "name": "Debug",
+      "factorioPath": "${env:factorioTestbench1}",
+      "hookMode": "debug",
+      "hookControl": ["level", "EditorExtensions"],
+      "hookData": true,
+      "hookSettings": false,
+      "factorioArgs": ["--load-scenario", "EditorExtensions/testing"]
+    },
+    {
+      "type": "factoriomod",
+      "request": "launch",
+      "name": "Debug (trim mods)",
+      "factorioPath": "${env:factorioTestbench1}",
+      "hookMode": "debug",
+      "hookControl": ["level", "EditorExtensions"],
+      "hookData": false,
+      "hookSettings": false,
+      "factorioArgs": ["--load-scenario", "EditorExtensions/testing"],
+      "adjustMods": {
+        "CursorEnhancements": true,
+        "EditorExtensions": true,
+        "flib": true
+      },
+      "disableExtraMods": true
+    },
+    {
+      "type": "factoriomod",
+      "request": "launch",
+      "name": "Debug (no scenario)",
+      "factorioPath": "${env:factorioTestbench1}",
+      "hookMode": "debug",
+      "hookControl": ["level", "EditorExtensions"],
+      "hookData": false,
+      "hookSettings": false
+    },
+    {
+      "type": "factoriomod",
+      "request": "launch",
+      "name": "Debug (src)",
+      "factorioPath": "${env:factorioSourceDebug}",
+      "hookMode": "debug",
+      "hookControl": ["level", "EditorExtensions"],
+      "hookData": false,
+      "hookSettings": false,
+      "factorioArgs": ["--load-scenario", "EditorExtensions/testing"]
+    },
+    {
+      "type": "factoriomod",
+      "request": "launch",
+      "name": "Profile",
+      "factorioPath": "${env:factorioTestbench1}",
+      "hookMode": "profile",
+      "hookControl": ["level", "EditorExtensions"],
+      "factorioArgs": ["--load-scenario", "EditorExtensions/testing"]
+    }
+  ]
+}

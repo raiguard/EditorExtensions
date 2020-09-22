@@ -1,4 +1,3 @@
-.vscode
 *.code-workspace
 *.zip
 !src/scenarios/testing/blueprint.zip

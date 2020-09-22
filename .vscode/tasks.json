@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Copy scenario blueprint",
+      "type": "shell",
+      "command": "cp",
+      "args": [
+        "c:/Files/Development/Factorio/Testbenches/1/scenarios/testing/blueprint.zip",
+        "c:/Files/Development/Factorio/Mods/EditorExtensions/src/scenarios/testing/blueprint.zip"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}
