@@ -419,7 +419,7 @@ super_beacon.icons = util.extract_icon_info(super_beacon)
 super_beacon.map_color = constants.infinity_tint
 super_beacon.friendly_map_color = constants.infinity_tint
 super_beacon.minable.result = "ee-super-beacon"
-super_beacon.energy_source = {type="void"}
+super_beacon.energy_source = {type = "void"}
 super_beacon.allowed_effects = {"consumption", "speed", "productivity", "pollution"}
 super_beacon.supply_area_distance = 64
 super_beacon.module_specification = {module_slots=12}
