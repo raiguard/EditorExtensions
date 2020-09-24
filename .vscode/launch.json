@@ -8,8 +8,17 @@
       "factorioPath": "${env:factorioTestbench1}",
       "hookMode": "debug",
       "hookControl": ["level", "EditorExtensions"],
+      "factorioArgs": ["--load-scenario", "EditorExtensions/testing"]
+    },
+    {
+      "type": "factoriomod",
+      "request": "launch",
+      "name": "Debug (data)",
+      "factorioPath": "${env:factorioTestbench1}",
+      "hookMode": "debug",
+      "hookControl": ["level", "EditorExtensions"],
       "hookData": true,
-      "hookSettings": false,
+      "hookSettings": true,
       "factorioArgs": ["--load-scenario", "EditorExtensions/testing"]
     },
     {
@@ -19,8 +28,6 @@
       "factorioPath": "${env:factorioTestbench1}",
       "hookMode": "debug",
       "hookControl": ["level", "EditorExtensions"],
-      "hookData": false,
-      "hookSettings": false,
       "factorioArgs": ["--load-scenario", "EditorExtensions/testing"],
       "adjustMods": {
         "CursorEnhancements": true,
@@ -35,9 +42,7 @@
       "name": "Debug (no scenario)",
       "factorioPath": "${env:factorioTestbench1}",
       "hookMode": "debug",
-      "hookControl": ["level", "EditorExtensions"],
-      "hookData": false,
-      "hookSettings": false
+      "hookControl": ["level", "EditorExtensions"]
     },
     {
       "type": "factoriomod",
@@ -46,8 +51,8 @@
       "factorioPath": "${env:factorioSourceDebug}",
       "hookMode": "debug",
       "hookControl": ["level", "EditorExtensions"],
-      "hookData": false,
-      "hookSettings": false,
+      "hookData": true,
+      "hookSettings": true,
       "factorioArgs": ["--load-scenario", "EditorExtensions/testing"]
     },
     {
