@@ -280,6 +280,8 @@ event.on_gui_opened(function(e)
         infinity_accumulator.open(e.player_index, entity)
       elseif entity.name == "ee-infinity-loader-logic-combinator" then
         infinity_loader.open(e.player_index, entity)
+      elseif entity.name == "ee-infinity-pipe" then
+        infinity_pipe.open(e.player_index, entity)
       elseif entity.name == "ee-infinity-cargo-wagon" then
         infinity_wagon.open(e.player_index, entity)
       end
