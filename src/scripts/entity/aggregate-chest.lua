@@ -11,7 +11,7 @@ end
 -- update the filters of all existing aggregate chests
 function aggregate_chest.update_all_filters()
   for _, surface in pairs(game.surfaces) do
-    for _, entity in pairs(surface.find_entities_filtered{name=constants.aggregate_chest_names}) do
+    for _, entity in pairs(surface.find_entities_filtered{name = constants.aggregate_chest_names}) do
       aggregate_chest.set_filters(entity)
     end
   end
@@ -25,7 +25,7 @@ function aggregate_chest.update_data()
   for name, prototype in pairs(game.item_prototypes) do
     if prototype.type ~= "mining-tool" and include_hidden or not prototype.has_flag("hidden") then
       i = i + 1
-      data[i] = {name=name, count=prototype.stack_size, mode="exactly", index=i}
+      data[i] = {name = name, count = prototype.stack_size, mode = "exactly", index = i}
     end
   end
   global.aggregate_filters = data

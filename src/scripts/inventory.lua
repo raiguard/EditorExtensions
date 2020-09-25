@@ -44,7 +44,7 @@ function inventory.create_sync_inventories(player_table, player)
       sync_tables[name] = {
         filters = sync_filters,
         hand_location = (hand_location.inventory == inventory_def and hand_location.slot or nil),
-        inventory=sync_inventory
+        inventory = sync_inventory
       }
     end
   end
@@ -77,7 +77,7 @@ function inventory.get_from_sync_inventories(player_table, player)
           end
           local hand_location = sync_table.hand_location
           if hand_location then
-            player.hand_location = {inventory=inventory_def, slot=hand_location}
+            player.hand_location = {inventory = inventory_def, slot = hand_location}
           end
         end
       end
@@ -139,11 +139,11 @@ local function import_filters(player, string)
     local output = {}
     local output_index = 0
     local filters = input.filters
-    for i=1, #filters do
+    for i = 1, #filters do
       local filter = filters[i]
       if item_prototypes[filter.name] then
         output_index = output_index + 1
-        output[output_index] = {name=filter.name, count=filter.count, mode=filter.mode, index=output_index}
+        output[output_index] = {name = filter.name, count = filter.count, mode = filter.mode, index = output_index}
       end
     end
     player.infinity_inventory_filters = output
@@ -169,40 +169,45 @@ gui.add_handlers{
         end
 
         local gui_data = gui.build(player.gui.screen, {
-          {type="frame", direction="vertical", save_as="window", children={
-            {type="flow", children={
-              {type="label", style="frame_title", caption={"ee-gui."..mode.."-inventory-filters"}},
-              {type="empty-widget",
-                style="draggable_space_header",
-                style_mods={height=24, horizontally_stretchable=true},
-                save_as="drag_handle"
+          {type = "frame", direction = "vertical", save_as = "window", children = {
+            {type = "flow", children = {
+              {type = "label", style = "frame_title", caption = {"ee-gui."..mode.."-inventory-filters"}},
+              {
+                type = "empty-widget",
+                style = "draggable_space_header",
+                style_mods = {height = 24, horizontally_stretchable = true},
+                save_as = "drag_handle"
               }
             }},
-            {type="text-box",
-              style_mods={width=400, height=300},
-              clear_and_focus_on_right_click=true,
-              elem_mods={word_wrap=true},
-              handlers=(mode == "import" and "inventory_filters_string.textbox" or nil),
-              save_as="textbox"
+            {
+              type = "text-box",
+              style_mods = {width = 400, height = 300},
+              clear_and_focus_on_right_click = true,
+              elem_mods = {word_wrap = true},
+              handlers = (mode == "import" and "inventory_filters_string.textbox" or nil),
+              save_as = "textbox"
             },
-            {type="flow", style_mods={top_margin=8}, direction="horizontal", children={
-              {type="button",
-                style="back_button",
-                caption={"gui.cancel"},
-                handlers="inventory_filters_string.back_button"
+            {type = "flow", style_mods = {top_margin = 8}, direction = "horizontal", children = {
+              {
+                type = "button",
+                style = "back_button",
+                caption = {"gui.cancel"},
+                handlers = "inventory_filters_string.back_button"
               },
-              {type="empty-widget",
-                style="draggable_space",
-                style_mods={height=32, horizontally_stretchable=true},
-                save_as="lower_drag_handle"
+              {
+                type = "empty-widget",
+                style = "draggable_space",
+                style_mods = {height = 32, horizontally_stretchable = true},
+                save_as = "lower_drag_handle"
               },
-              {type="condition", condition=(mode=="import"), children={
-                {type="button",
-                  style="confirm_button",
-                  caption={"gui.confirm"},
-                  elem_mods={enabled=false},
-                  handlers="inventory_filters_string.confirm_button",
-                  save_as="confirm_button"
+              {type = "condition", condition = (mode == "import"), children = {
+                {
+                  type = "button",
+                  style = "confirm_button",
+                  caption = {"gui.confirm"},
+                  elem_mods = {enabled = false},
+                  handlers = "inventory_filters_string.confirm_button",
+                  save_as = "confirm_button"
                 }
               }}
             }}
@@ -281,21 +286,23 @@ function inventory.create_filters_buttons(player)
   -- create buttons GUI
   local player_table = global.players[player.index]
   local gui_data = gui.build(player.gui.screen, {
-    {type="frame", style="quick_bar_window_frame", save_as="window", children={
-      {type="frame", style="shortcut_bar_inner_panel", direction="horizontal", children={
-        {type="sprite-button",
-          style="shortcut_bar_button",
-          sprite="ee_import_inventory_filters",
-          tooltip={"ee-gui.import-inventory-filters"},
-          handlers="inventory_filters_buttons.import_export_button",
-          save_as="import_button"
+    {type = "frame", style = "quick_bar_window_frame", save_as = "window", children = {
+      {type = "frame", style = "shortcut_bar_inner_panel", direction = "horizontal", children = {
+        {
+          type = "sprite-button",
+          style = "shortcut_bar_button",
+          sprite = "ee_import_inventory_filters",
+          tooltip = {"ee-gui.import-inventory-filters"},
+          handlers = "inventory_filters_buttons.import_export_button",
+          save_as = "import_button"
         },
-        {type="sprite-button",
-          style="shortcut_bar_button",
-          sprite="ee_export_inventory_filters",
-          tooltip={"ee-gui.export-inventory-filters"},
-          handlers="inventory_filters_buttons.import_export_button",
-          save_as="export_button"
+        {
+          type = "sprite-button",
+          style = "shortcut_bar_button",
+          sprite = "ee_export_inventory_filters",
+          tooltip = {"ee-gui.export-inventory-filters"},
+          handlers = "inventory_filters_buttons.import_export_button",
+          save_as = "export_button"
         }
       }}
     }}

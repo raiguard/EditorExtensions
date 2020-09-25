@@ -17,7 +17,7 @@ local function get_belt_type(entity)
   if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-"..type] then
     -- print warning message
     game.print{"", "EDIITOR EXTENSIONS: ", {"ee-message.unable-to-identify-belt"}}
-    game.print("entity_name=\""..entity.name.."\", parse_result=\""..type.."\"")
+    game.print("entity_name = \""..entity.name.."\", parse_result = \""..type.."\"")
     -- set to default type
     type = "express"
   end
@@ -65,18 +65,18 @@ local function update_filters(combinator, entities)
     inserter_filter_mode = "blacklist"
   end
   -- update inserter filter based on orthogonal
-  for i=1, #inserters do
+  for i = 1, #inserters do
     local orthogonal = i > (#inserters/2) and 1 or 2
     inserters[i].set_filter(1, filters[orthogonal].signal.name or nil)
     inserters[i].inserter_filter_mode = inserter_filter_mode
     inserters[i].active = enabled
   end
   -- update chest filters
-  for i=1, 2 do
+  for i = 1, 2 do
     local name = filters[i].signal.name
     chest.set_infinity_container_filter(
       i,
-      name and {name=name, count=game.item_prototypes[name].stack_size, mode="exactly", index=i} or nil
+      name and {name = name, count = game.item_prototypes[name].stack_size, mode = "exactly", index = i} or nil
     )
   end
   chest.remove_unfiltered_items = true
@@ -103,9 +103,9 @@ local function update_inserters(loader, entities)
       e.destroy()
     end
     inserters = {}
-    for i=1, num_inserters(loader) do
+    for i = 1, num_inserters(loader) do
       inserters[i] = surface.create_entity{
-        name="ee-infinity-loader-inserter",
+        name = "ee-infinity-loader-inserter",
         position = loader.position,
         force = loader.force,
         direction = loader.direction,
@@ -114,11 +114,11 @@ local function update_inserters(loader, entities)
       inserters[i].inserter_stack_size_override = 1
     end
     update_filters(
-      surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator", position=e_position}[1],
-      {loader=loader, inserters=inserters, chest=chest}
+      surface.find_entities_filtered{name = "ee-infinity-loader-logic-combinator", position = e_position}[1],
+      {loader = loader, inserters = inserters, chest = chest}
     )
   end
-  for i=1, #inserters do
+  for i = 1, #inserters do
     local orthogonal = i > (#inserters/2) and -0.25 or 0.25
     local inserter = inserters[i]
     local mod = math.min((i % (#inserters/2)),3)
@@ -186,9 +186,9 @@ local function create_loader(type, mode, surface, position, direction, force)
   -- fail-out if the loader was not successfully built
   if not loader then return end
   local inserters = {}
-  for i=1, num_inserters(loader) do
+  for i = 1, num_inserters(loader) do
       inserters[i] = surface.create_entity{
-      name="ee-infinity-loader-inserter",
+      name = "ee-infinity-loader-inserter",
       position = position,
       force = force,
       direction = direction,
@@ -248,7 +248,7 @@ end
 -- GUI
 
 gui.add_templates{
-  il_filter_button = {type="choose-elem-button", style="ee_il_filter_button", elem_type="item"}
+  il_filter_button = {type = "choose-elem-button", style = "ee_il_filter_button", elem_type = "item"}
 }
 
 gui.add_handlers{
@@ -273,7 +273,7 @@ gui.add_handlers{
         local control = entity.get_or_create_control_behavior()
         control.set_signal(
           index,
-          e.element.elem_value and {signal={type="item", name=e.element.elem_value}, count=1} or nil
+          e.element.elem_value and {signal = {type = "item", name = e.element.elem_value}, count = 1} or nil
         )
         update_filters(entity)
       end
@@ -285,7 +285,7 @@ gui.add_handlers{
         gui.update_filters("il", e.player_index, nil, "remove")
         gui_data.window.destroy()
         player_table.gui.il = nil
-        game.get_player(e.player_index).play_sound{path="entity-close/express-loader"}
+        game.get_player(e.player_index).play_sound{path = "entity-close/express-loader"}
       end
     }
   }
@@ -294,52 +294,59 @@ gui.add_handlers{
 -- TODO: update GUI state when any other players change something
 
 local function create_gui(player, player_table, entity)
-  local preview_entity = entity.surface.find_entities_filtered{position=entity.position, type="loader-1x1"}[1]
+  local preview_entity = entity.surface.find_entities_filtered{position = entity.position, type = "loader-1x1"}[1]
   local control = entity.get_or_create_control_behavior()
   local parameters = control.parameters.parameters
   local gui_data = gui.build(player.gui.screen, {
-    {type="frame", direction="vertical", handlers="il.window", save_as="window", children={
-      {type="flow", save_as="titlebar_flow", children={
-        {type="label",
-          style="frame_title",
-          caption={"entity-name.ee-infinity-loader"},
-          elem_mods={ignored_by_interaction=true}
+    {type = "frame", direction = "vertical", handlers = "il.window", save_as = "window", children = {
+      {type = "flow", save_as = "titlebar_flow", children = {
+        {
+          type = "label",
+          style = "frame_title",
+          caption = {"entity-name.ee-infinity-loader"},
+          elem_mods = {ignored_by_interaction = true}
         },
-        {template="titlebar_drag_handle"},
-        {template="close_button", handlers="il.close_button"}
+        {template = "titlebar_drag_handle"},
+        {template = "close_button", handlers = "il.close_button"}
       }},
-      {type="frame", style="ee_inside_shallow_frame_for_entity", children={
-        {type="frame", style="deep_frame_in_shallow_frame", children={
-          {type="entity-preview", style_mods={width=85, height=85}, elem_mods={entity=preview_entity}}
+      {type = "frame", style = "ee_inside_shallow_frame_for_entity", children = {
+        {type = "frame", style = "deep_frame_in_shallow_frame", children = {
+          {type = "entity-preview", style_mods = {width = 85, height = 85}, elem_mods = {entity = preview_entity}}
         }},
-        -- gui.templates.entity_camera(entity, 90, 1, {0,0}, player.display_scale),
-        {type="flow", direction="vertical", children={
-          {template="vertically_centered_flow", children={
-            {type="label", caption={"ee-gui.state"}},
-            {template="pushers.horizontal"},
-            {type="switch",
-              left_label_caption={"gui-constant.on"},
-              right_label_caption={"gui-constant.off"},
-              switch_state=control.enabled and "left" or "right",
-              handlers="il.state_switch"
+        {type = "flow", direction = "vertical", children = {
+          {template = "vertically_centered_flow", children = {
+            {type = "label", caption = {"ee-gui.state"}},
+            {template = "pushers.horizontal"},
+            {
+              type = "switch",
+              left_label_caption = {"gui-constant.on"},
+              right_label_caption = {"gui-constant.off"},
+              switch_state = control.enabled and "left" or "right",
+              handlers = "il.state_switch"
             }
           }},
-          {template="pushers.vertical"},
-          {template="vertically_centered_flow", children={
-            {type="label", caption={"", {"ee-gui.filters"}, " [img=info]"}, tooltip={"ee-gui.il-filters-description"}},
-            {type="empty-widget", style_mods={width=20}},
-            {type="frame", style="slot_button_deep_frame", children={
-              {template="il_filter_button",
-                name="ee_il_filter_button_1",
-                item=parameters[1].signal.name,
-                handlers="il.filter_button",
-                save_as="filter_button_1"
+          {template = "pushers.vertical"},
+          {template = "vertically_centered_flow", children = {
+            {
+              type = "label",
+              caption = {"", {"ee-gui.filters"}, " [img = info]"},
+              tooltip = {"ee-gui.il-filters-description"}
+            },
+            {type = "empty-widget", style_mods = {width = 20}},
+            {type = "frame", style = "slot_button_deep_frame", children = {
+              {
+                template = "il_filter_button",
+                name = "ee_il_filter_button_1",
+                item = parameters[1].signal.name,
+                handlers = "il.filter_button",
+                save_as = "filter_button_1"
               },
-              {template="il_filter_button",
-                name="ee_il_filter_button_2",
-                item=parameters[2].signal.name,
-                handlers="il.filter_button",
-                save_as="filter_button_2"
+              {
+                template = "il_filter_button",
+                name = "ee_il_filter_button_2",
+                item = parameters[2].signal.name,
+                handlers = "il.filter_button",
+                save_as = "filter_button_2"
               }
             }}
           }}
@@ -402,8 +409,8 @@ local function snap_loader(loader, entity)
   -- update internals
   update_inserters(loader)
   update_filters(
-    loader.surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator", position=loader.position}[1],
-    {loader=loader}
+    loader.surface.find_entities_filtered{name = "ee-infinity-loader-logic-combinator", position = loader.position}[1],
+    {loader = loader}
   )
 end
 
@@ -452,7 +459,7 @@ function infinity_loader.picker_dollies_move(e)
         entity.teleport(moved_entity.position)
       end
     end
-    loader = update_loader_type(loader, get_belt_type(loader), {position=moved_entity.position})
+    loader = update_loader_type(loader, get_belt_type(loader), {position = moved_entity.position})
     -- snap loader
     snap_loader(loader)
   end
@@ -505,10 +512,10 @@ end
 function infinity_loader.rotate(entity, previous_direction)
   -- rotate loader instead of combinator
   entity.direction = previous_direction
-  local loader = entity.surface.find_entities_filtered{type="loader-1x1", position=entity.position}[1]
+  local loader = entity.surface.find_entities_filtered{type = "loader-1x1", position = entity.position}[1]
   loader.rotate()
   update_inserters(loader)
-  update_filters(entity, {loader=loader})
+  update_filters(entity, {loader = loader})
   -- snap if a loader happens to be facing directly into this loader
   infinity_loader.snap_belt_neighbors(loader)
 end
@@ -517,11 +524,11 @@ function infinity_loader.destroy(entity)
   -- close open GUIs
   for i, t in pairs(global.players) do
     if t.gui.il and t.gui.il.entity == entity then
-      gui.handlers.il.window.on_gui_closed{player_index=i}
+      gui.handlers.il.window.on_gui_closed{player_index = i}
     end
   end
   -- destroy entities
-  local entities = entity.surface.find_entities_filtered{position=entity.position}
+  local entities = entity.surface.find_entities_filtered{position = entity.position}
   for _, sub_entity in pairs(entities) do
     if string.sub(sub_entity.name, 1, 18) == "ee-infinity-loader" then
       sub_entity.destroy()
@@ -537,7 +544,7 @@ end
 
 function infinity_loader.paste_settings(source, destination)
   -- sanitize filters to remove any non-items
-  local parameters = {parameters={}}
+  local parameters = {parameters = {}}
   local items = 0
   for _, p in pairs(table.deepcopy(source.get_control_behavior().parameters.parameters)) do
     if p.signal and p.signal.type == "item" and items < 2 then
@@ -555,16 +562,16 @@ function infinity_loader.open(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
-  player.play_sound{path="entity-open/express-loader"}
+  player.play_sound{path = "entity-open/express-loader"}
 end
 
 -- check every single infinity loader on every surface to see if it no longer has a loader entity
 -- called in on_configuration_changed
 function infinity_loader.check_loaders()
   for _, surface in pairs(game.surfaces) do
-    for _, entity in ipairs(surface.find_entities_filtered{name="ee-infinity-loader-logic-combinator"}) do
+    for _, entity in ipairs(surface.find_entities_filtered{name = "ee-infinity-loader-logic-combinator"}) do
       -- if its loader is gone, give it a new one with default settings
-      if #surface.find_entities_filtered{type="loader-1x1", position=entity.position} == 0 then
+      if #surface.find_entities_filtered{type = "loader-1x1", position = entity.position} == 0 then
         snap_loader(
           update_loader_type(
             nil,
