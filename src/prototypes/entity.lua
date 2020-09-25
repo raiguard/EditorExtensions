@@ -20,6 +20,8 @@ do
     entity.name = "ee-infinity-accumulator-"..entity_data.name
     entity.energy_source.usage_priority = entity_data.priority
     entity.energy_source.render_no_power_icon = entity_data.render_no_power_icon
+    entity.show_in_accumulator_stats = entity_data.show_in_accumulator_stats
+    entity.show_buffer_in_tooltip = entity_data.show_buffer_in_tooltip
     data:extend{entity}
   end
 end

@@ -66,7 +66,7 @@ local function calc_gui_values(buffer_size, mode)
   -- `power` is the dropdown value - how many sets of three OOMs there are, rounded down
   local power = math.floor((len - 1) / 3)
   -- slider value is the buffer size scaled to its base-three OOM
-  return math.floor(buffer_size / 10^(power * 3)), power
+  return math.floor(buffer_size / 10^(power * 3)), math.max(power, 1)
 end
 
 -- returns the entity buffer size based on the slider value and dropdown selected index
@@ -144,7 +144,7 @@ gui.add_handlers{
           constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index],
           calc_buffer_size(e.element.slider_value, gui_data.slider_dropdown.selected_index)
         )
-        gui_data.slider_textfield.text = e.element.slider_value
+        gui_data.slider_textfield.text = tostring(e.element.slider_value)
       end
     },
     slider_textfield = {

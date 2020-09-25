@@ -32,37 +32,51 @@ constants.infinity_accumulator_data = {
   {
     name = "primary-input",
     priority = "primary-input",
-    render_no_power_icon = false
+    render_no_power_icon = false,
+    show_in_accumulator_stats = false,
+    show_buffer_in_tooltip = false
   },
   {
     name = "primary-output",
     priority = "primary-output",
-    render_no_power_icon = false
+    render_no_power_icon = false,
+    show_in_accumulator_stats = false,
+    show_buffer_in_tooltip = false
   },
   {
     name = "secondary-input",
     priority = "secondary-input",
-    render_no_power_icon = false
+    render_no_power_icon = false,
+    show_in_accumulator_stats = false,
+    show_buffer_in_tooltip = false
   },
   {
     name = "secondary-output",
     priority = "secondary-output",
-    render_no_power_icon = false
+    render_no_power_icon = false,
+    show_in_accumulator_stats = false,
+    show_buffer_in_tooltip = false
   },
   {
     name = "tertiary-buffer",
     priority = "tertiary",
-    render_no_power_icon = true
+    render_no_power_icon = true,
+    show_in_accumulator_stats = true,
+    show_buffer_in_tooltip = true
   },
   {
     name = "tertiary-input",
     priority = "tertiary",
-    render_no_power_icon = false
+    render_no_power_icon = false,
+    show_in_accumulator_stats = false,
+    show_buffer_in_tooltip = false
   },
   {
     name = "tertiary-output",
     priority = "tertiary",
-    render_no_power_icon = false
+    render_no_power_icon = false,
+    show_in_accumulator_stats = false,
+    show_buffer_in_tooltip = false
   }
 }
 
