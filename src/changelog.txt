@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.21
 Date: ????
+  Features:
+    - Added "tertiary" as a selectable priority for infinity accumulator input/output
   Bugfixes:
     - Fixed prototype migration filenames to actually run in order
 ---------------------------------------------------------------------------------------------------

@@ -73,18 +73,20 @@ constants.cursor_enhancements_overrides = {
 constants.ia = {}
 
 constants.ia.entity_names = {
-  ["ee-infinity-accumulator-primary-output"] = true,
   ["ee-infinity-accumulator-primary-input"] = true,
-  ["ee-infinity-accumulator-secondary-output"] = true,
+  ["ee-infinity-accumulator-primary-output"] = true,
   ["ee-infinity-accumulator-secondary-input"] = true,
-  ["ee-infinity-accumulator-tertiary"] = true
+  ["ee-infinity-accumulator-secondary-output"] = true,
+  ["ee-infinity-accumulator-tertiary-buffer"] = true,
+  ["ee-infinity-accumulator-tertiary-input"] = true,
+  ["ee-infinity-accumulator-tertiary-output"] = true
 }
 
 constants.ia.index_to_mode = {"output", "input", "buffer"}
-constants.ia.index_to_priority = {"primary", "secondary"}
+constants.ia.index_to_priority = {"primary", "secondary", "tertiary"}
 
 constants.ia.localised_modes = {{"ee-gui.output"}, {"ee-gui.input"}, {"ee-gui.buffer"}}
-constants.ia.localised_priorities = {{"ee-gui.primary"}, {"ee-gui.secondary"}}
+constants.ia.localised_priorities = {{"ee-gui.primary"}, {"ee-gui.secondary"}, {"ee-gui.tertiary"}}
 constants.ia.localised_si_suffixes_joule = {}
 constants.ia.localised_si_suffixes_watt = {}
 
@@ -93,7 +95,7 @@ constants.ia.mode_to_index = {output=1, input=2, buffer=3}
 constants.ia.power_prefixes = {"kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta"}
 constants.ia.power_suffixes_by_mode = {output="watt", input="watt", buffer="joule"}
 
-constants.ia.priority_to_index = {primary=1, secondary=2, tertiary=1}
+constants.ia.priority_to_index = {primary=1, secondary=2, tertiary=3}
 
 constants.ia.si_suffixes_joule = {"kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ"}
 constants.ia.si_suffixes_watt = {"kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW"}

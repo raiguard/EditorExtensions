@@ -9,38 +9,39 @@ local constants = require("scripts.constants")
 -- LOCAL UTILITIES
 
 local function get_settings_from_name(name)
-  name = string.gsub(name, "(%a+)-(%a+)-(%a+)-", "")
-  if name == "tertiary" then return "tertiary", "buffer" end
-  local _, _, priority, mode = string.find(name, "(%a+)-(%a+)")
+  local _, _, priority, mode = string.find(name, "^.-(%a+)%-(%a+)$")
   return priority, mode
 end
 
 local function set_entity_settings(entity, mode, buffer_size)
-  -- reset everything
-  entity.power_production = 0
-  entity.power_usage = 0
-  entity.electric_buffer_size = buffer_size
   local watts = util.parse_energy(buffer_size.."W")
+
   if mode == "output" then
     entity.power_production = watts
+    entity.power_usage = 0
+    entity.electric_buffer_size = buffer_size
     entity.energy = buffer_size
   elseif mode == "input" then
+    entity.power_production = 0
     entity.power_usage = watts
+    entity.electric_buffer_size = buffer_size
+  elseif mode == "buffer" then
+    entity.power_production = 0
+    entity.power_usage = 0
+    entity.electric_buffer_size = buffer_size
   end
 end
 
 local function change_entity(entity, priority, mode)
-  priority = "-"..priority
-  local n_mode = mode and "-"..mode or ""
-  local new_name = "ee-infinity-accumulator"..priority..n_mode
+  local old_priority, old_mode = get_settings_from_name(entity.name)
   local new_entity = entity.surface.create_entity{
-    name = new_name,
+    name = "ee-infinity-accumulator-"..priority.."-"..mode,
     position = entity.position,
     force = entity.force,
     last_user = entity.last_user,
     create_build_effect_smoke = false
   }
-  set_entity_settings(new_entity, mode or "buffer", entity.electric_buffer_size)
+  set_entity_settings(new_entity, mode, entity.electric_buffer_size)
   entity.destroy()
   return new_entity
 end
@@ -96,7 +97,7 @@ gui.add_handlers{
         local gui_data = player_table.gui.ia
         local mode = constants.ia.index_to_mode[e.element.selected_index]
         if mode == "buffer" then
-          gui_data.entity = change_entity(gui_data.entity, "tertiary")
+          gui_data.entity = change_entity(gui_data.entity, "tertiary", "buffer")
         else
           local priority = constants.ia.index_to_priority[gui_data.priority_dropdown.selected_index]
           gui_data.entity = change_entity(gui_data.entity, priority, mode)
@@ -174,13 +175,14 @@ gui.add_handlers{
         gui.update_filters("ia", e.player_index, nil, "remove")
         gui_data.window.destroy()
         player_table.gui.ia = nil
-        game.get_player(e.player_index).play_sound{path="entity-close/ee-infinity-accumulator-tertiary"}
+        game.get_player(e.player_index).play_sound{path="entity-close/ee-infinity-accumulator-tertiary-buffer"}
       end
     }
   }
 }
 
 -- TODO: when changing settings, update GUI for everyone to avoid crashes
+-- TODO update GUI code style
 
 local function create_gui(player, player_table, entity)
   local priority, mode = get_settings_from_name(entity.name)
@@ -284,7 +286,7 @@ function infinity_accumulator.open(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
-  player.play_sound{path="entity-open/ee-infinity-accumulator-tertiary"}
+  player.play_sound{path="entity-open/ee-infinity-accumulator-tertiary-buffer"}
 end
 
 function infinity_accumulator.paste_settings(source, destination)
@@ -299,7 +301,7 @@ function infinity_accumulator.paste_settings(source, destination)
   local priority, mode = get_settings_from_name(source.name)
   local new_entity
   if mode == "buffer" then
-    new_entity = change_entity(destination, "tertiary")
+    new_entity = change_entity(destination, "tertiary", "buffer")
   else
     new_entity = change_entity(destination, priority, mode)
   end
