@@ -472,39 +472,41 @@ event.set_filters(
     defines.events.on_robot_built_entity
   },
   {
-    {filter="name", name="ee-infinity-loader-dummy-combinator"},
-    {filter="name", name="ee-infinity-loader-logic-combinator"},
-    {filter="name", name="ee-infinity-cargo-wagon"},
-    {filter="name", name="ee-infinity-fluid-wagon"},
-    {filter="name", name="ee-aggregate-chest"},
-    {filter="name", name="ee-aggregate-chest-passive-provider"},
-    {filter="name", name="ee-super-inserter"},
-    {filter="name", name="ee-infinity-pipe"},
-    {filter="type", type="transport-belt"},
-    {filter="type", type="underground-belt"},
-    {filter="type", type="splitter"},
-    {filter="type", type="loader"},
-    {filter="ghost"},
-    {filter="ghost_name", name="ee-infinity-loader-logic-combinator"}
+    {filter = "name", name = "ee-infinity-loader-dummy-combinator"},
+    {filter = "name", name = "ee-infinity-loader-logic-combinator"},
+    {filter = "name", name = "ee-infinity-cargo-wagon"},
+    {filter = "name", name = "ee-infinity-fluid-wagon"},
+    {filter = "name", name = "ee-aggregate-chest"},
+    {filter = "name", name = "ee-aggregate-chest-passive-provider"},
+    {filter = "name", name = "ee-super-inserter"},
+    {filter = "name", name = "ee-infinity-pipe"},
+    {filter = "type", type = "transport-belt"},
+    {filter = "type", type = "underground-belt"},
+    {filter = "type", type = "splitter"},
+    {filter = "type", type = "loader"},
+    {filter = "ghost"},
+    {filter = "ghost_name", name = "ee-infinity-loader-logic-combinator"}
   }
 )
 
 event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
-  {filter="name", name="ee-infinity-accumulator-primary-output"},
-  {filter="name", name="ee-infinity-accumulator-primary-input"},
-  {filter="name", name="ee-infinity-accumulator-secondary-output"},
-  {filter="name", name="ee-infinity-accumulator-secondary-input"},
-  {filter="name", name="ee-infinity-accumulator-tertiary"},
-  {filter="name", name="ee-infinity-loader-dummy-combinator"},
-  {filter="name", name="ee-infinity-loader-logic-combinator"},
-  {filter="name", name="ee-infinity-cargo-wagon"},
-  {filter="name", name="ee-infinity-fluid-wagon"},
+  {filter = "name", name = "ee-infinity-accumulator-primary-output"},
+  {filter = "name", name = "ee-infinity-accumulator-primary-input"},
+  {filter = "name", name = "ee-infinity-accumulator-secondary-output"},
+  {filter = "name", name = "ee-infinity-accumulator-secondary-input"},
+  {filter = "name", name = "ee-infinity-accumulator-tertiary-buffer"},
+  {filter = "name", name = "ee-infinity-accumulator-tertiary-input"},
+  {filter = "name", name = "ee-infinity-accumulator-tertiary-output"},
+  {filter = "name", name = "ee-infinity-loader-dummy-combinator"},
+  {filter = "name", name = "ee-infinity-loader-logic-combinator"},
+  {filter = "name", name = "ee-infinity-cargo-wagon"},
+  {filter = "name", name = "ee-infinity-fluid-wagon"},
 })
 
 event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
-  {filter="name", name="ee-infinity-cargo-wagon"}
+  {filter = "name", name = "ee-infinity-cargo-wagon"}
 })
 
 event.set_filters(defines.events.on_cancelled_deconstruction, {
-  {filter="name", name="ee-infinity-cargo-wagon"}
+  {filter = "name", name = "ee-infinity-cargo-wagon"}
 })

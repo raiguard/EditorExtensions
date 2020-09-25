@@ -82,7 +82,9 @@ end
 
 -- generate infinity loader loaders
 local loader_base = table.deepcopy(data.raw["underground-belt"]["underground-belt"])
-loader_base.icons = {{icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}}
+loader_base.icons = {
+  {icon = "__EditorExtensions__/graphics/item/infinity-loader.png", icon_size = 64, icon_mipmaps = 4}
+}
 for name, t in pairs(loader_base.structure) do
   if name ~= "back_patch" and name ~= "front_patch" then
     t.sheet.filename = "__EditorExtensions__/graphics/entity/infinity-loader/infinity-loader.png"

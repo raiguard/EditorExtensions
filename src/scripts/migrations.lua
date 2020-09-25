@@ -1,6 +1,7 @@
 local gui = require("__flib__.gui")
 
 local cheat_mode = require("scripts.cheat-mode")
+local constants = require("scripts.constants")
 
 return {
   ["1.1.0"] = function()
@@ -87,6 +88,16 @@ return {
   ["1.5.15"] = function()
     for _, player_table in pairs(global.players) do
       player_table.flags.update_character_cheats_when_possible = false
+    end
+  end,
+  ["1.5.21"] = function()
+    -- find every non-buffer IA and divide its buffer size by 60
+    for _, surface in pairs(game.surfaces) do
+      for _, entity in pairs(surface.find_entities_filtered{type = "electric-energy-interface"}) do
+        if constants.ia.entity_names[entity.name] and not string.find(entity.name, "tertiary") then
+          entity.electric_buffer_size = entity.electric_buffer_size / 60
+        end
+      end
     end
   end
 }

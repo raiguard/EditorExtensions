@@ -16,13 +16,13 @@ end
 function util.direction.to_vector(direction, longitudinal, orthogonal)
   orthogonal = orthogonal or 0
   if direction == defines.direction.north then
-    return {x=orthogonal, y=-longitudinal}
+    return {x = orthogonal, y = -longitudinal}
   elseif direction == defines.direction.south then
-    return {x=-orthogonal, y=longitudinal}
+    return {x = -orthogonal, y = longitudinal}
   elseif direction == defines.direction.east then
-    return {x=longitudinal, y=orthogonal}
+    return {x = longitudinal, y = orthogonal}
   elseif direction == defines.direction.west then
-    return {x=-longitudinal, y=-orthogonal}
+    return {x = -longitudinal, y = -orthogonal}
   end
 end
 
@@ -31,8 +31,8 @@ util.position = math2d.position
 -- creates an area that is the tile the position is contained in
 function util.position.to_tile_area(pos)
   return {
-    left_top = {x=math.floor(pos.x), y=math.floor(pos.y)},
-    right_bottom = {x=math.ceil(pos.x), y=math.ceil(pos.y)}
+    left_top = {x = math.floor(pos.x), y = math.floor(pos.y)},
+    right_bottom = {x = math.ceil(pos.x), y = math.ceil(pos.y)}
   }
 end
 

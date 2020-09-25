@@ -3,26 +3,23 @@ local util = require("prototypes.util")
 
 -- INFINITY ACCUMULATOR
 do
-  local accumulator_types = {"primary-input", "primary-output", "secondary-input", "secondary-output", "tertiary"}
   local base_entity = table.deepcopy(data.raw["electric-energy-interface"]["electric-energy-interface"])
+  base_entity.energy_source = {type = "electric", buffer_capacity = "8.34GJ"} -- buffer size for 500 GW
+  base_entity.friendly_map_color = constants.infinity_tint
+  base_entity.localised_description = {"entity-description.ee-infinity-accumulator"}
+  base_entity.localised_name = {"entity-name.ee-infinity-accumulator"}
+  base_entity.map_color = constants.infinity_tint
   base_entity.minable.result = "ee-infinity-accumulator"
-  base_entity.localised_description = {"entity-description.infinity-accumulator"}
-  local accumulator_icons = util.recursive_tint{(base_entity.icons[1])}
+  base_entity.order = "a"
+  base_entity.placeable_by = {item = "ee-infinity-accumulator", count = 1}
+  base_entity.subgroup = "ee-electricity"
   util.recursive_tint(base_entity)
 
-  for _, t in pairs(accumulator_types) do
+  for _, entity_data in ipairs(constants.infinity_accumulator_data) do
     local entity = table.deepcopy(base_entity)
-    entity.name = "ee-infinity-accumulator-"..t
-    entity.localised_name = {"entity-name.ee-infinity-accumulator"}
-    entity.localised_description = {"entity-description.ee-infinity-accumulator"}
-    entity.icons = accumulator_icons
-    entity.map_color = constants.infinity_tint
-    entity.friendly_map_color = constants.infinity_tint
-    entity.energy_source = {type="electric", usage_priority=t, buffer_capacity="500GJ"}
-    entity.subgroup = "ee-electricity"
-    entity.order = "a"
-    entity.minable.result = "ee-infinity-accumulator"
-    entity.placeable_by = {item="ee-infinity-accumulator", count=1}
+    entity.name = "ee-infinity-accumulator-"..entity_data.name
+    entity.energy_source.usage_priority = entity_data.priority
+    entity.energy_source.render_no_power_icon = entity_data.render_no_power_icon
     data:extend{entity}
   end
 end
@@ -172,8 +169,8 @@ infinity_heat_pipe.picture = {
     flags = {"no-crop"}
   }
 }
-infinity_heat_pipe.minable = {mining_time=0.5, result="ee-infinity-heat-pipe"}
-infinity_heat_pipe.placeable_by = {item="ee-infinity-heat-pipe", count=1}
+infinity_heat_pipe.minable = {mining_time = 0.5, result = "ee-infinity-heat-pipe"}
+infinity_heat_pipe.placeable_by = {item = "ee-infinity-heat-pipe", count = 1}
 util.recursive_tint(infinity_heat_pipe)
 data:extend{infinity_heat_pipe}
 
@@ -182,9 +179,9 @@ super_inserter.name = "ee-super-inserter"
 super_inserter.icons = util.extract_icon_info(super_inserter)
 super_inserter.map_color = constants.infinity_tint
 super_inserter.friendly_map_color = constants.infinity_tint
-super_inserter.placeable_by = {item="ee-super-inserter", count=1}
+super_inserter.placeable_by = {item = "ee-super-inserter", count = 1}
 super_inserter.minable.result = "ee-super-inserter"
-super_inserter.energy_source = {type="void"}
+super_inserter.energy_source = {type = "void"}
 super_inserter.energy_usage = "1W"
 super_inserter.stack = true
 super_inserter.filter_count = 5
@@ -197,7 +194,7 @@ data:extend{super_inserter}
 -- create everything except the actual loaders here. We create those in data-updates so they can get every belt type
 do
   local loader_icon = util.recursive_tint{
-    {icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}
+    {icon = "__EditorExtensions__/graphics/item/infinity-loader.png", icon_size = 64, icon_mipmaps = 4}
   }
   local loader_base = table.deepcopy(data.raw["underground-belt"]["underground-belt"])
   loader_base.icons = loader_icon
@@ -229,8 +226,8 @@ do
       collision_box = loader_base.collision_box,
       selection_box = loader_base.selection_box,
       fast_replaceable_group = "transport-belt",
-      placeable_by = {item="ee-infinity-loader", count=1},
-      minable = {result="ee-infinity-loader", mining_time=0.1},
+      placeable_by = {item = "ee-infinity-loader", count = 1},
+      minable = {result = "ee-infinity-loader", mining_time = 0.1},
       flags = {"player-creation", "hidden"},
       item_slot_count = 2,
       sprites = constants.empty_sheet,
@@ -255,7 +252,7 @@ do
       base_loader_path.."hr-underground-belt-structure-front-patch.png"
     }
   }
-  local sprite_x = {south=96*0, west=96*1, north=96*2, east=96*3}
+  local sprite_x = {south = 96*0, west = 96*1, north = 96*2, east = 96*3}
   local sprites = {}
   for k, x in pairs(sprite_x) do
     sprites[k] = {}
@@ -301,7 +298,7 @@ do
       -- selection_priority = 99,
       selectable_in_game = false,
       allow_custom_vectors = true,
-      energy_source = {type="void"},
+      energy_source = {type = "void"},
       extension_speed = 1,
       rotation_speed = 0.5,
       energy_per_movement = "0.00001J",
@@ -330,8 +327,8 @@ infinity_pipe.map_color = constants.infinity_tint
 infinity_pipe.friendly_map_color = constants.infinity_tint
 infinity_pipe.gui_mode = "all"
 infinity_pipe.icons = infinity_pipe.icons
-infinity_pipe.minable = {mining_time=0.5, result="ee-infinity-pipe"}
-infinity_pipe.placeable_by = {item="ee-infinity-pipe", count=1}
+infinity_pipe.minable = {mining_time = 0.5, result = "ee-infinity-pipe"}
+infinity_pipe.placeable_by = {item = "ee-infinity-pipe", count = 1}
 util.recursive_tint(infinity_pipe)
 data:extend{infinity_pipe}
 
@@ -342,7 +339,7 @@ do
   cargo_wagon.localised_description = {
     "",
     {"entity-description.ee-infinity-cargo-wagon"},
-    "\n[color=255,57,48]",
+    "\n[color = 255,57,48]",
     {"entity-description.ee-performance-warning"},"[/color]"
   }
   cargo_wagon.icons = util.extract_icon_info(cargo_wagon)
@@ -367,7 +364,7 @@ do
   fluid_wagon.localised_description = {
     "",
     {"entity-description.ee-infinity-fluid-wagon"},
-    "\n[color=255,57,48]",
+    "\n[color = 255,57,48]",
     {"entity-description.ee-performance-warning"},"[/color]"
   }
   fluid_wagon.icons = util.extract_icon_info(fluid_wagon)
@@ -422,7 +419,7 @@ super_beacon.minable.result = "ee-super-beacon"
 super_beacon.energy_source = {type = "void"}
 super_beacon.allowed_effects = {"consumption", "speed", "productivity", "pollution"}
 super_beacon.supply_area_distance = 64
-super_beacon.module_specification = {module_slots=12}
+super_beacon.module_specification = {module_slots = 12}
 util.recursive_tint(super_beacon, constants.infinity_tint)
 -- undo the tint of the module slots, except for the base
 for _, slot in ipairs(super_beacon.graphics_set.module_visualisations[1].slots) do
@@ -452,10 +449,10 @@ super_lab.icons = util.extract_icon_info(super_lab)
 super_lab.map_color = constants.infinity_tint
 super_lab.friendly_map_color = constants.infinity_tint
 super_lab.minable.result = "ee-super-lab"
-super_lab.energy_source = {type="void"}
+super_lab.energy_source = {type = "void"}
 super_lab.energy_usage = "1W"
 super_lab.researching_speed = 100
-super_lab.module_specification = {module_slots=12}
+super_lab.module_specification = {module_slots = 12}
 util.recursive_tint(super_lab)
 data:extend{super_lab}
 
@@ -465,13 +462,13 @@ super_locomotive.icons = util.extract_icon_info(super_locomotive)
 super_locomotive.map_color = constants.infinity_tint
 super_locomotive.friendly_map_color = constants.infinity_tint
 super_locomotive.max_power = "10MW"
-super_locomotive.energy_source = {type="void"}
+super_locomotive.energy_source = {type = "void"}
 super_locomotive.max_speed = 10
 super_locomotive.reversing_power_modifier = 1
 super_locomotive.braking_force = 100
 super_locomotive.minable.result = "ee-super-locomotive"
 super_locomotive.allow_manual_color = false
-super_locomotive.color = {r=0, g=0, b=0, a=0.5}
+super_locomotive.color = {r = 0, g = 0, b = 0, a = 0.5}
 util.recursive_tint(super_locomotive)
 data:extend{super_locomotive}
 
@@ -493,9 +490,9 @@ super_pump.name = "ee-super-pump"
 super_pump.icons = util.extract_icon_info(super_pump)
 super_pump.map_color = constants.infinity_tint
 super_pump.friendly_map_color = constants.infinity_tint
-super_pump.placeable_by = {item="ee-super-pump", count=1}
-super_pump.minable = {result="ee-super-pump", mining_time=0.1}
-super_pump.energy_source = {type="void"}
+super_pump.placeable_by = {item = "ee-super-pump", count = 1}
+super_pump.minable = {result = "ee-super-pump", mining_time = 0.1}
+super_pump.energy_source = {type = "void"}
 super_pump.energy_usage = "1W"
 super_pump.pumping_speed = 1000
 util.recursive_tint(super_pump)
@@ -507,7 +504,7 @@ super_radar.icons = util.extract_icon_info(super_radar)
 super_radar.map_color = constants.infinity_tint
 super_radar.friendly_map_color = constants.infinity_tint
 super_radar.minable.result = "ee-super-radar"
-super_radar.energy_source = {type="void"}
+super_radar.energy_source = {type = "void"}
 super_radar.max_distance_of_sector_revealed = 20
 super_radar.max_distance_of_nearby_sector_revealed = 20
 util.recursive_tint(super_radar)
@@ -520,7 +517,7 @@ super_roboport.map_color = constants.infinity_tint
 super_roboport.friendly_map_color = constants.infinity_tint
 super_roboport.logistics_radius = 200
 super_roboport.construction_radius = 400
-super_roboport.energy_source = {type="void"}
+super_roboport.energy_source = {type = "void"}
 super_roboport.charging_energy = "1000YW"
 super_roboport.charging_distance = 0
 super_roboport.charging_station_count = 100

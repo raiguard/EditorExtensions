@@ -102,7 +102,7 @@ data:extend{
     localised_name = {"entity-name.ee-infinity-loader"},
     localised_description = {"entity-description.ee-infinity-loader"},
     icons = util.recursive_tint{
-      {icon="__EditorExtensions__/graphics/item/infinity-loader.png", icon_size=64, icon_mipmaps=4}
+      {icon = "__EditorExtensions__/graphics/item/infinity-loader.png", icon_size = 64, icon_mipmaps = 4}
     },
     stack_size = 50,
     place_result = "ee-infinity-loader-dummy-combinator",
@@ -148,7 +148,7 @@ local super_beacon = table.deepcopy(data.raw["item"]["beacon"])
 super_beacon.name = "ee-super-beacon"
 super_beacon.icons = util.recursive_tint(util.extract_icon_info(super_beacon))
 super_beacon.place_result = "ee-super-beacon"
-super_beacon.subgroup="ee-modules"
+super_beacon.subgroup = "ee-modules"
 super_beacon.order = "aa"
 data:extend{super_beacon}
 

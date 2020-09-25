@@ -103,7 +103,7 @@ function infinity_pipe.snap(entity, player_settings)
               if prototype.production_type == "input" then
                 local fluid = fluidbox.get_locked_fluid(i)
                 if fluid then
-                  entity.set_infinity_pipe_filter{name=fluid, percentage=1, mode="at-least"}
+                  entity.set_infinity_pipe_filter{name = fluid, percentage = 1, mode = "at-least"}
                   return
                 end
               end

@@ -38,7 +38,7 @@ local function set_armor(inventory)
   if inventory[1] and inventory[1].valid_for_read and inventory[1].name == "power-armor-mk2" then
     inventory[1].grid.clear()
   else
-    inventory[1].set_stack{name="power-armor-mk2"}
+    inventory[1].set_stack{name = "power-armor-mk2"}
   end
   local grid = inventory[1].grid
   local equipment_to_add = constants.cheat_mode.equipment_to_add
