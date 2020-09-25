@@ -10,7 +10,7 @@ local constants = require("scripts.constants")
 -- LOCAL UTILITIES
 
 local function get_settings_from_name(name)
-  local _, _, priority, mode = string.find(name, "^.-(%a+)%-(%a+)$")
+  local _, _, priority, mode = string.find(name, "^ee%-infinity%-accumulator%-(%a+)%-(%a+)$")
   return priority, mode
 end
 
