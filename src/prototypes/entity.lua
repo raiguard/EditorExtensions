@@ -3,26 +3,25 @@ local util = require("prototypes.util")
 
 -- INFINITY ACCUMULATOR
 do
-  local accumulator_types = {"primary-input", "primary-output", "secondary-input", "secondary-output", "tertiary"}
   local base_entity = table.deepcopy(data.raw["electric-energy-interface"]["electric-energy-interface"])
+  base_entity.localised_name = {"entity-name.ee-infinity-accumulator"}
+  base_entity.localised_description = {"entity-description.ee-infinity-accumulator"}
+  base_entity.map_color = constants.infinity_tint
+  base_entity.friendly_map_color = constants.infinity_tint
   base_entity.minable.result = "ee-infinity-accumulator"
   base_entity.localised_description = {"entity-description.infinity-accumulator"}
-  local accumulator_icons = util.recursive_tint{(base_entity.icons[1])}
+  base_entity.subgroup = "ee-electricity"
+  base_entity.order = "a"
+  base_entity.minable.result = "ee-infinity-accumulator"
+  base_entity.placeable_by = {item="ee-infinity-accumulator", count=1}
+  base_entity.energy_source = {type="electric", buffer_capacity="500GJ"}
   util.recursive_tint(base_entity)
 
-  for _, t in pairs(accumulator_types) do
+  for _, entity_data in ipairs(constants.infinity_accumulator_data) do
     local entity = table.deepcopy(base_entity)
-    entity.name = "ee-infinity-accumulator-"..t
-    entity.localised_name = {"entity-name.ee-infinity-accumulator"}
-    entity.localised_description = {"entity-description.ee-infinity-accumulator"}
-    entity.icons = accumulator_icons
-    entity.map_color = constants.infinity_tint
-    entity.friendly_map_color = constants.infinity_tint
-    entity.energy_source = {type="electric", usage_priority=t, buffer_capacity="500GJ"}
-    entity.subgroup = "ee-electricity"
-    entity.order = "a"
-    entity.minable.result = "ee-infinity-accumulator"
-    entity.placeable_by = {item="ee-infinity-accumulator", count=1}
+    entity.name = "ee-infinity-accumulator-"..entity_data.name
+    entity.energy_source.usage_priority = entity_data.priority
+    entity.energy_source.render_no_power_icon = entity_data.render_no_power_icon
     data:extend{entity}
   end
 end

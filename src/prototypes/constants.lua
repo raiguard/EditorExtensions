@@ -28,6 +28,44 @@ constants.empty_sheet = {
 
 constants.equipment_background_color = {r=0.5, g=0.25, b=0.5, a=1}
 
+constants.infinity_accumulator_data = {
+  {
+    name = "primary-input",
+    priority = "primary-input",
+    render_no_power_icon = false
+  },
+  {
+    name = "primary-output",
+    priority = "primary-output",
+    render_no_power_icon = false
+  },
+  {
+    name = "secondary-input",
+    priority = "secondary-input",
+    render_no_power_icon = false
+  },
+  {
+    name = "secondary-output",
+    priority = "secondary-output",
+    render_no_power_icon = false
+  },
+  {
+    name = "tertiary-buffer",
+    priority = "tertiary",
+    render_no_power_icon = true
+  },
+  {
+    name = "tertiary-input",
+    priority = "tertiary",
+    render_no_power_icon = false
+  },
+  {
+    name = "tertiary-output",
+    priority = "tertiary",
+    render_no_power_icon = false
+  }
+}
+
 constants.infinity_chest_data = {
   {t={255,255,225}, o="aa"},
   {lm="active-provider", s=0, t={218,115,255}, o="ab"},
