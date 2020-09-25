@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.21
-Date: ????
+Date: 2020-09-25
   Features:
     - Added "tertiary" as a selectable priority for infinity accumulator input/output
   Bugfixes:
