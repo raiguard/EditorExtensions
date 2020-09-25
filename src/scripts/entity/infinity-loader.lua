@@ -329,7 +329,7 @@ local function create_gui(player, player_table, entity)
           {template = "vertically_centered_flow", children = {
             {
               type = "label",
-              caption = {"", {"ee-gui.filters"}, " [img = info]"},
+              caption = {"", {"ee-gui.filters"}, " [img=info]"},
               tooltip = {"ee-gui.il-filters-description"}
             },
             {type = "empty-widget", style_mods = {width = 20}},

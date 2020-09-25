@@ -246,7 +246,7 @@ local function create_gui(player, player_table, entity)
             {template = "vertically_centered_flow", children = {
               {
                 type = "label",
-                caption = {"", {"ee-gui.priority"}, " [img = info]"},
+                caption = {"", {"ee-gui.priority"}, " [img=info]"},
                 tooltip = {"ee-gui.ia-priority-description"}
               },
               {template = "pushers.horizontal"},
