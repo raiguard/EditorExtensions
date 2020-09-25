@@ -1,6 +1,7 @@
 local infinity_accumulator = {}
 
 local gui = require("__flib__.gui")
+local math = require("__flib__.math")
 local util = require("scripts.util")
 
 local constants = require("scripts.constants")
@@ -14,13 +15,12 @@ local function get_settings_from_name(name)
 end
 
 local function set_entity_settings(entity, mode, buffer_size)
-  local watts = util.parse_energy(buffer_size.."W")
+  local watts = util.parse_energy((buffer_size * 60).."W")
 
   if mode == "output" then
     entity.power_production = watts
     entity.power_usage = 0
     entity.electric_buffer_size = buffer_size
-    entity.energy = buffer_size
   elseif mode == "input" then
     entity.power_production = 0
     entity.power_usage = watts
@@ -28,12 +28,11 @@ local function set_entity_settings(entity, mode, buffer_size)
   elseif mode == "buffer" then
     entity.power_production = 0
     entity.power_usage = 0
-    entity.electric_buffer_size = buffer_size
+    entity.electric_buffer_size = buffer_size * 60
   end
 end
 
 local function change_entity(entity, priority, mode)
-  local old_priority, old_mode = get_settings_from_name(entity.name)
   local new_entity = entity.surface.create_entity{
     name = "ee-infinity-accumulator-"..priority.."-"..mode,
     position = entity.position,
@@ -41,17 +40,38 @@ local function change_entity(entity, priority, mode)
     last_user = entity.last_user,
     create_build_effect_smoke = false
   }
-  set_entity_settings(new_entity, mode, entity.electric_buffer_size)
+
+  -- calculate new buffer size
+  local buffer_size = entity.electric_buffer_size
+  local _, old_mode = get_settings_from_name(entity.name)
+  if old_mode ~= mode and old_mode == "buffer" then
+    -- coming from buffer, divide by 60
+    buffer_size = buffer_size / 60
+  end
+
+  set_entity_settings(new_entity, mode, buffer_size)
   entity.destroy()
+
   return new_entity
 end
 
 -- returns the slider value and dropdown selected index based on the entity's buffer size
-local function rev_parse_energy(value)
-  local len = string.len(string.format("%.0f", math.floor(value)))
-  local exponent = math.max(len - (len % 3 == 0 and 3 or len % 3),3)
-  value = math.floor(value / 10^exponent)
-  return value, exponent / 3
+local function calc_gui_values(buffer_size, mode)
+  if mode ~= "buffer" then
+    -- the slider is controlling watts, so inflate the buffer size by 60x to get that value
+    buffer_size = buffer_size * 60
+  end
+  -- determine how many orders of magnitude there are
+  local len = string.len(string.format("%.0f", math.floor(buffer_size)))
+  -- `power` is the dropdown value - how many sets of three OOMs there are, rounded down
+  local power = math.floor((len - 1) / 3)
+  -- slider value is the buffer size scaled to its base-three OOM
+  return math.floor(buffer_size / 10^(power * 3)), power
+end
+
+-- returns the entity buffer size based on the slider value and dropdown selected index
+local function calc_buffer_size(slider_value, dropdown_index)
+  return util.parse_energy(slider_value..constants.ia.si_suffixes_joule[dropdown_index]) / 60
 end
 
 -- -----------------------------------------------------------------------------
@@ -73,7 +93,7 @@ end
 local function update_gui_settings(gui_data)
   local entity = gui_data.entity
   local priority, mode = get_settings_from_name(entity.name)
-  local slider_value, dropdown_index = rev_parse_energy(entity.electric_buffer_size)
+  local slider_value, dropdown_index = calc_gui_values(entity.electric_buffer_size, mode)
   gui_data.mode_dropdown.selected_index = constants.ia.mode_to_index[mode]
   gui_data.priority_dropdown.selected_index = constants.ia.priority_to_index[priority]
   gui_data.slider.slider_value = slider_value
@@ -119,13 +139,10 @@ gui.add_handlers{
       on_gui_value_changed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
-        local buffer_size = util.parse_energy(
-          e.element.slider_value..constants.ia.si_suffixes_joule[gui_data.slider_dropdown.selected_index]
-        )
         set_entity_settings(
           gui_data.entity,
           constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index],
-          buffer_size
+          calc_buffer_size(e.element.slider_value, gui_data.slider_dropdown.selected_index)
         )
         gui_data.slider_textfield.text = e.element.slider_value
       end
@@ -144,13 +161,10 @@ gui.add_handlers{
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
         util.textfield.set_last_valid_value(e.element, player_table.gui.ia.last_textfield_value)
-        local buffer_size = util.parse_energy(
-          e.element.text..constants.ia.si_suffixes_joule[gui_data.slider_dropdown.selected_index]
-        )
         set_entity_settings(
           gui_data.entity,
           constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index],
-          buffer_size
+          calc_buffer_size(gui_data.slider.slider_value, gui_data.slider_dropdown.selected_index)
         )
       end
     },
@@ -158,13 +172,15 @@ gui.add_handlers{
       on_gui_selection_state_changed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
-        local buffer_size = util.parse_energy(
-          gui_data.slider.slider_value..constants.ia.si_suffixes_joule[e.element.selected_index]
-        )
         set_entity_settings(
           gui_data.entity,
           constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index],
-          buffer_size
+          calc_buffer_size(gui_data.slider.slider_value, gui_data.slider_dropdown.selected_index)
+        )
+
+        calc_gui_values(
+          calc_buffer_size(gui_data.slider.slider_value, gui_data.slider_dropdown.selected_index),
+          constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index]
         )
       end
     },
@@ -187,7 +203,7 @@ gui.add_handlers{
 local function create_gui(player, player_table, entity)
   local priority, mode = get_settings_from_name(entity.name)
   local is_buffer = mode == "buffer"
-  local slider_value, dropdown_index = rev_parse_energy(entity.electric_buffer_size)
+  local slider_value, dropdown_index = calc_gui_values(entity.electric_buffer_size, mode)
   local gui_data = gui.build(player.gui.screen, {
     {type="frame", direction="vertical", handlers="ia.window", save_as="window", children={
       {type="flow", save_as="titlebar_flow", children={

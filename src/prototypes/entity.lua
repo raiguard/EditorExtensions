@@ -4,7 +4,7 @@ local util = require("prototypes.util")
 -- INFINITY ACCUMULATOR
 do
   local base_entity = table.deepcopy(data.raw["electric-energy-interface"]["electric-energy-interface"])
-  base_entity.energy_source = {type="electric", buffer_capacity="500GJ"}
+  base_entity.energy_source = {type="electric", buffer_capacity="8.34GJ"} -- buffer size for 500 GW
   base_entity.friendly_map_color = constants.infinity_tint
   base_entity.localised_description = {"entity-description.ee-infinity-accumulator"}
   base_entity.localised_name = {"entity-name.ee-infinity-accumulator"}

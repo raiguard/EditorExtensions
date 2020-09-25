@@ -4,6 +4,7 @@ Date: ????
   Features:
     - Added "tertiary" as a selectable priority for infinity accumulator input/output
   Bugfixes:
+    - Fixed incorrect IA buffer size scaling leading to incorrect power production / consumption possibility numbers
     - Fixed prototype migration filenames to actually run in order
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.20
