@@ -4,17 +4,15 @@ local util = require("prototypes.util")
 -- INFINITY ACCUMULATOR
 do
   local base_entity = table.deepcopy(data.raw["electric-energy-interface"]["electric-energy-interface"])
-  base_entity.localised_name = {"entity-name.ee-infinity-accumulator"}
-  base_entity.localised_description = {"entity-description.ee-infinity-accumulator"}
-  base_entity.map_color = constants.infinity_tint
-  base_entity.friendly_map_color = constants.infinity_tint
-  base_entity.minable.result = "ee-infinity-accumulator"
-  base_entity.localised_description = {"entity-description.infinity-accumulator"}
-  base_entity.subgroup = "ee-electricity"
-  base_entity.order = "a"
-  base_entity.minable.result = "ee-infinity-accumulator"
-  base_entity.placeable_by = {item="ee-infinity-accumulator", count=1}
   base_entity.energy_source = {type="electric", buffer_capacity="500GJ"}
+  base_entity.friendly_map_color = constants.infinity_tint
+  base_entity.localised_description = {"entity-description.ee-infinity-accumulator"}
+  base_entity.localised_name = {"entity-name.ee-infinity-accumulator"}
+  base_entity.map_color = constants.infinity_tint
+  base_entity.minable.result = "ee-infinity-accumulator"
+  base_entity.order = "a"
+  base_entity.placeable_by = {item="ee-infinity-accumulator", count=1}
+  base_entity.subgroup = "ee-electricity"
   util.recursive_tint(base_entity)
 
   for _, entity_data in ipairs(constants.infinity_accumulator_data) do
