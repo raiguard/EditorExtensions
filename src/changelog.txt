@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.22
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed items spilling during inventory sync when the character's inventory was full
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.21
 Date: 2020-09-25
