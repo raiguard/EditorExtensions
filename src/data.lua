@@ -44,6 +44,7 @@ data:extend{
 
 require("prototypes.entity")
 require("prototypes.equipment")
+require("prototypes.fluid")
 require("prototypes.item-group")
 require("prototypes.item")
 require("prototypes.module")

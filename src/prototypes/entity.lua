@@ -403,7 +403,7 @@ do
   infinity_wagon_pipe.order = "a"
   infinity_wagon_pipe.flags = {"hide-alt-info", "hidden"}
 
-  for k, t in pairs(infinity_wagon_pipe.pictures) do
+  for k in pairs(infinity_wagon_pipe.pictures) do
     infinity_wagon_pipe.pictures[k] = constants.empty_sheet
   end
 
@@ -492,9 +492,18 @@ super_pump.map_color = constants.infinity_tint
 super_pump.friendly_map_color = constants.infinity_tint
 super_pump.placeable_by = {item = "ee-super-pump", count = 1}
 super_pump.minable = {result = "ee-super-pump", mining_time = 0.1}
-super_pump.energy_source = {type = "void"}
-super_pump.energy_usage = "1W"
-super_pump.pumping_speed = 1000
+super_pump.energy_source = {
+  type = "fluid",
+  fluid_box = {
+    pipe_connections = {},
+    filter = "ee-super-pump-speed-fluid",
+    base_area = 1000000000
+  },
+  fluid_usage_per_tick = 0.4
+}
+super_pump.fluid_box.height = 10
+super_pump.energy_usage = "720kW"
+super_pump.pumping_speed = 500
 util.recursive_tint(super_pump)
 data:extend{super_pump}
 

@@ -51,8 +51,8 @@
       "factorioPath": "${env:factorioSourceDebug}",
       "hookMode": "debug",
       "hookControl": ["level", "EditorExtensions"],
-      "hookData": true,
-      "hookSettings": true,
+      "hookData": false,
+      "hookSettings": false,
       "factorioArgs": ["--load-scenario", "EditorExtensions/testing"]
     },
     {
