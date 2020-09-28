@@ -19,6 +19,7 @@ local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
 local super_inserter = require("scripts.entity.super-inserter")
+local super_pump = require("scripts.entity.super-pump")
 
 -- -----------------------------------------------------------------------------
 -- COMMANDS
@@ -276,11 +277,14 @@ event.on_gui_opened(function(e)
   if not gui.dispatch_handlers(e) then
     local entity = e.entity
     if entity then
-      if constants.ia.entity_names[entity.name] then
+      local entity_name = entity.name
+      if constants.ia.entity_names[entity_name] then
         infinity_accumulator.open(e.player_index, entity)
-      elseif entity.name == "ee-infinity-loader-logic-combinator" then
+      elseif entity_name == "ee-infinity-loader-logic-combinator" then
         infinity_loader.open(e.player_index, entity)
-      elseif entity.name == "ee-infinity-cargo-wagon" then
+      elseif entity_name == "ee-super-pump" then
+        super_pump.open(e.player_index, entity)
+      elseif entity_name == "ee-infinity-cargo-wagon" then
         infinity_wagon.open(e.player_index, entity)
       end
     elseif e.gui_type and e.gui_type == defines.gui_type.controller then
