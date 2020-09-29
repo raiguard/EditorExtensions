@@ -9,6 +9,8 @@ local util = require("scripts.util")
 -- -----------------------------------------------------------------------------
 -- ENTITY FUNCTIONS
 
+-- TODO keep disabled until both connections are made, to avoid WATER HAMMER
+
 local function set_speed(entity, speed)
   entity.fluidbox[2] = {
     name = "ee-super-pump-speed-fluid",
