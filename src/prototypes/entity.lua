@@ -339,7 +339,7 @@ do
   cargo_wagon.localised_description = {
     "",
     {"entity-description.ee-infinity-cargo-wagon"},
-    "\n[color = 255,57,48]",
+    "\n[color=255,57,48]",
     {"entity-description.ee-performance-warning"},"[/color]"
   }
   cargo_wagon.icons = util.extract_icon_info(cargo_wagon)
@@ -364,7 +364,7 @@ do
   fluid_wagon.localised_description = {
     "",
     {"entity-description.ee-infinity-fluid-wagon"},
-    "\n[color = 255,57,48]",
+    "\n[color=255,57,48]",
     {"entity-description.ee-performance-warning"},"[/color]"
   }
   fluid_wagon.icons = util.extract_icon_info(fluid_wagon)
