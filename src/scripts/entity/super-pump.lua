@@ -61,6 +61,15 @@ local function create_gui(player, player_table, entity)
       {type = "flow", save_as = "titlebar_flow", children = {
         {type = "label", style = "frame_title", caption = {"entity-name.ee-super-pump"}, ignored_by_interaction = true},
         {type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true},
+        {
+          type = "sprite-button",
+          style = "frame_action_button",
+          sprite = "utility/logistic_network_panel_white",
+          hovered_sprite = "utility/logistic_network_panel_black",
+          clicked_sprite = "utility/logistic_network_panel_black",
+          tooltip = {"ee-gui.open-default-gui"},
+          handlers = "sp.open_default_gui_button"
+        },
         {template = "close_button", handlers = "sp.close_button"}
       }},
       {type = "frame", style = "ee_inside_shallow_frame_for_entity", children = {
@@ -74,7 +83,12 @@ local function create_gui(player, player_table, entity)
         }},
         {type = "flow", direction = "vertical", children = {
           {template = "vertically_centered_flow", children = {
-            {type = "label", style = "bold_label", style_mods = {right_margin = 12}, caption = {"ee-gui.speed"}},
+            {
+              type = "label",
+              style_mods = {right_margin = 12},
+              caption = {"ee-gui.speed"},
+              tooltip = {"ee-gui.speed-tooltip"}
+            },
             {
               type = "slider",
               minimum_value = 0,
@@ -120,11 +134,12 @@ local function destroy_gui(player, player_table)
   gui_data.elems.window.destroy()
   player_table.gui.sp = nil
 
-  if player.opened == gui_data.entity then
-    player.opened = nil
+  if not player_table.flags.opening_default_gui then
+    if player.opened == gui_data.entity then
+      player.opened = nil
+    end
+    player.play_sound{path = "entity-close/ee-super-pump"}
   end
-
-  player.play_sound{path = "entity-close/ee-super-pump"}
 end
 
 gui.add_handlers{
@@ -134,6 +149,15 @@ gui.add_handlers{
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         destroy_gui(player, player_table)
+      end
+    },
+    open_default_gui_button = {
+      on_gui_click = function(e)
+        local player = game.get_player(e.player_index)
+        local player_table = global.players[e.player_index]
+        player_table.flags.opening_default_gui = true
+        player.opened = player_table.gui.sp.entity
+        player_table.flags.opening_default_gui = false
       end
     },
     speed_slider = {
@@ -198,10 +222,11 @@ function super_pump.paste_settings(source, destination)
 end
 
 function super_pump.open(player_index, entity)
-  -- TODO check for other GUI
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
-  create_gui(player, player_table, entity)
+  if not player_table.flags.opening_default_gui then
+    create_gui(player, player_table, entity)
+  end
 end
 
 return super_pump

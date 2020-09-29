@@ -99,5 +99,10 @@ return {
         end
       end
     end
+  end,
+  ["1.6.0"] = function()
+    for _, player_table in pairs(global.players) do
+      player_table.flags.opening_default_gui = false
+    end
   end
 }
