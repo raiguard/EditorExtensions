@@ -160,8 +160,11 @@ event.register(
     local entity = e.entity or e.created_entity or e.destination
     local entity_name = entity.name
 
+    -- aggregate chest
+    if constants.aggregate_chest_names[entity_name] then
+      aggregate_chest.set_filters(entity)
     -- infinity loader
-    if entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
+    elseif entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
       infinity_loader.build_from_ghost(entity)
     elseif
       entity_name == "ee-infinity-loader-dummy-combinator"
@@ -184,9 +187,9 @@ event.register(
     elseif constants.infinity_wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
       on_tick.register()
-    -- aggregate chest
-    elseif constants.aggregate_chest_names[entity_name] then
-      aggregate_chest.set_filters(entity)
+    -- super pump
+    elseif entity_name == "ee-super-pump" then
+      super_pump.setup(entity, e.tags)
     -- only snap manually built entities
     elseif e.name == defines.events.on_built_entity then
       if entity_name == "ee-super-inserter" then
@@ -253,19 +256,26 @@ event.register("ee-mouse-leftclick", function(e)
 end)
 
 event.on_entity_settings_pasted(function(e)
+  local source = e.source
+  local destination = e.destination
+  local source_name = source.name
+  local destination_name = destination.name
+
   if
-    constants.ia.entity_names[e.source.name]
-    and constants.ia.entity_names[e.destination.name]
-    and e.source.name ~= e.destination.name
+    constants.ia.entity_names[source_name]
+    and constants.ia.entity_names[destination_name]
+    and source_name ~= destination_name
   then
-    infinity_accumulator.paste_settings(e.source, e.destination)
-  elseif e.destination.name == "ee-infinity-loader-logic-combinator" then
-    infinity_loader.paste_settings(e.source, e.destination)
+    infinity_accumulator.paste_settings(source, destination)
+  elseif destination_name == "ee-infinity-loader-logic-combinator" then
+    infinity_loader.paste_settings(source, destination)
   elseif
-    e.source.name == "ee-infinity-cargo-wagon" and e.destination.name == "ee-infinity-cargo-wagon"
-    or e.source.name == "ee-infinity-fluid-wagon" and e.destination.name == "ee-infinity-fluid-wagon"
+    source_name == "ee-infinity-cargo-wagon" and destination_name == "ee-infinity-cargo-wagon"
+    or source_name == "ee-infinity-fluid-wagon" and destination_name == "ee-infinity-fluid-wagon"
   then
-    infinity_wagon.paste_settings(e.source, e.destination)
+    infinity_wagon.paste_settings(source, destination)
+  elseif source_name == "ee-super-pump" and destination_name == "ee-super-pump" then
+    super_pump.paste_settings(source, destination)
   end
 end)
 
@@ -369,12 +379,15 @@ event.on_player_setup_blueprint(function(e)
   -- iterate each entity
   for i = 1, #entities do
     local entity = entities[i]
-    if entity.name == "ee-infinity-loader-logic-combinator" then
+    local entity_name = entity.name
+    if entity_name == "ee-infinity-loader-logic-combinator" then
       entities[i] = infinity_loader.setup_blueprint(entity)
-    elseif entity.name == "ee-infinity-cargo-wagon" then
+    elseif entity_name == "ee-infinity-cargo-wagon" then
       entities[i] = infinity_wagon.setup_cargo_blueprint(entity, mapping[entity.entity_number])
-    elseif entity.name == "ee-infinity-fluid-wagon" then
+    elseif entity_name == "ee-infinity-fluid-wagon" then
       entities[i] = infinity_wagon.setup_fluid_blueprint(entity, mapping[entity.entity_number])
+    elseif entity_name == "ee-super-pump" then
+      entities[i] = super_pump.save_speed(entity, mapping[entity.entity_number])
     end
   end
 
@@ -474,20 +487,22 @@ event.set_filters(
     defines.events.on_robot_built_entity
   },
   {
-    {filter = "name", name = "ee-infinity-loader-dummy-combinator"},
-    {filter = "name", name = "ee-infinity-loader-logic-combinator"},
+    {filter = "name", name = "ee-aggregate-chest-passive-provider"},
+    {filter = "name", name = "ee-aggregate-chest"},
     {filter = "name", name = "ee-infinity-cargo-wagon"},
     {filter = "name", name = "ee-infinity-fluid-wagon"},
-    {filter = "name", name = "ee-aggregate-chest"},
-    {filter = "name", name = "ee-aggregate-chest-passive-provider"},
-    {filter = "name", name = "ee-super-inserter"},
+    {filter = "name", name = "ee-infinity-loader-dummy-combinator"},
+    {filter = "name", name = "ee-infinity-loader-logic-combinator"},
     {filter = "name", name = "ee-infinity-pipe"},
+    {filter = "name", name = "ee-super-inserter"},
+    {filter = "name", name = "ee-super-pump"},
     {filter = "type", type = "transport-belt"},
     {filter = "type", type = "underground-belt"},
     {filter = "type", type = "splitter"},
     {filter = "type", type = "loader"},
     {filter = "ghost"},
-    {filter = "ghost_name", name = "ee-infinity-loader-logic-combinator"}
+    {filter = "ghost_name", name = "ee-infinity-loader-logic-combinator"},
+    {filter = "ghost_name", name = "ee-super-pump"}
   }
 )
 

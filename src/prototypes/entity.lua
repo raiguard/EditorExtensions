@@ -499,11 +499,11 @@ super_pump.energy_source = {
     filter = "ee-super-pump-speed-fluid",
     base_area = 1000000000
   },
-  fluid_usage_per_tick = 0.4
+  fluid_usage_per_tick = 0.02
 }
-super_pump.fluid_box.height = 10
+super_pump.fluid_box.height = 200
 super_pump.energy_usage = "720kW"
-super_pump.pumping_speed = 500
+super_pump.pumping_speed = 10000
 util.recursive_tint(super_pump)
 data:extend{super_pump}
 
