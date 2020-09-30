@@ -5,6 +5,7 @@ Date: ????
     - Super pump has been redesigned, and now sports an adjustable pumping speed with a custom GUI
   Bugfixes:
     - Fixed broken performance warning rich text on infinity wagon tooltips
+    - Fixed a crash when the scenario would toggle the map editor before EE loaded the player's data
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.22
 Date: 2020-09-26

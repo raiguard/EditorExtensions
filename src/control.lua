@@ -397,12 +397,16 @@ end)
 
 event.on_pre_player_toggled_map_editor(function(e)
   local player_table = global.players[e.player_index]
+  if not player_table then return end
   if player_table.flags.inventory_sync_enabled then
     inventory.create_sync_inventories(player_table, game.get_player(e.player_index))
   end
 end)
 
 event.on_player_toggled_map_editor(function(e)
+  local player_table = global.players[e.player_index]
+  if not player_table then return end
+
   -- the first time someone toggles the map editor, unpause the current tick
   if global.flags.map_editor_toggled == false then
     global.flags.map_editor_toggled = true
@@ -412,7 +416,6 @@ event.on_player_toggled_map_editor(function(e)
   end
 
   local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
   local to_state = player.controller_type == defines.controllers.editor
 
   -- update shortcut toggled state
