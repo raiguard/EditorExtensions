@@ -43,7 +43,7 @@ end)
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
 -- `on_tick` event handler is kept in `scripts.on-tick`
--- picker dollies event handler is kept in `scripts.entity.infinity-loader`
+-- picker dollies handler is kept in `scripts.entity.infinity-loader` and is registered in `scripts.compatibility`
 -- all other event handlers are here
 
 -- BOOTSTRAP
@@ -387,7 +387,7 @@ event.on_player_setup_blueprint(function(e)
     elseif entity_name == "ee-infinity-fluid-wagon" then
       entities[i] = infinity_wagon.setup_fluid_blueprint(entity, mapping[entity.entity_number])
     elseif entity_name == "ee-super-pump" then
-      entities[i] = super_pump.save_speed(entity, mapping[entity.entity_number])
+      entities[i] = super_pump.setup_blueprint(entity, mapping[entity.entity_number])
     end
   end
 

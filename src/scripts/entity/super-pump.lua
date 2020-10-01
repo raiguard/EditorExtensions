@@ -53,6 +53,7 @@ local function update_gui(gui_data)
   local speed = get_speed(entity)
 
   gui_elems.preview.entity = entity
+  gui_elems.state_switch.switch_state = entity.active and "left" or "right"
   gui_elems.speed_slider.slider_value = to_slider_value(speed)
   gui_elems.speed_textfield.text = tostring(speed)
 end
@@ -78,12 +79,25 @@ local function create_gui(player, player_table, entity)
         {type = "frame", style = "deep_frame_in_shallow_frame", children = {
           {
             type = "entity-preview",
-            style_mods = {width = 100, height = 100},
+            style_mods = {width = 85, height = 85},
             elem_mods = {entity = entity},
             save_as = "preview"
           }
         }},
         {type = "flow", direction = "vertical", children = {
+          {template = "vertically_centered_flow", children = {
+            {type = "label", caption = {"ee-gui.state"}},
+            {type = "empty-widget", style = "flib_horizontal_pusher"},
+            {
+              type = "switch",
+              left_label_caption = {"gui-constant.on"},
+              right_label_caption = {"gui-constant.off"},
+              switch_state = "left",
+              handlers = "sp.state_switch",
+              save_as = "state_switch"
+            }
+          }},
+          {type = "empty-widget", style = "flib_vertical_pusher"},
           {template = "vertically_centered_flow", children = {
             {
               type = "label",
@@ -109,7 +123,7 @@ local function create_gui(player, player_table, entity)
               save_as = "speed_textfield"
             },
             {type = "label", style = "ee_super_pump_per_second_label", caption = {"ee-gui.per-second"}}
-          }}
+          }},
         }}
       }}
     }}
@@ -190,6 +204,13 @@ gui.add_handlers{
         end
       end
     },
+    state_switch = {
+      on_gui_switch_state_changed = function(e)
+        local player_table = global.players[e.player_index]
+        local gui_data = player_table.gui.sp
+        gui_data.entity.active = e.element.switch_state == "left"
+      end
+    },
     window = {
       on_gui_closed = function(e)
         local player = game.get_player(e.player_index)
@@ -206,16 +227,17 @@ gui.add_handlers{
 function super_pump.setup(entity, tags)
   local speed = 1000
   if tags and tags.EditorExtensions then
+    entity.active = tags.EditorExtensions.active
     speed = tags.EditorExtensions.speed
   end
   set_speed(entity, speed)
 end
 
-function super_pump.save_speed(blueprint_entity, entity)
+function super_pump.setup_blueprint(blueprint_entity, entity)
   if not blueprint_entity.tags then
     blueprint_entity.tags = {}
   end
-  blueprint_entity.tags.EditorExtensions = {speed = get_speed(entity)}
+  blueprint_entity.tags.EditorExtensions = {active = entity.active, speed = get_speed(entity)}
   return blueprint_entity
 end
 
