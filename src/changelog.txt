@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.0
-Date: ????
+Date: 2020-10-01
   Features:
     - Super pump has been redesigned, and now sports an adjustable pumping speed with a custom GUI
   Bugfixes:
