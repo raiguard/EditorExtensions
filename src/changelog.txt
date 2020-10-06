@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.2
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed a crash when pasting to an Infinity Loader from an entity with no control behavior
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.1
 Date: 2020-10-06
