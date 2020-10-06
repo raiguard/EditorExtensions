@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.1
-Date: ????
+Date: 2020-10-06
   Bugfixes:
     - Fixed a crash when disabling cheat mode when the reach distance bonus wasn't being applied correctly
     - Fixed that the character bonuses would compound if `/cheat all` was typed multiple times
