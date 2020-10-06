@@ -543,11 +543,12 @@ function infinity_loader.setup_blueprint(blueprint_entity)
 end
 
 function infinity_loader.paste_settings(source, destination)
-  -- sanitize filters to remove any non-items
-  local parameters = {parameters = {}}
-  local items = 0
+  -- check if the source has control behavior
   local source_control_behavior = source.get_control_behavior()
   if source_control_behavior then
+    -- sanitize filters to remove any non-items
+    local parameters = {parameters = {}}
+    local items = 0
     for _, parameter in pairs(table.deepcopy(source_control_behavior.parameters.parameters)) do
       if parameter.signal and parameter.signal.type == "item" and items < 2 then
         items = items + 1
