@@ -48,7 +48,7 @@
       "type": "factoriomod",
       "request": "launch",
       "name": "Debug (src)",
-      "factorioPath": "${env:factorioSourceDebug}",
+      "factorioPath": "c:/Files/Development/Factorio/Factorio/bin/Releasex64vs2017/factorio-run.exe",
       "hookMode": "debug",
       "hookControl": ["level", "EditorExtensions"],
       "hookData": false,
