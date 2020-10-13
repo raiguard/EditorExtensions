@@ -481,6 +481,15 @@ event.on_player_toggled_map_editor(function(e)
     -- enable or disable cheats
     cheat_mode.update_character_cheats(player)
   end
+
+  -- push or unpush GUIs
+  if to_state then
+    player.gui.top.style.left_margin = constants.editor_gui_width
+    player.gui.left.style.left_margin = constants.editor_gui_width
+  else
+    player.gui.top.style.left_margin = 0
+    player.gui.left.style.left_margin = 0
+  end
 end)
 
 event.register(
