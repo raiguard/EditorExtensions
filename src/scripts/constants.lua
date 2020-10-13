@@ -155,6 +155,10 @@ constants.infinity_wagon_names = {
   ["ee-infinity-fluid-wagon"] = true
 }
 
+-- OTHER
+
+constants.editor_gui_width = 474
+
 -- SUPER PUMP
 
 constants.sp_slider_to_temperature = {

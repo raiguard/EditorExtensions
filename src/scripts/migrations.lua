@@ -114,5 +114,14 @@ return {
         }
       end
     end
+  end,
+  ["1.7.0"] = function()
+    for _, player in pairs(game.players) do
+      -- add margin to GUI roots if in the editor
+      if player.controller_type == defines.controllers.editor then
+        player.gui.top.style.left_margin = constants.editor_gui_width
+        player.gui.left.style.left_margin = constants.editor_gui_width
+      end
+    end
   end
 }
