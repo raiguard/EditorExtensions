@@ -99,5 +99,20 @@ return {
         end
       end
     end
+  end,
+  ["1.6.0"] = function()
+    for _, player_table in pairs(global.players) do
+      player_table.flags.opening_default_gui = false
+    end
+    -- add speedfluid to all existing pumps
+    for _, surface in pairs(game.surfaces) do
+      for _, entity in pairs(surface.find_entities_filtered{name = "ee-super-pump"}) do
+        entity.fluidbox[2] = {
+          name = "ee-super-pump-speed-fluid",
+          amount = 100000000000,
+          temperature = 30000.01
+        }
+      end
+    end
   end
 }

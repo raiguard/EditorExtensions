@@ -75,6 +75,11 @@ function cheat_mode.set_loadout(player)
 end
 
 function cheat_mode.update_character_cheats(player)
+  -- abort if they were already applied
+  -- we can safely assume that only this mod or Creative Mod would increase the reach this much
+  if player.cheat_mode and player.character_reach_distance_bonus >= 1000000 then
+    return
+  end
   -- get all associated characters as well as the active one
   local associated_characters = player.get_associated_characters()
   associated_characters[#associated_characters+1] = player.character
@@ -82,7 +87,7 @@ function cheat_mode.update_character_cheats(player)
   -- apply bonuses
   for _, character in pairs(associated_characters) do
     for modifier, amount in pairs(constants.cheat_mode.modifiers) do
-      character[modifier] = character[modifier] + (amount * multiplier)
+      character[modifier] = math.max(character[modifier] + (amount * multiplier), 0)
     end
   end
 end

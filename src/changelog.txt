@@ -1,6 +1,30 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.5.21
+Version: 1.6.2
 Date: ????
+  Bugfixes:
+    - Fixed a crash when pasting to an Infinity Loader from an entity with no control behavior
+---------------------------------------------------------------------------------------------------
+Version: 1.6.1
+Date: 2020-10-06
+  Bugfixes:
+    - Fixed a crash when disabling cheat mode when the reach distance bonus wasn't being applied correctly
+    - Fixed that the character bonuses would compound if `/cheat all` was typed multiple times
+---------------------------------------------------------------------------------------------------
+Version: 1.6.0
+Date: 2020-10-01
+  Features:
+    - Super pump has been redesigned, and now sports an adjustable pumping speed with a custom GUI
+  Bugfixes:
+    - Fixed broken performance warning rich text on infinity wagon tooltips
+    - Fixed a crash when the scenario would toggle the map editor before EE loaded the player's data
+---------------------------------------------------------------------------------------------------
+Version: 1.5.22
+Date: 2020-09-26
+  Bugfixes:
+    - Fixed items spilling during inventory sync when the character's inventory was full
+---------------------------------------------------------------------------------------------------
+Version: 1.5.21
+Date: 2020-09-25
   Features:
     - Added "tertiary" as a selectable priority for infinity accumulator input/output
   Bugfixes:

@@ -543,19 +543,23 @@ function infinity_loader.setup_blueprint(blueprint_entity)
 end
 
 function infinity_loader.paste_settings(source, destination)
-  -- sanitize filters to remove any non-items
-  local parameters = {parameters = {}}
-  local items = 0
-  for _, p in pairs(table.deepcopy(source.get_control_behavior().parameters.parameters)) do
-    if p.signal and p.signal.type == "item" and items < 2 then
-      items = items + 1
-      p.index = items
-      table.insert(parameters.parameters, p)
+  -- check if the source has control behavior
+  local source_control_behavior = source.get_control_behavior()
+  if source_control_behavior then
+    -- sanitize filters to remove any non-items
+    local parameters = {parameters = {}}
+    local items = 0
+    for _, parameter in pairs(table.deepcopy(source_control_behavior.parameters.parameters)) do
+      if parameter.signal and parameter.signal.type == "item" and items < 2 then
+        items = items + 1
+        parameter.index = items
+        table.insert(parameters.parameters, parameter)
+      end
     end
+    destination.get_control_behavior().parameters = parameters
+    -- update filters
+    update_filters(destination)
   end
-  destination.get_control_behavior().parameters = parameters
-  -- update filters
-  update_filters(destination)
 end
 
 function infinity_loader.open(player_index, entity)

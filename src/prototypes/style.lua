@@ -35,6 +35,15 @@ styles.ee_inside_shallow_frame_for_entity = {
   }
 }
 
+-- LABEL STYLES
+
+styles.ee_super_pump_per_second_label = {
+  type = "label_style",
+  parent = "bold_label",
+  font = "default-semibold",
+  left_margin = 4
+}
+
 -- TEXTFIELD STYLES
 
 styles.ee_slider_textfield = {

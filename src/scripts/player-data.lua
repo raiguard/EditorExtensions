@@ -10,7 +10,8 @@ function player_data.init(index)
       update_character_cheats_when_possible = false,
       in_satellite_view = false, -- space exploration compatibility
       inventory_sync_enabled = false,
-      map_editor_toggled = false
+      map_editor_toggled = false,
+      opening_default_gui = false -- currently for super pump, but can be used generically
     },
     gui = {}
   }
