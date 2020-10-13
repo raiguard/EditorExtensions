@@ -57,7 +57,7 @@ local function update_filters(combinator, entities)
   }[1]
   local control = combinator.get_control_behavior()
   local enabled = control.enabled
-  local filters = control.parameters.parameters
+  local filters = control.parameters
   local inserter_filter_mode
   if filters[1].signal.name or filters[2].signal.name or loader.loader_type == "output" then
     inserter_filter_mode = "whitelist"
@@ -296,7 +296,7 @@ gui.add_handlers{
 local function create_gui(player, player_table, entity)
   local preview_entity = entity.surface.find_entities_filtered{position = entity.position, type = "loader-1x1"}[1]
   local control = entity.get_or_create_control_behavior()
-  local parameters = control.parameters.parameters
+  local parameters = control.parameters
   local gui_data = gui.build(player.gui.screen, {
     {type = "frame", direction = "vertical", handlers = "il.window", save_as = "window", children = {
       {type = "flow", save_as = "titlebar_flow", children = {
