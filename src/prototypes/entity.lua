@@ -226,9 +226,10 @@ do
       collision_box = loader_base.collision_box,
       selection_box = loader_base.selection_box,
       fast_replaceable_group = "transport-belt",
+      next_upgrade = nil,
       placeable_by = {item = "ee-infinity-loader", count = 1},
       minable = {result = "ee-infinity-loader", mining_time = 0.1},
-      flags = {"player-creation", "hidden"},
+      flags = {"hidden", "not-upgradable", "player-creation"},
       item_slot_count = 2,
       sprites = constants.empty_sheet,
       activity_led_sprites = constants.empty_sheet,
@@ -279,7 +280,7 @@ do
   dummy_combinator.name = "ee-infinity-loader-dummy-combinator"
   dummy_combinator.localised_description = {"entity-description.ee-infinity-loader"}
   dummy_combinator.minable = nil
-  dummy_combinator.flags = {"player-creation"}
+  dummy_combinator.flags = {"not-upgradable", "player-creation"}
   dummy_combinator.icons = loader_base.icons
   dummy_combinator.sprites = sprites
   data:extend{dummy_combinator}
@@ -291,6 +292,7 @@ do
     {
       type = "inserter",
       name = "ee-infinity-loader-inserter",
+      localised_name = {"entity-name.ee-infinity-loader"},
       icons = loader_icon,
       stack = true,
       collision_box = {{-0.1,-0.1}, {0.1,0.1}},
@@ -315,7 +317,7 @@ do
       -- hand_open_picture = filter_inserter.hand_open_picture,
       -- hand_closed_picture = filter_inserter.hand_closed_picture,
       draw_inserter_arrow = false,
-      flags = {"hide-alt-info", "hidden"}
+      flags = {"hide-alt-info", "hidden", "not-upgradable"}
     }
   }
 end

@@ -111,6 +111,7 @@ local function create_loader(base_underground)
     suffix = string.gsub(suffix, pattern, replacement)
   end
   entity.name = "ee-infinity-loader-loader"..(suffix ~= "" and "-"..suffix or "")
+  entity.localised_name = {"entity-name.ee-infinity-loader"}
   -- other data
   entity.type = "loader-1x1"
   entity.next_upgrade = nil
@@ -121,6 +122,8 @@ local function create_loader(base_underground)
   entity.belt_distance = 0
   entity.belt_length = 0.6
   entity.container_distance = 0
+  entity.next_upgrade = nil
+  table.insert(entity.flags, "not-upgradable")
   data:extend{entity}
 end
 
