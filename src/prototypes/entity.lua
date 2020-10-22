@@ -332,8 +332,18 @@ infinity_pipe.gui_mode = "all"
 infinity_pipe.icons = infinity_pipe.icons
 infinity_pipe.minable = {mining_time = 0.5, result = "ee-infinity-pipe"}
 infinity_pipe.placeable_by = {item = "ee-infinity-pipe", count = 1}
+infinity_pipe.additional_pastable_entities = {"constant-combinator"}
 util.recursive_tint(infinity_pipe)
 data:extend{infinity_pipe}
+
+-- modify constant combinator to be pastable to infinity pipes
+local constant_combinator = data.raw["constant-combinator"]["constant-combinator"]
+local pastable = constant_combinator.additional_pastable_entities
+if pastable then
+  pastable[#pastable+1] = "ee-infinity-pipe"
+else
+  constant_combinator.additional_pastable_entities = {"ee-infinity-pipe"}
+end
 
 -- infinity wagons
 do

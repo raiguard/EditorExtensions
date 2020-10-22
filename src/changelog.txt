@@ -2,6 +2,7 @@
 Version: 1.7.1
 Date: ????
   Changes:
+    - Rewrote infinity pipe <-> constant combinator copy / paste to use prototype properties instead of runtime hacks
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.0
 Date: 2020-10-22

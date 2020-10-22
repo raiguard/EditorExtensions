@@ -255,6 +255,15 @@ event.register("ee-open-gui", function(e)
   infinity_wagon.check_and_open(player, selected)
 end)
 
+local function get_first_signal(entity)
+  local control = entity.get_or_create_control_behavior()
+  for _, signal in pairs(control.parameters.parameters) do
+    if signal.signal.type == "fluid" then
+      return signal.signal.name
+    end
+  end
+end
+
 event.on_entity_settings_pasted(function(e)
   local source = e.source
   local destination = e.destination
@@ -276,38 +285,16 @@ event.on_entity_settings_pasted(function(e)
     infinity_wagon.paste_settings(source, destination)
   elseif source_name == "ee-super-pump" and destination_name == "ee-super-pump" then
     super_pump.paste_settings(source, destination)
-  end
-end)
-
-local function get_first_signal(entity)
-  local control = entity.get_or_create_control_behavior()
-  for _, signal in pairs(control.parameters.parameters) do
-    if signal.signal.type == "fluid" then
-      return signal.signal.name
+  elseif source_name == "constant-combinator" and destination_name == "ee-infinity-pipe" then
+    local name = get_first_signal(source)
+    if name then
+      destination.set_infinity_pipe_filter{name = name}
     end
-  end
-end
-
-event.register("ee-paste-entity-settings", function(e)
-  local player = game.get_player(e.player_index)
-  local selected = player.selected
-  if selected and selected.valid then
-    local source = player.entity_copy_source
-    if source then
-      local selected_type = selected.type
-      local source_type = source.type
-      if source_type == "constant-combinator" and selected_type == "infinity-pipe" then
-        local name = get_first_signal(source)
-        if name then
-          selected.set_infinity_pipe_filter{name = name}
-        end
-      elseif source_type == "infinity-pipe" and selected_type == "constant-combinator" then
-        local filter = source.get_infinity_pipe_filter()
-        if filter then
-          local control = selected.get_or_create_control_behavior()
-          control.parameters = {parameters = {{signal = {type = "fluid", name = filter.name}, count = 1, index = 1}}}
-        end
-      end
+  elseif source_name == "ee-infinity-pipe" and destination_name == "constant-combinator" then
+    local filter = source.get_infinity_pipe_filter()
+    if filter then
+      local control = destination.get_or_create_control_behavior()
+      control.parameters = {parameters = {{signal = {type = "fluid", name = filter.name}, count = 1, index = 1}}}
     end
   end
 end)
