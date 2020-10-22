@@ -154,13 +154,18 @@ gui.add_handlers{
         local new_value = util.textfield.clamp_number_input(e.element, {0, 999.999}, gui_data.last_textfield_value)
         if new_value ~= gui_data.last_textfield_value then
           gui_data.last_textfield_value = new_value
-          gui_data.slider.slider_value = new_value
+          gui_data.slider.slider_value = math.round_to(new_value, 3)
         end
       end,
       on_gui_confirmed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
-        util.textfield.set_last_valid_value(e.element, player_table.gui.ia.last_textfield_value)
+        local final_value = math.round_to(tonumber(gui_data.last_textfield_value), 3)
+        util.textfield.set_last_valid_value(
+          e.element,
+          tostring(final_value)
+        )
+        gui_data.last_textfield_value = final_value
         set_entity_settings(
           gui_data.entity,
           constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index],

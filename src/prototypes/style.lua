@@ -48,7 +48,7 @@ styles.ee_super_pump_per_second_label = {
 
 styles.ee_slider_textfield = {
   type = "textbox_style",
-  width = 50,
+  width = 75,
   horizontal_align = "center",
   left_margin = 8
 }
@@ -56,7 +56,7 @@ styles.ee_slider_textfield = {
 styles.ee_invalid_slider_textfield = {
   type = "textbox_style",
   parent = "invalid_value_textfield",
-  width = 50,
+  width = 75,
   horizontal_align = "center",
   left_margin = 8
 }
