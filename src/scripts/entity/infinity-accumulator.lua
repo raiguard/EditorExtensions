@@ -66,7 +66,7 @@ local function calc_gui_values(buffer_size, mode)
   -- `power` is the dropdown value - how many sets of three OOMs there are, rounded down
   local power = math.floor((len - 1) / 3)
   -- slider value is the buffer size scaled to its base-three OOM
-  return math.floor(buffer_size / 10^(power * 3)), power
+  return math.floor_to(buffer_size / 10^(power * 3), 3), math.max(power, 1)
 end
 
 -- returns the entity buffer size based on the slider value and dropdown selected index
@@ -151,7 +151,7 @@ gui.add_handlers{
       on_gui_text_changed = function(e)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.ia
-        local new_value = util.textfield.clamp_number_input(e.element, {0,999}, gui_data.last_textfield_value)
+        local new_value = util.textfield.clamp_number_input(e.element, {0, 999.999}, gui_data.last_textfield_value)
         if new_value ~= gui_data.last_textfield_value then
           gui_data.last_textfield_value = new_value
           gui_data.slider.slider_value = new_value
@@ -176,11 +176,6 @@ gui.add_handlers{
           gui_data.entity,
           constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index],
           calc_buffer_size(gui_data.slider.slider_value, gui_data.slider_dropdown.selected_index)
-        )
-
-        calc_gui_values(
-          calc_buffer_size(gui_data.slider.slider_value, gui_data.slider_dropdown.selected_index),
-          constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index]
         )
       end
     },
@@ -282,6 +277,7 @@ local function create_gui(player, player_table, entity)
                 style = "ee_slider_textfield",
                 text = slider_value,
                 numeric = true,
+                allow_decimal = true,
                 lose_focus_on_confirm = true,
                 clear_and_focus_on_right_click = true,
                 handlers = "ia.slider_textfield",

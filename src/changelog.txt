@@ -3,6 +3,8 @@ Version: 1.7.0
 Date: ????
   Features:
     - Added copy / paste support between infinity pipes and constant combinators
+    - Added support for decimal values to the Infinity Accumulator GUI
+    - When in the map editor, mod_gui buttons and frames will be pushed to the right, so they remain visible
 ---------------------------------------------------------------------------------------------------
 Version: 1.6.2
 Date: 2020-10-19
