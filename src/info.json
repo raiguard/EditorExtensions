@@ -1,6 +1,6 @@
 {
   "name": "EditorExtensions",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "title": "Editor Extensions",
   "author": "raiguard",
   "contact": "Discord: Raiguard#7402",
@@ -8,7 +8,7 @@
   "factorio_version": "1.0",
   "dependencies": [
     "base >= 1.0.0",
-    "flib >= 0.4.1",
+    "flib >= 0.5.0",
     "? CursorEnhancements",
     "(?) aai-industry",
     "(?) Krastorio2",

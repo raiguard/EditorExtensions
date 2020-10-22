@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.6.3
+Version: 1.7.0
 Date: ????
   Features:
     - Added copy / paste support between infinity pipes and constant combinators
