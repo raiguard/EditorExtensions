@@ -255,15 +255,6 @@ event.register("ee-open-gui", function(e)
   infinity_wagon.check_and_open(player, selected)
 end)
 
-local function get_first_signal(entity)
-  local control = entity.get_or_create_control_behavior()
-  for _, signal in pairs(control.parameters.parameters) do
-    if signal.signal.type == "fluid" then
-      return signal.signal.name
-    end
-  end
-end
-
 event.on_entity_settings_pasted(function(e)
   local source = e.source
   local destination = e.destination
@@ -286,9 +277,11 @@ event.on_entity_settings_pasted(function(e)
   elseif source_name == "ee-super-pump" and destination_name == "ee-super-pump" then
     super_pump.paste_settings(source, destination)
   elseif source_name == "constant-combinator" and destination_name == "ee-infinity-pipe" then
-    local name = get_first_signal(source)
-    if name then
-      destination.set_infinity_pipe_filter{name = name}
+    local control = source.get_or_create_control_behavior()
+    for _, signal in pairs(control.parameters.parameters) do
+      if signal.signal.type == "fluid" then
+        destination.set_infinity_pipe_filter{name = signal.signal.name}
+      end
     end
   elseif source_name == "ee-infinity-pipe" and destination_name == "constant-combinator" then
     local filter = source.get_infinity_pipe_filter()
