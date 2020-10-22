@@ -169,7 +169,7 @@ gui.add_handlers{
         set_entity_settings(
           gui_data.entity,
           constants.ia.index_to_mode[gui_data.mode_dropdown.selected_index],
-          calc_buffer_size(gui_data.slider.slider_value, gui_data.slider_dropdown.selected_index)
+          calc_buffer_size(final_value, gui_data.slider_dropdown.selected_index)
         )
       end
     },
