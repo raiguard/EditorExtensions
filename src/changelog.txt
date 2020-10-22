@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.0
-Date: ????
+Date: 2020-10-22
   Features:
     - Added copy / paste support between infinity pipes and constant combinators
     - Added support for decimal values to the Infinity Accumulator GUI
