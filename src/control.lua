@@ -439,7 +439,7 @@ event.on_player_toggled_map_editor(function(e)
     player_table.flags.map_editor_toggled = true
     local default_filters = player_table.settings.default_inventory_filters
     if default_filters ~= "" then
-      inventory.import_inventory_filters(player, default_filters)
+      inventory.import_filters(player, default_filters)
     end
   end
 
