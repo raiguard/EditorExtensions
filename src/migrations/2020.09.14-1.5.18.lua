@@ -1,1 +1,1 @@
-require("migrations.scripts.update-scenario")
+require("scripts.update-scenario")
