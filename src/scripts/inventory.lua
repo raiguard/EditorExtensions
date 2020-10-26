@@ -122,7 +122,7 @@ local function export_filters(player)
   )
 end
 
-local function import_filters(player, string)
+function inventory.import_filters(player, string)
   local decoded_string = game.decode_string(string)
   if
     decoded_string
@@ -245,7 +245,7 @@ gui.add_handlers{
         local player = game.get_player(e.player_index)
         local player_table = global.players[e.player_index]
         local gui_data = player_table.gui.inventory_filters_string
-        if import_filters(player, gui_data.textbox.text) then
+        if inventory.import_filters(player, gui_data.textbox.text) then
           gui.handlers.inventory_filters_string.back_button.on_gui_click(e, player_table)
         else
           player.print{"ee-message.invalid-inventory-filters-string"}
