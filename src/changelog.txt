@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.2
-Date: ????
+Date: 2020-10-30
   Changes:
     - Removed the toggle-inventory-sync command, it is redundant due to the inventory sync per-player setting
   Bugfixes:
