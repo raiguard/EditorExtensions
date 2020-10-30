@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.2
 Date: ????
+  Changes:
+    - Removed the toggle-inventory-sync command, it is redundant due to the inventory sync per-player setting
   Bugfixes:
     - Fixed a crash when entering a mini-tutorial
 ---------------------------------------------------------------------------------------------------

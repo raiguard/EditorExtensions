@@ -87,21 +87,6 @@ function inventory.get_from_sync_inventories(player_table, player)
   player_table.sync_data = nil
 end
 
-function inventory.toggle_sync(player, player_table, enable)
-  if enable == nil then
-    enable = player_table.settings.inventory_sync and player.cheat_mode
-  end
-  if enable ~= player_table.flags.inventory_sync_enabled then
-    if enable then
-      player_table.flags.inventory_sync_enabled = true
-      player.print{"ee-message.inventory-sync-enabled"}
-    else
-      player_table.flags.inventory_sync_enabled = false
-      player.print{"ee-message.inventory-sync-disabled"}
-    end
-  end
-end
-
 -- -----------------------------------------------------------------------------
 -- INFINITY INVENTORY FILTERS
 

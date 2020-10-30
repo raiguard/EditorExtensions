@@ -33,8 +33,6 @@ commands.add_command("EditorExtensions", {"ee-message.command-help"}, function(e
     else
       player.print{"ee-message.cheat-mode-already-disabled"}
     end
-  elseif e.parameter == "toggle-inventory-sync" then
-    inventory.toggle_sync(player, player_table, not player_table.flags.inventory_sync_enabled)
   else
     player.print{"ee-message.unknown-command"}
   end
@@ -353,12 +351,9 @@ event.on_player_created(function(e)
   local player_table = global.players[e.player_index]
 
   if player.cheat_mode then
-    -- enable recipes and inventory sync
+    -- enable recipes
     cheat_mode.enable_recipes(player)
-    if player_table.settings.inventory_sync then
-      inventory.toggle_sync(player, player_table)
-    end
-    -- give them the loadout if they are in EE's scenario
+    -- give them the loadout if they are in our scenario
     if compatibility.check_for_testing_scenario() then
       cheat_mode.set_loadout(player)
     end
@@ -411,7 +406,7 @@ end)
 event.on_pre_player_toggled_map_editor(function(e)
   local player_table = global.players[e.player_index]
   if not player_table then return end
-  if player_table.flags.inventory_sync_enabled then
+  if player_table.settings.inventory_sync_enabled then
     inventory.create_sync_inventories(player_table, game.get_player(e.player_index))
   end
 end)
@@ -447,7 +442,7 @@ event.on_player_toggled_map_editor(function(e)
   inventory.close_guis(player_table, e.player_index)
 
   -- finish inventory sync
-  if player_table.flags.inventory_sync_enabled and player_table.sync_data then
+  if player_table.settings.inventory_sync_enabled and player_table.sync_data then
     inventory.get_from_sync_inventories(player_table, player)
   end
 
@@ -496,9 +491,6 @@ event.on_runtime_mod_setting_changed(function(e)
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     player_data.update_settings(player, player_table)
-    if e.setting == "ee-inventory-sync" then
-      inventory.toggle_sync(player, player_table)
-    end
   end
 end)
 

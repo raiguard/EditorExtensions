@@ -99,9 +99,6 @@ function cheat_mode.disable(player, player_table)
   -- remove recipes
   cheat_mode.disable_recipes(player)
 
-  -- disable inventory sync
-  inventory.toggle_sync(player, player_table)
-
   -- reset bonuses or set a flag to do so
   if player.controller_type == defines.controllers.character then
     cheat_mode.update_character_cheats(player)

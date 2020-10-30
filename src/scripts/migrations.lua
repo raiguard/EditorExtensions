@@ -123,5 +123,11 @@ return {
         player.gui.left.style.left_margin = constants.editor_gui_width
       end
     end
+  end,
+  ["1.7.2"] = function()
+    for _, player_table in pairs(global.players) do
+      -- remove inventory sync flag - there is a mod setting for it!
+      player_table.flags.inventory_sync_enabled = nil
+    end
   end
 }

@@ -159,6 +159,14 @@ constants.infinity_wagon_names = {
 
 constants.editor_gui_width = 474
 
+-- SETTINGS
+
+constants.setting_names = {
+  ["ee-infinity-pipe-crafter-snapping"] = "infinity_pipe_crafter_snapping",
+  ["ee-default-inventory-filters"] = "default_inventory_filters",
+  ["ee-inventory-sync"] = "inventory_sync_enabled"
+}
+
 -- SUPER PUMP
 
 constants.sp_slider_to_temperature = {
