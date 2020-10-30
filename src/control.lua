@@ -55,7 +55,6 @@ event.on_init(function()
     -- enable recipes for cheat mode
     if player.cheat_mode then
       cheat_mode.enable_recipes(player)
-      inventory.toggle_sync(player, global.players[i])
     end
   end
 
@@ -108,28 +107,10 @@ event.on_player_cheat_mode_enabled(function(e)
 
   -- space exploration - if they are in god mode, they are in the satellite view, so don't unlock recipes
   if compatibility.check_for_space_exploration() and player.controller_type == defines.controllers.god then
-    player_table.flags.in_satellite_view = true
     return
   end
 
   cheat_mode.enable_recipes(player)
-  if player_table.settings.inventory_sync then
-    inventory.toggle_sync(player, player_table)
-  end
-end)
-
-event.on_player_cheat_mode_disabled(function(e)
-  local player_table = global.players[e.player_index]
-
-  -- space exploration - don't do anything if they're returning from the satellite view
-  if player_table.flags.in_satellite_view then
-    player_table.flags.in_satellite_view = false
-    return
-  end
-
-  if player_table.settings.inventory_sync then
-    inventory.toggle_sync(game.get_player(e.player_index), player_table, false)
-  end
 end)
 
 event.on_console_command(function(e)
@@ -348,7 +329,6 @@ event.on_player_created(function(e)
   player_data.init(e.player_index)
 
   local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
 
   if player.cheat_mode then
     -- enable recipes

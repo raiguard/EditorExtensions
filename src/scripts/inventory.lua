@@ -119,7 +119,7 @@ function inventory.import_filters(player, string)
     local input = game.json_to_table(json)
     -- run migrations
     migration.run(version, filters_table_migrations, nil, input)
-    -- sanitise the filters to only include currently existing prototypes
+    -- sanitize the filters to only include currently existing prototypes
     local item_prototypes = game.item_prototypes
     local output = {}
     local output_index = 0

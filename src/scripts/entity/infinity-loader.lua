@@ -16,7 +16,7 @@ local function get_belt_type(entity)
   -- check to see if the loader prototype exists
   if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-"..type] then
     -- print warning message
-    game.print{"", "EDIITOR EXTENSIONS: ", {"ee-message.unable-to-identify-belt"}}
+    game.print{"", "EDITOR EXTENSIONS: ", {"ee-message.unable-to-identify-belt"}}
     game.print("entity_name = \""..entity.name.."\", parse_result = \""..type.."\"")
     -- set to default type
     type = "express"
@@ -228,16 +228,16 @@ local function check_belt_neighbors(entity, func, type_agnostic)
 end
 
 -- apply the function to each entity on neighboring tiles, returning entities that the callback matched
-local function check_tile_neighbors(entity, func, eight_way, directon_agnostic)
+local function check_tile_neighbors(entity, func, eight_way, direction_agnostic)
   local matched_entities = {}
   for i= 0, 7, eight_way and 1 or 2 do
-    if not directon_agnostic then matched_entities[i] = {} end
+    if not direction_agnostic then matched_entities[i] = {} end
     local entities = entity.surface.find_entities(
       util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1)))
     )
     for _, e in ipairs(entities) do
       if func(e) then
-        table.insert(directon_agnostic and matched_entities or matched_entities[i], e)
+        table.insert(direction_agnostic and matched_entities or matched_entities[i], e)
       end
     end
   end
