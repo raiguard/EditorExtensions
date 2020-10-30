@@ -24,16 +24,6 @@
     {
       "type": "factoriomod",
       "request": "launch",
-      "name": "Debug (src)",
-      "factorioPath": "${env:factorioSourceRelease}",
-      "hookMode": "debug",
-      "hookControl": ["EditorExtensions", "Sandbox"],
-      "hookData": false,
-      "hookSettings": false
-    },
-    {
-      "type": "factoriomod",
-      "request": "launch",
       "name": "Profile",
       "factorioPath": "${env:factorioTestbench1}",
       "hookMode": "profile",
