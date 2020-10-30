@@ -91,6 +91,17 @@ function cheat_mode.update_character_cheats(player)
   end
 end
 
+function cheat_mode.enable(player, set_loadout)
+  -- recipes will be enabled automatically
+  player.cheat_mode = true
+
+  cheat_mode.update_character_cheats(player)
+
+  if set_loadout then
+    cheat_mode.set_loadout(player)
+  end
+end
+
 function cheat_mode.disable(player, player_table)
   -- disable cheat mode
   player.cheat_mode = false

@@ -10,6 +10,7 @@ local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
 local on_tick = require("scripts.on-tick")
 local player_data = require("scripts.player-data")
+local util = require("scripts.util")
 
 require("scripts.common-gui")
 
@@ -24,19 +25,27 @@ local super_pump = require("scripts.entity.super-pump")
 -- -----------------------------------------------------------------------------
 -- COMMANDS
 
-commands.add_command("EditorExtensions", {"ee-message.command-help"}, function(e)
-  local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
-  if e.parameter == "disable-cheat-mode" then
-    if player.cheat_mode then
-      cheat_mode.disable(player, player_table)
-    else
-      player.print{"ee-message.cheat-mode-already-disabled"}
+commands.add_command(
+  "cheatmode",
+  {"command-help.cheatmode"},
+  function(e)
+    local parameter = e.parameter
+    local player = game.get_player(e.player_index)
+    if not parameter then
+      util.freeze_time_on_all_surfaces(player)
+      cheat_mode.enable(player)
+    elseif parameter == "all" then
+      util.freeze_time_on_all_surfaces(player)
+      cheat_mode.enable(player, true)
+    elseif parameter == "off" then
+      if player.cheat_mode then
+        cheat_mode.disable(player, global.players[e.player_index])
+      else
+        player.print{"ee-message.cheat-mode-already-disabled"}
+      end
     end
-  else
-    player.print{"ee-message.unknown-command"}
   end
-end)
+)
 
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
@@ -111,18 +120,6 @@ event.on_player_cheat_mode_enabled(function(e)
   end
 
   cheat_mode.enable_recipes(player)
-end)
-
-event.on_console_command(function(e)
-  if e.command == "cheat" then
-    local player = game.get_player(e.player_index)
-    if player.cheat_mode then
-      game.print{"ee-message.time-frozen"}
-      if e.parameters == "all" then
-        cheat_mode.set_loadout(player)
-      end
-    end
-  end
 end)
 
 -- ENTITY
@@ -331,12 +328,8 @@ event.on_player_created(function(e)
   local player = game.get_player(e.player_index)
 
   if player.cheat_mode then
-    -- enable recipes
     cheat_mode.enable_recipes(player)
-    -- give them the loadout if they are in our scenario
-    if compatibility.check_for_testing_scenario() then
-      cheat_mode.set_loadout(player)
-    end
+    cheat_mode.enable(player, compatibility.check_for_testing_scenario())
   end
 end)
 
