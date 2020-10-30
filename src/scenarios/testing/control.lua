@@ -66,7 +66,6 @@ end)
 
 event.on_player_created(function(e)
   game.get_player(e.player_index).cheat_mode = true
-  silo_script.on_player_created(e)
 end)
 
 event.on_gui_click(silo_script.on_gui_click)

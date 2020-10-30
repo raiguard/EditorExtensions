@@ -276,7 +276,7 @@ event.on_entity_settings_pasted(function(e)
     super_pump.paste_settings(source, destination)
   elseif source_name == "constant-combinator" and destination_name == "ee-infinity-pipe" then
     local control = source.get_or_create_control_behavior()
-    for _, signal in pairs(control.parameters.parameters) do
+    for _, signal in pairs(control.parameters) do
       if signal.signal.type == "fluid" then
         destination.set_infinity_pipe_filter{name = signal.signal.name}
       end
