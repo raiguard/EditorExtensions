@@ -1,7 +1,6 @@
 local cheat_mode = {}
 
 local constants = require("scripts.constants")
-local inventory = require("scripts.inventory")
 
 function cheat_mode.enable_recipes(player, skip_message)
   local force = player.force

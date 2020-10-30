@@ -24,13 +24,13 @@ return {
   end,
   ["1.2.0"] = function()
     local player_tables = global.players
-    for i, player in pairs(game.players) do
+    for i in pairs(game.players) do
       -- set map editor toggled flag to true
       player_tables[i].flags.map_editor_toggled = true
     end
   end,
   ["1.3.0"] = function()
-    -- enable infintiy heat pipe recipe
+    -- enable infinity heat pipe recipe
     for _, force in pairs(game.forces) do
       local recipes = force.recipes
       if recipes["ee-infinity-loader"].enabled then
@@ -128,6 +128,12 @@ return {
     for _, player_table in pairs(global.players) do
       -- remove inventory sync flag - there is a mod setting for it!
       player_table.flags.inventory_sync_enabled = nil
+    end
+  end,
+  ["1.7.3"] = function()
+    for _, player_table in pairs(global.players) do
+      -- no longer needs to be kept track of
+      player_table.flags.in_satellite_view = nil
     end
   end
 }

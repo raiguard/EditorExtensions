@@ -1,7 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.3
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed various crashes caused by the removal of the toggle-inventory-sync command
+    - Fixed typo in infinity loader error message
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.2
 Date: 2020-10-30
