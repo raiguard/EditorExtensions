@@ -3,6 +3,12 @@ Version: 1.8.0
 Date: ????
   Changes:
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.3
+Date: 2020-10-30
+  Bugfixes:
+    - Fixed various crashes caused by the removal of the toggle-inventory-sync command
+    - Fixed typo in infinity loader error message
+---------------------------------------------------------------------------------------------------
 Version: 1.7.2
 Date: 2020-10-30
   Changes:

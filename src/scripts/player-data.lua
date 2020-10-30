@@ -8,7 +8,6 @@ function player_data.init(index)
   local player_table = {
     flags = {
       update_character_cheats_when_possible = false,
-      in_satellite_view = false, -- space exploration compatibility
       map_editor_toggled = false,
       opening_default_gui = false -- currently for super pump, but can be used generically
     },
