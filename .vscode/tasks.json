@@ -10,6 +10,19 @@
         "c:/Files/Development/Factorio/Mods/EditorExtensions/src/scenarios/testing/blueprint.zip"
       ],
       "problemMatcher": []
+    },
+    {
+      "type": "factorio",
+      "label": "Set minimal mods",
+      "command": "adjustMods",
+      // unfortunately tasks don't support environment variables... >:(
+      "modsPath": "c:/Files/Development/Factorio/Testbenches/1/mods",
+      "adjustMods": {
+        "EditorExtensions": true,
+        "flib": true,
+        "Sandbox": true
+      },
+      "disableExtraMods": true
     }
   ]
 }
