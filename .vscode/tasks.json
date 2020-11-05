@@ -6,7 +6,7 @@
       "type": "shell",
       "command": "cp",
       "args": [
-        "c:/Files/Development/Factorio/Testbenches/1/scenarios/testing/blueprint.zip",
+        "c:/Files/Development/Factorio/Factorio/scenarios/testing/blueprint.zip",
         "c:/Files/Development/Factorio/Mods/EditorExtensions/src/scenarios/testing/blueprint.zip"
       ],
       "problemMatcher": []
