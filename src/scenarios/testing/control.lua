@@ -6,8 +6,6 @@ local event = require("__flib__.event")
 local migration = require("__flib__.migration")
 
 local silo_script = require("__core__.lualib.silo-script")
-silo_script.add_remote_interface()
-silo_script.add_commands()
 
 -- -----------------------------------------------------------------------------
 -- UTILITIES
