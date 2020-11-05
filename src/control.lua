@@ -246,7 +246,7 @@ event.on_entity_settings_pasted(function(e)
     and source_name ~= destination_name
   then
     infinity_accumulator.paste_settings(source, destination)
-  elseif destination_name == "ee-infinity-loader-logic-combinator" then
+  elseif source.type == "constant-combinator" and destination_name == "ee-infinity-loader-logic-combinator" then
     infinity_loader.paste_settings(source, destination)
   elseif
     source_name == "ee-infinity-cargo-wagon" and destination_name == "ee-infinity-cargo-wagon"

@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.4
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed a crash when copy / pasting to an infinity loader from anything but a constant combinator
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.3
 Date: 2020-10-30
