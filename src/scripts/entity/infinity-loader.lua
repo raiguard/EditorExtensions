@@ -547,7 +547,7 @@ function infinity_loader.paste_settings(source, destination)
   local source_control_behavior = source.get_control_behavior()
   if source_control_behavior then
     -- sanitize filters to remove any non-items
-    local parameters = {parameters = {}}
+    local parameters = {}
     local items = 0
     for _, parameter in pairs(table.deepcopy(source_control_behavior.parameters)) do
       if parameter.signal and parameter.signal.type == "item" and items < 2 then
