@@ -1,6 +1,6 @@
 local infinity_loader = {}
 
-local gui = require("__flib__.gui")
+local gui = require("__flib__.gui-beta")
 local util = require("scripts.util")
 
 local constants = require("scripts.constants")
@@ -247,48 +247,35 @@ end
 -- -----------------------------------------------------------------------------
 -- GUI
 
-gui.add_templates{
-  il_filter_button = {type = "choose-elem-button", style = "ee_il_filter_button", elem_type = "item"}
-}
+local function close_gui(e)
+  local player_table = global.players[e.player_index]
+  local gui_data = player_table.gui.il
+  gui_data.refs.window.destroy()
+  player_table.gui.il = nil
+  game.get_player(e.player_index).play_sound{path = "entity-close/express-loader"}
+end
+
+local function update_enabled(e)
+  local entity = global.players[e.player_index].gui.il.entity
+  entity.get_or_create_control_behavior().enabled = e.element.switch_state == "left"
+  update_filters(entity)
+end
+
+local function update_filter(e)
+  local index = gui.get_tags(e.element).filter_index
+  local entity = global.players[e.player_index].gui.il.entity
+  local control = entity.get_or_create_control_behavior()
+  control.set_signal(
+    index,
+    e.element.elem_value and {signal = {type = "item", name = e.element.elem_value}, count = 1} or nil
+  )
+  update_filters(entity)
+end
 
 gui.add_handlers{
-  il = {
-    close_button = {
-      on_gui_click = function(e)
-        gui.handlers.il.window.on_gui_closed(e)
-      end
-    },
-    state_switch = {
-      on_gui_switch_state_changed = function(e)
-        local entity = global.players[e.player_index].gui.il.entity
-        entity.get_or_create_control_behavior().enabled = e.element.switch_state == "left"
-        update_filters(entity)
-      end
-    },
-    filter_button = {
-      on_gui_elem_changed = function(e)
-        local name = e.element.name
-        local index = tonumber(string.sub(name, #name, #name))
-        local entity = global.players[e.player_index].gui.il.entity
-        local control = entity.get_or_create_control_behavior()
-        control.set_signal(
-          index,
-          e.element.elem_value and {signal = {type = "item", name = e.element.elem_value}, count = 1} or nil
-        )
-        update_filters(entity)
-      end
-    },
-    window = {
-      on_gui_closed = function(e)
-        local player_table = global.players[e.player_index]
-        local gui_data = player_table.gui.il
-        gui.update_filters("il", e.player_index, nil, "remove")
-        gui_data.window.destroy()
-        player_table.gui.il = nil
-        game.get_player(e.player_index).play_sound{path = "entity-close/express-loader"}
-      end
-    }
-  }
+  il_close = close_gui,
+  il_update_enabled = update_enabled,
+  il_update_filter = update_filter
 }
 
 -- TODO: update GUI state when any other players change something
@@ -297,72 +284,71 @@ local function create_gui(player, player_table, entity)
   local preview_entity = entity.surface.find_entities_filtered{position = entity.position, type = "loader-1x1"}[1]
   local control = entity.get_or_create_control_behavior()
   local parameters = control.parameters
-  local gui_data = gui.build(player.gui.screen, {
-    {type = "frame", direction = "vertical", handlers = "il.window", save_as = "window", children = {
-      {type = "flow", save_as = "titlebar_flow", children = {
+  local refs = gui.build(player.gui.screen, {
+    {type = "frame", direction = "vertical", handlers = {on_closed = "il_close"}, ref = {"window"}, children = {
+      {type = "flow", ref = {"titlebar_flow"}, children = {
         {
           type = "label",
           style = "frame_title",
           caption = {"entity-name.ee-infinity-loader"},
-          elem_mods = {ignored_by_interaction = true}
+          ignored_by_interaction = true
         },
-        {template = "titlebar_drag_handle"},
-        {template = "close_button", handlers = "il.close_button"}
+        {type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true},
+        util.close_button{on_click = "il_close"}
       }},
-      {type = "frame", style = "ee_inside_shallow_frame_for_entity", children = {
+      {type = "frame", style = "entity_frame", direction = "vertical", children = {
         {type = "frame", style = "deep_frame_in_shallow_frame", children = {
-          {type = "entity-preview", style_mods = {width = 85, height = 85}, elem_mods = {entity = preview_entity}}
+          {type = "entity-preview", style = "wide_entity_button", elem_mods = {entity = preview_entity}}
         }},
-        {type = "flow", direction = "vertical", children = {
-          {template = "vertically_centered_flow", children = {
-            {type = "label", caption = {"ee-gui.state"}},
-            {template = "pushers.horizontal"},
+        {type = "flow", style_mods = {vertical_align = "center"}, children = {
+          {type = "label", caption = {"ee-gui.state"}},
+          {type = "empty-widget", style = "flib_horizontal_pusher"},
+          {
+            type = "switch",
+            left_label_caption = {"gui-constant.on"},
+            right_label_caption = {"gui-constant.off"},
+            switch_state = control.enabled and "left" or "right",
+            handlers = {on_switch_state_changed = "il_update_enabled"}
+          }
+        }},
+        {type = "line", style_mods = {horizontally_stretchable = true}, direction = "horizontal"},
+        {type = "flow", style_mods = {vertical_align = "center"}, children = {
+          {
+            type = "label",
+            caption = {"", {"ee-gui.filters"}, " [img=info]"},
+            tooltip = {"ee-gui.il-filters-description"}
+          },
+          {type = "empty-widget", style = "flib_horizontal_pusher"},
+          {type = "frame", style = "slot_button_deep_frame", children = {
             {
-              type = "switch",
-              left_label_caption = {"gui-constant.on"},
-              right_label_caption = {"gui-constant.off"},
-              switch_state = control.enabled and "left" or "right",
-              handlers = "il.state_switch"
-            }
-          }},
-          {template = "pushers.vertical"},
-          {template = "vertically_centered_flow", children = {
-            {
-              type = "label",
-              caption = {"", {"ee-gui.filters"}, " [img=info]"},
-              tooltip = {"ee-gui.il-filters-description"}
+              type = "choose-elem-button",
+              elem_type = "item",
+              item = parameters[1].signal.name,
+              tags = {filter_index = 1},
+              handlers = {on_elem_changed = "il_update_filter"}
             },
-            {type = "empty-widget", style_mods = {width = 20}},
-            {type = "frame", style = "slot_button_deep_frame", children = {
-              {
-                template = "il_filter_button",
-                name = "ee_il_filter_button_1",
-                item = parameters[1].signal.name,
-                handlers = "il.filter_button",
-                save_as = "filter_button_1"
-              },
-              {
-                template = "il_filter_button",
-                name = "ee_il_filter_button_2",
-                item = parameters[2].signal.name,
-                handlers = "il.filter_button",
-                save_as = "filter_button_2"
-              }
-            }}
+            {
+              type = "choose-elem-button",
+              elem_type = "item",
+              item = parameters[2].signal.name,
+              tags = {filter_index = 2},
+              handlers = {on_elem_changed = "il_update_filter"}
+            }
           }}
         }}
       }}
     }}
   })
 
-  gui_data.window.force_auto_center()
-  gui_data.titlebar_flow.drag_target = gui_data.window
+  refs.window.force_auto_center()
+  refs.titlebar_flow.drag_target = refs.window
 
-  player.opened = gui_data.window
+  player.opened = refs.window
 
-  gui_data.entity = entity
-
-  player_table.gui.il = gui_data
+  player_table.gui.il = {
+    entity = entity,
+    refs = refs
+  }
 end
 
 -- -----------------------------------------------------------------------------
