@@ -11,8 +11,6 @@ local migrations = require("scripts.migrations")
 local on_tick = require("scripts.on-tick")
 local player_data = require("scripts.player-data")
 
-require("scripts.common-gui")
-
 local aggregate_chest = require("scripts.entity.aggregate-chest")
 local infinity_accumulator = require("scripts.entity.infinity-accumulator")
 local infinity_loader = require("scripts.entity.infinity-loader")
@@ -284,7 +282,7 @@ event.on_gui_opened(function(e)
     elseif e.gui_type and e.gui_type == defines.gui_type.controller then
       local player = game.get_player(e.player_index)
       if player.controller_type == defines.controllers.editor then
-        inventory.create_filters_buttons(player)
+        inventory.show_filters_buttons(player)
       end
     end
   end
@@ -293,7 +291,7 @@ end)
 event.on_gui_closed(function(e)
   if not gui.dispatch(e) then
     if e.gui_type and e.gui_type == 3 then
-      inventory.close_guis(global.players[e.player_index], e.player_index)
+      inventory.close_guis(e.player_index)
     end
   end
 end)
@@ -411,7 +409,9 @@ event.on_player_toggled_map_editor(function(e)
   end
 
   -- close inventory filters GUIs if they're open
-  inventory.close_guis(player_table, e.player_index)
+  if not to_state then
+    inventory.close_guis(e.player_index)
+  end
 
   -- finish inventory sync
   if player_table.settings.inventory_sync_enabled and player_table.sync_data then
@@ -438,20 +438,6 @@ event.on_player_toggled_map_editor(function(e)
     player.gui.left.style.left_margin = 0
   end
 end)
-
-event.register(
-  {
-    defines.events.on_player_display_resolution_changed,
-    defines.events.on_player_display_scale_changed
-  },
-  function(e)
-    local player = game.get_player(e.player_index)
-    local gui_data = global.players[e.player_index].gui.inventory_filters_buttons
-    if gui_data then
-      inventory.set_filters_gui_location(player, gui_data)
-    end
-  end
-)
 
 -- SETTINGS
 

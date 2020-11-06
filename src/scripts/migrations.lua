@@ -1,5 +1,3 @@
-local gui = require("__flib__.gui")
-
 local cheat_mode = require("scripts.cheat-mode")
 local constants = require("scripts.constants")
 
@@ -60,7 +58,8 @@ return {
     -- remove old lualib info
     global.__lualib = nil
     -- initialize GUI module
-    gui.init()
+    -- ! defunct as of v1.8.0
+    -- gui.init()
     -- destroy any infinity combinator GUIs
     for _, player_table in pairs(global.players) do
       player_table.sync_inventories = nil

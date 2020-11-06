@@ -1,11 +1,8 @@
 local inventory = {}
 
-local gui = require("__flib__.gui")
+local gui = require("__flib__.gui-beta")
 local migration = require("__flib__.migration")
 local reverse_defines = require("__flib__.reverse-defines")
-
-local math = math
-local string = string
 
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
@@ -93,20 +90,6 @@ end
 local filters_table_version = 0
 local filters_table_migrations = {}
 
-local function export_filters(player)
-  local filters = player.infinity_inventory_filters
-  local output = {
-    filters = filters,
-    remove_unfiltered_items = player.remove_unfiltered_items
-  }
-  return game.encode_string(
-    "EditorExtensions-inventory_filters-"
-    ..filters_table_version
-    .."-"
-    ..game.table_to_json(output)
-  )
-end
-
 function inventory.import_filters(player, string)
   local decoded_string = game.decode_string(string)
   if
@@ -138,171 +121,197 @@ function inventory.import_filters(player, string)
   return false
 end
 
-gui.add_handlers{
-  inventory_filters_buttons = {
-    import_export_button = {
-      on_gui_click = function(e)
-        local player = game.get_player(e.player_index)
-        local player_table = global.players[e.player_index]
-        local existing_data = player_table.gui.inventory_filters_string
-        local mode = (string.sub(e.element.sprite, 4, 9) == "export") and "export" or "import"
-
-        if existing_data then
-          gui.update_filters("inventory_filters_string", e.player_index, nil, "remove")
-          existing_data.window.destroy()
-          player_table.gui.inventory_filters_string = nil
-        end
-
-        local gui_data = gui.build(player.gui.screen, {
-          {type = "frame", direction = "vertical", save_as = "window", children = {
-            {type = "flow", children = {
-              {type = "label", style = "frame_title", caption = {"ee-gui."..mode.."-inventory-filters"}},
-              {
-                type = "empty-widget",
-                style = "draggable_space_header",
-                style_mods = {height = 24, horizontally_stretchable = true},
-                save_as = "drag_handle"
-              }
-            }},
-            {
-              type = "text-box",
-              style_mods = {width = 400, height = 300},
-              clear_and_focus_on_right_click = true,
-              elem_mods = {word_wrap = true},
-              handlers = (mode == "import" and "inventory_filters_string.textbox" or nil),
-              save_as = "textbox"
-            },
-            {type = "flow", style_mods = {top_margin = 8}, direction = "horizontal", children = {
-              {
-                type = "button",
-                style = "back_button",
-                caption = {"gui.cancel"},
-                handlers = "inventory_filters_string.back_button"
-              },
-              {
-                type = "empty-widget",
-                style = "draggable_space",
-                style_mods = {height = 32, horizontally_stretchable = true},
-                save_as = "lower_drag_handle"
-              },
-              {type = "condition", condition = (mode == "import"), children = {
-                {
-                  type = "button",
-                  style = "confirm_button",
-                  caption = {"gui.confirm"},
-                  elem_mods = {enabled = false},
-                  handlers = "inventory_filters_string.confirm_button",
-                  save_as = "confirm_button"
-                }
-              }}
-            }}
-          }}
-        })
-
-        gui_data.drag_handle.drag_target = gui_data.window
-        gui_data.lower_drag_handle.drag_target = gui_data.window
-        gui_data.window.force_auto_center()
-        gui_data.textbox.focus()
-
-        gui_data.mode = mode
-
-        if mode == "export" then
-          gui_data.lower_drag_handle.style.right_margin = 0
-          gui_data.textbox.text = export_filters(player)
-          gui_data.textbox.select_all()
-        end
-
-        player_table.gui.inventory_filters_string = gui_data
-      end
-    }
-  },
-  inventory_filters_string = {
-    back_button = {
-      on_gui_click = function(e, player_table)
-        player_table = player_table or global.players[e.player_index]
-        gui.update_filters("inventory_filters_string", e.player_index, nil, "remove")
-        player_table.gui.inventory_filters_string.window.destroy()
-        player_table.gui.inventory_filters_string = nil
-      end
-    },
-    confirm_button = {
-      on_gui_click = function(e)
-        local player = game.get_player(e.player_index)
-        local player_table = global.players[e.player_index]
-        local gui_data = player_table.gui.inventory_filters_string
-        if inventory.import_filters(player, gui_data.textbox.text) then
-          gui.handlers.inventory_filters_string.back_button.on_gui_click(e, player_table)
-        else
-          player.print{"ee-message.invalid-inventory-filters-string"}
-        end
-      end
-    },
-    textbox = {
-      on_gui_text_changed = function(e)
-        local gui_data = global.players[e.player_index].gui.inventory_filters_string
-        if gui_data.mode == "import" then
-          if e.element.text == "" then
-            gui_data.confirm_button.enabled = false
-          else
-            gui_data.confirm_button.enabled = true
-          end
-        end
-      end
-    }
+local function export_filters(player)
+  local filters = player.infinity_inventory_filters
+  local output = {
+    filters = filters,
+    remove_unfiltered_items = player.remove_unfiltered_items
   }
-}
+  return game.encode_string(
+    "EditorExtensions-inventory_filters-"
+    ..filters_table_version
+    .."-"
+    ..game.table_to_json(output)
+  )
+end
 
-function inventory.close_guis(player_table, player_index)
-  local buttons_gui_data = player_table.gui.inventory_filters_buttons
-  if buttons_gui_data then
-    gui.update_filters("inventory_filters_buttons", player_index, nil, "remove")
-    buttons_gui_data.window.destroy()
-    player_table.gui.inventory_filters_buttons = nil
-  end
-  local string_gui_data = player_table.gui.inventory_filters_string
-  if string_gui_data then
-    gui.update_filters("inventory_filters_string", player_index, nil, "remove")
-    string_gui_data.window.destroy()
-    player_table.gui.inventory_filters_string = nil
+-- GUI
+
+-- string GUI
+
+local function close_string_gui(e)
+  local player_table = global.players[e.player_index]
+  local refs = player_table.gui.inventory_filters_string
+  refs.window.destroy()
+  player_table.gui.inventory_filters_string = nil
+end
+
+local function update_confirm_button_enabled(e)
+  local player_table = global.players[e.player_index]
+  local refs = player_table.gui.inventory_filters_string
+
+  if #e.element.text > 0 then
+    refs.confirm_button.enabled = true
+  else
+    refs.confirm_button.enabled = false
   end
 end
 
-function inventory.create_filters_buttons(player)
-  -- create buttons GUI
+local function import_filters(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  local refs = player_table.gui.inventory_filters_string
+
+  local string = refs.textbox.text
+
+  if inventory.import_filters(player, string) then
+    close_string_gui(e)
+    player.create_local_flying_text{
+      text = {"ee-message.imported-infinity-filters"},
+      create_at_cursor = true
+    }
+  else
+    player.create_local_flying_text{
+      text = {"ee-message.invalid-infinity-filters-string"},
+      create_at_cursor = true
+    }
+    player.play_sound{path = "utility/cannot_build", volume_modifier = 0.75}
+  end
+end
+
+local function open_string_gui(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+
+  -- check for existing filters GUI
+  local gui_data = player_table.gui.inventory_filters_string
+
+  if gui_data then
+    close_string_gui(e)
+  end
+
+  local mode = gui.get_tags(e.element).mode
+
+  -- create GUI
+  local refs = gui.build(player.gui.screen, {
+    {
+      type = "frame",
+      direction = "vertical",
+      ref = {"window"},
+      children = {
+        {type = "flow", ref = {"titlebar_flow"}, children = {
+          {
+            type = "label",
+            style = "frame_title",
+            caption = {"ee-gui."..mode.."-infinity-filters"},
+            ignored_by_interaction = true
+          },
+          {type = "empty-widget", style = "flib_dialog_titlebar_drag_handle", ignored_by_interaction = true}
+        }},
+        {type = "frame", style = "inside_shallow_frame_with_padding", children = {
+          {
+            type = "text-box",
+            style_mods = {width = 400, height = 300},
+            clear_and_focus_on_right_click = true,
+            text = mode == "import" and "" or export_filters(player),
+            elem_mods = {word_wrap = true},
+            handlers = mode == "import" and {on_text_changed = "inv_update_confirm_button_enabled"} or nil,
+            ref = {"textbox"}
+          }
+        }},
+        {type = "flow", style = "dialog_buttons_horizontal_flow", children = {
+          {
+            type = "button",
+            style = "back_button",
+            caption = {"gui.cancel"},
+            handlers = {on_click = "inv_close_string_gui"}
+          },
+          {type = "empty-widget", style = "flib_dialog_footer_drag_handle", ref = {"footer_drag_handle"}},
+          (
+            mode == "import"
+            and {
+              type = "button",
+              style = "confirm_button",
+              caption = {"gui.confirm"},
+              elem_mods = {enabled = false},
+              handlers = {on_click = "inv_import_filters"},
+              ref = {"confirm_button"}
+            }
+            or nil
+          )
+        }}
+      }
+    }
+  })
+
+  refs.textbox.select_all()
+  refs.textbox.focus()
+
+  refs.titlebar_flow.drag_target = refs.window
+  refs.footer_drag_handle.drag_target = refs.window
+
+  refs.window.force_auto_center()
+
+  player_table.gui.inventory_filters_string = refs
+end
+
+-- buttons GUI
+
+local function close_buttons_gui(e)
+  local player_table = global.players[e.player_index]
+  local refs = player_table.gui.inventory_filters_buttons
+  refs.window.destroy()
+  player_table.gui.inventory_filters_buttons = nil
+end
+
+
+gui.add_handlers{
+  inv_close_string_gui = close_string_gui,
+  inv_update_confirm_button_enabled = update_confirm_button_enabled,
+  inv_import_filters = import_filters,
+  inv_open_string_gui = open_string_gui
+}
+
+function inventory.show_filters_buttons(player)
   local player_table = global.players[player.index]
-  local gui_data = gui.build(player.gui.screen, {
-    {type = "frame", style = "quick_bar_window_frame", save_as = "window", children = {
+
+  -- TODO anchor to character GUI
+  local refs = gui.build(player.gui.screen, {
+    {type = "frame", style = "quick_bar_window_frame", ref = {"window"}, children = {
       {type = "frame", style = "shortcut_bar_inner_panel", direction = "horizontal", children = {
         {
           type = "sprite-button",
           style = "shortcut_bar_button",
           sprite = "ee_import_inventory_filters",
-          tooltip = {"ee-gui.import-inventory-filters"},
-          handlers = "inventory_filters_buttons.import_export_button",
-          save_as = "import_button"
+          tooltip = {"ee-gui.import-infinity-filters"},
+          tags = {mode = "import"},
+          handlers = {on_click = "inv_open_string_gui"}
         },
         {
           type = "sprite-button",
           style = "shortcut_bar_button",
           sprite = "ee_export_inventory_filters",
-          tooltip = {"ee-gui.export-inventory-filters"},
-          handlers = "inventory_filters_buttons.import_export_button",
-          save_as = "export_button"
+          tooltip = {"ee-gui.export-infinity-filters"},
+          tags = {mode = "export"},
+          handlers = {on_click = "inv_open_string_gui"}
         }
       }}
     }}
   })
-  -- position GUI
-  inventory.set_filters_gui_location(player, gui_data)
-  -- add to global
-  player_table.gui.inventory_filters_buttons = gui_data
+
+  player_table.gui.inventory_filters_buttons = refs
 end
 
-function inventory.set_filters_gui_location(player, gui_data)
-  gui_data.window.location = {
-    x = 0,
-    y = player.display_resolution.height - (56 * player.display_scale)
-  }
+function inventory.close_guis(player_index)
+  local player_table = global.players[player_index]
+  local guis = player_table.gui
+
+  if guis.inventory_filters_string then
+    close_string_gui{player_index = player_index}
+  end
+  if guis.inventory_filters_buttons then
+    close_buttons_gui{player_index = player_index}
+  end
 end
 
 return inventory

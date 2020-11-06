@@ -1,7 +1,5 @@
 local player_data = {}
 
-local gui = require("__flib__.gui")
-
 local constants = require("scripts.constants")
 
 function player_data.init(index)
@@ -31,8 +29,7 @@ function player_data.refresh(player, player_table)
   -- close any open GUIs
   for _, name in ipairs{"ia", "il", "sp"} do
     if player_table.gui[name] then
-      player_table.gui[name].window.destroy()
-      gui.update_filters(name, player.index, nil, "remove")
+      player_table.gui[name].refs.window.destroy()
       player_table.gui[name] = nil
     end
   end
