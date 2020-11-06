@@ -1,5 +1,5 @@
 local event = require("__flib__.event")
-local gui = require("__flib__.gui")
+local gui = require("__flib__.gui-beta")
 local migration = require("__flib__.migration")
 
 local constants = require("scripts.constants")
@@ -47,8 +47,6 @@ end)
 -- BOOTSTRAP
 
 event.on_init(function()
-  gui.init()
-
   global_data.init()
   for i, player in pairs(game.players) do
     player_data.init(i)
@@ -63,22 +61,16 @@ event.on_init(function()
 
   aggregate_chest.update_data()
   on_tick.register()
-
-  gui.build_lookup_tables()
 end)
 
 event.on_load(function()
   compatibility.register_picker_dollies()
 
   on_tick.register()
-
-  gui.build_lookup_tables()
 end)
 
 event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
-    gui.check_filter_validity()
-
     compatibility.add_cursor_enhancements_overrides()
 
     aggregate_chest.update_data()
@@ -273,10 +265,10 @@ end)
 
 -- GUI
 
-gui.register_handlers()
+gui.hook_gui_events()
 
 event.on_gui_opened(function(e)
-  if not gui.dispatch_handlers(e) then
+  if not gui.dispatch(e) then
     local entity = e.entity
     if entity then
       local entity_name = entity.name
@@ -299,7 +291,7 @@ event.on_gui_opened(function(e)
 end)
 
 event.on_gui_closed(function(e)
-  if not gui.dispatch_handlers(e) then
+  if not gui.dispatch(e) then
     if e.gui_type and e.gui_type == 3 then
       inventory.close_guis(global.players[e.player_index], e.player_index)
     end

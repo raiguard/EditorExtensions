@@ -135,5 +135,9 @@ return {
       -- no longer needs to be kept track of
       player_table.flags.in_satellite_view = nil
     end
+  end,
+  ["1.8.0"] = function()
+    -- gui subtable is no longer needed!
+    global.__flib.gui = nil
   end
 }

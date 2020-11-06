@@ -61,4 +61,16 @@ function util.textfield.set_last_valid_value(element, last_value)
   return element.text
 end
 
+function util.close_button(handlers)
+  return {
+    type = "sprite-button",
+    style = "frame_action_button",
+    sprite = "utility/close_white",
+    hovered_sprite = "utility/close_black",
+    clicked_sprite = "utility/close_black",
+    mouse_button_filter = {"left"},
+    handlers = handlers
+  }
+end
+
 return util
