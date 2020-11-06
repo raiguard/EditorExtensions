@@ -178,9 +178,11 @@ local function update_power_from_textfield(e)
     refs.slider_textfield.style = "ee_invalid_slider_textfield"
   else
     refs.slider_textfield.style = "ee_slider_textfield"
+
     local processed_value = math.round_to(math.clamp(new_value, 0, 999.999), 3)
     state.power = processed_value
     refs.slider.slider_value = processed_value
+
     set_entity_settings(
       state.entity,
       constants.ia.index_to_mode[refs.mode_dropdown.selected_index],
