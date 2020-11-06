@@ -399,16 +399,16 @@ event.on_player_toggled_map_editor(function(e)
   -- update shortcut toggled state
   player.set_shortcut_toggled("ee-toggle-map-editor", to_state)
 
-  -- apply default inventory filters if this is their first time in the editor
+  -- apply default infinity filters if this is their first time in the editor
   if to_state and not player_table.flags.map_editor_toggled then
     player_table.flags.map_editor_toggled = true
-    local default_filters = player_table.settings.default_inventory_filters
+    local default_filters = player_table.settings.default_infinity_filters
     if default_filters ~= "" then
       inventory.import_filters(player, default_filters)
     end
   end
 
-  -- close inventory filters GUIs if they're open
+  -- close infinity filters GUIs if they're open
   if not to_state then
     inventory.close_guis(e.player_index)
   end

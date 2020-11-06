@@ -135,9 +135,8 @@ local function export_filters(player)
   )
 end
 
--- GUI
-
--- string GUI
+-- -----------------------------------------------------------------------------
+-- INFINITY INVENTORY FILTERS GUI
 
 local function close_string_gui(e)
   local player_table = global.players[e.player_index]
@@ -254,8 +253,6 @@ local function open_string_gui(e)
 
   player_table.gui.inventory_filters_string = refs
 end
-
--- buttons GUI
 
 local function close_buttons_gui(e)
   local player_table = global.players[e.player_index]

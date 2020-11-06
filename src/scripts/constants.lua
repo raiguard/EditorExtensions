@@ -163,7 +163,7 @@ constants.editor_gui_width = 474
 
 constants.setting_names = {
   ["ee-infinity-pipe-crafter-snapping"] = "infinity_pipe_crafter_snapping",
-  ["ee-default-inventory-filters"] = "default_inventory_filters",
+  ["ee-default-infinity-filters"] = "default_infinity_filters",
   ["ee-inventory-sync"] = "inventory_sync_enabled"
 }
 
