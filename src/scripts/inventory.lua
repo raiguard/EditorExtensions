@@ -225,7 +225,12 @@ local function open_string_gui(e)
             caption = {"gui.cancel"},
             handlers = {on_click = "inv_close_string_gui"}
           },
-          {type = "empty-widget", style = "flib_dialog_footer_drag_handle", ref = {"footer_drag_handle"}},
+          {
+            type = "empty-widget",
+            style = "flib_dialog_footer_drag_handle",
+            style_mods = mode == "export" and {right_margin = 0} or nil,
+            ref = {"footer_drag_handle"}
+          },
           (
             mode == "import"
             and {
@@ -254,14 +259,6 @@ local function open_string_gui(e)
   player_table.gui.inventory_filters_string = refs
 end
 
-local function close_buttons_gui(e)
-  local player_table = global.players[e.player_index]
-  local refs = player_table.gui.inventory_filters_buttons
-  refs.window.destroy()
-  player_table.gui.inventory_filters_buttons = nil
-end
-
-
 gui.add_handlers{
   inv_close_string_gui = close_string_gui,
   inv_update_confirm_button_enabled = update_confirm_button_enabled,
@@ -269,45 +266,57 @@ gui.add_handlers{
   inv_open_string_gui = open_string_gui
 }
 
-function inventory.show_filters_buttons(player)
-  local player_table = global.players[player.index]
-
-  -- TODO anchor to character GUI
-  local refs = gui.build(player.gui.screen, {
-    {type = "frame", style = "quick_bar_window_frame", ref = {"window"}, children = {
-      {type = "frame", style = "shortcut_bar_inner_panel", direction = "horizontal", children = {
-        {
-          type = "sprite-button",
-          style = "shortcut_bar_button",
-          sprite = "ee_import_inventory_filters",
-          tooltip = {"ee-gui.import-infinity-filters"},
-          tags = {mode = "import"},
-          handlers = {on_click = "inv_open_string_gui"}
-        },
-        {
-          type = "sprite-button",
-          style = "shortcut_bar_button",
-          sprite = "ee_export_inventory_filters",
-          tooltip = {"ee-gui.export-infinity-filters"},
-          tags = {mode = "export"},
-          handlers = {on_click = "inv_open_string_gui"}
+function inventory.create_filters_buttons(player, player_table)
+  local refs = gui.build(player.gui.relative, {
+    {
+      type = "frame",
+      style = "quick_bar_window_frame",
+      ref = {"window"},
+      anchor = {
+        gui = "controller-gui",
+        position = "left",
+        name = "editor"
+      },
+      children = {
+        {type = "frame", style = "shortcut_bar_inner_panel", direction = "vertical", children = {
+          {
+            type = "sprite-button",
+            style = "shortcut_bar_button",
+            sprite = "ee_import_inventory_filters",
+            tooltip = {"ee-gui.import-infinity-filters"},
+            tags = {mode = "import"},
+            handlers = {on_click = "inv_open_string_gui"}
+          },
+          {
+            type = "sprite-button",
+            style = "shortcut_bar_button",
+            sprite = "ee_export_inventory_filters",
+            tooltip = {"ee-gui.export-infinity-filters"},
+            tags = {mode = "export"},
+            handlers = {on_click = "inv_open_string_gui"}
+          }
         }
-      }}
+      }
     }}
   })
 
   player_table.gui.inventory_filters_buttons = refs
 end
 
-function inventory.close_guis(player_index)
+function inventory.destroy_filters_buttons(player_table)
+  local buttons_gui_data = player_table.gui.inventory_filters_buttons
+  if buttons_gui_data then
+    player_table.gui.inventory_filters_buttons.window.destroy()
+    player_table.gui.inventory_filters_buttons = nil
+  end
+end
+
+function inventory.close_string_gui(player_index)
   local player_table = global.players[player_index]
   local guis = player_table.gui
 
   if guis.inventory_filters_string then
     close_string_gui{player_index = player_index}
-  end
-  if guis.inventory_filters_buttons then
-    close_buttons_gui{player_index = player_index}
   end
 end
 

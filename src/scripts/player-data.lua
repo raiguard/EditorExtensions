@@ -1,6 +1,7 @@
 local player_data = {}
 
 local constants = require("scripts.constants")
+local inventory = require("scripts.inventory")
 
 function player_data.init(index)
   local player_table = {
@@ -33,6 +34,10 @@ function player_data.refresh(player, player_table)
       player_table.gui[name] = nil
     end
   end
+
+  -- recreate inventory filters buttons
+  inventory.destroy_filters_buttons(player_table)
+  inventory.create_filters_buttons(player, player_table)
 
   -- set shortcut availability
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)

@@ -279,11 +279,6 @@ event.on_gui_opened(function(e)
       elseif entity_name == "ee-infinity-cargo-wagon" then
         infinity_wagon.open(e.player_index, entity)
       end
-    elseif e.gui_type and e.gui_type == defines.gui_type.controller then
-      local player = game.get_player(e.player_index)
-      if player.controller_type == defines.controllers.editor then
-        inventory.show_filters_buttons(player)
-      end
     end
   end
 end)
@@ -291,7 +286,7 @@ end)
 event.on_gui_closed(function(e)
   if not gui.dispatch(e) then
     if e.gui_type and e.gui_type == 3 then
-      inventory.close_guis(e.player_index)
+      inventory.close_string_gui(e.player_index)
     end
   end
 end)
@@ -410,7 +405,7 @@ event.on_player_toggled_map_editor(function(e)
 
   -- close infinity filters GUIs if they're open
   if not to_state then
-    inventory.close_guis(e.player_index)
+    inventory.close_string_gui(e.player_index)
   end
 
   -- finish inventory sync
