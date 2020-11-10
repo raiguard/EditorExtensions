@@ -1,7 +1,14 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.7.4
+Version: 1.8.0
 Date: ????
+  Features:
+    - Added `/cheatmode` command, meant to be used in place of `/cheat`
+      - No parameter will emulate `/cheat` and enable testing tool recipes
+      - `all` parameter does everything previously listed, and provides infinity items and equipment to the player
+      - `off` parameter disables cheat mode and testing tool recipes
   Changes:
+    - The mod no longer hijacks the vanilla `/cheat` command, instead using a custom `/cheatmode` command
+    - Removed `/EditorExtensions` command
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.3
 Date: 2020-10-30

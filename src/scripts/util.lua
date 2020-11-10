@@ -26,6 +26,14 @@ function util.direction.to_vector(direction, longitudinal, orthogonal)
   end
 end
 
+function util.freeze_time_on_all_surfaces(player)
+  player.print{"ee-message.time-frozen"}
+  for _, surface in pairs(game.surfaces) do
+    surface.freeze_daytime = true
+    surface.daytime = 0
+  end
+end
+
 util.position = math2d.position
 
 -- creates an area that is the tile the position is contained in
