@@ -10,8 +10,8 @@ personal_battery.flags = {"hidden"}
 personal_battery.energy_source.buffer_capacity = "1000YJ"
 data:extend{personal_battery}
 
--- infinity personal fusion reactor
 data:extend{
+  -- infinity exoskeleton
   {
     type = "movement-bonus-equipment",
     name = "ee-super-exoskeleton-equipment",
@@ -30,6 +30,7 @@ data:extend{
     categories = {"armor"},
     flags = {"hidden"}
   },
+  -- infinity personal fusion reactor
   {
     type = "generator-equipment",
     name = "ee-infinity-fusion-reactor-equipment",
