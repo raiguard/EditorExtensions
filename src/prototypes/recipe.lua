@@ -2,6 +2,7 @@ local constants = require("prototypes.constants")
 
 local recipe_names = {
   "ee-infinity-accumulator",
+  "ee-super-battery-equipment",
   "ee-super-beacon",
   "ee-infinity-cargo-wagon",
   "ee-super-construction-robot",

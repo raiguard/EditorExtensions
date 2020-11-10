@@ -44,31 +44,6 @@ function util.position.to_tile_area(pos)
   }
 end
 
-util.textfield = {}
-
--- clamps numeric textfields to between two values, and sets the textfield style if it is invalid
-function util.textfield.clamp_number_input(element, clamps, last_value)
-  local text = element.text
-  if text == ""
-  or (clamps[1] and tonumber(text) < clamps[1])
-  or (clamps[2] and tonumber(text) > clamps[2]) then
-    element.style = "ee_invalid_slider_textfield"
-  else
-    element.style = "ee_slider_textfield"
-    last_value = text
-  end
-  return last_value
-end
-
--- sets the numeric textfield to the last valid value and resets the style
-function util.textfield.set_last_valid_value(element, last_value)
-  if element.text ~= last_value then
-    element.text = last_value
-    element.style = "ee_slider_textfield"
-  end
-  return element.text
-end
-
 function util.close_button(handlers)
   return {
     type = "sprite-button",

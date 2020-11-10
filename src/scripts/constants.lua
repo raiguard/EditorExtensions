@@ -20,7 +20,8 @@ constants.cheat_mode.equipment_to_add = {
   {name = "ee-super-exoskeleton-equipment", position = {3,0}},
   {name = "ee-super-energy-shield-equipment", position = {4,0}},
   {name = "ee-super-night-vision-equipment", position = {5,0}},
-  {name = "belt-immunity-equipment", position = {6,0}}
+  {name = "ee-super-battery-equipment", position = {6, 0}},
+  {name = "belt-immunity-equipment", position = {7,0}}
 }
 
 constants.cheat_mode.items_to_add = {

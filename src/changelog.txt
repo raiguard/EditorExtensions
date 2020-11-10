@@ -2,6 +2,7 @@
 Version: 1.8.0
 Date: ????
   Features:
+    - Added super battery equipment
     - Added `/cheatmode` command, meant to be used in place of `/cheat`
       - No parameter will emulate `/cheat` and enable testing tool recipes
       - `all` parameter does everything previously listed, and provides infinity items and equipment to the player

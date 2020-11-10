@@ -120,20 +120,6 @@ super_locomotive.order = "aa"
 super_locomotive.stack_size = 50
 data:extend{super_locomotive}
 
--- super personal roboport
-data:extend{
-  {
-    type = "item",
-    name = "ee-super-personal-roboport-equipment",
-    icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["personal-roboport-mk2-equipment"])),
-    subgroup = "ee-equipment",
-    order = "ab",
-    placed_as_equipment_result = "ee-super-personal-roboport-equipment",
-    stack_size = 50
-  }
-}
-
 local infinity_pipe = table.deepcopy(data.raw["item"]["infinity-pipe"])
 infinity_pipe.name = "ee-infinity-pipe"
 infinity_pipe.icons = util.recursive_tint{infinity_pipe.icons[1]}
@@ -241,6 +227,34 @@ data:extend{
     subgroup = "ee-equipment",
     order = "ae",
     placed_as_equipment_result = "ee-super-night-vision-equipment",
+    stack_size = 50
+  }
+}
+
+-- super personal battery
+data:extend{
+  {
+    type = "item",
+    name = "ee-super-battery-equipment",
+    icon_size = 32,
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["battery-equipment"])),
+    subgroup = "ee-equipment",
+    order = "af",
+    placed_as_equipment_result = "ee-super-battery-equipment",
+    stack_size = 50
+  }
+}
+
+-- super personal roboport
+data:extend{
+  {
+    type = "item",
+    name = "ee-super-personal-roboport-equipment",
+    icon_size = 32,
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["personal-roboport-mk2-equipment"])),
+    subgroup = "ee-equipment",
+    order = "ab",
+    placed_as_equipment_result = "ee-super-personal-roboport-equipment",
     stack_size = 50
   }
 }
