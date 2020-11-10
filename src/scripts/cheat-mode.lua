@@ -95,6 +95,8 @@ function cheat_mode.enable(player, set_loadout)
   -- recipes will be enabled automatically
   player.cheat_mode = true
 
+  player.force.research_all_technologies()
+
   cheat_mode.update_character_cheats(player)
 
   if set_loadout then

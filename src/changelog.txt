@@ -7,7 +7,7 @@ Date: ????
       - `all` parameter does everything previously listed, and provides infinity items and equipment to the player
       - `off` parameter disables cheat mode and testing tool recipes
   Changes:
-    - The mod no longer hijacks the vanilla `/cheat` command, instead using a custom `/cheatmode` command
+    - The mod no longer hijacks the vanilla `/cheat` command, instead using the aforementioned custom `/cheatmode` command
     - Removed `/EditorExtensions` command
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.3
