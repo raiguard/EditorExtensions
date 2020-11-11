@@ -274,7 +274,7 @@ function inventory.create_filters_buttons(player, player_table)
       ref = {"window"},
       anchor = {
         gui = "controller-gui",
-        position = "left",
+        position = defines.relative_gui_position.left,
         name = "editor"
       },
       children = {
