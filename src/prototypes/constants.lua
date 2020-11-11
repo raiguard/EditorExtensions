@@ -27,6 +27,7 @@ constants.empty_sheet = {
 }
 
 constants.equipment_background_color = {r = 0.5, g = 0.25, b = 0.5, a = 1}
+constants.equipment_background_color_hovered = {r = 0.6, g = 0.35, b = 0.6, a = 1}
 
 constants.infinity_accumulator_data = {
   {

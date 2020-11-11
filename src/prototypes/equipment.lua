@@ -3,6 +3,7 @@ local constants = require("prototypes.constants")
 local personal_battery = table.deepcopy(data.raw["battery-equipment"]["battery-equipment"])
 personal_battery.name = "ee-super-battery-equipment"
 personal_battery.background_color = constants.equipment_background_color
+personal_battery.grabbed_background_color = constants.equipment_background_color_hovered
 personal_battery.shape = {width = 1, height = 1, type = "full"}
 personal_battery.sprite.tint = constants.infinity_tint
 personal_battery.take_result = "ee-super-battery-equipment"
@@ -23,6 +24,7 @@ data:extend{
       tint = constants.infinity_tint
     },
     background_color = constants.equipment_background_color,
+    grabbed_background_color = constants.equipment_background_color_hovered,
     shape = {width = 1, height = 1, type = "full"},
     energy_source = {type = "electric", usage_priority = "secondary-input"},
     energy_consumption = "1kW",
@@ -42,6 +44,7 @@ data:extend{
       tint = constants.infinity_tint
     },
     background_color = constants.equipment_background_color,
+    grabbed_background_color = constants.equipment_background_color_hovered,
     shape = {width = 1, height = 1, type = "full"},
     energy_source = {type = "electric", usage_priority = "primary-output"},
     power = "1000YW",
@@ -53,6 +56,7 @@ data:extend{
 local energy_shield = table.deepcopy(data.raw["energy-shield-equipment"]["energy-shield-equipment"])
 energy_shield.name = "ee-super-energy-shield-equipment"
 energy_shield.background_color = constants.equipment_background_color
+energy_shield.grabbed_background_color = constants.equipment_background_color_hovered
 energy_shield.sprite.tint = constants.infinity_tint
 energy_shield.shape = {width = 1, height = 1, type = "full"}
 energy_shield.max_shield_value = 1000000
@@ -69,6 +73,7 @@ data:extend{energy_shield}
 local night_vision = table.deepcopy(data.raw["night-vision-equipment"]["night-vision-equipment"])
 night_vision.name = "ee-super-night-vision-equipment"
 night_vision.background_color = constants.equipment_background_color
+night_vision.grabbed_background_color = constants.equipment_background_color_hovered
 night_vision.sprite.tint = constants.infinity_tint
 night_vision.shape = {width = 1, height = 1, type = "full"}
 night_vision.darkness_to_turn_on = 0
@@ -80,6 +85,7 @@ data:extend{night_vision}
 local personal_roboport = table.deepcopy(data.raw["roboport-equipment"]["personal-roboport-mk2-equipment"])
 personal_roboport.name = "ee-super-personal-roboport-equipment"
 personal_roboport.background_color = constants.equipment_background_color
+personal_roboport.grabbed_background_color = constants.equipment_background_color_hovered
 personal_roboport.shape = {width = 1, height = 1, type = "full"}
 personal_roboport.sprite.tint = constants.infinity_tint
 personal_roboport.charging_energy = "1000GJ"
