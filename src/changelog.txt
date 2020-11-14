@@ -11,6 +11,16 @@ Date: ????
     - The mod no longer hijacks the vanilla `/cheat` command, instead using the aforementioned custom `/cheatmode` command
     - Removed `/EditorExtensions` command
 ---------------------------------------------------------------------------------------------------
+Version: 1.7.5
+Date: 2020-11-14
+  Changes:
+    - Moved the testing scenario's actual code outside of the scenario script itself, to avoid issues with migrations
+---------------------------------------------------------------------------------------------------
+Version: 1.7.4
+Date: 2020-11-05
+  Bugfixes:
+    - Fixed a crash when copy / pasting to an infinity loader from anything but a constant combinator
+---------------------------------------------------------------------------------------------------
 Version: 1.7.3
 Date: 2020-10-30
   Bugfixes:
