@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.5
-Date: ????
+Date: 2020-11-14
   Changes:
     - Moved the testing scenario's actual code outside of the scenario script itself, to avoid issues with migrations
 ---------------------------------------------------------------------------------------------------
