@@ -29,6 +29,7 @@ constants.cheat_mode.items_to_add = {
   {name = "ee-infinity-chest", count = 50},
   {name = "ee-super-construction-robot", count = 100},
   {name = "ee-super-inserter", count = 50},
+  {name = "ee-infinity-loader", count = 50},
   {name = "ee-infinity-pipe", count = 50},
   {name = "ee-super-substation", count = 50}
 }
