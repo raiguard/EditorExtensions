@@ -29,8 +29,15 @@ function util.recursive_tint(array, tint)
 end
 
 -- consolidate icon information into a table to use in "icons"
-function util.extract_icon_info(obj)
-  return obj.icons or {{icon = obj.icon, icon_size = obj.icon_size, icon_mipmaps = obj.icon_mipmaps}}
+function util.extract_icon_info(obj, skip_cleanup)
+  local icons = obj.icons or {{icon = obj.icon, icon_size = obj.icon_size, icon_mipmaps = obj.icon_mipmaps}}
+  icons[1].icon_size = icons[1].icon_size or obj.icon_size
+  if not skip_cleanup then
+    obj.icon = nil
+    obj.icon_size = nil
+    obj.icon_mipmaps = nil
+  end
+  return icons
 end
 
 -- generate the localised description of a chest

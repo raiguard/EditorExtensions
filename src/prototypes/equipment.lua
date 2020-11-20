@@ -7,7 +7,6 @@ personal_battery.grabbed_background_color = constants.equipment_background_color
 personal_battery.shape = {width = 1, height = 1, type = "full"}
 personal_battery.sprite.tint = constants.infinity_tint
 personal_battery.take_result = "ee-super-battery-equipment"
-personal_battery.flags = {"hidden"}
 personal_battery.energy_source.buffer_capacity = "1000YJ"
 data:extend{personal_battery}
 
@@ -29,8 +28,7 @@ data:extend{
     energy_source = {type = "electric", usage_priority = "secondary-input"},
     energy_consumption = "1kW",
     movement_bonus = 2,
-    categories = {"armor"},
-    flags = {"hidden"}
+    categories = {"armor"}
   },
   -- infinity personal fusion reactor
   {
@@ -48,8 +46,7 @@ data:extend{
     shape = {width = 1, height = 1, type = "full"},
     energy_source = {type = "electric", usage_priority = "primary-output"},
     power = "1000YW",
-    categories = {"armor"},
-    flags = {"hidden"}
+    categories = {"armor"}
   }
 }
 
@@ -67,7 +64,6 @@ energy_shield.energy_source = {
   buffer_capacity = "100YJ"
 }
 energy_shield.take_result = "ee-super-energy-shield-equipment"
-energy_shield.flags = {"hidden"}
 data:extend{energy_shield}
 
 local night_vision = table.deepcopy(data.raw["night-vision-equipment"]["night-vision-equipment"])
@@ -79,7 +75,6 @@ night_vision.shape = {width = 1, height = 1, type = "full"}
 night_vision.darkness_to_turn_on = 0
 night_vision.color_lookup = {{0.5, "__core__/graphics/color_luts/identity-lut.png"}}
 night_vision.take_result = "ee-super-night-vision-equipment"
-night_vision.flags = {"hidden"}
 data:extend{night_vision}
 
 local personal_roboport = table.deepcopy(data.raw["roboport-equipment"]["personal-roboport-mk2-equipment"])
@@ -99,5 +94,4 @@ personal_roboport.energy_source = {
   input_flow_limit = "100YW"
 }
 personal_roboport.take_result = "ee-super-personal-roboport-equipment"
-personal_roboport.flags = {"hidden"}
 data:extend{personal_roboport}

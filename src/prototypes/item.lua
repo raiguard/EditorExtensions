@@ -8,7 +8,7 @@ data:extend{
     name = "ee-infinity-accumulator",
     localised_description = {"entity-description.ee-infinity-accumulator"},
     stack_size = 50,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["accumulator"]["accumulator"])),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["accumulator"]["accumulator"], true)),
     place_result = "ee-infinity-accumulator-primary-output",
     subgroup = "ee-electricity",
     order = "a"
@@ -27,6 +27,7 @@ data:extend{infinity_cargo_wagon}
 -- infinity and aggregate chests
 do
   local ic_item = table.deepcopy(data.raw["item"]["infinity-chest"])
+  util.extract_icon_info(ic_item)
   for _, t in pairs(constants.infinity_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
@@ -75,7 +76,7 @@ data:extend{
     type = "item",
     name = "ee-infinity-fusion-reactor-equipment",
     icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["fusion-reactor-equipment"])),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["fusion-reactor-equipment"], true)),
     subgroup = "ee-equipment",
     order = "aa",
     placed_as_equipment_result = "ee-infinity-fusion-reactor-equipment",
@@ -84,13 +85,14 @@ data:extend{
 }
 
 local infinity_heat_pipe = table.deepcopy(data.raw["item"]["heat-interface"])
+util.extract_icon_info(infinity_heat_pipe)
 infinity_heat_pipe.name = "ee-infinity-heat-pipe"
 infinity_heat_pipe.localised_description = {"entity-description.ee-infinity-heat-pipe"}
 infinity_heat_pipe.subgroup = "ee-misc"
 infinity_heat_pipe.order = "ca"
 infinity_heat_pipe.stack_size = 50
 infinity_heat_pipe.flags = {}
-infinity_heat_pipe.icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["heat-pipe"]))
+infinity_heat_pipe.icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["heat-pipe"], true))
 infinity_heat_pipe.place_result = "ee-infinity-heat-pipe"
 data:extend{infinity_heat_pipe}
 
@@ -161,7 +163,7 @@ data:extend{
     type = "item",
     name = "ee-super-energy-shield-equipment",
     icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["energy-shield-equipment"])),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["energy-shield-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ad",
     placed_as_equipment_result = "ee-super-energy-shield-equipment",
@@ -175,7 +177,7 @@ data:extend{
     type = "item",
     name = "ee-super-exoskeleton-equipment",
     icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["exoskeleton-equipment"])),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["exoskeleton-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ac",
     placed_as_equipment_result = "ee-super-exoskeleton-equipment",
@@ -184,8 +186,9 @@ data:extend{
 }
 
 local super_fuel = table.deepcopy(data.raw["item"]["nuclear-fuel"])
+util.extract_icon_info(super_fuel)
 super_fuel.name = "ee-super-fuel"
-super_fuel.icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["rocket-fuel"]))
+super_fuel.icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["rocket-fuel"], true))
 super_fuel.stack_size = 100
 super_fuel.fuel_value = "1000YJ"
 super_fuel.subgroup = "ee-trains"
@@ -223,7 +226,7 @@ data:extend{
     type = "item",
     name = "ee-super-night-vision-equipment",
     icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["night-vision-equipment"])),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["night-vision-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ae",
     placed_as_equipment_result = "ee-super-night-vision-equipment",
@@ -237,7 +240,7 @@ data:extend{
     type = "item",
     name = "ee-super-battery-equipment",
     icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["battery-equipment"])),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["battery-equipment"], true)),
     subgroup = "ee-equipment",
     order = "af",
     placed_as_equipment_result = "ee-super-battery-equipment",
@@ -251,7 +254,7 @@ data:extend{
     type = "item",
     name = "ee-super-personal-roboport-equipment",
     icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["personal-roboport-mk2-equipment"])),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["personal-roboport-mk2-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ab",
     placed_as_equipment_result = "ee-super-personal-roboport-equipment",

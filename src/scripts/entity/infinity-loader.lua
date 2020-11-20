@@ -66,10 +66,30 @@ local function update_filters(combinator, entities)
   end
   -- update inserter filter based on orthogonal
   for i = 1, #inserters do
-    local orthogonal = i > (#inserters/2) and 1 or 2
-    inserters[i].set_filter(1, filters[orthogonal].signal.name or nil)
-    inserters[i].inserter_filter_mode = inserter_filter_mode
-    inserters[i].active = enabled
+    local inserter = inserters[i]
+    local orthogonal = i > (#inserters / 2) and 1 or 2
+    inserter.held_stack.clear()
+    inserter.set_filter(1, filters[orthogonal].signal.name or nil)
+    inserter.inserter_filter_mode = inserter_filter_mode
+    inserter.active = enabled
+    -- if orthogonal == 1 then
+    --   rendering.draw_circle{
+    --     target = inserter.pickup_position,
+    --     color = {r = 0, g = 1, b = 0, a = 0.5},
+    --     surface = inserter.surface,
+    --     radius = 0.03,
+    --     filled = true,
+    --     time_to_live = 180
+    --   }
+    --   rendering.draw_circle{
+    --     target = inserter.drop_position,
+    --     color = {r = 0, g = 1, b = 1, a = 0.5},
+    --     surface = inserter.surface,
+    --     radius = 0.03,
+    --     filled = true,
+    --     time_to_live = 180
+    --   }
+    -- end
   end
   -- update chest filters
   for i = 1, 2 do
@@ -141,6 +161,23 @@ local function update_inserters(loader, entities)
         util.direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal)
       )
     end
+    -- TEMPORARY rendering
+    -- rendering.draw_circle{
+    --   target = inserter.pickup_position,
+    --   color = {r = 0, g = 1, b = 0, a = 0.5},
+    --   surface = inserter.surface,
+    --   radius = 0.03,
+    --   filled = true,
+    --   time_to_live = 180
+    -- }
+    -- rendering.draw_circle{
+    --   target = inserter.drop_position,
+    --   color = {r = 0, g = 1, b = 1, a = 0.5},
+    --   surface = inserter.surface,
+    --   radius = 0.03,
+    --   filled = true,
+    --   time_to_live = 180
+    -- }
   end
 end
 

@@ -69,11 +69,11 @@ constants.infinity_accumulator_data = {
 
 constants.infinity_chest_data = {
   {t = {255,255,225}, o = "aa"},
-  {lm = "active-provider", s = 0, t = {218,115,255}, o = "ab"},
-  {lm = "passive-provider", s = 0, t = {255,141,114}, o = "ac"},
+  {lm = "active-provider", t = {218,115,255}, o = "ab"},
+  {lm = "passive-provider", t = {255,141,114}, o = "ac"},
   {lm = "storage", s = 1, t = {255,220,113}, o = "ad"},
-  {lm = "buffer", s = 30, t = {114,255,135}, o = "ae"},
-  {lm = "requester", s = 30, t = {114,236,255}, o = "af"}
+  {lm = "buffer", t = {114,255,135}, o = "ae"},
+  {lm = "requester", t = {114,236,255}, o = "af"}
 }
 
 constants.infinity_chest_icon = {

@@ -67,6 +67,7 @@ do
   }
 
   local base_entity = table.deepcopy(data.raw["infinity-container"]["infinity-chest"])
+  util.extract_icon_info(base_entity)
   for _, t in pairs(constants.infinity_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
@@ -81,7 +82,7 @@ do
     chest.subgroup = "ee-inventories"
     chest.erase_contents_when_mined = true
     chest.logistic_mode = lm
-    chest.logistic_slots_count = t.s
+    chest.max_logistic_slots = t.s
     chest.minable.result = "ee-infinity-chest"..suffix
     chest.render_not_in_network_icon = true
     chest.inventory_size = 100
@@ -141,7 +142,6 @@ do
     chest.order = t.o
     chest.icons = {table.deepcopy(constants.aggregate_chest_icon)}
     chest.picture = table.deepcopy(aggregate_chest_picture)
-    chest.logistic_slots_count = 0
     chest.minable.result = "ee-aggregate-chest"..suffix
     chest.enable_inventory_bar = false
     chest.flags = {"player-creation", "hide-alt-info"}
@@ -151,10 +151,11 @@ do
 end
 
 local infinity_heat_pipe = table.deepcopy(data.raw["heat-interface"]["heat-interface"])
+util.extract_icon_info(infinity_heat_pipe)
 infinity_heat_pipe.name = "ee-infinity-heat-pipe"
 infinity_heat_pipe.localised_description = {"entity-description.ee-infinity-heat-pipe"}
 infinity_heat_pipe.gui_mode = "all"
-infinity_heat_pipe.icons = util.extract_icon_info(data.raw["item"]["heat-pipe"])
+infinity_heat_pipe.icons = util.extract_icon_info(data.raw["item"]["heat-pipe"], true)
 infinity_heat_pipe.map_color = constants.infinity_tint
 infinity_heat_pipe.friendly_map_color = constants.infinity_tint
 infinity_heat_pipe.picture = {
@@ -183,7 +184,6 @@ super_inserter.friendly_map_color = constants.infinity_tint
 super_inserter.placeable_by = {item = "ee-super-inserter", count = 1}
 super_inserter.minable.result = "ee-super-inserter"
 super_inserter.energy_source = {type = "void"}
-super_inserter.energy_usage = "1W"
 super_inserter.stack = true
 super_inserter.filter_count = 5
 super_inserter.extension_speed = 1
@@ -305,7 +305,6 @@ do
       extension_speed = 1,
       rotation_speed = 0.5,
       energy_per_movement = "0.00001J",
-      energy_per_extension = "0.00001J",
       pickup_position = {0, -0.2},
       insert_position = {0, 0.2},
       filter_count = 1,
@@ -329,7 +328,7 @@ infinity_pipe.localised_description = {"entity-description.ee-infinity-pipe"}
 infinity_pipe.map_color = constants.infinity_tint
 infinity_pipe.friendly_map_color = constants.infinity_tint
 infinity_pipe.gui_mode = "all"
-infinity_pipe.icons = infinity_pipe.icons
+infinity_pipe.icons = util.extract_icon_info(infinity_pipe)
 infinity_pipe.minable = {mining_time = 0.5, result = "ee-infinity-pipe"}
 infinity_pipe.placeable_by = {item = "ee-infinity-pipe", count = 1}
 infinity_pipe.additional_pastable_entities = {"constant-combinator"}
@@ -476,6 +475,7 @@ super_locomotive.map_color = constants.infinity_tint
 super_locomotive.friendly_map_color = constants.infinity_tint
 super_locomotive.max_power = "10MW"
 super_locomotive.energy_source = {type = "void"}
+super_locomotive.burner = nil
 super_locomotive.max_speed = 10
 super_locomotive.reversing_power_modifier = 1
 super_locomotive.braking_force = 100

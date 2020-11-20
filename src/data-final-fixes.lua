@@ -119,11 +119,19 @@ local function create_loader(base_underground)
   entity.order = "a"
   entity.selectable_in_game = false
   entity.filter_count = 0
-  entity.belt_distance = 0
   entity.belt_length = 0.6
   entity.container_distance = 0
   entity.next_upgrade = nil
   table.insert(entity.flags, "not-upgradable")
+  -- clean up unused data
+  entity.icon = nil
+  entity.icon_size = nil
+  entity.icon_mipmaps = nil
+  entity.max_distance = nil
+  entity.underground_sprite = nil
+  entity.underground_remove_belts_sprite = nil
+  entity.structure.direction_in_side_loading = nil
+  entity.structure.direction_out_side_loading = nil
   data:extend{entity}
 end
 
