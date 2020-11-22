@@ -260,10 +260,22 @@ end)
 
 -- GUI
 
-gui.hook_gui_events()
+local function handle_gui_action(e)
+  local msg = gui.read_action(e)
+  if msg then
+    if msg.gui == "inv_filters" then
+      inventory.handle_gui_action(e, msg)
+    end
+    return true
+  else
+    return false
+  end
+end
+
+gui.hook_events(handle_gui_action)
 
 event.on_gui_opened(function(e)
-  if not gui.dispatch(e) then
+  if not handle_gui_action(e) then
     local entity = e.entity
     if entity then
       local entity_name = entity.name
@@ -281,7 +293,7 @@ event.on_gui_opened(function(e)
 end)
 
 event.on_gui_closed(function(e)
-  if not gui.dispatch(e) then
+  if not handle_gui_action(e) then
     if e.gui_type and e.gui_type == 3 then
       inventory.close_string_gui(e.player_index)
     end

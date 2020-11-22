@@ -138,59 +138,7 @@ end
 -- -----------------------------------------------------------------------------
 -- INFINITY INVENTORY FILTERS GUI
 
-local function close_string_gui(e)
-  local player_table = global.players[e.player_index]
-  local refs = player_table.gui.inventory_filters_string
-  refs.window.destroy()
-  player_table.gui.inventory_filters_string = nil
-end
-
-local function update_confirm_button_enabled(e)
-  local player_table = global.players[e.player_index]
-  local refs = player_table.gui.inventory_filters_string
-
-  if #e.element.text > 0 then
-    refs.confirm_button.enabled = true
-  else
-    refs.confirm_button.enabled = false
-  end
-end
-
-local function import_filters(e)
-  local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
-  local refs = player_table.gui.inventory_filters_string
-
-  local string = refs.textbox.text
-
-  if inventory.import_filters(player, string) then
-    close_string_gui(e)
-    player.create_local_flying_text{
-      text = {"ee-message.imported-infinity-filters"},
-      create_at_cursor = true
-    }
-  else
-    player.create_local_flying_text{
-      text = {"ee-message.invalid-infinity-filters-string"},
-      create_at_cursor = true
-    }
-    player.play_sound{path = "utility/cannot_build", volume_modifier = 0.75}
-  end
-end
-
-local function open_string_gui(e)
-  local player = game.get_player(e.player_index)
-  local player_table = global.players[e.player_index]
-
-  -- check for existing filters GUI
-  local gui_data = player_table.gui.inventory_filters_string
-
-  if gui_data then
-    close_string_gui(e)
-  end
-
-  local mode = gui.get_tags(e.element).mode
-
+local function open_string_gui(player, player_table, mode)
   -- create GUI
   local refs = gui.build(player.gui.screen, {
     {
@@ -214,7 +162,11 @@ local function open_string_gui(e)
             clear_and_focus_on_right_click = true,
             text = mode == "import" and "" or export_filters(player),
             elem_mods = {word_wrap = true},
-            handlers = mode == "import" and {on_text_changed = "inv_update_confirm_button_enabled"} or nil,
+            actions = (
+              mode == "import"
+              and {on_text_changed = {gui = "inv_filters", action = "update_confirm_button_enabled"}}
+              or nil
+            ),
             ref = {"textbox"}
           }
         }},
@@ -223,7 +175,7 @@ local function open_string_gui(e)
             type = "button",
             style = "back_button",
             caption = {"gui.cancel"},
-            handlers = {on_click = "inv_close_string_gui"}
+            actions = {on_click = {gui = "inv_filters", action = "close_string_gui"}}
           },
           {
             type = "empty-widget",
@@ -238,7 +190,7 @@ local function open_string_gui(e)
               style = "confirm_button",
               caption = {"gui.confirm"},
               elem_mods = {enabled = false},
-              handlers = {on_click = "inv_import_filters"},
+              actions = {on_click = {gui = "inv_filters", action = "import_filters"}},
               ref = {"confirm_button"}
             }
             or nil
@@ -259,12 +211,11 @@ local function open_string_gui(e)
   player_table.gui.inventory_filters_string = refs
 end
 
-gui.add_handlers{
-  inv_close_string_gui = close_string_gui,
-  inv_update_confirm_button_enabled = update_confirm_button_enabled,
-  inv_import_filters = import_filters,
-  inv_open_string_gui = open_string_gui
-}
+local function close_string_gui(player_table)
+  local refs = player_table.gui.inventory_filters_string
+  refs.window.destroy()
+  player_table.gui.inventory_filters_string = nil
+end
 
 function inventory.create_filters_buttons(player, player_table)
   local refs = gui.build(player.gui.relative, {
@@ -285,7 +236,7 @@ function inventory.create_filters_buttons(player, player_table)
             sprite = "ee_import_inventory_filters",
             tooltip = {"ee-gui.import-infinity-filters"},
             tags = {mode = "import"},
-            handlers = {on_click = "inv_open_string_gui"}
+            actions = {on_click = {gui = "inv_filters", action = "open_string_gui"}}
           },
           {
             type = "sprite-button",
@@ -293,7 +244,7 @@ function inventory.create_filters_buttons(player, player_table)
             sprite = "ee_export_inventory_filters",
             tooltip = {"ee-gui.export-infinity-filters"},
             tags = {mode = "export"},
-            handlers = {on_click = "inv_open_string_gui"}
+            actions = {on_click = {gui = "inv_filters", action = "open_string_gui"}}
           }
         }
       }
@@ -316,7 +267,44 @@ function inventory.close_string_gui(player_index)
   local guis = player_table.gui
 
   if guis.inventory_filters_string then
-    close_string_gui{player_index = player_index}
+    close_string_gui(player_table)
+  end
+end
+
+function inventory.handle_gui_action(e, msg)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  local refs = player_table.gui.inventory_filters_string
+
+  if msg.action == "open_string_gui" then
+    if refs then
+      close_string_gui(player_table)
+    end
+    open_string_gui(player, player_table, gui.get_tags(e.element).mode)
+  elseif msg.action == "close_string_gui" then
+    close_string_gui(player_table)
+  elseif msg.action == "update_confirm_button_enabled" then
+    if #refs.textbox.text > 0 then
+      refs.confirm_button.enabled = true
+    else
+      refs.confirm_button.enabled = false
+    end
+  elseif msg.action == "import_filters" then
+    local string = refs.textbox.text
+
+    if inventory.import_filters(player, string) then
+      close_string_gui(player_table)
+      player.create_local_flying_text{
+        text = {"ee-message.imported-infinity-filters"},
+        create_at_cursor = true
+      }
+    else
+      player.create_local_flying_text{
+        text = {"ee-message.invalid-infinity-filters-string"},
+        create_at_cursor = true
+      }
+      player.play_sound{path = "utility/cannot_build", volume_modifier = 0.75}
+    end
   end
 end
 
