@@ -11,7 +11,8 @@ Date: ????
     - The mod no longer hijacks the vanilla `/cheat` command, instead using the aforementioned custom `/cheatmode` command
     - Removed `/EditorExtensions` command
     - Refined crafting group icon to better fit the other new icons
-
+  Bugfixes:
+    - Fixed edge-case with IL chest filter setting
 ---------------------------------------------------------------------------------------------------
 Version: 1.7.5
 Date: 2020-11-14

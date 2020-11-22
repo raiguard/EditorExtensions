@@ -92,13 +92,16 @@ local function update_filters(combinator, entities)
     -- end
   end
   -- update chest filters
-  for i = 1, 2 do
-    local name = filters[i].signal.name
-    chest.set_infinity_container_filter(
-      i,
-      name and {name = name, count = game.item_prototypes[name].stack_size, mode = "exactly", index = i} or nil
-    )
+  local i = 0
+  local new_filters = {}
+  for j = 1, 2 do
+    local name = filters[j].signal.name
+    if name then
+      i = i + 1
+      new_filters[i] = {name = name, count = game.item_prototypes[name].stack_size, mode = "exactly", index = i}
+    end
   end
+  chest.infinity_container_filters = new_filters
   chest.remove_unfiltered_items = true
 end
 
