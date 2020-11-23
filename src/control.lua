@@ -260,22 +260,15 @@ end)
 
 -- GUI
 
-local function handle_gui_action(e)
+gui.hook_events(function(e)
   local msg = gui.read_action(e)
   if msg then
-    if msg.gui == "inv_filters" then
+    if msg.gui == "ia" then
+      infinity_accumulator.handle_gui_action(e, msg)
+    elseif msg.gui == "inv_filters" then
       inventory.handle_gui_action(e, msg)
     end
-    return true
-  else
-    return false
-  end
-end
-
-gui.hook_events(handle_gui_action)
-
-event.on_gui_opened(function(e)
-  if not handle_gui_action(e) then
+  elseif e.name == defines.events.on_gui_opened then
     local entity = e.entity
     if entity then
       local entity_name = entity.name
@@ -289,12 +282,8 @@ event.on_gui_opened(function(e)
         infinity_wagon.open(e.player_index, entity)
       end
     end
-  end
-end)
-
-event.on_gui_closed(function(e)
-  if not handle_gui_action(e) then
-    if e.gui_type and e.gui_type == 3 then
+  elseif e.name == defines.events.on_gui_closed then
+    if e.gui_type and e.gui_type == defines.gui_type.controller then
       inventory.close_string_gui(e.player_index)
     end
   end
