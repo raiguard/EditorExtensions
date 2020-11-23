@@ -8,6 +8,7 @@ Date: ????
       - `all` parameter does everything previously listed, and provides infinity items and equipment to the player
       - `off` parameter disables cheat mode and testing tool recipes
   Changes:
+    - Updated testing scenario map to include a super radar
     - Increased super roboport slots from 7 to 10
     - The mod no longer hijacks the vanilla `/cheat` command, instead using the aforementioned custom `/cheatmode` command
     - Removed `/EditorExtensions` command
