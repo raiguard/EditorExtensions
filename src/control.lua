@@ -265,6 +265,8 @@ gui.hook_events(function(e)
   if msg then
     if msg.gui == "ia" then
       infinity_accumulator.handle_gui_action(e, msg)
+    elseif msg.gui == "il" then
+      infinity_loader.handle_gui_action(e, msg)
     elseif msg.gui == "inv_filters" then
       inventory.handle_gui_action(e, msg)
     end
