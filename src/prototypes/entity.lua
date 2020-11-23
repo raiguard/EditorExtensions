@@ -539,6 +539,8 @@ super_roboport.map_color = constants.infinity_tint
 super_roboport.friendly_map_color = constants.infinity_tint
 super_roboport.logistics_radius = 200
 super_roboport.construction_radius = 400
+super_roboport.robot_slots_count = 10
+super_roboport.material_slots_count = 10
 super_roboport.energy_source = {type = "void"}
 super_roboport.charging_energy = "1000YW"
 super_roboport.charging_distance = 0
