@@ -267,6 +267,8 @@ gui.hook_events(function(e)
       infinity_accumulator.handle_gui_action(e, msg)
     elseif msg.gui == "il" then
       infinity_loader.handle_gui_action(e, msg)
+    elseif msg.gui == "sp" then
+      super_pump.handle_gui_action(e, msg)
     elseif msg.gui == "inv_filters" then
       inventory.handle_gui_action(e, msg)
     end
