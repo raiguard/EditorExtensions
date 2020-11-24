@@ -12,6 +12,8 @@ Date: 2020-11-23
       - `all` parameter does everything previously listed, and provides infinity items and equipment to the player
       - `off` parameter disables cheat mode and testing tool recipes
   Changes:
+    - Updated entity GUIs to match new vanilla style
+    - Relocated infinity filter buttons from the bottom-left corner to being anchored on the editor GUI
     - Updated testing scenario map to include a super radar
     - Increased super roboport slots from 7 to 10
     - The mod no longer hijacks the vanilla `/cheat` command, instead using the aforementioned custom `/cheatmode` command
