@@ -44,7 +44,7 @@ function util.position.to_tile_area(pos)
   }
 end
 
-function util.close_button(handlers)
+function util.close_button(actions)
   return {
     type = "sprite-button",
     style = "frame_action_button",
@@ -52,7 +52,7 @@ function util.close_button(handlers)
     hovered_sprite = "utility/close_black",
     clicked_sprite = "utility/close_black",
     mouse_button_filter = {"left"},
-    handlers = handlers
+    actions = actions
   }
 end
 
