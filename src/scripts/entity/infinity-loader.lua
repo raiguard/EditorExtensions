@@ -548,7 +548,7 @@ function infinity_loader.destroy(entity)
   -- close open GUIs
   for i, t in pairs(global.players) do
     if t.gui.il and t.gui.il.entity == entity then
-      gui.handlers.il.window.on_gui_closed{player_index = i}
+      handle_gui_action({player_index = i}, {action = "close"})
     end
   end
   -- destroy entities
