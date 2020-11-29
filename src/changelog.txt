@@ -18,6 +18,7 @@ Date: 2020-11-23
       - `all` parameter does everything previously listed, and provides infinity items and equipment to the player
       - `off` parameter disables cheat mode and testing tool recipes
   Changes:
+    - Updated to Factorio 1.1
     - Updated entity GUIs to match new vanilla style
     - Relocated infinity filter buttons from the bottom-left corner to being anchored on the editor GUI
     - Updated testing scenario map to include a super radar
