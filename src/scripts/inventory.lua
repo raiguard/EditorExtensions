@@ -27,6 +27,7 @@ function inventory.create_sync_inventories(player_table, player)
     elseif inventory_def then
       local source_inventory = player.get_inventory(inventory_def)
       local get_filter = source_inventory.get_filter
+      local set_filter = source_inventory.set_filter
       local supports_filters = source_inventory.supports_filters()
       local source_inventory_len = #source_inventory
       sync_inventory = game.create_inventory(source_inventory_len)
@@ -34,6 +35,7 @@ function inventory.create_sync_inventories(player_table, player)
         sync_inventory[i].transfer_stack(source_inventory[i])
         if supports_filters then
           sync_filters[i] = get_filter(i)
+          set_filter(i, nil)
         end
       end
     end
@@ -66,8 +68,9 @@ function inventory.get_from_sync_inventories(player_table, player)
         if inventory_def then
           local destination_inventory = player.get_inventory(inventory_def)
           local set_filter = destination_inventory.set_filter
+          local supports_filters = destination_inventory.supports_filters()
           for i = 1, math.min(#destination_inventory, #sync_inventory) do
-            if sync_filters[i] then
+            if supports_filters then
               set_filter(i, sync_filters[i])
             end
             destination_inventory[i].transfer_stack(sync_inventory[i])
