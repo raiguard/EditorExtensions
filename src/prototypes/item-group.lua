@@ -1,3 +1,5 @@
+local constants = require("prototypes.constants")
+
 local function add_group(name, order)
   data:extend{
     {
@@ -22,6 +24,13 @@ data:extend{
     type = "item-group",
     name = "ee-tools",
     order = "zzzzz",
-    icons = {{icon = "__EditorExtensions__/graphics/gui/crafting-group.png", icon_size = 128, icon_mipmaps = 2}}
+    icons = {
+      {
+        icon = "__EditorExtensions__/graphics/gui/crafting-group.png",
+        icon_size = 128,
+        icon_mipmaps = 2,
+        tint = constants.infinity_tint
+      }
+    }
   }
 }
