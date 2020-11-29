@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.8.1
-Date: ????
+Date: 2020-11-29
   Bugfixes:
     - Fixed entity GUI close buttons not working
     - Fixed a crash when mining an infinity loader while its GUI was open
