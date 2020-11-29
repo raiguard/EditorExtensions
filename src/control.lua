@@ -253,7 +253,7 @@ event.on_entity_settings_pasted(function(e)
     local filter = source.get_infinity_pipe_filter()
     if filter then
       local control = destination.get_or_create_control_behavior()
-      control.parameters = {parameters = {{signal = {type = "fluid", name = filter.name}, count = 1, index = 1}}}
+      control.parameters = {{signal = {type = "fluid", name = filter.name}, count = 1, index = 1}}
     end
   end
 end)

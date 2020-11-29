@@ -574,10 +574,11 @@ function infinity_loader.paste_settings(source, destination)
     local parameters = {}
     local items = 0
     for _, parameter in pairs(table.deepcopy(source_control_behavior.parameters)) do
-      if parameter.signal and parameter.signal.type == "item" and items < 2 then
+      if parameter.signal and parameter.signal.type == "item" and parameter.signal.name then
         items = items + 1
         parameter.index = items
         table.insert(parameters, parameter)
+        if items == 2 then break end
       end
     end
     destination.get_control_behavior().parameters = parameters
