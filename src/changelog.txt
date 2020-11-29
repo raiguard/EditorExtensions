@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.8.3
-Date: ????
+Date: 2020-11-29
   Changes:
     - Made internal changes to make it possible to extend the testing scenario's scripting for testing mods
     - Removed now-defunct rocket silo stats GUI code from the testing scenario
