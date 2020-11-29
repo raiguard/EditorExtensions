@@ -1,18 +1,13 @@
 local event = require("__flib__.event")
 local migration = require("__flib__.migration")
+local mod_gui = require("mod-gui")
 
-local silo_script = require("__core__.lualib.silo-script")
+local callbacks = {}
 
 -- -----------------------------------------------------------------------------
 -- UTILITIES
 
-local radius = 200
 local function setup_force(force)
-  local spawn_pos = force.get_spawn_position("nauvis")
-  force.chart("nauvis", {
-    {(spawn_pos.x - radius), (spawn_pos.y - radius)}, {(spawn_pos.x + radius), (spawn_pos.y + radius)}
-  })
-
   force.research_all_technologies()
 
   force.max_successful_attempts_per_tick_per_construction_queue = 30
@@ -27,6 +22,19 @@ local migrations = {
       force.max_successful_attempts_per_tick_per_construction_queue = 30
       force.max_failed_attempts_per_tick_per_construction_queue = 10
     end
+  end,
+  ["1.8.3"] = function()
+    -- remove rocket silo GUI
+    for _, player in pairs(game.players) do
+      local button = mod_gui.get_button_flow(player).silo_gui_sprite_button
+      if button then
+        button.destroy()
+      end
+      local frame = mod_gui.get_frame_flow(player).silo_gui_frame
+      if frame then
+        frame.destroy()
+      end
+    end
   end
 }
 
@@ -34,9 +42,6 @@ local migrations = {
 -- EVENT HANDLERS
 
 event.on_init(function()
-  silo_script.on_init()
-  remote.call("silo_script", "set_no_victory", true)
-
   if remote.interfaces["kr-crash-site"] then
     remote.call("kr-crash-site", "crash_site_enabled", false)
   end
@@ -44,28 +49,39 @@ event.on_init(function()
   for _, force in pairs(game.forces) do
     setup_force(force)
   end
-end)
 
-event.on_load(silo_script.on_load)
+  if callbacks.on_init then
+    callbacks.on_init()
+  end
+end)
 
 event.on_configuration_changed(function(e)
   migration.on_config_changed(e, migrations, "EditorExtensions")
-  silo_script.on_configuration_changed(e)
-  remote.call("silo_script", "set_no_victory", true)
+
+  if callbacks.on_configuration_changed then
+    callbacks.on_configuration_changed(e)
+  end
 end)
 
 event.on_force_created(function(e)
   setup_force(e.force)
+
+  if callbacks.on_force_created then
+    callbacks.on_force_created(e)
+  end
 end)
 
 event.on_player_created(function(e)
   game.get_player(e.player_index).cheat_mode = true
+
+  if callbacks.on_player_created then
+    callbacks.on_player_created(e)
+  end
 end)
 
-event.on_gui_click(silo_script.on_gui_click)
-event.on_rocket_launched(silo_script.on_rocket_launched)
-
--- disable AAI industry crash site
 remote.add_interface("EditorExtensions_TestingScenario", {
+  -- disable AAI industry crash site
   allow_aai_crash_sequence = function() return {allow = false, weight = 1} end
 })
+
+return callbacks

@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.8.3
 Date: ????
+  Changes:
+    - Made internal changes to make it possible to extend the testing scenario's scripting for testing mods
+    - Removed now-defunct rocket silo stats GUI code from the testing scenario
   Bugfixes:
     - Fixed inventory sync not deleting filters properly
 ---------------------------------------------------------------------------------------------------
