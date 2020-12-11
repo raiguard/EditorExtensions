@@ -104,7 +104,7 @@ data:extend{
     localised_name = {"entity-name.ee-infinity-loader"},
     localised_description = {"entity-description.ee-infinity-loader"},
     icons = util.recursive_tint{
-      {icon = "__EditorExtensions__/graphics/item/infinity-loader.png", icon_size = 64, icon_mipmaps = 4}
+      {icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4}
     },
     stack_size = 50,
     place_result = "ee-infinity-loader-dummy-combinator",
