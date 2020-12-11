@@ -1,3 +1,4 @@
+local constants = require("prototypes.constants")
 local util = require("prototypes.util")
 
 -- set aggregate chest inventory size
@@ -80,55 +81,58 @@ for _, character in pairs(data.raw["character"]) do
   character.crafting_categories[#character.crafting_categories+1] = "ee-testing-tool"
 end
 
--- generate infinity loader loaders
-local loader_base = table.deepcopy(data.raw["linked-belt"]["linked-belt"])
-loader_base.icons = {
-  {icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4}
-}
-util.recursive_tint(loader_base)
+-- generate linked belts and infinity loaders
 
-local belt_patterns = {
-  -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
-  ["%-?transport%-belt%-to%-ground"] = "",
-  -- vanilla and 99% of mods
-  ["%-?underground%-belt"] = ""
-}
+local linked_belt_base = table.deepcopy(data.raw["linked-belt"]["linked-belt"])
+linked_belt_base.icons = util.extract_icon_info(linked_belt_base)
+linked_belt_base.localised_name = {"entity-name.ee-linked-belt"}
+linked_belt_base.localised_description = {"entity-description.ee-linked-belt"}
+linked_belt_base.placeable_by = {item = "ee-linked-belt", count = 1}
+linked_belt_base.minable = {result = "ee-linked-belt", mining_time = 0.1}
+util.recursive_tint(linked_belt_base, constants.alternate_tint)
 
-local function create_loader(base_underground)
-  local entity = table.deepcopy(data.raw["underground-belt"][base_underground])
-  -- adjust pictures and icon
-  entity.structure = loader_base.structure
-  entity.icons = loader_base.icons
-  -- get name
-  local suffix = entity.name
-  for pattern,  replacement in pairs(belt_patterns) do
-    suffix = string.gsub(suffix, pattern, replacement)
-  end
-  entity.name = "ee-infinity-loader-loader"..(suffix ~= "" and "-"..suffix or "")
-  entity.localised_name = {"entity-name.ee-infinity-loader"}
-  -- other data
-  entity.type = "loader-1x1"
-  entity.next_upgrade = nil
-  entity.max_distance = 0
-  entity.order = "a"
-  entity.selectable_in_game = false
-  entity.filter_count = 0
-  entity.belt_length = 0.6
-  entity.container_distance = 0
-  entity.next_upgrade = nil
-  table.insert(entity.flags, "not-upgradable")
-  -- clean up unused data
-  entity.icon = nil
-  entity.icon_size = nil
-  entity.icon_mipmaps = nil
-  entity.max_distance = nil
-  entity.underground_sprite = nil
-  entity.underground_remove_belts_sprite = nil
-  entity.structure.direction_in_side_loading = nil
-  entity.structure.direction_out_side_loading = nil
+local function create_linked_belt(base_prototype, suffix)
+  local entity = table.deepcopy(linked_belt_base)
+  entity.name = "ee-linked-belt"..suffix
+
+  entity.belt_animation_set = base_prototype.belt_animation_set
+  entity.speed = base_prototype.speed
+
   data:extend{entity}
 end
 
-for name in pairs(table.deepcopy(data.raw["underground-belt"])) do
-  create_loader(name)
+local loader_base = table.deepcopy(data.raw["loader-1x1"]["loader-1x1"])
+loader_base.structure = table.deepcopy(linked_belt_base.structure)
+loader_base.icons = table.deepcopy(linked_belt_base.icons)
+loader_base.icon = nil
+loader_base.icon_size = nil
+loader_base.icon_mipmaps = nil
+loader_base.localised_name = {"entity-name.ee-infinity-loader"}
+loader_base.localised_description = {"entity-name.ee-infinity-loader"}
+loader_base.selectable_in_game = false
+loader_base.belt_length = 0.6
+loader_base.container_distance = 0
+util.recursive_tint(loader_base)
+
+local function create_loader(base_prototype, suffix)
+  local entity = table.deepcopy(loader_base)
+  entity.name = "ee-infinity-loader-loader"..suffix
+  entity.belt_animation_set = base_prototype.belt_animation_set
+  entity.speed = base_prototype.speed
+
+  data:extend{entity}
+end
+
+for name, prototype in pairs(table.deepcopy(data.raw["underground-belt"])) do
+  -- determine suffix
+  local suffix = name
+  for pattern, replacement in pairs(constants.belt_name_patterns) do
+    suffix = string.gsub(suffix, pattern, replacement)
+  end
+  if suffix ~= "" then
+    suffix = "-"..suffix
+  end
+
+  create_linked_belt(prototype, suffix)
+  create_loader(prototype, suffix)
 end

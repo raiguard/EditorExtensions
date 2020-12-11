@@ -11,6 +11,17 @@ constants.aggregate_chest_icon = {
   icon_mipmaps = 4
 }
 
+constants.alternate_tint = {r = 0.5, g = 1, b = 1, a = 1}
+
+-- pattern -> replacement
+-- iterate through all of these to result in the base belt type
+constants.belt_name_patterns = {
+  -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
+  ["%-?transport%-belt%-to%-ground"] = "",
+  -- vanilla and 99% of mods
+  ["%-?underground%-belt"] = ""
+}
+
 constants.empty_circuit_wire_connection_points = {
   {wire = {},shadow = {}},
   {wire = {},shadow = {}},

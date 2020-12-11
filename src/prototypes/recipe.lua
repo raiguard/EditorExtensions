@@ -16,6 +16,7 @@ local recipe_names = {
   "ee-super-inserter",
   "ee-super-lab",
   "ee-infinity-loader",
+  "ee-linked-belt",
   "ee-super-locomotive",
   "ee-super-logistic-robot",
   "ee-super-personal-roboport-equipment",

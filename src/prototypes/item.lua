@@ -113,15 +113,6 @@ data:extend{
   }
 }
 
-local super_locomotive = table.deepcopy(data.raw["item-with-entity-data"]["locomotive"])
-super_locomotive.name = "ee-super-locomotive"
-super_locomotive.icons = util.recursive_tint(util.extract_icon_info(super_locomotive))
-super_locomotive.place_result = "ee-super-locomotive"
-super_locomotive.subgroup = "ee-trains"
-super_locomotive.order = "aa"
-super_locomotive.stack_size = 50
-data:extend{super_locomotive}
-
 local infinity_pipe = table.deepcopy(data.raw["item"]["infinity-pipe"])
 infinity_pipe.name = "ee-infinity-pipe"
 infinity_pipe.icons = util.recursive_tint{infinity_pipe.icons[1]}
@@ -131,6 +122,17 @@ infinity_pipe.stack_size = 50
 infinity_pipe.place_result = "ee-infinity-pipe"
 infinity_pipe.flags = {}
 data:extend{infinity_pipe}
+
+local linked_belt = table.deepcopy(data.raw["item"]["linked-belt"])
+linked_belt.name = "ee-linked-belt"
+linked_belt.icons = util.extract_icon_info(linked_belt)
+linked_belt.subgroup = "ee-misc"
+linked_belt.order = "ab"
+linked_belt.stack_size = 50
+linked_belt.place_result = "ee-linked-belt"
+linked_belt.flags = {}
+util.recursive_tint(linked_belt, constants.alternate_tint)
+data:extend{linked_belt}
 
 local super_beacon = table.deepcopy(data.raw["item"]["beacon"])
 super_beacon.name = "ee-super-beacon"
@@ -200,7 +202,7 @@ super_inserter.name = "ee-super-inserter"
 super_inserter.icons = util.recursive_tint(util.extract_icon_info(super_inserter))
 super_inserter.place_result = "ee-super-inserter"
 super_inserter.subgroup = "ee-misc"
-super_inserter.order = "ab"
+super_inserter.order = "ac"
 data:extend{super_inserter}
 
 local super_lab = table.deepcopy(data.raw["item"]["lab"])
@@ -210,6 +212,15 @@ super_lab.place_result = "ee-super-lab"
 super_lab.subgroup = "ee-misc"
 super_lab.order = "ea"
 data:extend{super_lab}
+
+local super_locomotive = table.deepcopy(data.raw["item-with-entity-data"]["locomotive"])
+super_locomotive.name = "ee-super-locomotive"
+super_locomotive.icons = util.recursive_tint(util.extract_icon_info(super_locomotive))
+super_locomotive.place_result = "ee-super-locomotive"
+super_locomotive.subgroup = "ee-trains"
+super_locomotive.order = "aa"
+super_locomotive.stack_size = 50
+data:extend{super_locomotive}
 
 local super_logistic_robot = table.deepcopy(data.raw["item"]["logistic-robot"])
 super_logistic_robot.name = "ee-super-logistic-robot"
