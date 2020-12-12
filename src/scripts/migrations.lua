@@ -138,5 +138,10 @@ return {
   ["1.8.0"] = function()
     -- gui subtable is no longer needed!
     global.__flib.gui = nil
+  end,
+  ["1.9.0"] = function()
+    for _, player_table in pairs(global.players) do
+      player_table.flags.connecting_linked_belts = false
+    end
   end
 }

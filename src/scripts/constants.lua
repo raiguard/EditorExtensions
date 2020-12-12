@@ -119,6 +119,7 @@ constants.belt_speed_for_60_per_second = 60 / 60 / 8
 constants.belt_type_patterns = {
   -- editor extensions :D
   ["ee%-infinity%-loader%-loader%-?"] = "",
+  ["ee%-linked%-belt%-?"] = "",
   -- beltlayer: https://mods.factorio.com/mod/beltlayer
   ["layer%-connector"] = "",
   -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
@@ -139,7 +140,9 @@ constants.belt_type_patterns = {
   ["%-?transport"] = "",
   ["%-?underground"] = "",
   ["%-?splitter"] = "",
-  ["%-?loader"] = ""
+  ["%-?loader"] = "",
+  ["%-?1x1"] = "",
+  ["%-?linked"] = ""
 }
 
 -- INFINITY PIPE

@@ -46,12 +46,8 @@ function infinity_wagon.destroy(entity)
   global.wagons[entity.unit_number] = nil
 end
 
-function infinity_wagon.check_and_open(player, selected)
-  if selected and selected.name == "ee-infinity-fluid-wagon" then
-    if util.position.distance(player.position, selected.position) <= player.reach_distance then
-      player.opened = global.wagons[selected.unit_number].proxy
-    end
-  end
+function infinity_wagon.check_is_wagon(selected)
+  return selected.name == "ee-infinity-cargo-wagon" or selected.name == "ee-infinity-fluid-wagon"
 end
 
 -- called during `on_tick`
@@ -90,8 +86,8 @@ function infinity_wagon.flip_inventories()
   end
 end
 
-function infinity_wagon.open(player_index, entity)
-  game.get_player(player_index).opened = global.wagons[entity.unit_number].proxy
+function infinity_wagon.open(player, entity)
+  player.opened = global.wagons[entity.unit_number].proxy
 end
 
 function infinity_wagon.paste_settings(source, destination)

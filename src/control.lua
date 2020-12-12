@@ -17,6 +17,7 @@ local infinity_accumulator = require("scripts.entity.infinity-accumulator")
 local infinity_loader = require("scripts.entity.infinity-loader")
 local infinity_pipe = require("scripts.entity.infinity-pipe")
 local infinity_wagon = require("scripts.entity.infinity-wagon")
+local linked_belt = require("scripts.entity.linked-belt")
 local super_inserter = require("scripts.entity.super-inserter")
 local super_pump = require("scripts.entity.super-pump")
 
@@ -110,6 +111,67 @@ event.on_player_cheat_mode_enabled(function(e)
   end
 
   cheat_mode.enable_recipes(player)
+end)
+
+-- CUSTOM INPUT
+
+event.register("ee-toggle-map-editor", function(e)
+  local player = game.get_player(e.player_index)
+  if player.admin then
+    player.toggle_map_editor()
+  else
+    player.print{"ee-message.map-editor-denied"}
+  end
+end)
+
+event.register("ee-open-gui", function(e)
+  local player = game.get_player(e.player_index)
+  local selected = player.selected
+  if player.selected then
+    if infinity_wagon.check_is_wagon(selected) then
+      if player.can_reach_entity(selected) then
+        infinity_wagon.open(player, selected)
+      else
+        util.error_text(player, {"cant-reach"}, selected.position)
+      end
+    elseif linked_belt.check_is_linked_belt(selected) then
+      local player_table = global.players[e.player_index]
+      if player_table.flags.connecting_linked_belts then
+        linked_belt.finish_connection(player, player_table, selected)
+      else
+        linked_belt.start_connection(player, player_table, selected)
+      end
+    end
+  end
+end)
+
+event.register("ee-paste-entity-settings", function(e)
+  local player = game.get_player(e.player_index)
+  local selected = player.selected
+  if selected and linked_belt.check_is_linked_belt(selected) then
+    local player_table = global.players[e.player_index]
+    if player_table.flags.connecting_linked_belts then
+      linked_belt.finish_connection(player, player_table, selected, true)
+    else
+      linked_belt.start_connection(player, player_table, selected, true)
+    end
+  end
+end)
+
+event.register("ee-copy-entity-settings", function(e)
+  local player = game.get_player(e.player_index)
+  local selected = player.selected
+  if selected and linked_belt.check_is_linked_belt(selected) and selected.linked_belt_neighbour then
+    linked_belt.sever_connection(selected)
+  end
+end)
+
+event.register("ee-clear-cursor", function(e)
+  local player_table = global.players[e.player_index]
+  if player_table.flags.connecting_linked_belts then
+    local player = game.get_player(e.player_index)
+    linked_belt.cancel_connection(player, player_table)
+  end
 end)
 
 -- ENTITY
@@ -215,12 +277,6 @@ event.on_cancelled_deconstruction(function(e)
   infinity_wagon.reset(e.entity)
 end)
 
-event.register("ee-open-gui", function(e)
-  local player = game.get_player(e.player_index)
-  local selected = player.selected
-  infinity_wagon.check_and_open(player, selected)
-end)
-
 event.on_entity_settings_pasted(function(e)
   local source = e.source
   local destination = e.destination
@@ -298,15 +354,6 @@ end)
 event.on_lua_shortcut(function(e)
   if e.prototype_name == "ee-toggle-map-editor" then
     game.get_player(e.player_index).toggle_map_editor()
-  end
-end)
-
-event.register("ee-toggle-map-editor", function(e)
-  local player = game.get_player(e.player_index)
-  if player.admin then
-    player.toggle_map_editor()
-  else
-    player.print{"ee-message.map-editor-denied"}
   end
 end)
 
