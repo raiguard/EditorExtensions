@@ -162,7 +162,8 @@ event.register("ee-copy-entity-settings", function(e)
   local player = game.get_player(e.player_index)
   local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) and selected.linked_belt_neighbour then
-    linked_belt.sever_connection(selected)
+    local player_table = global.players[e.player_index]
+    linked_belt.sever_connection(player, player_table, selected)
   end
 end)
 
@@ -311,6 +312,18 @@ event.on_entity_settings_pasted(function(e)
       local control = destination.get_or_create_control_behavior()
       control.parameters = {{signal = {type = "fluid", name = filter.name}, count = 1, index = 1}}
     end
+  end
+end)
+
+event.on_selected_entity_changed(function(e)
+  local player = game.get_player(e.player_index)
+  local player_table = global.players[e.player_index]
+  local selected = player.selected
+  if selected and linked_belt.check_is_linked_belt(selected) then
+    linked_belt.render_connection(player, player_table, selected)
+  elseif player_table.linked_belt_connection then
+    rendering.destroy(player_table.linked_belt_connection)
+    player_table.linked_belt_connection = nil
   end
 end)
 

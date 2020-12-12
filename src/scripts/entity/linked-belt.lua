@@ -79,6 +79,7 @@ function linked_belt.finish_connection(player, player_table, entity, shift)
     player_table.flags.connecting_linked_belts = false
     player_table.linked_belt_source = nil
     destroy_box(player_table)
+    linked_belt.render_connection(player, player_table, entity)
   else
     util.error_text(player, {"ee-message.cannot-connect"}, entity.position)
   end
@@ -88,10 +89,35 @@ function linked_belt.cancel_connection(player, player_table)
   player_table.flags.connecting_linked_belts = false
   player_table.linked_belt_source = nil
   destroy_box(player_table)
+  if player_table.linked_belt_connection then
+    rendering.destroy(player_table.linked_belt_connection)
+    player_table.linked_belt_connection = nil
+  end
 end
 
-function linked_belt.sever_connection(entity)
+function linked_belt.sever_connection(player, player_table, entity)
   entity.disconnect_linked_belts()
+  linked_belt.render_connection(player, player_table, entity)
+end
+
+function linked_belt.render_connection(player, player_table, entity)
+  if player_table.linked_belt_connection then
+    rendering.destroy(player_table.linked_belt_connection)
+  end
+  local neighbour = entity.linked_belt_neighbour
+  if neighbour then
+    if entity.surface == neighbour.surface then
+      player_table.linked_belt_connection = rendering.draw_line{
+        color = {r = 0.5, g = 1, b = 0.5},
+        width = 2,
+        from = entity.position,
+        to = neighbour.position,
+        surface = entity.surface,
+        players = {player.index}
+      }
+    else
+    end
+  end
 end
 
 return linked_belt
