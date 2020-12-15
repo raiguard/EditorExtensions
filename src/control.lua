@@ -318,12 +318,9 @@ end)
 event.on_selected_entity_changed(function(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
-  local selected = player.selected
+  local selected = player.selected or e.last_entity
   if selected and linked_belt.check_is_linked_belt(selected) then
-    linked_belt.render_connection(player, player_table, selected)
-  elseif player_table.linked_belt_connection then
-    rendering.destroy(player_table.linked_belt_connection)
-    player_table.linked_belt_connection = nil
+    linked_belt.render_connection(player, player_table)
   end
 end)
 
