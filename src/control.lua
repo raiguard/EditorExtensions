@@ -265,6 +265,8 @@ event.on_player_rotated_entity(function(e)
   elseif entity.type == "splitter" or entity.type == "loader" or entity.type == "loader-1x1" then
     -- snap belt neighbors
     infinity_loader.snap_belt_neighbors(entity)
+  elseif linked_belt.check_is_linked_belt(entity) then
+    linked_belt.handle_rotation(e)
   end
 end)
 

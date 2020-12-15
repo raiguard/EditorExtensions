@@ -130,4 +130,21 @@ function linked_belt.render_connection(player, player_table)
   player_table.linked_belt_render_objects = objects
 end
 
+function linked_belt.handle_rotation(e)
+  local entity = e.entity
+
+  entity.direction = e.previous_direction
+
+  local neighbour = entity.linked_belt_neighbour
+  if neighbour then
+    -- disconnect, flip both ends, reconnect
+    entity.disconnect_linked_belts()
+    entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
+    neighbour.linked_belt_type = neighbour.linked_belt_type == "output" and "input" or "output"
+    entity.connect_linked_belts(neighbour)
+  else
+    entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
+  end
+end
+
 return linked_belt
