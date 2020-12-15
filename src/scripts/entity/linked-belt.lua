@@ -1,3 +1,5 @@
+local direction = require("__flib__.direction")
+
 local util = require("scripts.util")
 
 local linked_belt = {}
@@ -7,14 +9,14 @@ local linked_belt = {}
   Left click:
     - Not holding end:
       - No connection: Connect this end, put other end in cursor
-      - Connection: Disconnect this end and put in cursor
+      - Connection: Disconnect other end and put in cursor
     - Holding end:
       - No connection: Connect to other end
       - Connection: Error (flying text)
   Shift + left click:
     - Not holding end:
       - No connection: Connect this end, put other end in cursor
-      - Connection: Disconnect other end and put it in the cursor
+      - Connection: Disconnect this end and put it in the cursor
     - Holding end:
       - No connection: Connect to other end
       - Connection: Sever current connection, connect to other end
@@ -144,6 +146,79 @@ function linked_belt.handle_rotation(e)
     entity.connect_linked_belts(neighbour)
   else
     entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
+  end
+end
+
+-- SNAPPING
+
+local function get_linked_belt_direction(belt)
+  if belt.linked_belt_type == "output" then
+    return direction.opposite(belt.direction)
+  end
+  return belt.direction
+end
+
+local function replace_linked_belt(entity, new_type)
+  local entity_data = {
+    direction = get_linked_belt_direction(entity),
+    force = entity.force,
+    last_user = entity.last_user,
+    linked_belt_type = entity.linked_belt_type,
+    position = entity.position,
+    surface = entity.surface
+  }
+
+  entity.destroy()
+
+  local new_entity = entity_data.surface.create_entity{
+    name = "ee-linked-belt"..(new_type == "" and "" or "-"..new_type),
+    direction = entity_data.direction,
+    force = entity_data.force,
+    player = entity_data.last_user,
+    position = entity_data.position,
+    create_build_effect_smoke = false
+  }
+  new_entity.linked_belt_type = entity_data.linked_belt_type
+
+  return new_entity
+end
+
+function linked_belt.snap(entity, target)
+  if not entity or not entity.valid then return end
+
+  -- temporarily disconnect from other end
+  local neighbour = entity.linked_belt_neighbour
+  if neighbour then
+    entity.disconnect_linked_belts()
+  end
+
+  -- check for a connected belt, then flip and try again, then flip back if failed
+  -- this will inherently snap the direction, and then snap the belt type if they don't match
+  -- if the belt already has a neighbour, the direction will not be flipped
+  for i = 1, 2 do
+    local linked_belt_type = entity.linked_belt_type
+    local neighbour_key = linked_belt_type.."s"
+
+    local connection = entity.belt_neighbours[neighbour_key][1]
+    if connection and (not target or connection.unit_number == target.unit_number) then
+      -- snap the belt type
+      local belt_type = util.get_belt_type(connection)
+      if util.get_belt_type(entity) ~= belt_type then
+        entity = replace_linked_belt(entity, belt_type)
+      end
+      -- prevent an actual flip if the belt has a neighbour
+      if i == 2 and neighbour then
+        entity.linked_belt_type = linked_belt_type == "output" and "input" or "output"
+      end
+    else
+      -- flip the direction
+      entity.linked_belt_type = linked_belt_type == "output" and "input" or "output"
+    end
+  end
+
+  -- reconnect to other end
+  if neighbour then
+    entity.connect_linked_belts(neighbour)
   end
 end
 

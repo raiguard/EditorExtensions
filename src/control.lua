@@ -216,6 +216,8 @@ event.register(
     elseif constants.infinity_wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
       on_tick.register()
+    elseif linked_belt.check_is_linked_belt(entity) then
+      linked_belt.snap(entity)
     -- super pump
     elseif entity_name == "ee-super-pump" then
       super_pump.setup(entity, e.tags)
@@ -527,6 +529,8 @@ event.set_filters(
     {filter = "type", type = "underground-belt"},
     {filter = "type", type = "splitter"},
     {filter = "type", type = "loader"},
+    {filter = "type", type = "loader-1x1"},
+    {filter = "type", type = "linked-belt"},
     {filter = "ghost"},
     {filter = "ghost_name", name = "ee-infinity-loader-logic-combinator"},
     {filter = "ghost_name", name = "ee-super-pump"}

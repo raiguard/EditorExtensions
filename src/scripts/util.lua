@@ -1,30 +1,10 @@
+local direction = require("__flib__.direction")
+local math2d = require("__core__.lualib.math2d")
 local util = require("__core__.lualib.util")
 
-local math2d = require("__core__.lualib.math2d")
+local constants = require("scripts.constants")
 
 -- GENERAL
-
-util.direction = {}
-util.direction.opposite = util.oppositedirection
-
--- borrowed from STDLIB: returns the next or previous direction
-function util.direction.next(direction, reverse, eight_way)
-  return (direction + (eight_way and ((reverse and -1) or 1) or ((reverse and -2) or 2))) % 8
-end
-
--- gets a vector based on a cardinal direction
-function util.direction.to_vector(direction, longitudinal, orthogonal)
-  orthogonal = orthogonal or 0
-  if direction == defines.direction.north then
-    return {x = orthogonal, y = -longitudinal}
-  elseif direction == defines.direction.south then
-    return {x = -orthogonal, y = longitudinal}
-  elseif direction == defines.direction.east then
-    return {x = longitudinal, y = orthogonal}
-  elseif direction == defines.direction.west then
-    return {x = -longitudinal, y = -orthogonal}
-  end
-end
 
 function util.freeze_time_on_all_surfaces(player)
   player.print{"ee-message.time-frozen"}
@@ -44,6 +24,22 @@ function util.position.to_tile_area(pos)
   }
 end
 
+function util.get_belt_type(entity)
+  local type = entity.name
+  for pattern, replacement in pairs(constants.belt_type_patterns) do
+    type = string.gsub(type, pattern, replacement)
+  end
+  -- check to see if the loader prototype exists
+  if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-"..type] then
+    -- print warning message
+    game.print{"", "EDITOR EXTENSIONS: ", {"ee-message.unable-to-identify-belt"}}
+    game.print("entity_name = \""..entity.name.."\", parse_result = \""..type.."\"")
+    -- set to default type
+    type = "express"
+  end
+  return type
+end
+
 function util.close_button(actions)
   return {
     type = "sprite-button",
@@ -54,6 +50,15 @@ function util.close_button(actions)
     mouse_button_filter = {"left"},
     actions = actions
   }
+end
+
+function util.error_text(player, text, position)
+  player.create_local_flying_text{
+    text = text,
+    position = position,
+    create_at_cursor = (not position) and true or nil
+  }
+  player.play_sound{path = "utility/cannot_build"}
 end
 
 -- SNAPPING
@@ -76,10 +81,10 @@ end
 -- apply the function to each entity on neighboring tiles, returning entities that the callback matched
 function util.check_tile_neighbors(entity, func, eight_way, direction_agnostic)
   local matched_entities = {}
-  for i= 0, 7, eight_way and 1 or 2 do
+  for i = 0, 7, eight_way and 1 or 2 do
     if not direction_agnostic then matched_entities[i] = {} end
     local entities = entity.surface.find_entities(
-      util.position.to_tile_area(util.position.add(entity.position, util.direction.to_vector(i, 1)))
+      util.position.to_tile_area(util.position.add(entity.position, direction.to_vector(i, 1)))
     )
     for _, e in ipairs(entities) do
       if func(e) then
@@ -88,15 +93,6 @@ function util.check_tile_neighbors(entity, func, eight_way, direction_agnostic)
     end
   end
   return matched_entities
-end
-
-function util.error_text(player, text, position)
-  player.create_local_flying_text{
-    text = text,
-    position = position,
-    create_at_cursor = (not position) and true or nil
-  }
-  player.play_sound{path = "utility/cannot_build"}
 end
 
 return util

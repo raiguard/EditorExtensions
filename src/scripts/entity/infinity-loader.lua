@@ -1,28 +1,13 @@
-local infinity_loader = {}
-
+local direction = require("__flib__.direction")
 local gui = require("__flib__.gui-beta")
 local util = require("scripts.util")
 
 local constants = require("scripts.constants")
 
+local infinity_loader = {}
+
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
-
-local function get_belt_type(entity)
-  local type = entity.name
-  for pattern, replacement in pairs(constants.belt_type_patterns) do
-    type = type:gsub(pattern, replacement)
-  end
-  -- check to see if the loader prototype exists
-  if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-"..type] then
-    -- print warning message
-    game.print{"", "EDITOR EXTENSIONS: ", {"ee-message.unable-to-identify-belt"}}
-    game.print("entity_name = \""..entity.name.."\", parse_result = \""..type.."\"")
-    -- set to default type
-    type = "express"
-  end
-  return type
-end
 
 local function check_is_loader(entity)
   if entity.name:find("infinity%-loader%-loader") then return true end
@@ -32,7 +17,7 @@ end
 -- get the direction that the mouth of the loader is facing
 local function get_loader_direction(loader)
   if loader.loader_type == "input" then
-    return util.direction.opposite(loader.direction)
+    return direction.opposite(loader.direction)
   end
   return loader.direction
 end
@@ -150,7 +135,7 @@ local function update_inserters(loader, entities)
       inserter.pickup_target = loader
       inserter.pickup_position = util.position.add(
         e_position,
-        util.direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal)
+        direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal)
       )
       inserter.drop_target = chest
       inserter.drop_position = e_position
@@ -161,7 +146,7 @@ local function update_inserters(loader, entities)
       inserter.drop_target = loader
       inserter.drop_position = util.position.add(
         e_position,
-        util.direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal)
+        direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal)
       )
     end
     -- TEMPORARY rendering
@@ -210,7 +195,7 @@ local function update_loader_type(loader, belt_type, overrides)
 end
 
 -- create an infinity loader
-local function create_loader(type, mode, surface, position, direction, force)
+local function create_loader(type, mode, surface, position, loader_direction, force)
   local name = "ee-infinity-loader-loader"..(type == "" and "" or "-"..type)
   if not game.entity_prototypes[name] then
     error("Attempted to create an infinity loader with an invalid belt type.")
@@ -218,7 +203,7 @@ local function create_loader(type, mode, surface, position, direction, force)
   local loader = surface.create_entity{
     name = name,
     position = position,
-    direction = direction,
+    direction = loader_direction,
     force = force,
     type = mode,
     create_build_effect_smoke = false
@@ -231,7 +216,7 @@ local function create_loader(type, mode, surface, position, direction, force)
       name = "ee-infinity-loader-inserter",
       position = position,
       force = force,
-      direction = direction,
+      direction = loader_direction,
       create_build_effect_smoke = false
     }
     inserters[i].inserter_stack_size_override = 1
@@ -246,7 +231,7 @@ local function create_loader(type, mode, surface, position, direction, force)
     name = "ee-infinity-loader-logic-combinator",
     position = position,
     force = force,
-    direction = mode == "input" and util.direction.opposite(direction) or direction,
+    direction = mode == "input" and direction.opposite(loader_direction) or loader_direction,
     create_build_effect_smoke = false
   }
   return loader, inserters, chest, combinator
@@ -371,7 +356,7 @@ local function snap_loader(loader, entity)
   if not entity then
     entity = loader.surface.find_entities_filtered{
       area = util.position.to_tile_area(
-        util.position.add(loader.position, util.direction.to_vector(get_loader_direction(loader), 1))
+        util.position.add(loader.position, direction.to_vector(get_loader_direction(loader), 1))
       ),
       type = {"transport-belt", "underground-belt", "splitter", "loader", "loader-1x1", "linked-belt"}
     }[1]
@@ -391,8 +376,8 @@ local function snap_loader(loader, entity)
       end
     end
     -- snap belt type
-    local belt_type = get_belt_type(entity)
-    if get_belt_type(loader) ~= belt_type then
+    local belt_type = util.get_belt_type(entity)
+    if util.get_belt_type(loader) ~= belt_type then
       loader = update_loader_type(loader, belt_type)
     end
   end
@@ -451,7 +436,7 @@ function infinity_loader.picker_dollies_move(e)
         entity.teleport(moved_entity.position)
       end
     end
-    loader = update_loader_type(loader, get_belt_type(loader), {position = moved_entity.position})
+    loader = update_loader_type(loader, util.get_belt_type(loader), {position = moved_entity.position})
     -- snap loader
     snap_loader(loader)
   end
