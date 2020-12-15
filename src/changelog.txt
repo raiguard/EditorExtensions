@@ -4,10 +4,11 @@ Date: ????
   Features:
     - Added linked belts
       - These can connect to other linked belts in arbitrary locations, even across surfaces
-      - Click a linked belt to start a connection, then click another one to bond them
-      - Shift + right-click a linked belt to sever a bond
+      - Click a linked belt to start a connection, then click another one to link them
+      - Shift + right-click a linked belt to sever its link
       - Linked belts will snap their belt type, similar to infinity loaders
       - Linked belts will also snap direction if they don't currently have a link
+      - Links will be preserved in blueprints, so long as both ends of the link are in the blueprint
   Changes:
     - Infinity loaders now use the linked belt graphics instead of desaturated graphics
     - Significantly simplified infinity loader snapping code
