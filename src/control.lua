@@ -177,6 +177,30 @@ end)
 
 -- ENTITY
 
+local function snap_belt_neighbours(entity)
+  local loaders = {}
+  local linked_belts = {}
+  for _ = 1, entity.type == "transport-belt" and 4 or 2 do
+    for _, neighbours in pairs(entity.belt_neighbours) do
+      for _, neighbour in ipairs(neighbours) do
+        if infinity_loader.check_is_loader(neighbour) then
+          loaders[neighbour.unit_number or (#loaders + 1)] = neighbour
+        elseif linked_belt.check_is_linked_belt(neighbour) then
+          linked_belts[neighbour.unit_number or (#linked_belts + 1)] = neighbour
+        end
+      end
+    end
+    entity.rotate()
+  end
+
+  for _, loader in pairs(loaders) do
+    infinity_loader.snap(loader, entity)
+  end
+  for _, belt in pairs(linked_belts) do
+    linked_belt.snap(belt, entity)
+  end
+end
+
 event.register(
   {
     defines.events.on_built_entity,
@@ -200,18 +224,18 @@ event.register(
       or entity_name == "ee-infinity-loader-logic-combinator"
     then
       infinity_loader.build(entity)
-    elseif entity.type == "transport-belt" then
-      -- snap neighbors
-      infinity_loader.snap_tile_neighbors(entity)
-    elseif entity.type == "underground-belt" then
-      -- snap neighbors of both sides
-      infinity_loader.snap_tile_neighbors(entity)
-      if entity.neighbours then
-        infinity_loader.snap_tile_neighbors(entity.neighbours)
+    -- transport belt connectables
+    elseif
+      entity.type == "transport-belt"
+      or entity.type == "underground-belt"
+      or entity.type == "splitter"
+      or entity.type == "loader"
+      or entity.type == "loader-1x1"
+    then
+      snap_belt_neighbours(entity)
+      if entity.type == "underground-belt" and entity.neighbours then
+        snap_belt_neighbours(entity.neighbours)
       end
-    elseif entity.type == "splitter" or entity.type == "loader" or entity.type == "loader-1x1" then
-      -- snap belt neighbors
-      infinity_loader.snap_belt_neighbors(entity)
     -- infinity wagon
     elseif constants.infinity_wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
@@ -254,19 +278,18 @@ event.register(
 event.on_player_rotated_entity(function(e)
   local entity = e.entity
   if entity.name == "ee-infinity-loader-logic-combinator" then
-    infinity_loader.rotate(entity, e.previous_direction)
-  elseif entity.type == "transport-belt" then
-    -- snap neighbors
-    infinity_loader.snap_tile_neighbors(entity)
-  elseif entity.type == "underground-belt" then
-    -- snap neighbors of both sides
-    infinity_loader.snap_tile_neighbors(entity)
-    if entity.neighbours then
-      infinity_loader.snap_tile_neighbors(entity.neighbours)
+    snap_belt_neighbours(infinity_loader.rotate(entity, e.previous_direction))
+  elseif
+    entity.type == "transport-belt"
+    or entity.type == "underground-belt"
+    or entity.type == "splitter"
+    or entity.type == "loader"
+    or entity.type == "loader-1x1"
+  then
+    snap_belt_neighbours(entity)
+    if entity.type == "underground-belt" and entity.neighbours then
+      snap_belt_neighbours(entity.neighbours)
     end
-  elseif entity.type == "splitter" or entity.type == "loader" or entity.type == "loader-1x1" then
-    -- snap belt neighbors
-    infinity_loader.snap_belt_neighbors(entity)
   elseif linked_belt.check_is_linked_belt(entity) then
     linked_belt.handle_rotation(e)
   end
@@ -322,8 +345,10 @@ end)
 event.on_selected_entity_changed(function(e)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
-  local selected = player.selected or e.last_entity
+  local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) then
+    linked_belt.render_connection(player, player_table)
+  elseif e.last_entity and linked_belt.check_is_linked_belt(e.last_entity) then
     linked_belt.render_connection(player, player_table)
   end
 end)

@@ -9,19 +9,6 @@ local infinity_loader = {}
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
-local function check_is_loader(entity)
-  if entity.name:find("infinity%-loader%-loader") then return true end
-  return false
-end
-
--- get the direction that the mouth of the loader is facing
-local function get_loader_direction(loader)
-  if loader.loader_type == "input" then
-    return direction.opposite(loader.direction)
-  end
-  return loader.direction
-end
-
 local function num_inserters(entity)
   return math.ceil(entity.prototype.belt_speed / constants.belt_speed_for_60_per_second) * 2
 end
@@ -135,7 +122,7 @@ local function update_inserters(loader, entities)
       inserter.pickup_target = loader
       inserter.pickup_position = util.position.add(
         e_position,
-        direction.to_vector(e_direction, (-mod*0.2 + 0.3), orthogonal)
+        direction.to_vector_2d(e_direction, (-mod*0.2 + 0.3), orthogonal)
       )
       inserter.drop_target = chest
       inserter.drop_position = e_position
@@ -146,7 +133,7 @@ local function update_inserters(loader, entities)
       inserter.drop_target = loader
       inserter.drop_position = util.position.add(
         e_position,
-        direction.to_vector(e_direction, (mod*0.2 - 0.3), orthogonal)
+        direction.to_vector_2d(e_direction, (mod*0.2 - 0.3), orthogonal)
       )
     end
     -- TEMPORARY rendering
@@ -344,72 +331,40 @@ end
 
 -- -----------------------------------------------------------------------------
 -- SNAPPING
--- "Snapping" in this case usually means matching both direction and belt type
+-- "snapping" in this case usually means matching both direction and belt type
 
 -- snaps the loader to the transport-belt-connectable entity that it's facing
--- if `entity` is supplied, it will check against that entity, and will not snap if it cannot connect to it
-local function snap_loader(loader, entity)
-  -- in case the loader got snapped before in the same neighbors function, don't do anything
-  if loader and not loader.valid then return end
+-- if `target` is supplied, it will check against that entity, and will not snap if it cannot connect to it
+function infinity_loader.snap(entity, target)
+  if not entity or not entity.valid then return end
 
-  -- if the entity was not supplied, find it
-  if not entity then
-    entity = loader.surface.find_entities_filtered{
-      area = util.position.to_tile_area(
-        util.position.add(loader.position, direction.to_vector(get_loader_direction(loader), 1))
-      ),
-      type = {"transport-belt", "underground-belt", "splitter", "loader", "loader-1x1", "linked-belt"}
-    }[1]
-  end
+  -- check for a connected belt, then flip and try again, then flip back if failed
+  -- this will inherently snap the direction, and then snap the belt type if they don't match
+  for _ = 1, 2 do
+    local loader_type = entity.loader_type
+    local neighbour_key = loader_type.."s"
 
-  if entity then
-    -- snap direction
-    local belt_neighbors = loader.belt_neighbours
-    if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
-      -- we are facing something, but cannot connect to it, so rotate and try again
-      loader.rotate()
-      belt_neighbors = loader.belt_neighbours
-      if #belt_neighbors.inputs == 0 and #belt_neighbors.outputs == 0 then
-        -- cannot connect to whatever it is, so reset and don't snap belt type
-        loader.rotate()
-        goto skip_belt_type
+    local connection = entity.belt_neighbours[neighbour_key][1]
+    if connection and (not target or connection.unit_number == target.unit_number) then
+      -- snap the belt type
+      local belt_type = util.get_belt_type(connection)
+      if util.get_belt_type(entity) ~= belt_type then
+        entity = update_loader_type(entity, belt_type)
       end
+      -- update internals
+      update_inserters(entity)
+      update_filters(
+        entity.surface.find_entities_filtered{
+          name = "ee-infinity-loader-logic-combinator",
+          position = entity.position
+        }[1],
+        {loader = entity}
+      )
+      break
+    else
+      -- flip the direction
+      entity.loader_type = loader_type == "output" and "input" or "output"
     end
-    -- snap belt type
-    local belt_type = util.get_belt_type(entity)
-    if util.get_belt_type(loader) ~= belt_type then
-      loader = update_loader_type(loader, belt_type)
-    end
-  end
-  ::skip_belt_type::
-
-  -- update internals
-  update_inserters(loader)
-  update_filters(
-    loader.surface.find_entities_filtered{name = "ee-infinity-loader-logic-combinator", position = loader.position}[1],
-    {loader = loader}
-  )
-end
-
--- checks adjacent tiles for infinity loaders, and calls the snapping function on any it finds
-function infinity_loader.snap_tile_neighbors(entity)
-  for _, e in pairs(util.check_tile_neighbors(entity, check_is_loader, false, true)) do
-    snap_loader(e, entity)
-  end
-end
-
--- checks belt neighbors for both rotations of the source entity for infinity loaders, and calls the snapping function
--- on them
-function infinity_loader.snap_belt_neighbors(entity)
-  local belt_neighbors = util.check_belt_neighbors(entity, check_is_loader, true)
-  entity.rotate()
-  local rev_belt_neighbors = util.check_belt_neighbors(entity, check_is_loader, true)
-  entity.rotate()
-  for _, e in ipairs(belt_neighbors) do
-    snap_loader(e, entity)
-  end
-  for _, e in ipairs(rev_belt_neighbors) do
-    snap_loader(e, entity)
   end
 end
 
@@ -429,7 +384,7 @@ function infinity_loader.picker_dollies_move(e)
         position = e.start_pos
       }
     ) do
-      if check_is_loader(entity) then
+      if infinity_loader.check_is_loader(entity) then
         -- we need to move the loader very last, after all of the other entities are in the new position
         loader = entity
       else
@@ -438,12 +393,16 @@ function infinity_loader.picker_dollies_move(e)
     end
     loader = update_loader_type(loader, util.get_belt_type(loader), {position = moved_entity.position})
     -- snap loader
-    snap_loader(loader)
+    infinity_loader.snap(loader)
   end
 end
 
 -- -----------------------------------------------------------------------------
 -- FUNCTIONS
+
+function infinity_loader.check_is_loader(entity)
+  return string.find(entity.name, "infinity%-loader%-loader")
+end
 
 function infinity_loader.build_from_ghost(entity)
   -- convert to dummy combinator ghost
@@ -483,7 +442,7 @@ function infinity_loader.build(entity)
   new_control.enabled = old_control.enabled
   entity.destroy()
   -- snap new loader
-  snap_loader(loader)
+  infinity_loader.snap(loader)
 end
 
 function infinity_loader.rotate(entity, previous_direction)
@@ -493,8 +452,8 @@ function infinity_loader.rotate(entity, previous_direction)
   loader.rotate()
   update_inserters(loader)
   update_filters(entity, {loader = loader})
-  -- snap if a loader happens to be facing directly into this loader
-  infinity_loader.snap_belt_neighbors(loader)
+
+  return loader
 end
 
 function infinity_loader.destroy(entity)
@@ -554,7 +513,7 @@ function infinity_loader.check_loaders()
     for _, entity in ipairs(surface.find_entities_filtered{name = "ee-infinity-loader-logic-combinator"}) do
       -- if its loader is gone, give it a new one with default settings
       if #surface.find_entities_filtered{type = "loader-1x1", position = entity.position} == 0 then
-        snap_loader(
+        infinity_loader.snap(
           update_loader_type(
             nil,
             "express",

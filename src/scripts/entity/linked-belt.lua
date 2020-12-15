@@ -210,6 +210,7 @@ function linked_belt.snap(entity, target)
       if i == 2 and neighbour then
         entity.linked_belt_type = linked_belt_type == "output" and "input" or "output"
       end
+      break
     else
       -- flip the direction
       entity.linked_belt_type = linked_belt_type == "output" and "input" or "output"
