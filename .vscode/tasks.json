@@ -18,6 +18,7 @@
       // unfortunately tasks don't support environment variables... >:(
       "modsPath": "c:/Files/Development/Factorio/Testbenches/1/mods",
       "adjustMods": {
+        "CursorEnhancements": true,
         "EditorExtensions": true,
         "flib": true,
         "Sandbox": true

@@ -1,5 +1,6 @@
 local direction = require("__flib__.direction")
 
+local shared = require("scripts.shared")
 local util = require("scripts.util")
 
 local linked_belt = {}
@@ -38,6 +39,7 @@ function linked_belt.finish_connection(player, player_table, entity, shift)
     player_table.flags.connecting_linked_belts = false
     player_table.linked_belt_source = nil
     linked_belt.render_connection(player, player_table)
+    shared.snap_belt_neighbours(entity)
   else
     util.error_text(player, {"ee-message.cannot-connect"}, entity.position)
   end

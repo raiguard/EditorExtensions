@@ -10,6 +10,7 @@ local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
 local on_tick = require("scripts.on-tick")
 local player_data = require("scripts.player-data")
+local shared = require("scripts.shared")
 local util = require("scripts.util")
 
 local aggregate_chest = require("scripts.entity.aggregate-chest")
@@ -177,30 +178,6 @@ end)
 
 -- ENTITY
 
-local function snap_belt_neighbours(entity)
-  local loaders = {}
-  local linked_belts = {}
-  for _ = 1, entity.type == "transport-belt" and 4 or 2 do
-    for _, neighbours in pairs(entity.belt_neighbours) do
-      for _, neighbour in ipairs(neighbours) do
-        if infinity_loader.check_is_loader(neighbour) then
-          loaders[neighbour.unit_number or (#loaders + 1)] = neighbour
-        elseif linked_belt.check_is_linked_belt(neighbour) then
-          linked_belts[neighbour.unit_number or (#linked_belts + 1)] = neighbour
-        end
-      end
-    end
-    entity.rotate()
-  end
-
-  for _, loader in pairs(loaders) do
-    infinity_loader.snap(loader, entity)
-  end
-  for _, belt in pairs(linked_belts) do
-    linked_belt.snap(belt, entity)
-  end
-end
-
 event.register(
   {
     defines.events.on_built_entity,
@@ -232,14 +209,16 @@ event.register(
       or entity.type == "loader"
       or entity.type == "loader-1x1"
     then
-      snap_belt_neighbours(entity)
+      -- generic other snapping
+      shared.snap_belt_neighbours(entity)
       if entity.type == "underground-belt" and entity.neighbours then
-        snap_belt_neighbours(entity.neighbours)
+        shared.snap_belt_neighbours(entity.neighbours)
       end
     -- infinity wagon
     elseif constants.infinity_wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
       on_tick.register()
+    -- linked belt
     elseif linked_belt.check_is_linked_belt(entity) then
       linked_belt.snap(entity)
     -- super pump
@@ -278,7 +257,7 @@ event.register(
 event.on_player_rotated_entity(function(e)
   local entity = e.entity
   if entity.name == "ee-infinity-loader-logic-combinator" then
-    snap_belt_neighbours(infinity_loader.rotate(entity, e.previous_direction))
+    shared.snap_belt_neighbours(infinity_loader.rotate(entity, e.previous_direction))
   elseif
     entity.type == "transport-belt"
     or entity.type == "underground-belt"
@@ -286,12 +265,17 @@ event.on_player_rotated_entity(function(e)
     or entity.type == "loader"
     or entity.type == "loader-1x1"
   then
-    snap_belt_neighbours(entity)
+    shared.snap_belt_neighbours(entity)
     if entity.type == "underground-belt" and entity.neighbours then
-      snap_belt_neighbours(entity.neighbours)
+      shared.snap_belt_neighbours(entity.neighbours)
     end
   elseif linked_belt.check_is_linked_belt(entity) then
     linked_belt.handle_rotation(e)
+    shared.snap_belt_neighbours(entity)
+    local neighbour = entity.linked_belt_neighbour
+    if neighbour and neighbour.type ~= "entity-ghost" then
+      shared.snap_belt_neighbours(neighbour)
+    end
   end
 end)
 
@@ -583,3 +567,49 @@ event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_ma
 event.set_filters(defines.events.on_cancelled_deconstruction, {
   {filter = "name", name = "ee-infinity-cargo-wagon"}
 })
+
+-- -----------------------------------------------------------------------------
+-- SHARED
+
+function shared.snap_belt_neighbours(entity)
+  local loaders = {}
+  local linked_belts = {}
+
+  local linked_belt_neighbour
+  if entity.type == "linked-belt" then
+    linked_belt_neighbour = entity.linked_belt_neighbour
+    if linked_belt_neighbour then
+      entity.disconnect_linked_belts()
+    end
+  end
+
+  for _ = 1, entity.type == "transport-belt" and 4 or 2 do
+    -- catalog belt neighbours for this rotation
+    for _, neighbours in pairs(entity.belt_neighbours) do
+      for _, neighbour in ipairs(neighbours) do
+        if infinity_loader.check_is_loader(neighbour) then
+          loaders[neighbour.unit_number or (#loaders + 1)] = neighbour
+        elseif linked_belt.check_is_linked_belt(neighbour) then
+          linked_belts[neighbour.unit_number or (#linked_belts + 1)] = neighbour
+        end
+      end
+    end
+    -- rotate or flip linked belt type
+    if entity.type == "linked-belt" then
+      entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
+    else
+      entity.rotate()
+    end
+  end
+
+  if linked_belt_neighbour then
+    entity.connect_linked_belts(linked_belt_neighbour)
+  end
+
+  for _, loader in pairs(loaders) do
+    infinity_loader.snap(loader, entity)
+  end
+  for _, belt in pairs(linked_belts) do
+    linked_belt.snap(belt, entity)
+  end
+end
