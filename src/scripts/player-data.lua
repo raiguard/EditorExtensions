@@ -6,11 +6,13 @@ local inventory = require("scripts.inventory")
 function player_data.init(index)
   local player_table = {
     flags = {
-      update_character_cheats_when_possible = false,
       map_editor_toggled = false,
-      opening_default_gui = false -- currently for super pump, but can be used generically
+      opening_default_gui = false, -- currently for super pump, but can be used generically
+      update_character_cheats_when_possible = false
     },
-    gui = {}
+    gui = {},
+    linked_belt_render_objects = {},
+    linked_belt_source = nil
   }
   global.players[index] = player_table
 

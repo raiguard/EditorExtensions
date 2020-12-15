@@ -135,7 +135,10 @@ event.register("ee-open-gui", function(e)
       else
         util.error_text(player, {"cant-reach"}, selected.position)
       end
-    elseif linked_belt.check_is_linked_belt(selected) then
+    elseif
+      linked_belt.check_is_linked_belt(selected)
+      and not (player.cursor_stack and player.cursor_stack.valid_for_read)
+    then
       local player_table = global.players[e.player_index]
       if player_table.flags.connecting_linked_belts then
         linked_belt.finish_connection(player, player_table, selected)
@@ -334,6 +337,8 @@ event.on_selected_entity_changed(function(e)
     linked_belt.render_connection(player, player_table)
   elseif e.last_entity and linked_belt.check_is_linked_belt(e.last_entity) then
     linked_belt.render_connection(player, player_table)
+  elseif not e.last_entity and player_table.flags.connecting_linked_belts then
+    linked_belt.render_connection(player, player_table)
   end
 end)
 
@@ -499,6 +504,14 @@ event.on_player_toggled_map_editor(function(e)
   else
     player.gui.top.style.left_margin = 0
     player.gui.left.style.left_margin = 0
+  end
+end)
+
+event.on_player_cursor_stack_changed(function(e)
+  local player_table = global.players[e.player_index]
+  if player_table.flags.connecting_linked_belts then
+    local player = game.get_player(e.player_index)
+    linked_belt.cancel_connection(player, player_table)
   end
 end)
 

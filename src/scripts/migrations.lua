@@ -142,6 +142,7 @@ return {
   ["1.9.0"] = function()
     for _, player_table in pairs(global.players) do
       player_table.flags.connecting_linked_belts = false
+      player_table.linked_belt_render_objects = {}
     end
   end
 }
