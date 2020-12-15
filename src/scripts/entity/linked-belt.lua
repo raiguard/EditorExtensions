@@ -4,37 +4,6 @@ local util = require("scripts.util")
 
 local linked_belt = {}
 
---[[
-  INTERACTIONS
-  Left click:
-    - Not holding end:
-      - No connection: Connect this end, put other end in cursor
-      - Connection: Disconnect other end and put in cursor
-    - Holding end:
-      - No connection: Connect to other end
-      - Connection: Error (flying text)
-  Shift + left click:
-    - Not holding end:
-      - No connection: Connect this end, put other end in cursor
-      - Connection: Disconnect this end and put it in the cursor
-    - Holding end:
-      - No connection: Connect to other end
-      - Connection: Sever current connection, connect to other end
-  Shift + right click:
-    - Not holding end:
-      - No connection: Error (flying text)
-      - Connection: Sever current connection
-    - Holding end:
-      - No connection: Error (flying text)
-      - Connection: Sever current connection
-  Rotate:
-    - No connection: toggle input/output on self
-    - Connection: toggle input/output on both ends of the connection
-  Snapping:
-    - No connection: direction and belt type?
-    - Connection: belt type only
-]]
-
 function linked_belt.check_is_linked_belt(entity)
   return string.find(entity.name, "ee%-linked%-belt")
 end
