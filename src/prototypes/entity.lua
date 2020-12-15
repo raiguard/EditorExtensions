@@ -421,6 +421,57 @@ do
   data:extend{cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe}
 end
 
+local linked_chest = table.deepcopy(data.raw["linked-container"]["linked-chest"])
+linked_chest.name = "ee-linked-chest"
+linked_chest.icons = {
+  {icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64, icon_mipmaps = 4}
+}
+linked_chest.icon = nil
+linked_chest.icon_size = nil
+linked_chest.icon_mipmaps = nil
+linked_chest.minable.result = "ee-linked-chest"
+linked_chest.inventory_size = 100
+linked_chest.picture = {
+  layers = {
+    {
+      filename = "__EditorExtensions__/graphics/entity/linked-chest/linked-chest.png",
+      priority = "extra-high",
+      width = 34,
+      height = 42,
+      shift = util.by_pixel(0, -3),
+      hr_version =
+      {
+        filename = "__EditorExtensions__/graphics/entity/linked-chest/hr-linked-chest.png",
+        priority = "extra-high",
+        width = 68,
+        height = 84,
+        shift = util.by_pixel(0, -3),
+        scale = 0.5,
+      }
+    },
+    {
+      filename = "__EditorExtensions__/graphics/entity/linked-chest/linked-chest-shadow.png",
+      priority = "extra-high",
+      width = 58,
+      height = 24,
+      shift = util.by_pixel(12, 6),
+      draw_as_shadow = true,
+      hr_version =
+      {
+        filename = "__EditorExtensions__/graphics/entity/linked-chest/hr-linked-chest-shadow.png",
+        priority = "extra-high",
+        width = 116,
+        height = 48,
+        shift = util.by_pixel(12, 6),
+        draw_as_shadow = true,
+        scale = 0.5,
+      }
+    }
+  }
+}
+util.recursive_tint(linked_chest, constants.alternate_tint)
+data:extend{linked_chest}
+
 local super_beacon = table.deepcopy(data.raw["beacon"]["beacon"])
 super_beacon.name = "ee-super-beacon"
 super_beacon.icons = util.extract_icon_info(super_beacon)

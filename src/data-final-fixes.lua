@@ -89,6 +89,7 @@ linked_belt_base.localised_name = {"entity-name.ee-linked-belt"}
 linked_belt_base.localised_description = {"entity-description.ee-linked-belt"}
 linked_belt_base.placeable_by = {item = "ee-linked-belt", count = 1}
 linked_belt_base.minable = {result = "ee-linked-belt", mining_time = 0.1}
+linked_belt_base.fast_replaceable_group = "transport-belt"
 table.insert(linked_belt_base.flags, "not-upgradable")
 util.recursive_tint(linked_belt_base, constants.alternate_tint)
 
@@ -104,6 +105,8 @@ end
 
 local loader_base = table.deepcopy(data.raw["loader-1x1"]["loader-1x1"])
 loader_base.structure = table.deepcopy(linked_belt_base.structure)
+loader_base.structure.direction_in_side_loading = nil
+loader_base.structure.direction_out_side_loading = nil
 loader_base.icons = table.deepcopy(linked_belt_base.icons)
 loader_base.icon = nil
 loader_base.icon_size = nil
@@ -113,6 +116,7 @@ loader_base.localised_description = {"entity-name.ee-infinity-loader"}
 loader_base.selectable_in_game = false
 loader_base.belt_length = 0.6
 loader_base.container_distance = 0
+loader_base.fast_replaceable_group = "transport-belt"
 util.recursive_tint(loader_base)
 
 local function create_loader(base_prototype, suffix)

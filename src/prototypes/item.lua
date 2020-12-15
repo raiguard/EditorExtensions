@@ -134,6 +134,19 @@ linked_belt.flags = {}
 util.recursive_tint(linked_belt, constants.alternate_tint)
 data:extend{linked_belt}
 
+local linked_chest = table.deepcopy(data.raw["item"]["linked-chest"])
+linked_chest.name = "ee-linked-chest"
+linked_chest.icons = {
+  {icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64, icon_mipmaps = 4}
+}
+linked_chest.subgroup = "ee-inventories"
+linked_chest.order = "c"
+linked_chest.stack_size = 50
+linked_chest.place_result = "ee-linked-chest"
+linked_chest.flags = {}
+util.recursive_tint(linked_chest, constants.alternate_tint)
+data:extend{linked_chest}
+
 local super_beacon = table.deepcopy(data.raw["item"]["beacon"])
 super_beacon.name = "ee-super-beacon"
 super_beacon.icons = util.recursive_tint(util.extract_icon_info(super_beacon))
