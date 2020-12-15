@@ -89,6 +89,7 @@ linked_belt_base.localised_name = {"entity-name.ee-linked-belt"}
 linked_belt_base.localised_description = {"entity-description.ee-linked-belt"}
 linked_belt_base.placeable_by = {item = "ee-linked-belt", count = 1}
 linked_belt_base.minable = {result = "ee-linked-belt", mining_time = 0.1}
+table.insert(linked_belt_base.flags, "not-upgradable")
 util.recursive_tint(linked_belt_base, constants.alternate_tint)
 
 local function create_linked_belt(base_prototype, suffix)
