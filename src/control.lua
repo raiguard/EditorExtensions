@@ -263,13 +263,13 @@ event.register(
     elseif constants.ia.entity_names[entity.name] then
       infinity_accumulator.close_open_guis(entity)
     elseif linked_belt.check_is_linked_belt(entity) then
-      local player_table = global.players[e.player_index]
-      if
-        player_table.flags.connecting_linked_belts
-        and player_table.linked_belt_source.unit_number == entity.unit_number
-      then
-        local player = game.get_player(e.player_index)
-        linked_belt.cancel_connection(player, player_table)
+      local players = global.linked_belt_sources[entity.unit_number]
+      if players then
+        for player_index in pairs(players) do
+          local player = game.get_player(player_index)
+          local player_table = global.players[player_index]
+          linked_belt.cancel_connection(player, player_table)
+        end
       end
     end
   end

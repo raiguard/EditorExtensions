@@ -24,6 +24,10 @@ function linked_belt.start_connection(player, player_table, entity, shift)
   player_table.flags.connecting_linked_belts = true
   player_table.linked_belt_source = source
 
+  local source_players = global.linked_belt_sources[entity.unit_number] or {}
+  source_players[player.index] = true
+  global.linked_belt_sources[entity.unit_number] = source_players
+
   linked_belt.render_connection(player, player_table)
 end
 
@@ -38,6 +42,11 @@ function linked_belt.finish_connection(player, player_table, entity, shift)
     entity.connect_linked_belts(source)
     player_table.flags.connecting_linked_belts = false
     player_table.linked_belt_source = nil
+    local source_players = global.linked_belt_sources[source.unit_number]
+    source_players[player.index] = nil
+    if table_size(source_players) == 0 then
+      global.linked_belt_sources[source.unit_number] = nil
+    end
     linked_belt.render_connection(player, player_table)
     shared.snap_belt_neighbours(entity)
   else
@@ -47,6 +56,12 @@ end
 
 function linked_belt.cancel_connection(player, player_table)
   player_table.flags.connecting_linked_belts = false
+  local source = player_table.linked_belt_source
+  local source_players = global.linked_belt_sources[source.unit_number]
+  source_players[player.index] = nil
+  if table_size(source_players) == 0 then
+    global.linked_belt_sources[source.unit_number] = nil
+  end
   player_table.linked_belt_source = nil
   linked_belt.render_connection(player, player_table)
 end

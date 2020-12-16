@@ -145,5 +145,20 @@ return {
       player_table.last_cleared_cursor_tick = 0
       player_table.linked_belt_render_objects = {}
     end
+  end,
+  ["1.9.2"] = function()
+    local linked_belt_sources = {}
+    for player_index, player_table in pairs(global.players) do
+      local source = player_table.linked_belt_source
+      if source and source.valid then
+        local players = linked_belt_sources[source.unit_number]
+        if players then
+          players[player_index] = true
+        else
+          linked_belt_sources[source.unit_number] = {player_index}
+        end
+      end
+    end
+    global.linked_belt_sources = linked_belt_sources
   end
 }
