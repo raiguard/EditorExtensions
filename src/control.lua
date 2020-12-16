@@ -171,6 +171,14 @@ event.register("ee-copy-entity-settings", function(e)
   end
 end)
 
+event.register("ee-fast-entity-transfer", function(e)
+  local player = game.get_player(e.player_index)
+  local selected = player.selected
+  if selected and linked_belt.check_is_linked_belt(selected) then
+    linked_belt.sync_belt_types(player, selected)
+  end
+end)
+
 event.register("ee-clear-cursor", function(e)
   local player_table = global.players[e.player_index]
   if player_table.flags.connecting_linked_belts then

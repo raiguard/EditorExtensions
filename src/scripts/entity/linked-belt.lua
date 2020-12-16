@@ -63,7 +63,7 @@ local function draw_connection(objects, color, dashed, player_index, source, des
       radius = 0.15,
       width = 2,
       filled = not dashed,
-      target = entity,
+      target = entity.position,
       surface = entity.surface,
       players = {player_index}
     }
@@ -74,8 +74,8 @@ local function draw_connection(objects, color, dashed, player_index, source, des
       width = 2,
       gap_length = dashed and 0.3 or 0,
       dash_length = dashed and 0.3 or 0,
-      from = source,
-      to = destination,
+      from = source.position,
+      to = destination.position,
       surface = source.surface,
       players = {player_index}
     }
@@ -212,6 +212,20 @@ function linked_belt.snap(entity, target)
   -- reconnect to other end
   if neighbour then
     entity.connect_linked_belts(neighbour)
+  end
+end
+
+function linked_belt.sync_belt_types(player, entity)
+  local neighbour = entity.linked_belt_neighbour
+  if neighbour then
+    local belt_type = util.get_belt_type(entity)
+    if belt_type ~= util.get_belt_type(neighbour) then
+      entity.disconnect_linked_belts()
+      neighbour = replace_linked_belt(neighbour, belt_type)
+      entity.connect_linked_belts(neighbour)
+    else
+      util.error_text(player, {"ee-message.belt-types-already-synced"}, entity.position)
+    end
   end
 end
 

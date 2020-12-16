@@ -19,6 +19,12 @@ data:extend{
   },
   {
     type = "custom-input",
+    name = "ee-fast-entity-transfer",
+    key_sequence = "",
+    linked_game_control = "fast-entity-transfer"
+  },
+  {
+    type = "custom-input",
     name = "ee-clear-cursor",
     key_sequence = "",
     linked_game_control = "clear-cursor"
