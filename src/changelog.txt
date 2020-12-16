@@ -15,7 +15,8 @@ Date: ????
   Changes:
     - Infinity loaders now use the linked belt graphics instead of desaturated graphics
     - Significantly simplified infinity loader snapping code
-
+  Bugfixes:
+    - Fixed cheat equipment not being tinted purple
 ---------------------------------------------------------------------------------------------------
 Version: 1.8.3
 Date: 2020-11-29
