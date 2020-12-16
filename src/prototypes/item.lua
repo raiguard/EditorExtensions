@@ -132,7 +132,7 @@ linked_belt.order = "ab"
 linked_belt.stack_size = 50
 linked_belt.place_result = "ee-linked-belt-express"
 linked_belt.flags = {}
-util.recursive_tint(linked_belt, constants.alternate_tint)
+util.recursive_tint(linked_belt, constants.linked_belt_tint)
 data:extend{linked_belt}
 
 local linked_chest = table.deepcopy(data.raw["item"]["linked-chest"])
@@ -145,7 +145,7 @@ linked_chest.order = "c"
 linked_chest.stack_size = 50
 linked_chest.place_result = "ee-linked-chest"
 linked_chest.flags = {}
-util.recursive_tint(linked_chest, constants.alternate_tint)
+util.recursive_tint(linked_chest, constants.infinity_chest_data[1].t)
 data:extend{linked_chest}
 
 local super_beacon = table.deepcopy(data.raw["item"]["beacon"])

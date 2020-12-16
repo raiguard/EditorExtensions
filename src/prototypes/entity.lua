@@ -469,7 +469,7 @@ linked_chest.picture = {
     }
   }
 }
-util.recursive_tint(linked_chest, constants.alternate_tint)
+util.recursive_tint(linked_chest, constants.infinity_chest_data[1].t)
 data:extend{linked_chest}
 
 local super_beacon = table.deepcopy(data.raw["beacon"]["beacon"])

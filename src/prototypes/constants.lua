@@ -11,8 +11,6 @@ constants.aggregate_chest_icon = {
   icon_mipmaps = 4
 }
 
-constants.alternate_tint = {r = 0.6, g = 0.8, b = 1, a = 1}
-
 -- pattern -> replacement
 -- iterate through all of these to result in the base belt type
 constants.belt_name_patterns = {
@@ -94,6 +92,8 @@ constants.infinity_chest_icon = {
 }
 
 constants.infinity_tint = {r = 1, g = 0.5, b = 1, a = 1}
+
+constants.linked_belt_tint = {r = 0.6, g = 1, b = 1, a = 1}
 
 constants.module_data = {
   {
