@@ -125,6 +125,7 @@ data:extend{infinity_pipe}
 
 local linked_belt = table.deepcopy(data.raw["item"]["linked-belt"])
 linked_belt.name = "ee-linked-belt"
+linked_belt.localised_description = {"item-description.ee-linked-belt"}
 linked_belt.icons = util.extract_icon_info(linked_belt)
 linked_belt.subgroup = "ee-misc"
 linked_belt.order = "ab"
