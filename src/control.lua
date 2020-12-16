@@ -262,6 +262,15 @@ event.register(
       infinity_wagon.destroy(entity)
     elseif constants.ia.entity_names[entity.name] then
       infinity_accumulator.close_open_guis(entity)
+    elseif linked_belt.check_is_linked_belt(entity) then
+      local player_table = global.players[e.player_index]
+      if
+        player_table.flags.connecting_linked_belts
+        and player_table.linked_belt_source.unit_number == entity.unit_number
+      then
+        local player = game.get_player(e.player_index)
+        linked_belt.cancel_connection(player, player_table)
+      end
     end
   end
 )
@@ -577,6 +586,7 @@ event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robo
   {filter = "name", name = "ee-infinity-loader-logic-combinator"},
   {filter = "name", name = "ee-infinity-cargo-wagon"},
   {filter = "name", name = "ee-infinity-fluid-wagon"},
+  {filter = "type", type = "linked-belt"}
 })
 
 event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {

@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.1
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed a crash when mining a linked belt when that linked belt is selected for linking
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.0
 Date: 2020-12-16

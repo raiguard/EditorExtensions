@@ -97,7 +97,7 @@ function linked_belt.render_connection(player, player_table)
   objects = {} -- new objects table
 
   local active_source = player_table.linked_belt_source
-  if active_source then
+  if active_source and active_source.valid then
     local neighbour = active_source.linked_belt_neighbour
     if neighbour then
       draw_connection(objects, colors.red, false, player.index, active_source, active_source.linked_belt_neighbour)
@@ -114,10 +114,10 @@ function linked_belt.render_connection(player, player_table)
     then
       draw_connection(objects, colors.green, false, player.index, selected, neighbour)
     end
-    if active_source then
+    if active_source and active_source.valid then
       draw_connection(objects, colors.teal, true, player.index, active_source, selected)
     end
-  elseif active_source then
+  elseif active_source and active_source.valid then
     draw_connection(objects, colors.teal, true, player.index, active_source)
   end
 
