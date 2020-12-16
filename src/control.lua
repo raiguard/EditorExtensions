@@ -176,6 +176,7 @@ event.register("ee-clear-cursor", function(e)
   if player_table.flags.connecting_linked_belts then
     local player = game.get_player(e.player_index)
     linked_belt.cancel_connection(player, player_table)
+    player_table.last_cleared_cursor_tick = game.ticks_played
   end
 end)
 
@@ -501,10 +502,14 @@ event.on_player_toggled_map_editor(function(e)
 end)
 
 event.on_player_cursor_stack_changed(function(e)
+  local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
   if player_table.flags.connecting_linked_belts then
-    local player = game.get_player(e.player_index)
     linked_belt.cancel_connection(player, player_table)
+  end
+  local cursor_stack = player.cursor_stack
+  if player_table.last_cleared_cursor_tick == game.ticks_played and (cursor_stack and cursor_stack.valid_for_read) then
+    player.clear_cursor()
   end
 end)
 

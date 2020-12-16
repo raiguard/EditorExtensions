@@ -11,6 +11,7 @@ function player_data.init(index)
       update_character_cheats_when_possible = false
     },
     gui = {},
+    last_cleared_cursor_tick = 0,
     linked_belt_render_objects = {},
     linked_belt_source = nil
   }
