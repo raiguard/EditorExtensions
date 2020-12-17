@@ -3,6 +3,7 @@ Version: 1.9.3
 Date: ????
   Bugfixes:
     - Fixed a crash when opening an infinity cargo wagon
+    - Fixed a crash when shift+clicking a linked belt twice
     - Fixed being unable to open infinity fluid wagons if they had an equipment grid
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.2

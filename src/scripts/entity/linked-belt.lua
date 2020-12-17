@@ -24,9 +24,9 @@ function linked_belt.start_connection(player, player_table, entity, shift)
   player_table.flags.connecting_linked_belts = true
   player_table.linked_belt_source = source
 
-  local source_players = global.linked_belt_sources[entity.unit_number] or {}
+  local source_players = global.linked_belt_sources[source.unit_number] or {}
   source_players[player.index] = true
-  global.linked_belt_sources[entity.unit_number] = source_players
+  global.linked_belt_sources[source.unit_number] = source_players
 
   linked_belt.render_connection(player, player_table)
 end
