@@ -1,7 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.3
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed a crash when opening an infinity cargo wagon
+    - Fixed being unable to open infinity fluid wagons if they had an equipment grid
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.2
 Date: 2020-12-16

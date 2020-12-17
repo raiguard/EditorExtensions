@@ -377,8 +377,9 @@ gui.hook_events(function(e)
         infinity_loader.open(e.player_index, entity)
       elseif entity_name == "ee-super-pump" then
         super_pump.open(e.player_index, entity)
-      elseif entity_name == "ee-infinity-cargo-wagon" then
-        infinity_wagon.open(e.player_index, entity)
+      elseif infinity_wagon.check_is_wagon(entity) then
+        local player = game.get_player(e.player_index)
+        infinity_wagon.open(player, entity)
       end
     end
   elseif e.name == defines.events.on_gui_closed then
