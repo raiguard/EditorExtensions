@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.4
-Date: ????
+Date: 2020-12-24
   Changes:
     - Infinity loaders and linked belts will default to the fastest belt speed in the current modset, instead of being hardcoded at express belts
   Bugfixes:
