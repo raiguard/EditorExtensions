@@ -161,7 +161,7 @@ local function update_loader_type(loader, belt_type, overrides)
   overrides = overrides or {}
   -- save settings first
   local position = overrides.position or loader.position
-  local direction = overrides.direction or loader.direction
+  local loader_direction = overrides.direction or loader.direction
   local force = overrides.force or loader.force
   local last_user = overrides.last_user or loader.last_user
   if last_user == "" then last_user = nil end
@@ -171,7 +171,7 @@ local function update_loader_type(loader, belt_type, overrides)
   local new_loader = surface.create_entity{
     name = "ee-infinity-loader-loader"..(belt_type == "" and "" or "-"..belt_type),
     position = position,
-    direction = direction,
+    direction = loader_direction,
     force = force,
     player = last_user,
     type = loader_type,
