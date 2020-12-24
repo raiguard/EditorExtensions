@@ -131,6 +131,7 @@ linked_belt.subgroup = "ee-misc"
 linked_belt.order = "ab"
 linked_belt.stack_size = 50
 linked_belt.flags = {}
+linked_belt.place_result = nil -- will be set in data-final-fixes
 util.recursive_tint(linked_belt, constants.linked_belt_tint)
 data:extend{linked_belt}
 
