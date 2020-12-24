@@ -314,7 +314,7 @@ local function handle_gui_action(e, msg)
   if msg.action == "close" then
     gui_data.refs.window.destroy()
     player_table.gui.il = nil
-    player.play_sound{path = "entity-close/express-loader"}
+    player.play_sound{path = "entity-close/ee-infinity-loader-loader"}
   elseif msg.action == "toggle_enabled" then
     local entity = global.players[e.player_index].gui.il.entity
     entity.get_or_create_control_behavior().enabled = e.element.switch_state == "left"
@@ -426,7 +426,7 @@ end
 function infinity_loader.build(entity)
   -- create the loader with default belt type, we will snap it later
   local loader, _, _, combinator = create_loader(
-    "express",
+    global.fastest_belt_type,
     "output",
     entity.surface,
     entity.position,
@@ -503,7 +503,7 @@ function infinity_loader.open(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
-  player.play_sound{path = "entity-open/express-loader"}
+  player.play_sound{path = "entity-open/ee-infinity-loader-loader"}
 end
 
 -- check every single infinity loader on every surface to see if it no longer has a loader entity
@@ -516,7 +516,7 @@ function infinity_loader.check_loaders()
         infinity_loader.snap(
           update_loader_type(
             nil,
-            "express",
+            global.fastest_belt_type,
             {
               position = entity.position,
               direction = entity.direction,

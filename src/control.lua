@@ -80,6 +80,8 @@ end)
 
 event.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
+    global_data.read_fastest_belt_type()
+
     compatibility.add_cursor_enhancements_overrides()
 
     aggregate_chest.update_data()

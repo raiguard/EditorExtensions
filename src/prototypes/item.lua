@@ -130,7 +130,6 @@ linked_belt.icons = util.extract_icon_info(linked_belt)
 linked_belt.subgroup = "ee-misc"
 linked_belt.order = "ab"
 linked_belt.stack_size = 50
-linked_belt.place_result = "ee-linked-belt-express"
 linked_belt.flags = {}
 util.recursive_tint(linked_belt, constants.linked_belt_tint)
 data:extend{linked_belt}

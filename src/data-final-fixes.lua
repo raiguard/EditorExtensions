@@ -1,3 +1,5 @@
+local sounds = require("__base__.prototypes.entity.sounds")
+
 local constants = require("prototypes.constants")
 local util = require("prototypes.util")
 
@@ -117,6 +119,8 @@ loader_base.selectable_in_game = false
 loader_base.belt_length = 0.6
 loader_base.container_distance = 0
 loader_base.fast_replaceable_group = "transport-belt"
+loader_base.open_sound = sounds.machine_open
+loader_base.close_sound = sounds.machine_close
 util.recursive_tint(loader_base)
 
 local function create_loader(base_prototype, suffix)
@@ -127,6 +131,9 @@ local function create_loader(base_prototype, suffix)
 
   data:extend{entity}
 end
+
+local fastest_suffix = ""
+local fastest_speed = 0
 
 for name, prototype in pairs(table.deepcopy(data.raw["underground-belt"])) do
   -- determine suffix
@@ -140,4 +147,11 @@ for name, prototype in pairs(table.deepcopy(data.raw["underground-belt"])) do
 
   create_linked_belt(prototype, suffix)
   create_loader(prototype, suffix)
+
+  if prototype.speed > fastest_speed then
+    fastest_speed = prototype.speed
+    fastest_suffix = suffix
+  end
 end
+
+data.raw["item"]["ee-linked-belt"].place_result = "ee-linked-belt"..fastest_suffix

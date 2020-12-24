@@ -23,8 +23,7 @@ function util.position.to_tile_area(pos)
   }
 end
 
-function util.get_belt_type(entity)
-  local type = entity.name
+function util.get_belt_type(name)
   for pattern, replacement in pairs(constants.belt_type_patterns) do
     type = string.gsub(type, pattern, replacement)
   end
@@ -32,9 +31,9 @@ function util.get_belt_type(entity)
   if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-"..type] then
     -- print warning message
     game.print{"", "EDITOR EXTENSIONS: ", {"ee-message.unable-to-identify-belt"}}
-    game.print("entity_name = \""..entity.name.."\", parse_result = \""..type.."\"")
+    game.print("entity_name = \""..name.."\", parse_result = \""..type.."\"")
     -- set to default type
-    type = "express"
+    type = global.fastest_belt_type
   end
   return type
 end
