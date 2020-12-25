@@ -57,6 +57,7 @@ commands.add_command(
 
 event.on_init(function()
   global_data.init()
+  global_data.read_fastest_belt_type()
   for i, player in pairs(game.players) do
     player_data.init(i)
     -- enable recipes for cheat mode
