@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.6
-Date: ????
+Date: 2021-01-25
   Features:
     - Added miniloader belt type compatibility to the infinity loader
   Bugfixes:
