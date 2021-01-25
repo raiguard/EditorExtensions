@@ -135,6 +135,11 @@ constants.belt_type_patterns = {
   ["subterranean"] = "",
   -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
   ["%-to%-ground"] = "",
+  -- miniloader: https://mods.factorio.com/mod/miniloader
+  ["chute"] = "",
+  ["space%-mini"] = "se-space", -- miniloader + space exploration
+  ["%-filter%-mini"] = "",
+  ["%-mini"] = "",
   -- vanilla
   ["%-?belt"] = "",
   ["%-?transport"] = "",

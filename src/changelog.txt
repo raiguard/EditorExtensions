@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.6
 Date: ????
+  Features:
+    - Added miniloader belt type compatibility to the infinity loader
   Bugfixes:
     - Fixed that being in the SE satellite view when mod confiration changes would enable the testing tool recipes
 ---------------------------------------------------------------------------------------------------
