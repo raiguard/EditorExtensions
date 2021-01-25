@@ -91,7 +91,8 @@ event.on_configuration_changed(function(e)
 
     for i, player in pairs(game.players) do
       player_data.refresh(player, global.players[i])
-      if player.cheat_mode then
+      -- space exploration - do nothing if they are in the satellite view
+      if player.cheat_mode and not compatibility.in_se_satellite_view(player) then
         cheat_mode.enable_recipes(player)
       end
     end
@@ -109,8 +110,8 @@ event.on_player_cheat_mode_enabled(function(e)
   -- if the scenario enabled it, the player hasn't been initialized yet
   if not player_table then return end
 
-  -- space exploration - if they are in god mode, they are in the satellite view, so don't unlock recipes
-  if compatibility.check_for_space_exploration() and player.controller_type == defines.controllers.god then
+  -- space exploration - do nothing if they are in the satellite view
+  if compatibility.in_se_satellite_view() then
     return
   end
 

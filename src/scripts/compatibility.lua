@@ -18,6 +18,10 @@ function compatibility.check_for_space_exploration()
   return script.active_mods["space-exploration"] and true or false
 end
 
+function compatibility.in_se_satellite_view(player)
+  return compatibility.check_for_space_exploration() and player.controller_type == defines.controllers.god
+end
+
 function compatibility.check_for_testing_scenario()
   return remote.interfaces["EditorExtensions_TestingScenario"] and true or false
 end

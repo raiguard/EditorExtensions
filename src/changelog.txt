@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.6
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed that being in the SE satellite view when mod confiration changes would enable the testing tool recipes
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.5
 Date: 2020-12-25
