@@ -96,8 +96,6 @@ event.on_configuration_changed(function(e)
         cheat_mode.enable_recipes(player)
       end
     end
-  elseif e.mod_changes["InfinityMode"] then -- if coming from infinity mode, fix infinity loaders
-    infinity_loader.check_loaders()
   end
 end)
 
