@@ -1,7 +1,3 @@
-if __DebugAdapter or __Profiler then
-  (__DebugAdapter or __Profiler).levelPath("EditorExtensions", "scenarios/testing/")
-end
-
 if not script.active_mods["EditorExtensions"] then
   error("Editor Extensions must be active for this scenario to function.")
 end
