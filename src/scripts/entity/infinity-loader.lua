@@ -342,9 +342,8 @@ function infinity_loader.snap(entity, target)
   -- this will inherently snap the direction, and then snap the belt type if they don't match
   for _ = 1, 2 do
     local loader_type = entity.loader_type
-    local neighbour_key = loader_type.."s"
 
-    local connection = entity.belt_neighbours[neighbour_key][1]
+    local connection = entity.belt_neighbours[loader_type.."s"][1]
     if connection and (not target or connection.unit_number == target.unit_number) then
       -- snap the belt type
       local belt_type = util.get_belt_type(connection)

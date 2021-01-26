@@ -111,7 +111,7 @@ event.on_player_cheat_mode_enabled(function(e)
   if not player_table then return end
 
   -- space exploration - do nothing if they are in the satellite view
-  if compatibility.in_se_satellite_view() then
+  if compatibility.in_se_satellite_view(player) then
     return
   end
 
