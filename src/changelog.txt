@@ -2,6 +2,10 @@
 Version: 1.9.8
 Date: ????
   Changes:
+    - Compatibility with Quick Item Search, as the default hotkeys conflict
+  Bugfixes:
+    - Fixed a crash when using the `/cheatmode` command in the map editor
+    - Fixed a potential crash if adding EE to an existing save when in the Space Exploration satellite view
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.7
 Date: 2021-01-26

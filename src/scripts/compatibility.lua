@@ -22,6 +22,14 @@ function compatibility.in_se_satellite_view(player)
   return compatibility.check_for_space_exploration() and player.controller_type == defines.controllers.god
 end
 
+function compatibility.in_qis_window(player)
+  local opened = player.opened
+  if opened and player.opened_gui_type == defines.gui_type.custom and string.find(opened.name, "^qis") then
+    return true
+  end
+  return false
+end
+
 function compatibility.check_for_testing_scenario()
   return remote.interfaces["EditorExtensions_TestingScenario"] and true or false
 end

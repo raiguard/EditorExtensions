@@ -61,7 +61,8 @@ event.on_init(function()
   for i, player in pairs(game.players) do
     player_data.init(i)
     -- enable recipes for cheat mode
-    if player.cheat_mode then
+    -- space exploration - do nothing if they are in the satellite view
+    if player.cheat_mode and not compatibility.in_se_satellite_view(player) then
       cheat_mode.enable_recipes(player)
     end
   end
@@ -120,10 +121,14 @@ end)
 
 event.register("ee-toggle-map-editor", function(e)
   local player = game.get_player(e.player_index)
-  if player.admin then
-    player.toggle_map_editor()
-  else
-    player.print{"ee-message.map-editor-denied"}
+
+  -- quick item search compatibility
+  if not compatibility.in_qis_window(player) then
+    if player.admin then
+      player.toggle_map_editor()
+    else
+      player.print{"ee-message.map-editor-denied"}
+    end
   end
 end)
 
