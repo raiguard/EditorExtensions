@@ -4,6 +4,7 @@ Date: ????
   Changes:
     - Compatibility with Quick Item Search, as the default hotkeys conflict
   Bugfixes:
+    - Fixed a crash related to selecting a new blueprint inside of a blueprint book
     - Fixed a crash when using the `/cheatmode` command in the map editor
     - Fixed a potential crash if adding EE to an existing save when in the Space Exploration satellite view
 ---------------------------------------------------------------------------------------------------

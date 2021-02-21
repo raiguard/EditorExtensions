@@ -434,6 +434,14 @@ event.on_player_setup_blueprint(function(e)
   local bp = player.blueprint_to_setup
   if not bp or not bp.valid_for_read then
     bp = player.cursor_stack
+    if bp.type == "blueprint-book" then
+      local item_inventory = bp.get_inventory(defines.inventory.item_main)
+      if item_inventory then
+        bp = item_inventory[bp.active_index]
+      else
+        return
+      end
+    end
   end
 
   -- get blueprint entities and mapping
