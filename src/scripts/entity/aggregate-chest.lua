@@ -2,10 +2,11 @@ local aggregate_chest = {}
 
 local constants = require("scripts.constants")
 
--- set the filters for the given aggregate chest
+-- set the filters for the given aggregate chest and removes the bar if there is one
 function aggregate_chest.set_filters(entity)
   entity.remove_unfiltered_items = true
   entity.infinity_container_filters = global.aggregate_filters
+  entity.get_inventory(defines.inventory.chest).set_bar()
 end
 
 -- update the filters of all existing aggregate chests
@@ -29,6 +30,11 @@ function aggregate_chest.update_data()
     end
   end
   global.aggregate_filters = data
+end
+
+-- remove filters on aggregate chests when blueprinted
+function aggregate_chest.setup_blueprint(entity)
+  entity.infinity_settings.filters = nil
 end
 
 return aggregate_chest

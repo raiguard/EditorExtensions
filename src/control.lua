@@ -453,7 +453,9 @@ event.on_player_setup_blueprint(function(e)
   for i = 1, #entities do
     local entity = entities[i]
     local entity_name = entity.name
-    if entity_name == "ee-infinity-loader-logic-combinator" then
+    if constants.aggregate_chest_names[entity_name] then
+      aggregate_chest.setup_blueprint(entity)
+    elseif entity_name == "ee-infinity-loader-logic-combinator" then
       entities[i] = infinity_loader.setup_blueprint(entity)
     elseif entity_name == "ee-infinity-cargo-wagon" then
       entities[i] = infinity_wagon.setup_cargo_blueprint(entity, mapping[entity.entity_number])

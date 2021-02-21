@@ -1,12 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.8
 Date: ????
+  Features:
+    - Added compatibility with Quick Item Search, as the default hotkeys conflict
   Changes:
-    - Compatibility with Quick Item Search, as the default hotkeys conflict
+    - Aggregate chests wipe their filters before being saved in blueprints, to significantly decrease blueprint string size
   Bugfixes:
     - Fixed a crash related to selecting a new blueprint inside of a blueprint book
     - Fixed a crash when using the `/cheatmode` command in the map editor
     - Fixed a potential crash if adding EE to an existing save when in the Space Exploration satellite view
+    - Fixed that aggregate chests placed from blueprints after a mod added items would have a limiter bar set
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.7
 Date: 2021-01-26
