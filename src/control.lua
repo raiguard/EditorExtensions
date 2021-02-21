@@ -342,14 +342,14 @@ event.on_entity_settings_pasted(function(e)
     local control = source.get_or_create_control_behavior()
     for _, signal in pairs(control.parameters) do
       if signal.signal.type == "fluid" then
-        destination.set_infinity_pipe_filter{name = signal.signal.name}
+        destination.set_infinity_pipe_filter{name = signal.signal.name, percentage = 1}
       end
     end
   elseif source_name == "ee-infinity-pipe" and destination_name == "constant-combinator" then
     local filter = source.get_infinity_pipe_filter()
     if filter then
       local control = destination.get_or_create_control_behavior()
-      control.parameters = {{signal = {type = "fluid", name = filter.name}, count = 1, index = 1}}
+      control.parameters = {{signal = {type = "fluid", name = filter.name}, count = filter.percentage * 100, index = 1}}
     end
   end
 end)
