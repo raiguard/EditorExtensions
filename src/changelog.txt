@@ -5,6 +5,7 @@ Date: ????
     - Added compatibility with Quick Item Search, as the default hotkeys conflict
   Changes:
     - Aggregate chests wipe their filters before being saved in blueprints, to significantly decrease blueprint string size
+    - Disabled editing of infinity filters on aggregate chests
   Bugfixes:
     - Fixed a crash related to selecting a new blueprint inside of a blueprint book
     - Fixed a crash when using the `/cheatmode` command in the map editor

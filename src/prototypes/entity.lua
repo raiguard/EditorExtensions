@@ -145,6 +145,7 @@ do
     chest.minable.result = "ee-aggregate-chest"..suffix
     chest.enable_inventory_bar = false
     chest.flags = {"player-creation", "hide-alt-info"}
+    chest.gui_mode = "none"
     util.recursive_tint(chest, t.t)
     data:extend{chest}
   end
