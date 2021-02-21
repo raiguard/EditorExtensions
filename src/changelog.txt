@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.8
-Date: ????
+Date: 2021-02-21
   Features:
     - Added compatibility with Quick Item Search, as the default hotkeys conflict
   Changes:
