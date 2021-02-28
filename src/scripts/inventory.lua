@@ -266,11 +266,14 @@ function inventory.destroy_filters_buttons(player_table)
 end
 
 function inventory.close_string_gui(player_index)
+  local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   local guis = player_table.gui
 
   if guis.inventory_filters_string then
     close_string_gui(player_table)
+    -- keep controller GUI open
+    player.opened = defines.gui_type.controller
   end
 end
 

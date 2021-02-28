@@ -2,6 +2,7 @@
 Version: 1.9.9
 Date: ????
   Changes:
+    - Infinity inventory filters import/export dialog will now close independently of the controller GUI
     - Testing tool recipes will only be enabed if they're not already - avoiding duplicate new recipe notifications
   Optimizations:
     - Infinity wagon proxies will only be teleported if the wagon has moved
