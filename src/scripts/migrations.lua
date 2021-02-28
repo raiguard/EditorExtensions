@@ -160,5 +160,10 @@ return {
       end
     end
     global.linked_belt_sources = linked_belt_sources
+  end,
+  ["1.9.9"] = function()
+    for _, wagon_data in pairs(global.wagons) do
+      wagon_data.wagon_last_position = wagon_data.wagon.position
+    end
   end
 }

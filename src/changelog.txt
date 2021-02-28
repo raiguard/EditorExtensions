@@ -2,6 +2,9 @@
 Version: 1.9.9
 Date: ????
   Changes:
+    - Testing tool recipes will only be enabed if they're not already - avoiding duplicate new recipe notifications
+  Optimizations:
+    - Infinity wagon proxies will only be teleported if the wagon has moved
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.8
 Date: 2021-02-21

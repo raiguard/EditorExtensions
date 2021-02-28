@@ -1,7 +1,5 @@
 local infinity_wagon = {}
 
-local util = require("scripts.util")
-
 function infinity_wagon.build(entity, tags)
   local proxy = entity.surface.create_entity{
     name = "ee-infinity-wagon-"..(entity.name == "ee-infinity-cargo-wagon" and "chest" or "pipe"),
@@ -10,14 +8,15 @@ function infinity_wagon.build(entity, tags)
   }
   -- create all api lookups here to save time in on_tick()
   local data = {
-    wagon = entity,
-    wagon_name = entity.name,
-    wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
-    wagon_fluidbox = entity.fluidbox,
+    flip = 0,
     proxy = proxy,
-    proxy_inv = proxy.get_inventory(defines.inventory.chest),
     proxy_fluidbox = proxy.fluidbox,
-    flip = 0
+    proxy_inv = proxy.get_inventory(defines.inventory.chest),
+    wagon = entity,
+    wagon_fluidbox = entity.fluidbox,
+    wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
+    wagon_last_position = entity.position,
+    wagon_name = entity.name
   }
   global.wagons[entity.unit_number] = data
   -- apply any pre-existing filters
@@ -81,7 +80,12 @@ function infinity_wagon.flip_inventories()
           t.flip = 0
         end
       end
-      t.proxy.teleport(t.wagon.position)
+      local position = t.wagon.position
+      local last_position = t.wagon_last_position
+      if last_position.x ~= position.x or last_position.y ~= position.y then
+        t.proxy.teleport(t.wagon.position)
+        t.wagon_last_position = last_position
+      end
     end
   end
 end

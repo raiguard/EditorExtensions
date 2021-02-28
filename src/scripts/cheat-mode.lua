@@ -8,7 +8,7 @@ function cheat_mode.enable_recipes(player, skip_message)
   -- check if it has already been enabled for this force
   if recipes["ee-infinity-loader"].enabled == false then
     for _, recipe in pairs(recipes) do
-      if recipe.category == "ee-testing-tool" then
+      if recipe.category == "ee-testing-tool" and not recipe.enabled then
         recipe.enabled = true
       end
     end
