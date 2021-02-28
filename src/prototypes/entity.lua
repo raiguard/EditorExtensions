@@ -133,6 +133,8 @@ do
     }
   }
 
+  local aggregate_chest_mode = settings.startup["ee-allow-changing-aggregate-chest-filters"].value and "admins" or "none"
+
   for _, t in pairs(constants.aggregate_chest_data) do
     local lm = t.lm
     local suffix = lm and "-"..lm or ""
@@ -145,7 +147,7 @@ do
     chest.minable.result = "ee-aggregate-chest"..suffix
     chest.enable_inventory_bar = false
     chest.flags = {"player-creation", "hide-alt-info"}
-    chest.gui_mode = "none"
+    chest.gui_mode = aggregate_chest_mode
     util.recursive_tint(chest, t.t)
     data:extend{chest}
   end

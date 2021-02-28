@@ -77,6 +77,13 @@ data:extend{
     default_value = true,
     order = "bgb"
   },
+  {
+    type = "bool-setting",
+    name = "ee-allow-changing-aggregate-chest-filters",
+    setting_type = "startup",
+    default_value = false,
+    order = "c"
+  },
   -- MAP SETTINGS
   {
     type = "bool-setting",
