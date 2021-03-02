@@ -66,7 +66,7 @@ local function create_gui(player, player_table, entity)
       actions = {on_closed = {gui = "sp", action = "close"}},
       ref = {"window"},
       children = {
-        {type = "flow", ref = {"titlebar_flow"}, children = {
+        {type = "flow", style = "flib_titlebar_flow", ref = {"titlebar_flow"}, children = {
           {
             type = "label",
             style = "frame_title",
@@ -77,9 +77,9 @@ local function create_gui(player, player_table, entity)
           {
             type = "sprite-button",
             style = "frame_action_button",
-            sprite = "utility/logistic_network_panel_white",
-            hovered_sprite = "utility/logistic_network_panel_black",
-            clicked_sprite = "utility/logistic_network_panel_black",
+            sprite = "ee_open_default_gui_white",
+            hovered_sprite = "ee_open_default_gui_black",
+            clicked_sprite = "ee_open_default_gui_black",
             tooltip = {"ee-gui.open-default-gui"},
             actions = {on_click = {gui = "sp", action = "open_default_gui"}}
           },

@@ -89,7 +89,7 @@ local function create_gui(player, player_table, entity)
       actions = {on_closed = {gui = "ia", action = "close"}},
       ref = {"window"},
       children = {
-        {type = "flow", ref = {"titlebar_flow"}, children = {
+        {type = "flow", style = "flib_titlebar_flow", ref = {"titlebar_flow"}, children = {
           {
             type = "label",
             style = "frame_title",

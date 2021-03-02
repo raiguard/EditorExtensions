@@ -149,7 +149,7 @@ local function open_string_gui(player, player_table, mode)
       direction = "vertical",
       ref = {"window"},
       children = {
-        {type = "flow", ref = {"titlebar_flow"}, children = {
+        {type = "flow", style = "flib_titlebar_flow", ref = {"titlebar_flow"}, children = {
           {
             type = "label",
             style = "frame_title",
