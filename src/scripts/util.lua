@@ -46,6 +46,7 @@ function util.close_button(actions)
     sprite = "utility/close_white",
     hovered_sprite = "utility/close_black",
     clicked_sprite = "utility/close_black",
+    tooltip = {"gui.close-instruction"},
     mouse_button_filter = {"left"},
     actions = actions
   }
