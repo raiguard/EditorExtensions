@@ -211,7 +211,7 @@ end
 -- PUBLIC FUNCTIONS
 
 function super_pump.setup(entity, tags)
-  local speed = 1000
+  local speed = 12000
   if tags and tags.EditorExtensions then
     entity.active = tags.EditorExtensions.active
     speed = tags.EditorExtensions.speed
