@@ -9,7 +9,7 @@ local util = require("scripts.util")
 -- -----------------------------------------------------------------------------
 -- ENTITY FUNCTIONS
 
--- TODO keep disabled until both connections are made, to avoid WATER HAMMER
+-- TODO: keep disabled until both connections are made, to avoid WATER HAMMER
 
 local function set_speed(entity, speed)
   entity.fluidbox[2] = {
@@ -196,7 +196,7 @@ local function handle_gui_action(e, msg)
 
       local clamped_value = math.clamp(new_value, lowest, highest)
       state.speed = clamped_value
-      refs.speed_slider.slider_value = clamped_value
+      refs.speed_slider.slider_value = to_slider_value(clamped_value)
 
       set_speed(state.entity, tonumber(clamped_value))
     end

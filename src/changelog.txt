@@ -5,6 +5,8 @@ Date: ????
     - Adjusted GUI titlebar styling
     - Changed super pump default speed to 12,000/s
     - Improved super pump "open default GUI" icon
+  Bugfixes:
+    - Fixed super pump textifield incorrectly setting the slider
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.9
 Date: 2021-02-28
