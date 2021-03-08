@@ -162,8 +162,12 @@ return {
     global.linked_belt_sources = linked_belt_sources
   end,
   ["1.9.9"] = function()
-    for _, wagon_data in pairs(global.wagons) do
-      wagon_data.wagon_last_position = wagon_data.wagon.position
+    for unit_number, wagon_data in pairs(global.wagons) do
+      if wagon_data.wagon.valid then
+        wagon_data.wagon_last_position = wagon_data.wagon.position
+      else
+        global.wagons[unit_number] = nil
+      end
     end
   end
 }
