@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.11
 Date: ????
+  Changes:
+    - Updated Russian locale (credit to Astorin)
   Bugfixes:
     - Fixed a crash when an invalid infinity wagon is stored in `global` on migration
 ---------------------------------------------------------------------------------------------------
