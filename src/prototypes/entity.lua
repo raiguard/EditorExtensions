@@ -88,6 +88,7 @@ do
     chest.inventory_size = 100
     chest.next_upgrade = nil
     chest.flags = {"player-creation"}
+    chest.gui_mode = "all"
     util.recursive_tint(chest, t.t)
     data:extend{chest}
   end
@@ -133,7 +134,7 @@ do
     }
   }
 
-  local aggregate_chest_mode = settings.startup["ee-allow-changing-aggregate-chest-filters"].value and "admins" or "none"
+  local aggregate_chest_mode = settings.startup["ee-allow-changing-aggregate-chest-filters"].value and "all" or "none"
 
   for _, t in pairs(constants.aggregate_chest_data) do
     local lm = t.lm
@@ -434,6 +435,7 @@ linked_chest.icon_size = nil
 linked_chest.icon_mipmaps = nil
 linked_chest.minable.result = "ee-linked-chest"
 linked_chest.inventory_size = 100
+linked_chest.gui_mode = "all"
 linked_chest.picture = {
   layers = {
     {
