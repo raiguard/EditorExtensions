@@ -417,6 +417,7 @@ do
   infinity_wagon_pipe.selectable_in_game = false
   infinity_wagon_pipe.order = "a"
   infinity_wagon_pipe.flags = {"hide-alt-info", "hidden"}
+  infinity_wagon_pipe.gui_mode = "all"
 
   for k in pairs(infinity_wagon_pipe.pictures) do
     infinity_wagon_pipe.pictures[k] = constants.empty_sheet

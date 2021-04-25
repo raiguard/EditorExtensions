@@ -2,6 +2,7 @@
 Version: 1.9.13
 Date: ????
   Bugfixes:
+    - Fixed infinity fluid wagons only being changeable by admins
     - Updated flib dependency to fix crashes for those with an old version
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.12
