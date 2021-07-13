@@ -138,8 +138,8 @@ constants.belt_type_patterns = {
   -- miniloader: https://mods.factorio.com/mod/miniloader
   ["chute"] = "",
   ["space%-mini"] = "se-space", -- miniloader + space exploration
-  ["%-filter%-mini"] = "",
-  ["%-mini"] = "",
+  ["%-filter%-miniloader"] = "",
+  ["%-?miniloader"] = "",
   -- vanilla
   ["%-?belt"] = "",
   ["%-?transport"] = "",
