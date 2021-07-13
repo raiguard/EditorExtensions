@@ -43,6 +43,8 @@ commands.add_command(
       else
         player.print{"ee-message.cheat-mode-already-disabled"}
       end
+    else
+        player.print{"ee-message.unrecognized-cheatmode-subcommand"}
     end
   end
 )
