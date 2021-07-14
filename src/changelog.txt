@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.14
-Date: ????
+Date: 2021-07-14
   Changes:
     - Typing an invalid cheatmode subcommand will print a message saying so
   Bugfixes:
