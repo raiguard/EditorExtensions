@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.14
 Date: ????
+  Changes:
+    - Typing an invalid cheatmode subcommand will print a message saying so
   Bugfixes:
     - Fixed default miniloader detection for the infinity loader
 ---------------------------------------------------------------------------------------------------
