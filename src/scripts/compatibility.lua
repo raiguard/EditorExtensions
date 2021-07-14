@@ -31,6 +31,7 @@ function compatibility.in_qis_window(player)
 end
 
 function compatibility.check_for_testing_scenario()
+  -- TODO: Use `script.level`?
   return remote.interfaces["EditorExtensions_TestingScenario"] and true or false
 end
 
