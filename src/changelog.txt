@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.15
 Date: ????
+  Changes:
+    - Changed infinity wagon speed caps to match the super locomotive
   Bugfixes:
     - Fixed filter miniload detection for the infinity loader
 ---------------------------------------------------------------------------------------------------

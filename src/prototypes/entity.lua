@@ -359,6 +359,7 @@ do
   }
   cargo_wagon.icons = util.extract_icon_info(cargo_wagon)
   cargo_wagon.inventory_size = 100
+  cargo_wagon.max_speed = 10
   cargo_wagon.minable.result = "ee-infinity-cargo-wagon"
   cargo_wagon.minimap_representation = {
     filename = "__EditorExtensions__/graphics/entity/infinity-cargo-wagon-minimap.png",
@@ -383,6 +384,7 @@ do
     {"entity-description.ee-performance-warning"},"[/color]"
   }
   fluid_wagon.icons = util.extract_icon_info(fluid_wagon)
+  fluid_wagon.max_speed = 10
   fluid_wagon.minable.result = "ee-infinity-fluid-wagon"
   fluid_wagon.minimap_representation = {
     filename = "__EditorExtensions__/graphics/entity/infinity-fluid-wagon-minimap.png",
