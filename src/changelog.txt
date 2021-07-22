@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.16
 Date: ????
+  Changes:
+    - Updated Russian locale
   Bugfixes:
     - Fixed that the infinity wagon `remove unfiltered items` setting wasn't saved in blueprints
 ---------------------------------------------------------------------------------------------------
