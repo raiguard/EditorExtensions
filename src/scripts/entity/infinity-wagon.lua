@@ -21,10 +21,17 @@ function infinity_wagon.build(entity, tags)
   global.wagons[entity.unit_number] = data
   -- apply any pre-existing filters
   if tags and tags.EditorExtensions then
+    local ee_tags = tags.EditorExtensions
     if entity.name == "ee-infinity-cargo-wagon" then
-      data.proxy.infinity_container_filters = tags.EditorExtensions
+      -- LEGACY: Before v1.9.16, we did not store the `remove unfiltered items` setting
+      if ee_tags.filters then
+        data.proxy.infinity_container_filters = ee_tags.filters
+        data.proxy.remove_unfiltered_items = ee_tags.remove_unfiltered_items
+      else
+        data.proxy.infinity_container_filters = ee_tags
+      end
     elseif entity.name == "ee-infinity-fluid-wagon" then
-      data.proxy.set_infinity_pipe_filter(tags.EditorExtensions)
+      proxy.set_infinity_pipe_filter(ee_tags)
     end
   end
 end
@@ -100,8 +107,12 @@ end
 
 function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
     if entity then
+      local proxy = global.wagons[entity.unit_number].proxy
       if not blueprint_entity.tags then blueprint_entity.tags = {} end
-      blueprint_entity.tags.EditorExtensions = global.wagons[entity.unit_number].proxy.infinity_container_filters
+      blueprint_entity.tags.EditorExtensions = {
+        filters = proxy.infinity_container_filters,
+        remove_unfiltered_items = proxy.remove_unfiltered_items,
+      }
     end
     return blueprint_entity
 end

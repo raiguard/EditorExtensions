@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.16
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed that the infinity wagon `remove unfiltered items` setting wasn't saved in blueprints
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.15
 Date: 2021-07-18
