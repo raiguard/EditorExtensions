@@ -1,6 +1,6 @@
 local infinity_accumulator = {}
 
-local gui = require("__flib__.gui-beta")
+local gui = require("__flib__.gui")
 local math = require("__flib__.math")
 local util = require("scripts.util")
 

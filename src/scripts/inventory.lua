@@ -1,6 +1,6 @@
 local inventory = {}
 
-local gui = require("__flib__.gui-beta")
+local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
 local reverse_defines = require("__flib__.reverse-defines")
 

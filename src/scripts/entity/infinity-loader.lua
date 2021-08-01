@@ -1,5 +1,5 @@
 local direction = require("__flib__.direction")
-local gui = require("__flib__.gui-beta")
+local gui = require("__flib__.gui")
 local util = require("scripts.util")
 
 local constants = require("scripts.constants")
