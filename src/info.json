@@ -15,7 +15,8 @@
     "(?) omnimatter_compression",
     "(?) space-exploration",
     "(?) Transport_Drones",
-    "(?) PickerDollies"
+    "(?) PickerDollies",
+    "(?) DeadlockStackingForAngels"
   ],
   "description": "Extends the map editor with new features and tools, makes tweaks to it to facilitate easier sandbox play, and adds items and entities to assist with testing factories.\n\nThe successor to Infinity Mode, which was inspired by Creative Mode."
 }

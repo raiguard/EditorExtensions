@@ -4,6 +4,7 @@ Date: ????
   Changes:
     - Updated Russian locale
   Bugfixes:
+    - Fixed missing slots in the aggregate chest with DeadlockStackingForAngels enabled
     - Fixed that the infinity wagon `remove unfiltered items` setting wasn't saved in blueprints
 ---------------------------------------------------------------------------------------------------
 Version: 1.9.15
