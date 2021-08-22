@@ -8,7 +8,6 @@ local compatibility = require("scripts.compatibility")
 local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
-local on_tick = require("scripts.on-tick")
 local player_data = require("scripts.player-data")
 local shared = require("scripts.shared")
 local util = require("scripts.util")
@@ -51,7 +50,6 @@ commands.add_command(
 
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
--- `on_tick` event handler is kept and registered in `scripts.on-tick`
 -- picker dollies handler is kept in `scripts.entity.infinity-loader` and is registered in `scripts.compatibility`
 -- all other event handlers are here
 
@@ -73,13 +71,10 @@ event.on_init(function()
   compatibility.register_picker_dollies()
 
   aggregate_chest.update_data()
-  on_tick.register()
 end)
 
 event.on_load(function()
   compatibility.register_picker_dollies()
-
-  on_tick.register()
 end)
 
 event.on_configuration_changed(function(e)
@@ -238,7 +233,6 @@ event.register(
     -- infinity wagon
     elseif constants.infinity_wagon_names[entity_name] then
       infinity_wagon.build(entity, e.tags)
-      on_tick.register()
     -- linked belt
     elseif linked_belt.check_is_linked_belt(entity) then
       linked_belt.snap(entity)
@@ -561,6 +555,12 @@ event.on_runtime_mod_setting_changed(function(e)
     local player_table = global.players[e.player_index]
     player_data.update_settings(player, player_table)
   end
+end)
+
+-- TICK
+
+event.on_tick(function()
+  infinity_wagon.flip_inventories()
 end)
 
 -- -----------------------------------------------------------------------------
