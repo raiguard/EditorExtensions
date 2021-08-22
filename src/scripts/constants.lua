@@ -72,6 +72,12 @@ constants.cursor_enhancements_overrides = {
   ["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon"
 }
 
+-- DEBUG WORLD
+
+constants.debug_world = {
+  size = {height = 50, width = 50}
+}
+
 -- INFINITY ACCUMULATOR
 
 constants.ia = {}

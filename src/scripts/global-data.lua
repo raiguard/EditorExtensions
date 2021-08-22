@@ -2,7 +2,8 @@ local global_data = {}
 
 function global_data.init()
   global.flags = {
-    map_editor_toggled = false
+    in_debug_world = false,
+    map_editor_toggled = false,
   }
   global.linked_belt_sources = {}
   global.players = {}

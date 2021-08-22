@@ -5,6 +5,7 @@ local migration = require("__flib__.migration")
 local constants = require("scripts.constants")
 local cheat_mode = require("scripts.cheat-mode")
 local compatibility = require("scripts.compatibility")
+local debug_world = require("scripts.debug-world")
 local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
@@ -58,6 +59,14 @@ commands.add_command(
 event.on_init(function()
   global_data.init()
   global_data.read_fastest_belt_type()
+
+  compatibility.add_cursor_enhancements_overrides()
+  compatibility.register_picker_dollies()
+
+  aggregate_chest.update_data()
+
+  debug_world()
+
   for i, player in pairs(game.players) do
     player_data.init(i)
     -- enable recipes for cheat mode
@@ -66,11 +75,6 @@ event.on_init(function()
       cheat_mode.enable_recipes(player)
     end
   end
-
-  compatibility.add_cursor_enhancements_overrides()
-  compatibility.register_picker_dollies()
-
-  aggregate_chest.update_data()
 end)
 
 event.on_load(function()
@@ -407,9 +411,10 @@ event.on_player_created(function(e)
 
   local player = game.get_player(e.player_index)
 
-  if player.cheat_mode then
+  local in_debug_world = global.flags.in_debug_world
+  if in_debug_world or player.cheat_mode then
     cheat_mode.enable_recipes(player)
-    cheat_mode.enable(player, compatibility.check_for_testing_scenario())
+    cheat_mode.enable(player, in_debug_world or compatibility.check_for_testing_scenario())
   end
 end)
 
