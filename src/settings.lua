@@ -99,6 +99,13 @@ data:extend{
     default_value = true,
     order = "b"
   },
+  {
+    type = "bool-setting",
+    name = "ee-hijack-debug-world",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "c"
+  },
   -- PLAYER SETTINGS
   {
     type = "bool-setting",

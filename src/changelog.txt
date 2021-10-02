@@ -2,7 +2,8 @@
 Version: 1.10.0
 Date: ????
   Features:
-    - Control+clicking "Single player" or "New game" in the main menu will generate a 50x50 freeplay world with lab tiles and cheat mode enabled
+    - Control + clicking "Single player" or "New game" in the main menu will generate a 50x50 freeplay world with lab tiles and cheat mode enabled
+      - This can be disabled in the mod settings, if you'd rather use the vanilla debug world
   Compatibility:
     - Added support for `Better Belts` to the infinity loader
   Bugfixes:

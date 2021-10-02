@@ -65,7 +65,9 @@ event.on_init(function()
 
   aggregate_chest.update_data()
 
-  debug_world()
+  if settings.global["ee-hijack-debug-world"].value then
+    debug_world()
+  end
 
   for i, player in pairs(game.players) do
     player_data.init(i)
