@@ -492,10 +492,12 @@ super_beacon.supply_area_distance = 64
 super_beacon.module_specification = {module_slots = 12}
 util.recursive_tint(super_beacon, constants.infinity_tint)
 -- undo the tint of the module slots, except for the base
-for _, slot in ipairs(super_beacon.graphics_set.module_visualisations[1].slots) do
-  for _, def in ipairs(slot) do
-    if not def.has_empty_slot then
-      util.recursive_tint(def, false)
+if super_beacon.graphics_set.module_visualisations then
+  for _, slot in ipairs(super_beacon.graphics_set.module_visualisations[1].slots) do
+    for _, def in ipairs(slot) do
+      if not def.has_empty_slot then
+        util.recursive_tint(def, false)
+      end
     end
   end
 end

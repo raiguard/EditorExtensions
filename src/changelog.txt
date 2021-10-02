@@ -6,6 +6,7 @@ Date: ????
   Compatibility:
     - Added support for `Better Belts` to the infinity loader
   Bugfixes:
+    - Fixed a crash with the `Classic Beacon` mod
     - Fixed infinity loaders not being compatible with yellow Krastorio 2 loaders
     - Removed conditional registration of on_tick event to fix a rare desync
 ---------------------------------------------------------------------------------------------------
