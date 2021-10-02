@@ -137,6 +137,8 @@ constants.belt_type_patterns = {
   ["%-?kr%-02"] = "fast",
   ["%-?kr%-03"] = "express",
   ["%-?kr%-04"] = "k",
+  -- krastorio 2: https://mods.factorio.com/mod/Krastorio2
+  ["^kr%-loader$"] = "",
   -- replicating belts: https://mods.factorio.com/mod/replicating-belts
   ["replicating%-?"] = "",
   -- subterranean: https://mods.factorio.com/mod/Subterranean
