@@ -126,6 +126,8 @@ constants.belt_type_patterns = {
   -- editor extensions :D
   ["ee%-infinity%-loader%-loader%-?"] = "",
   ["ee%-linked%-belt%-?"] = "",
+  -- better belts: https://mods.factorio.com/mod/BetterBelts
+  ["%-v%d$"] = "",
   -- beltlayer: https://mods.factorio.com/mod/beltlayer
   ["layer%-connector"] = "",
   -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts

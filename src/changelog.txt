@@ -3,6 +3,8 @@ Version: 1.10.0
 Date: ????
   Features:
     - Control+clicking "Single player" or "New game" in the main menu will generate a 50x50 freeplay world with lab tiles and cheat mode enabled
+  Compatibility:
+    - Added support for `Better Belts` to the infinity loader
   Bugfixes:
     - Removed conditional registration of on_tick event to fix a rare desync
 ---------------------------------------------------------------------------------------------------

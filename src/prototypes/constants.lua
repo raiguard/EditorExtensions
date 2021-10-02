@@ -14,6 +14,8 @@ constants.aggregate_chest_icon = {
 -- pattern -> replacement
 -- iterate through all of these to result in the base belt type
 constants.belt_name_patterns = {
+  -- better belts: https://mods.factorio.com/mod/BetterBelts
+  ["%-v%d$"] = "",
   -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
   ["%-?transport%-belt%-to%-ground"] = "",
   -- vanilla and 99% of mods
