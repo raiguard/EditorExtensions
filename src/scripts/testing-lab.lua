@@ -12,6 +12,7 @@ function testing_lab.toggle(player, player_table, ts_setting)
   local in_editor = player.controller_type == defines.controllers.editor
 
   if in_editor then
+    -- If the surface is invalid in any way, or its name does not match our lab's name
     if not last_surface_data
       or not last_surface_data.surface
       or not last_surface_data.surface.valid
@@ -27,6 +28,7 @@ function testing_lab.toggle(player, player_table, ts_setting)
           player.print("Could not create test surface")
           return
         end
+        -- Lab conditions
         testing_surface.generate_with_lab_tiles = true
         testing_surface.freeze_daytime = true
         testing_surface.show_clouds = false
