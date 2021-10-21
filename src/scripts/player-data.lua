@@ -3,7 +3,7 @@ local player_data = {}
 local constants = require("scripts.constants")
 local inventory = require("scripts.inventory")
 
-function player_data.init(index)
+function player_data.init(player)
   local player_table = {
     flags = {
       map_editor_toggled = false,
@@ -13,18 +13,22 @@ function player_data.init(index)
     gui = {},
     last_cleared_cursor_tick = 0,
     linked_belt_render_objects = {},
-    linked_belt_source = nil
+    linked_belt_source = nil,
   }
-  global.players[index] = player_table
+  global.players[player.index] = player_table
 
-  player_data.refresh(game.get_player(index), global.players[index])
+  player_data.refresh(player, player_table)
 end
 
 function player_data.update_settings(player, player_table)
   local player_settings = player.mod_settings
   local settings = {}
   for prototype, internal in pairs(constants.setting_names) do
-    settings[internal] = player_settings[prototype].value
+    if internal == "testing_lab" then
+      settings[internal] = constants.testing_lab_setting[player_settings[prototype].value]
+    else
+      settings[internal] = player_settings[prototype].value
+    end
   end
   player_table.settings = settings
 end

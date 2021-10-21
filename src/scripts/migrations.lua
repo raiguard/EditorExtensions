@@ -169,5 +169,5 @@ return {
         global.wagons[unit_number] = nil
       end
     end
-  end
+  end,
 }

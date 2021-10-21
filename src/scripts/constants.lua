@@ -1,6 +1,6 @@
-local constants = {}
-
 local table = require("__flib__.table")
+
+local constants = {}
 
 -- AGGREGATE_CHEST
 
@@ -184,7 +184,8 @@ constants.editor_gui_width = 474
 constants.setting_names = {
   ["ee-infinity-pipe-crafter-snapping"] = "infinity_pipe_crafter_snapping",
   ["ee-default-infinity-filters"] = "default_infinity_filters",
-  ["ee-inventory-sync"] = "inventory_sync_enabled"
+  ["ee-inventory-sync"] = "inventory_sync_enabled",
+  ["ee-testing-lab"] = "testing_lab",
 }
 
 -- SUPER PUMP
@@ -217,5 +218,20 @@ constants.sp_slider_to_temperature = {
 }
 
 constants.sp_temperature_to_slider = table.invert(constants.sp_slider_to_temperature)
+
+-- TEST SURFACE
+
+constants.empty_map_gen_settings = {
+	default_enable_all_autoplace_controls = false,
+	property_expression_names = {cliffiness = 0},
+	autoplace_settings = {tile = {settings = {["out-of-map"] = {frequency="normal", size="normal", richness="normal"}}}},
+	starting_area = "none",
+}
+
+constants.testing_lab_setting = {
+  off = 1,
+  personal = 2,
+  shared = 3
+}
 
 return constants

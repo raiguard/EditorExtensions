@@ -128,5 +128,13 @@ data:extend{
     setting_type = "runtime-per-user",
     default_value = true,
     order = "ca"
-  }
+  },
+  {
+    type = "string-setting",
+    name = "ee-testing-lab",
+    setting_type = "runtime-per-user",
+    allowed_values = {"off", "personal", "shared"},
+    default_value = "off",
+    order = "da"
+  },
 }

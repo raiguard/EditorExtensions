@@ -2,15 +2,16 @@ local event = require("__flib__.event")
 local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
 
-local constants = require("scripts.constants")
 local cheat_mode = require("scripts.cheat-mode")
 local compatibility = require("scripts.compatibility")
+local constants = require("scripts.constants")
 local debug_world = require("scripts.debug-world")
 local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
 local player_data = require("scripts.player-data")
 local shared = require("scripts.shared")
+local testing_lab = require("scripts.testing-lab")
 local util = require("scripts.util")
 
 local aggregate_chest = require("scripts.entity.aggregate-chest")
@@ -69,8 +70,8 @@ event.on_init(function()
     debug_world()
   end
 
-  for i, player in pairs(game.players) do
-    player_data.init(i)
+  for _, player in pairs(game.players) do
+    player_data.init(player)
     -- enable recipes for cheat mode
     -- space exploration - do nothing if they are in the satellite view
     if player.cheat_mode and not compatibility.in_se_satellite_view(player) then
@@ -409,9 +410,9 @@ end)
 -- PLAYER
 
 event.on_player_created(function(e)
-  player_data.init(e.player_index)
-
   local player = game.get_player(e.player_index)
+
+  player_data.init(player)
 
   local in_debug_world = global.flags.in_debug_world
   if in_debug_world or player.cheat_mode then
@@ -536,6 +537,12 @@ event.on_player_toggled_map_editor(function(e)
   else
     player.gui.top.style.left_margin = 0
     player.gui.left.style.left_margin = 0
+  end
+
+  -- Toggle surface
+  local ts_setting = player_table.settings.testing_lab
+  if ts_setting ~= constants.testing_lab_setting.off then
+    testing_lab.toggle(player, player_table, ts_setting)
   end
 end)
 

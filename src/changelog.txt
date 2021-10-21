@@ -1,7 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.0
 Date: ????
-  Changes:
+  Features:
+    - Added "testing lab" feature, which teleports you to a lab surface when entering the map editor, then back out when you leave
+      - This is disabled by default and must be enabled on a per-player basis
+      - You can choose between a personal lab and a shared lab
+      - If you also disable inventory sync, this becomes a cheat-free way to test setups in the same map as your actual game
 ---------------------------------------------------------------------------------------------------
 Version: 1.10.0
 Date: 2021-10-02
