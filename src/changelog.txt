@@ -3,6 +3,7 @@ Version: 1.11.1
 Date: ????
   Changes:
     - The testing lab now uses a separate force from your regular game
+    - Updated Russian locale (by Astorin)
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.0
 Date: 2021-10-21
