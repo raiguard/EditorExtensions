@@ -14,7 +14,7 @@
       "type": "factoriomod",
       "request": "launch",
       "name": "Debug (data)",
-      "factorioPath": "/home/rai/dev/factorio/bin/x364/factorio",
+      "factorioPath": "/home/rai/dev/factorio/1/bin/x64/factorio",
       "hookMode": "debug",
       "hookControl": ["EditorExtensions", "Sandbox"],
       "hookData": true,
@@ -25,7 +25,7 @@
       "type": "factoriomod",
       "request": "launch",
       "name": "Profile",
-      "factorioPath": "/home/rai/dev/factorio/bin/x364/factorio",
+      "factorioPath": "/home/rai/dev/factorio/1/bin/x64/factorio",
       "hookMode": "profile",
       "hookControl": ["EditorExtensions", "Sandbox"]
     }
