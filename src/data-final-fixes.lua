@@ -99,8 +99,20 @@ local function create_linked_belt(base_prototype, suffix)
   local entity = table.deepcopy(linked_belt_base)
   entity.name = "ee-linked-belt"..suffix
 
-  entity.belt_animation_set = base_prototype.belt_animation_set
   entity.speed = base_prototype.speed
+
+  -- Account for both variants
+  entity.belt_animation_set = base_prototype.belt_animation_set
+  entity.belt_horizontal = base_prototype.belt_horizontal
+  entity.belt_vertical = base_prototype.belt_vertical
+  entity.ending_bottom = base_prototype.ending_bottom
+  entity.ending_patch = base_prototype.ending_patch
+  entity.ending_side = base_prototype.ending_side
+  entity.ending_top = base_prototype.ending_top
+  entity.ends_with_stopper = base_prototype.ends_with_stopper
+  entity.starting_bottom = base_prototype.starting_bottom
+  entity.starting_side = base_prototype.starting_side
+  entity.starting_top = base_prototype.starting_top
 
   data:extend{entity}
 end
@@ -126,8 +138,19 @@ util.recursive_tint(loader_base)
 local function create_loader(base_prototype, suffix)
   local entity = table.deepcopy(loader_base)
   entity.name = "ee-infinity-loader-loader"..suffix
-  entity.belt_animation_set = base_prototype.belt_animation_set
   entity.speed = base_prototype.speed
+  -- Account for both variants
+  entity.belt_animation_set = base_prototype.belt_animation_set
+  entity.belt_horizontal = base_prototype.belt_horizontal
+  entity.belt_vertical = base_prototype.belt_vertical
+  entity.ending_bottom = base_prototype.ending_bottom
+  entity.ending_patch = base_prototype.ending_patch
+  entity.ending_side = base_prototype.ending_side
+  entity.ending_top = base_prototype.ending_top
+  entity.ends_with_stopper = base_prototype.ends_with_stopper
+  entity.starting_bottom = base_prototype.starting_bottom
+  entity.starting_side = base_prototype.starting_side
+  entity.starting_top = base_prototype.starting_top
 
   data:extend{entity}
 end
