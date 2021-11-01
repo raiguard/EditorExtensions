@@ -42,11 +42,12 @@ function testing_lab.toggle(player, player_table, ts_setting)
       local force = game.forces[force_name]
       if not game.forces[force_name] then
         if table_size(game.forces) < 64 then
-          force = game.create_force(force_name)
-          force.research_all_technologies()
-        else
-          game.print("Cannot create a testing lab force. Factorio only supports up to 64 forces at once.")
+          player.print("Cannot create a testing lab force. Factorio only supports up to 64 forces at once. Please use a shared lab.")
+          return
         end
+
+        force = game.create_force(force_name)
+        force.research_all_technologies()
       end
 
       last_surface_data = {force = force, position = {x = 0, y = 0}, surface = testing_surface}
