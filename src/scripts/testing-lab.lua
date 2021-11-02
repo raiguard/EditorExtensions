@@ -35,7 +35,6 @@ function testing_lab.toggle(player, player_table, ts_setting)
         testing_surface.freeze_daytime = true
         testing_surface.show_clouds = false
         testing_surface.daytime = 0
-
       end
 
       local force_name = "EE_TESTFORCE_"..key
