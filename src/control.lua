@@ -363,6 +363,11 @@ gui.hook_events(function(e)
   if msg then
     if msg.gui == "ia" then
       infinity_accumulator.handle_gui_action(e, msg)
+    elseif msg.gui == "infinity_pipe" then
+      local player_table = global.players[e.player_index]
+      if player_table and player_table.gui.infinity_pipe then
+        player_table.gui.infinity_pipe:dispatch(msg, e)
+      end
     elseif msg.gui == "il" then
       infinity_loader.handle_gui_action(e, msg)
     elseif msg.gui == "sp" then
@@ -376,6 +381,8 @@ gui.hook_events(function(e)
       local entity_name = entity.name
       if constants.ia.entity_names[entity_name] then
         infinity_accumulator.open(e.player_index, entity)
+      elseif entity_name == "ee-infinity-pipe" then
+        infinity_pipe.create_gui(e.player_index, entity)
       elseif entity_name == "ee-infinity-loader-logic-combinator" then
         infinity_loader.open(e.player_index, entity)
       elseif entity_name == "ee-super-pump" then

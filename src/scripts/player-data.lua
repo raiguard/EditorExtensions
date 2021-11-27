@@ -4,6 +4,7 @@ local constants = require("scripts.constants")
 local inventory = require("scripts.inventory")
 
 function player_data.init(player)
+  --- @class PlayerTable
   local player_table = {
     flags = {
       map_editor_toggled = false,
