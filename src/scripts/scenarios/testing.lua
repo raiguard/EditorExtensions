@@ -35,7 +35,7 @@ local migrations = {
         frame.destroy()
       end
     end
-  end
+  end,
 }
 
 -- -----------------------------------------------------------------------------
@@ -81,7 +81,9 @@ end)
 
 remote.add_interface("EditorExtensions_TestingScenario", {
   -- disable AAI industry crash site
-  allow_aai_crash_sequence = function() return {allow = false, weight = 1} end
+  allow_aai_crash_sequence = function()
+    return { allow = false, weight = 1 }
+  end,
 })
 
 return callbacks

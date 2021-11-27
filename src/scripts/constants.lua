@@ -6,7 +6,7 @@ local constants = {}
 
 constants.aggregate_chest_names = {
   ["ee-aggregate-chest"] = "ee-aggregate-chest",
-  ["ee-aggregate-chest-passive-provider"] = "ee-aggregate-chest-passive-provider"
+  ["ee-aggregate-chest-passive-provider"] = "ee-aggregate-chest-passive-provider",
 }
 
 -- CHEAT MODE
@@ -14,41 +14,41 @@ constants.aggregate_chest_names = {
 constants.cheat_mode = {}
 
 constants.cheat_mode.equipment_to_add = {
-  {name = "ee-infinity-fusion-reactor-equipment", position = {0,0}},
-  {name = "ee-super-personal-roboport-equipment", position = {1,0}},
-  {name = "ee-super-exoskeleton-equipment", position = {2,0}},
-  {name = "ee-super-exoskeleton-equipment", position = {3,0}},
-  {name = "ee-super-energy-shield-equipment", position = {4,0}},
-  {name = "ee-super-night-vision-equipment", position = {5,0}},
-  {name = "ee-super-battery-equipment", position = {6, 0}},
-  {name = "belt-immunity-equipment", position = {7,0}}
+  { name = "ee-infinity-fusion-reactor-equipment", position = { 0, 0 } },
+  { name = "ee-super-personal-roboport-equipment", position = { 1, 0 } },
+  { name = "ee-super-exoskeleton-equipment", position = { 2, 0 } },
+  { name = "ee-super-exoskeleton-equipment", position = { 3, 0 } },
+  { name = "ee-super-energy-shield-equipment", position = { 4, 0 } },
+  { name = "ee-super-night-vision-equipment", position = { 5, 0 } },
+  { name = "ee-super-battery-equipment", position = { 6, 0 } },
+  { name = "belt-immunity-equipment", position = { 7, 0 } },
 }
 
 constants.cheat_mode.items_to_add = {
-  {name = "ee-infinity-accumulator", count = 50},
-  {name = "ee-infinity-chest", count = 50},
-  {name = "ee-super-construction-robot", count = 100},
-  {name = "ee-super-inserter", count = 50},
-  {name = "ee-infinity-loader", count = 50},
-  {name = "ee-infinity-pipe", count = 50},
-  {name = "ee-super-substation", count = 50}
+  { name = "ee-infinity-accumulator", count = 50 },
+  { name = "ee-infinity-chest", count = 50 },
+  { name = "ee-super-construction-robot", count = 100 },
+  { name = "ee-super-inserter", count = 50 },
+  { name = "ee-infinity-loader", count = 50 },
+  { name = "ee-infinity-pipe", count = 50 },
+  { name = "ee-super-substation", count = 50 },
 }
 
 constants.cheat_mode.items_to_remove = {
-  {name = "express-loader", count = 50},
-  {name = "stack-inserter", count = 50},
-  {name = "substation", count = 50},
-  {name = "construction-robot", count = 100},
-  {name = "electric-energy-interface", count = 1},
-  {name = "infinity-chest", count = 20},
-  {name = "infinity-pipe", count = 10}
+  { name = "express-loader", count = 50 },
+  { name = "stack-inserter", count = 50 },
+  { name = "substation", count = 50 },
+  { name = "construction-robot", count = 100 },
+  { name = "electric-energy-interface", count = 1 },
+  { name = "infinity-chest", count = 20 },
+  { name = "infinity-pipe", count = 10 },
 }
 
 constants.cheat_mode.modifiers = {
   character_build_distance_bonus = 1000000,
   character_mining_speed_modifier = 2,
   character_reach_distance_bonus = 1000000,
-  character_resource_reach_distance_bonus = 1000000
+  character_resource_reach_distance_bonus = 1000000,
 }
 
 -- CURSOR ENHANCEMENTS
@@ -69,13 +69,13 @@ constants.cursor_enhancements_overrides = {
   ["ee-super-substation"] = "ee-infinity-accumulator",
   -- trains
   ["ee-super-locomotive"] = "ee-infinity-cargo-wagon",
-  ["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon"
+  ["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon",
 }
 
 -- DEBUG WORLD
 
 constants.debug_world = {
-  size = {height = 50, width = 50}
+  size = { height = 50, width = 50 },
 }
 
 -- INFINITY ACCUMULATOR
@@ -89,30 +89,30 @@ constants.ia.entity_names = {
   ["ee-infinity-accumulator-secondary-output"] = true,
   ["ee-infinity-accumulator-tertiary-buffer"] = true,
   ["ee-infinity-accumulator-tertiary-input"] = true,
-  ["ee-infinity-accumulator-tertiary-output"] = true
+  ["ee-infinity-accumulator-tertiary-output"] = true,
 }
 
-constants.ia.index_to_mode = {"output", "input", "buffer"}
-constants.ia.index_to_priority = {"primary", "secondary", "tertiary"}
+constants.ia.index_to_mode = { "output", "input", "buffer" }
+constants.ia.index_to_priority = { "primary", "secondary", "tertiary" }
 
-constants.ia.localised_modes = {{"ee-gui.output"}, {"ee-gui.input"}, {"ee-gui.buffer"}}
-constants.ia.localised_priorities = {{"ee-gui.primary"}, {"ee-gui.secondary"}, {"ee-gui.tertiary"}}
+constants.ia.localised_modes = { { "ee-gui.output" }, { "ee-gui.input" }, { "ee-gui.buffer" } }
+constants.ia.localised_priorities = { { "ee-gui.primary" }, { "ee-gui.secondary" }, { "ee-gui.tertiary" } }
 constants.ia.localised_si_suffixes_joule = {}
 constants.ia.localised_si_suffixes_watt = {}
 
-constants.ia.mode_to_index = {output = 1, input = 2, buffer = 3}
+constants.ia.mode_to_index = { output = 1, input = 2, buffer = 3 }
 
-constants.ia.power_prefixes = {"kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta"}
-constants.ia.power_suffixes_by_mode = {output = "watt", input = "watt", buffer = "joule"}
+constants.ia.power_prefixes = { "kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta" }
+constants.ia.power_suffixes_by_mode = { output = "watt", input = "watt", buffer = "joule" }
 
-constants.ia.priority_to_index = {primary = 1, secondary = 2, tertiary = 3}
+constants.ia.priority_to_index = { primary = 1, secondary = 2, tertiary = 3 }
 
-constants.ia.si_suffixes_joule = {"kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ"}
-constants.ia.si_suffixes_watt = {"kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW"}
+constants.ia.si_suffixes_joule = { "kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ" }
+constants.ia.si_suffixes_watt = { "kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW" }
 
 for i, v in pairs(constants.ia.power_prefixes) do
-  constants.ia.localised_si_suffixes_watt[i] = {"", {"si-prefix-symbol-"..v}, {"si-unit-symbol-watt"}}
-  constants.ia.localised_si_suffixes_joule[i] = {"", {"si-prefix-symbol-"..v}, {"si-unit-symbol-joule"}}
+  constants.ia.localised_si_suffixes_watt[i] = { "", { "si-prefix-symbol-" .. v }, { "si-unit-symbol-watt" } }
+  constants.ia.localised_si_suffixes_joule[i] = { "", { "si-prefix-symbol-" .. v }, { "si-unit-symbol-joule" } }
 end
 
 -- INFINITY LOADER
@@ -157,7 +157,7 @@ constants.belt_type_patterns = {
   ["%-?splitter"] = "",
   ["%-?loader"] = "",
   ["%-?1x1"] = "",
-  ["%-?linked"] = ""
+  ["%-?linked"] = "",
 }
 
 -- INFINITY PIPE
@@ -165,14 +165,14 @@ constants.belt_type_patterns = {
 constants.ip_crafter_snapping_types = {
   ["assembling-machine"] = true,
   ["furnace"] = true,
-  ["rocket-silo"] = true
+  ["rocket-silo"] = true,
 }
 
 -- INFINITY WAGON
 
 constants.infinity_wagon_names = {
   ["ee-infinity-cargo-wagon"] = true,
-  ["ee-infinity-fluid-wagon"] = true
+  ["ee-infinity-fluid-wagon"] = true,
 }
 
 -- OTHER
@@ -214,7 +214,7 @@ constants.sp_slider_to_temperature = {
   [20] = 15000,
   [21] = 20000,
   [22] = 25000,
-  [23] = 30000
+  [23] = 30000,
 }
 
 constants.sp_temperature_to_slider = table.invert(constants.sp_slider_to_temperature)
@@ -222,16 +222,16 @@ constants.sp_temperature_to_slider = table.invert(constants.sp_slider_to_tempera
 -- TEST SURFACE
 
 constants.empty_map_gen_settings = {
-	default_enable_all_autoplace_controls = false,
-	property_expression_names = {cliffiness = 0},
-	autoplace_settings = {tile = {settings = {["out-of-map"] = {frequency="normal", size="normal", richness="normal"}}}},
-	starting_area = "none",
+  default_enable_all_autoplace_controls = false,
+  property_expression_names = { cliffiness = 0 },
+  autoplace_settings = { tile = { settings = { ["out-of-map"] = { frequency = "normal", size = "normal", richness = "normal" } } } },
+  starting_area = "none",
 }
 
 constants.testing_lab_setting = {
   off = 1,
   personal = 2,
-  shared = 3
+  shared = 3,
 }
 
 return constants

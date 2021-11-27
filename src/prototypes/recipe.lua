@@ -30,26 +30,26 @@ local recipe_names = {
 }
 local function register_recipes(t)
   for _, k in ipairs(t) do
-    data:extend{
+    data:extend({
       {
         type = "recipe",
         name = k,
         ingredients = {},
         category = "ee-testing-tool",
         enabled = false,
-        result = k
-      }
-    }
+        result = k,
+      },
+    })
   end
 end
 
 register_recipes(recipe_names)
 for _, t in pairs(constants.infinity_chest_data) do
-  register_recipes{"ee-infinity-chest"..(t.lm and "-"..t.lm or "")}
+  register_recipes({ "ee-infinity-chest" .. (t.lm and "-" .. t.lm or "") })
 end
 for _, t in pairs(constants.aggregate_chest_data) do
-  register_recipes{"ee-aggregate-chest"..(t.lm and "-"..t.lm or "")}
+  register_recipes({ "ee-aggregate-chest" .. (t.lm and "-" .. t.lm or "") })
 end
 for _, t in ipairs(constants.module_data) do
-  register_recipes{t.name}
+  register_recipes({ t.name })
 end

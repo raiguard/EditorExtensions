@@ -24,7 +24,7 @@ local to_check = {
   "selection-tool",
   "spidertron-remote",
   "tool",
-  "upgrade-item"
+  "upgrade-item",
 }
 -- start with four extra slots to account for inserter interactions
 local slot_count = 4
@@ -42,7 +42,7 @@ end
 -- allow all science packs to be placed in the super lab
 local packs_build = {}
 for _, lab in pairs(data.raw["lab"]) do
-  for _,  input in pairs(lab.inputs) do
+  for _, input in pairs(lab.inputs) do
     packs_build[input] = true
   end
 end
@@ -71,7 +71,7 @@ local modules = {
   "ee-super-clean-module",
   "ee-super-slow-module",
   "ee-super-ineffectivity-module",
-  "ee-super-dirty-module"
+  "ee-super-dirty-module",
 }
 for _, name in pairs(modules) do
   data.raw["module"][name].limitation = nil
@@ -80,24 +80,24 @@ end
 -- allow all character prototypes to craft testing tools
 for _, character in pairs(data.raw["character"]) do
   character.crafting_categories = character.crafting_categories or {}
-  character.crafting_categories[#character.crafting_categories+1] = "ee-testing-tool"
+  character.crafting_categories[#character.crafting_categories + 1] = "ee-testing-tool"
 end
 
 -- generate linked belts and infinity loaders
 
 local linked_belt_base = table.deepcopy(data.raw["linked-belt"]["linked-belt"])
 linked_belt_base.icons = util.extract_icon_info(linked_belt_base)
-linked_belt_base.localised_name = {"entity-name.ee-linked-belt"}
-linked_belt_base.localised_description = {"entity-description.ee-linked-belt"}
-linked_belt_base.placeable_by = {item = "ee-linked-belt", count = 1}
-linked_belt_base.minable = {result = "ee-linked-belt", mining_time = 0.1}
+linked_belt_base.localised_name = { "entity-name.ee-linked-belt" }
+linked_belt_base.localised_description = { "entity-description.ee-linked-belt" }
+linked_belt_base.placeable_by = { item = "ee-linked-belt", count = 1 }
+linked_belt_base.minable = { result = "ee-linked-belt", mining_time = 0.1 }
 linked_belt_base.fast_replaceable_group = "transport-belt"
 table.insert(linked_belt_base.flags, "not-upgradable")
 util.recursive_tint(linked_belt_base, constants.linked_belt_tint)
 
 local function create_linked_belt(base_prototype, suffix)
   local entity = table.deepcopy(linked_belt_base)
-  entity.name = "ee-linked-belt"..suffix
+  entity.name = "ee-linked-belt" .. suffix
 
   entity.speed = base_prototype.speed
 
@@ -114,7 +114,7 @@ local function create_linked_belt(base_prototype, suffix)
   entity.starting_side = base_prototype.starting_side
   entity.starting_top = base_prototype.starting_top
 
-  data:extend{entity}
+  data:extend({ entity })
 end
 
 local loader_base = table.deepcopy(data.raw["loader-1x1"]["loader-1x1"])
@@ -125,8 +125,8 @@ loader_base.icons = table.deepcopy(linked_belt_base.icons)
 loader_base.icon = nil
 loader_base.icon_size = nil
 loader_base.icon_mipmaps = nil
-loader_base.localised_name = {"entity-name.ee-infinity-loader"}
-loader_base.localised_description = {"entity-name.ee-infinity-loader"}
+loader_base.localised_name = { "entity-name.ee-infinity-loader" }
+loader_base.localised_description = { "entity-name.ee-infinity-loader" }
 loader_base.selectable_in_game = false
 loader_base.belt_length = 0.6
 loader_base.container_distance = 0
@@ -137,7 +137,7 @@ util.recursive_tint(loader_base)
 
 local function create_loader(base_prototype, suffix)
   local entity = table.deepcopy(loader_base)
-  entity.name = "ee-infinity-loader-loader"..suffix
+  entity.name = "ee-infinity-loader-loader" .. suffix
   entity.speed = base_prototype.speed
   -- Account for both variants
   entity.belt_animation_set = base_prototype.belt_animation_set
@@ -152,7 +152,7 @@ local function create_loader(base_prototype, suffix)
   entity.starting_side = base_prototype.starting_side
   entity.starting_top = base_prototype.starting_top
 
-  data:extend{entity}
+  data:extend({ entity })
 end
 
 local fastest_suffix = ""
@@ -165,7 +165,7 @@ for name, prototype in pairs(table.deepcopy(data.raw["underground-belt"])) do
     suffix = string.gsub(suffix, pattern, replacement)
   end
   if suffix ~= "" then
-    suffix = "-"..suffix
+    suffix = "-" .. suffix
   end
 
   create_linked_belt(prototype, suffix)
@@ -177,4 +177,4 @@ for name, prototype in pairs(table.deepcopy(data.raw["underground-belt"])) do
   end
 end
 
-data.raw["item"]["ee-linked-belt"].place_result = "ee-linked-belt"..fastest_suffix
+data.raw["item"]["ee-linked-belt"].place_result = "ee-linked-belt" .. fastest_suffix

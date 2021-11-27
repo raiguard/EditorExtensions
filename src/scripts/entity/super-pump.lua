@@ -15,7 +15,7 @@ local function set_speed(entity, speed)
   entity.fluidbox[2] = {
     name = "ee-super-pump-speed-fluid",
     amount = 100000000000,
-    temperature = speed + 0.01 -- avoid floating point imprecision
+    temperature = speed + 0.01, -- avoid floating point imprecision
   }
 end
 
@@ -63,78 +63,105 @@ local function create_gui(player, player_table, entity)
     {
       type = "frame",
       direction = "vertical",
-      actions = {on_closed = {gui = "sp", action = "close"}},
-      ref = {"window"},
+      actions = { on_closed = { gui = "sp", action = "close" } },
+      ref = { "window" },
       children = {
-        {type = "flow", style = "flib_titlebar_flow", ref = {"titlebar_flow"}, children = {
-          {
-            type = "label",
-            style = "frame_title",
-            caption = {"entity-name.ee-super-pump"},
-            ignored_by_interaction = true
-          },
-          {type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true},
-          {
-            type = "sprite-button",
-            style = "frame_action_button",
-            sprite = "ee_open_default_gui_white",
-            hovered_sprite = "ee_open_default_gui_black",
-            clicked_sprite = "ee_open_default_gui_black",
-            tooltip = {"ee-gui.open-default-gui"},
-            actions = {on_click = {gui = "sp", action = "open_default_gui"}}
-          },
-          util.close_button{on_click = {gui = "sp", action = "close"}}
-        }},
-        {type = "frame", style = "entity_frame", direction = "vertical", children = {
-          {type = "frame", style = "deep_frame_in_shallow_frame", children = {
-            {type = "entity-preview", style = "wide_entity_button", elem_mods = {entity = entity}, ref = {"preview"}}
-          }},
-          {type = "flow", style_mods = {vertical_align = "center"}, children = {
-            {type = "label", caption = {"ee-gui.state"}},
-            {type = "empty-widget", style = "flib_horizontal_pusher"},
-            {
-              type = "switch",
-              left_label_caption = {"gui-constant.on"},
-              right_label_caption = {"gui-constant.off"},
-              switch_state = "left",
-              actions = {on_switch_state_changed = {gui = "sp", action = "update_active"}},
-              ref = {"state_switch"}
-            }
-          }},
-          {type = "line", style_mods = {horizontally_stretchable = true}, direction = "horizontal"},
-          {type = "flow", style_mods = {vertical_align = "center"}, children = {
+        {
+          type = "flow",
+          style = "flib_titlebar_flow",
+          ref = { "titlebar_flow" },
+          children = {
             {
               type = "label",
-              style_mods = {right_margin = 6},
-              caption = {"ee-gui.speed"},
-              tooltip = {"ee-gui.speed-tooltip"}
+              style = "frame_title",
+              caption = { "entity-name.ee-super-pump" },
+              ignored_by_interaction = true,
             },
+            { type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true },
             {
-              type = "slider",
-              style_mods = {horizontally_stretchable = true},
-              minimum_value = 0,
-              maximum_value = 23,
-              actions = {on_value_changed = {gui = "sp", action = "update_speed_from_slider"}},
-              ref = {"speed_slider"}
+              type = "sprite-button",
+              style = "frame_action_button",
+              sprite = "ee_open_default_gui_white",
+              hovered_sprite = "ee_open_default_gui_black",
+              clicked_sprite = "ee_open_default_gui_black",
+              tooltip = { "ee-gui.open-default-gui" },
+              actions = { on_click = { gui = "sp", action = "open_default_gui" } },
             },
+            util.close_button({ on_click = { gui = "sp", action = "close" } }),
+          },
+        },
+        {
+          type = "frame",
+          style = "entity_frame",
+          direction = "vertical",
+          children = {
             {
-              type = "textfield",
-              style = "ee_slider_textfield",
-              style_mods = {width = 80},
-              numeric = true,
-              lose_focus_on_confirm = true,
-              clear_and_focus_on_right_click = true,
-              actions = {
-                on_confirmed = {gui = "sp", action = "confirm_textfield"},
-                on_text_changed = {gui = "sp", action = "update_speed_from_textfield"}
+              type = "frame",
+              style = "deep_frame_in_shallow_frame",
+              children = {
+                {
+                  type = "entity-preview",
+                  style = "wide_entity_button",
+                  elem_mods = { entity = entity },
+                  ref = { "preview" },
+                },
               },
-              ref = {"speed_textfield"}
             },
-            {type = "label", style = "ee_super_pump_per_second_label", caption = {"ee-gui.per-second"}}
-          }}
-        }}
-      }
-    }
+            {
+              type = "flow",
+              style_mods = { vertical_align = "center" },
+              children = {
+                { type = "label", caption = { "ee-gui.state" } },
+                { type = "empty-widget", style = "flib_horizontal_pusher" },
+                {
+                  type = "switch",
+                  left_label_caption = { "gui-constant.on" },
+                  right_label_caption = { "gui-constant.off" },
+                  switch_state = "left",
+                  actions = { on_switch_state_changed = { gui = "sp", action = "update_active" } },
+                  ref = { "state_switch" },
+                },
+              },
+            },
+            { type = "line", style_mods = { horizontally_stretchable = true }, direction = "horizontal" },
+            {
+              type = "flow",
+              style_mods = { vertical_align = "center" },
+              children = {
+                {
+                  type = "label",
+                  style_mods = { right_margin = 6 },
+                  caption = { "ee-gui.speed" },
+                  tooltip = { "ee-gui.speed-tooltip" },
+                },
+                {
+                  type = "slider",
+                  style_mods = { horizontally_stretchable = true },
+                  minimum_value = 0,
+                  maximum_value = 23,
+                  actions = { on_value_changed = { gui = "sp", action = "update_speed_from_slider" } },
+                  ref = { "speed_slider" },
+                },
+                {
+                  type = "textfield",
+                  style = "ee_slider_textfield",
+                  style_mods = { width = 80 },
+                  numeric = true,
+                  lose_focus_on_confirm = true,
+                  clear_and_focus_on_right_click = true,
+                  actions = {
+                    on_confirmed = { gui = "sp", action = "confirm_textfield" },
+                    on_text_changed = { gui = "sp", action = "update_speed_from_textfield" },
+                  },
+                  ref = { "speed_textfield" },
+                },
+                { type = "label", style = "ee_super_pump_per_second_label", caption = { "ee-gui.per-second" } },
+              },
+            },
+          },
+        },
+      },
+    },
   })
 
   refs.titlebar_flow.drag_target = refs.window
@@ -143,14 +170,14 @@ local function create_gui(player, player_table, entity)
   player_table.gui.sp = {
     state = {
       entity = entity,
-      speed = get_speed(entity)
+      speed = get_speed(entity),
     },
-    refs = refs
+    refs = refs,
   }
 
   player.opened = refs.window
 
-  player.play_sound{path = "entity-open/ee-super-pump"}
+  player.play_sound({ path = "entity-open/ee-super-pump" })
 
   update_gui(player_table.gui.sp)
 end
@@ -167,7 +194,7 @@ local function handle_gui_action(e, msg)
       if player.opened == state.entity then
         player.opened = nil
       end
-      player.play_sound{path = "entity-close/ee-super-pump"}
+      player.play_sound({ path = "entity-close/ee-super-pump" })
     end
     refs.window.destroy()
     player_table.gui.sp = nil
@@ -223,7 +250,7 @@ function super_pump.setup_blueprint(blueprint_entity, entity)
   if not blueprint_entity.tags then
     blueprint_entity.tags = {}
   end
-  blueprint_entity.tags.EditorExtensions = {active = entity.active, speed = get_speed(entity)}
+  blueprint_entity.tags.EditorExtensions = { active = entity.active, speed = get_speed(entity) }
   return blueprint_entity
 end
 

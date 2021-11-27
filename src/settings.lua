@@ -1,88 +1,88 @@
-data:extend{
+data:extend({
   -- STARTUP SETTINGS
   {
     type = "int-setting",
     name = "ee-controller-inventory_size",
     setting_type = "startup",
     default_value = 150,
-    order = "ba"
+    order = "ba",
   },
   {
     type = "bool-setting",
     name = "ee-controller-enable_flash_light",
     setting_type = "startup",
     default_value = true,
-    order = "bb"
+    order = "bb",
   },
   {
     type = "bool-setting",
     name = "ee-controller-render_as_day",
     setting_type = "startup",
     default_value = true,
-    order = "bc"
+    order = "bc",
   },
   {
     type = "bool-setting",
     name = "ee-controller-instant_blueprint_building",
     setting_type = "startup",
     default_value = true,
-    order = "bda"
+    order = "bda",
   },
   {
     type = "bool-setting",
     name = "ee-controller-instant_deconstruction",
     setting_type = "startup",
     default_value = true,
-    order = "bdb"
+    order = "bdb",
   },
   {
     type = "bool-setting",
     name = "ee-controller-instant_upgrading",
     setting_type = "startup",
     default_value = true,
-    order = "bdc"
+    order = "bdc",
   },
   {
     type = "bool-setting",
     name = "ee-controller-instant_rail_planner",
     setting_type = "startup",
     default_value = true,
-    order = "bdd"
+    order = "bdd",
   },
   {
     type = "bool-setting",
     name = "ee-controller-show_additional_entity_info_gui",
     setting_type = "startup",
     default_value = false,
-    order = "be"
+    order = "be",
   },
   {
     type = "bool-setting",
     name = "ee-controller-fill_built_entity_energy_buffers",
     setting_type = "startup",
     default_value = true,
-    order = "bf"
+    order = "bf",
   },
   {
     type = "bool-setting",
     name = "ee-controller-show_character_tab_in_controller_gui",
     setting_type = "startup",
     default_value = false,
-    order = "bga"
+    order = "bga",
   },
   {
     type = "bool-setting",
     name = "ee-controller-show_infinity_filters_in_controller_gui",
     setting_type = "startup",
     default_value = true,
-    order = "bgb"
+    order = "bgb",
   },
   {
     type = "bool-setting",
     name = "ee-allow-changing-aggregate-chest-filters",
     setting_type = "startup",
     default_value = false,
-    order = "c"
+    order = "c",
   },
   -- MAP SETTINGS
   {
@@ -90,21 +90,21 @@ data:extend{
     name = "ee-aggregate-include-hidden",
     setting_type = "runtime-global",
     default_value = true,
-    order = "a"
+    order = "a",
   },
   {
     type = "bool-setting",
     name = "ee-prevent-initial-pause",
     setting_type = "runtime-global",
     default_value = true,
-    order = "b"
+    order = "b",
   },
   {
     type = "bool-setting",
     name = "ee-hijack-debug-world",
     setting_type = "runtime-global",
     default_value = true,
-    order = "c"
+    order = "c",
   },
   -- PLAYER SETTINGS
   {
@@ -112,7 +112,7 @@ data:extend{
     name = "ee-infinity-pipe-crafter-snapping",
     setting_type = "runtime-per-user",
     default_value = true,
-    order = "aa"
+    order = "aa",
   },
   {
     type = "string-setting",
@@ -120,21 +120,21 @@ data:extend{
     setting_type = "runtime-per-user",
     allow_blank = true,
     default_value = "",
-    order = "ba"
+    order = "ba",
   },
   {
     type = "bool-setting",
     name = "ee-inventory-sync",
     setting_type = "runtime-per-user",
     default_value = true,
-    order = "ca"
+    order = "ca",
   },
   {
     type = "string-setting",
     name = "ee-testing-lab",
     setting_type = "runtime-per-user",
-    allowed_values = {"off", "personal", "shared"},
+    allowed_values = { "off", "personal", "shared" },
     default_value = "off",
-    order = "da"
+    order = "da",
   },
-}
+})

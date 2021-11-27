@@ -50,7 +50,7 @@ function linked_belt.finish_connection(player, player_table, entity, shift)
     linked_belt.render_connection(player, player_table)
     shared.snap_belt_neighbours(entity)
   else
-    util.error_text(player, {"ee-message.connection-blocked"}, entity.position)
+    util.error_text(player, { "ee-message.connection-blocked" }, entity.position)
   end
 end
 
@@ -72,19 +72,19 @@ function linked_belt.sever_connection(player, player_table, entity)
 end
 
 local function draw_connection(objects, color, dashed, player_index, source, destination)
-  for _, entity in ipairs{source, destination} do
-    objects[#objects+1] = rendering.draw_circle{
+  for _, entity in ipairs({ source, destination }) do
+    objects[#objects + 1] = rendering.draw_circle({
       color = color,
       radius = 0.15,
       width = 2,
       filled = not dashed,
       target = entity.position,
       surface = entity.surface,
-      players = {player_index}
-    }
+      players = { player_index },
+    })
   end
   if destination and source.surface == destination.surface then
-    objects[#objects + 1] = rendering.draw_line{
+    objects[#objects + 1] = rendering.draw_line({
       color = color,
       width = 2,
       gap_length = dashed and 0.3 or 0,
@@ -92,15 +92,15 @@ local function draw_connection(objects, color, dashed, player_index, source, des
       from = source.position,
       to = destination.position,
       surface = source.surface,
-      players = {player_index}
-    }
+      players = { player_index },
+    })
   end
 end
 
 local colors = {
-  red = {r = 1, g = 0.5, b = 0.5},
-  green = {r = 0.3, g = 0.8, b = 0.3},
-  teal = {r = 0.5, g = 1, b = 1}
+  red = { r = 1, g = 0.5, b = 0.5 },
+  green = { r = 0.3, g = 0.8, b = 0.3 },
+  teal = { r = 0.5, g = 1, b = 1 },
 }
 
 function linked_belt.render_connection(player, player_table)
@@ -172,26 +172,28 @@ local function replace_linked_belt(entity, new_type)
     last_user = entity.last_user,
     linked_belt_type = entity.linked_belt_type,
     position = entity.position,
-    surface = entity.surface
+    surface = entity.surface,
   }
 
   entity.destroy()
 
-  local new_entity = entity_data.surface.create_entity{
-    name = "ee-linked-belt"..(new_type == "" and "" or "-"..new_type),
+  local new_entity = entity_data.surface.create_entity({
+    name = "ee-linked-belt" .. (new_type == "" and "" or "-" .. new_type),
     direction = entity_data.direction,
     force = entity_data.force,
     player = entity_data.last_user,
     position = entity_data.position,
-    create_build_effect_smoke = false
-  }
+    create_build_effect_smoke = false,
+  })
   new_entity.linked_belt_type = entity_data.linked_belt_type
 
   return new_entity
 end
 
 function linked_belt.snap(entity, target)
-  if not entity or not entity.valid then return end
+  if not entity or not entity.valid then
+    return
+  end
 
   -- temporarily disconnect from other end
   local neighbour = entity.linked_belt_neighbour
@@ -204,7 +206,7 @@ function linked_belt.snap(entity, target)
   -- if the belt already has a neighbour, the direction will not be flipped
   for i = 1, 2 do
     local linked_belt_type = entity.linked_belt_type
-    local neighbour_key = linked_belt_type.."s"
+    local neighbour_key = linked_belt_type .. "s"
 
     local connection = entity.belt_neighbours[neighbour_key][1]
     if connection and (not target or connection.unit_number == target.unit_number) then
@@ -239,7 +241,7 @@ function linked_belt.sync_belt_types(player, entity)
       neighbour = replace_linked_belt(neighbour, belt_type)
       entity.connect_linked_belts(neighbour)
     else
-      util.error_text(player, {"ee-message.belt-types-already-synced"}, entity.position)
+      util.error_text(player, { "ee-message.belt-types-already-synced" }, entity.position)
     end
   end
 end

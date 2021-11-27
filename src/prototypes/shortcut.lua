@@ -1,15 +1,15 @@
 local function shortcut_sprite(suffix, size)
   return {
-    filename = "__EditorExtensions__/graphics/shortcut-bar/map-editor-"..suffix,
+    filename = "__EditorExtensions__/graphics/shortcut-bar/map-editor-" .. suffix,
     priority = "extra-high-no-scale",
     size = size,
     scale = 1,
     mipmap_count = 2,
-    flags = {"icon"}
+    flags = { "icon" },
   }
 end
 
-data:extend{
+data:extend({
   {
     type = "shortcut",
     name = "ee-toggle-map-editor",
@@ -19,6 +19,6 @@ data:extend{
     disabled_small_icon = shortcut_sprite("x24-white.png", 24),
     action = "lua",
     associated_control_input = "ee-toggle-map-editor",
-    toggleable = true
-  }
-}
+    toggleable = true,
+  },
+})

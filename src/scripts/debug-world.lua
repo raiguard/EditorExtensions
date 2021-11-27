@@ -1,5 +1,7 @@
 return function()
-  if script.level.level_name ~= "freeplay" then return end
+  if script.level.level_name ~= "freeplay" then
+    return
+  end
 
   local nauvis = game.get_surface("nauvis")
   local map_gen_settings = nauvis.map_gen_settings

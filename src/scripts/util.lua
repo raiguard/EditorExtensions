@@ -6,7 +6,7 @@ local constants = require("scripts.constants")
 -- GENERAL
 
 function util.freeze_time_on_all_surfaces(player)
-  player.print{"ee-message.time-frozen"}
+  player.print({ "ee-message.time-frozen" })
   for _, surface in pairs(game.surfaces) do
     surface.freeze_daytime = true
     surface.daytime = 0
@@ -18,8 +18,8 @@ util.position = math2d.position
 -- creates an area that is the tile the position is contained in
 function util.position.to_tile_area(pos)
   return {
-    left_top = {x = math.floor(pos.x), y = math.floor(pos.y)},
-    right_bottom = {x = math.ceil(pos.x), y = math.ceil(pos.y)}
+    left_top = { x = math.floor(pos.x), y = math.floor(pos.y) },
+    right_bottom = { x = math.ceil(pos.x), y = math.ceil(pos.y) },
   }
 end
 
@@ -29,10 +29,10 @@ function util.get_belt_type(entity)
     type = string.gsub(type, pattern, replacement)
   end
   -- check to see if the loader prototype exists
-  if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-"..type] then
+  if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-" .. type] then
     -- print warning message
-    game.print{"", "EDITOR EXTENSIONS: ", {"ee-message.unable-to-identify-belt"}}
-    game.print("entity_name = \""..entity.name.."\", parse_result = \""..type.."\"")
+    game.print({ "", "EDITOR EXTENSIONS: ", { "ee-message.unable-to-identify-belt" } })
+    game.print('entity_name = "' .. entity.name .. '", parse_result = "' .. type .. '"')
     -- set to default type
     type = global.fastest_belt_type
   end
@@ -46,19 +46,19 @@ function util.close_button(actions)
     sprite = "utility/close_white",
     hovered_sprite = "utility/close_black",
     clicked_sprite = "utility/close_black",
-    tooltip = {"gui.close-instruction"},
-    mouse_button_filter = {"left"},
-    actions = actions
+    tooltip = { "gui.close-instruction" },
+    mouse_button_filter = { "left" },
+    actions = actions,
   }
 end
 
 function util.error_text(player, text, position)
-  player.create_local_flying_text{
+  player.create_local_flying_text({
     text = text,
     position = position,
-    create_at_cursor = (not position) and true or nil
-  }
-  player.play_sound{path = "utility/cannot_build"}
+    create_at_cursor = not position and true or nil,
+  })
+  player.play_sound({ path = "utility/cannot_build" })
 end
 
 return util

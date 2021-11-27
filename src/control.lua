@@ -1,5 +1,4 @@
 local event = require("__flib__.event")
-
 local gui = require("__flib__.gui")
 local migration = require("__flib__.migration")
 
@@ -27,29 +26,25 @@ local super_pump = require("scripts.entity.super-pump")
 -- -----------------------------------------------------------------------------
 -- COMMANDS
 
-commands.add_command(
-  "cheatmode",
-  {"command-help.cheatmode"},
-  function(e)
-    local parameter = e.parameter
-    local player = game.get_player(e.player_index)
-    if not parameter then
-      util.freeze_time_on_all_surfaces(player)
-      cheat_mode.enable(player)
-    elseif parameter == "all" then
-      util.freeze_time_on_all_surfaces(player)
-      cheat_mode.enable(player, true)
-    elseif parameter == "off" then
-      if player.cheat_mode then
-        cheat_mode.disable(player, global.players[e.player_index])
-      else
-        player.print{"ee-message.cheat-mode-already-disabled"}
-      end
+commands.add_command("cheatmode", { "command-help.cheatmode" }, function(e)
+  local parameter = e.parameter
+  local player = game.get_player(e.player_index)
+  if not parameter then
+    util.freeze_time_on_all_surfaces(player)
+    cheat_mode.enable(player)
+  elseif parameter == "all" then
+    util.freeze_time_on_all_surfaces(player)
+    cheat_mode.enable(player, true)
+  elseif parameter == "off" then
+    if player.cheat_mode then
+      cheat_mode.disable(player, global.players[e.player_index])
     else
-      player.print{"ee-message.unrecognized-cheatmode-subcommand"}
+      player.print({ "ee-message.cheat-mode-already-disabled" })
     end
+  else
+    player.print({ "ee-message.unrecognized-cheatmode-subcommand" })
   end
-)
+end)
 
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
@@ -112,7 +107,9 @@ event.on_player_cheat_mode_enabled(function(e)
   local player_table = global.players[e.player_index]
 
   -- if the scenario enabled it, the player hasn't been initialized yet
-  if not player_table then return end
+  if not player_table then
+    return
+  end
 
   -- space exploration - do nothing if they are in the satellite view
   if compatibility.in_se_satellite_view(player) then
@@ -132,7 +129,7 @@ event.register("ee-toggle-map-editor", function(e)
     if player.admin then
       player.toggle_map_editor()
     else
-      player.print{"ee-message.map-editor-denied"}
+      player.print({ "ee-message.map-editor-denied" })
     end
   end
 end)
@@ -145,7 +142,7 @@ event.register("ee-open-gui", function(e)
       if player.can_reach_entity(selected) then
         infinity_wagon.open(player, selected)
       else
-        util.error_text(player, {"cant-reach"}, selected.position)
+        util.error_text(player, { "cant-reach" }, selected.position)
       end
     elseif
       linked_belt.check_is_linked_belt(selected)
@@ -202,89 +199,82 @@ end)
 
 -- ENTITY
 
-event.register(
-  {
-    defines.events.on_built_entity,
-    defines.events.on_entity_cloned,
-    defines.events.on_robot_built_entity,
-    defines.events.script_raised_built,
-    defines.events.script_raised_revive,
-  },
-  function(e)
-    local entity = e.entity or e.created_entity or e.destination
-    local entity_name = entity.name
+event.register({
+  defines.events.on_built_entity,
+  defines.events.on_entity_cloned,
+  defines.events.on_robot_built_entity,
+  defines.events.script_raised_built,
+  defines.events.script_raised_revive,
+}, function(e)
+  local entity = e.entity or e.created_entity or e.destination
+  local entity_name = entity.name
 
-    -- aggregate chest
-    if constants.aggregate_chest_names[entity_name] then
-      aggregate_chest.set_filters(entity)
+  -- aggregate chest
+  if constants.aggregate_chest_names[entity_name] then
+    aggregate_chest.set_filters(entity)
     -- infinity loader
-    elseif entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
-      infinity_loader.build_from_ghost(entity)
-    elseif
-      entity_name == "ee-infinity-loader-dummy-combinator"
-      or entity_name == "ee-infinity-loader-logic-combinator"
-    then
-      infinity_loader.build(entity)
+  elseif entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
+    infinity_loader.build_from_ghost(entity)
+  elseif
+    entity_name == "ee-infinity-loader-dummy-combinator" or entity_name == "ee-infinity-loader-logic-combinator"
+  then
+    infinity_loader.build(entity)
     -- transport belt connectables
-    elseif
-      entity.type == "transport-belt"
-      or entity.type == "underground-belt"
-      or entity.type == "splitter"
-      or entity.type == "loader"
-      or entity.type == "loader-1x1"
-    then
-      -- generic other snapping
-      shared.snap_belt_neighbours(entity)
-      if entity.type == "underground-belt" and entity.neighbours then
-        shared.snap_belt_neighbours(entity.neighbours)
-      end
+  elseif
+    entity.type == "transport-belt"
+    or entity.type == "underground-belt"
+    or entity.type == "splitter"
+    or entity.type == "loader"
+    or entity.type == "loader-1x1"
+  then
+    -- generic other snapping
+    shared.snap_belt_neighbours(entity)
+    if entity.type == "underground-belt" and entity.neighbours then
+      shared.snap_belt_neighbours(entity.neighbours)
+    end
     -- infinity wagon
-    elseif constants.infinity_wagon_names[entity_name] then
-      infinity_wagon.build(entity, e.tags)
+  elseif constants.infinity_wagon_names[entity_name] then
+    infinity_wagon.build(entity, e.tags)
     -- linked belt
-    elseif linked_belt.check_is_linked_belt(entity) then
-      linked_belt.snap(entity)
+  elseif linked_belt.check_is_linked_belt(entity) then
+    linked_belt.snap(entity)
     -- super pump
-    elseif entity_name == "ee-super-pump" then
-      super_pump.setup(entity, e.tags)
+  elseif entity_name == "ee-super-pump" then
+    super_pump.setup(entity, e.tags)
     -- only snap manually built entities
-    elseif e.name == defines.events.on_built_entity then
-      if entity_name == "ee-super-inserter" then
-        super_inserter.snap(entity)
-      elseif entity_name == "ee-infinity-pipe" then
-        infinity_pipe.snap(entity, global.players[e.player_index].settings)
-      end
+  elseif e.name == defines.events.on_built_entity then
+    if entity_name == "ee-super-inserter" then
+      super_inserter.snap(entity)
+    elseif entity_name == "ee-infinity-pipe" then
+      infinity_pipe.snap(entity, global.players[e.player_index].settings)
     end
   end
-)
+end)
 
-event.register(
-  {
-    defines.events.on_player_mined_entity,
-    defines.events.on_robot_mined_entity,
-    defines.events.on_entity_died,
-    defines.events.script_raised_destroy
-  },
-  function(e)
-    local entity = e.entity
-    if entity.name == "ee-infinity-loader-logic-combinator" then
-      infinity_loader.destroy(entity)
-    elseif constants.infinity_wagon_names[entity.name] then
-      infinity_wagon.destroy(entity)
-    elseif constants.ia.entity_names[entity.name] then
-      infinity_accumulator.close_open_guis(entity)
-    elseif linked_belt.check_is_linked_belt(entity) then
-      local players = global.linked_belt_sources[entity.unit_number]
-      if players then
-        for player_index in pairs(players) do
-          local player = game.get_player(player_index)
-          local player_table = global.players[player_index]
-          linked_belt.cancel_connection(player, player_table)
-        end
+event.register({
+  defines.events.on_player_mined_entity,
+  defines.events.on_robot_mined_entity,
+  defines.events.on_entity_died,
+  defines.events.script_raised_destroy,
+}, function(e)
+  local entity = e.entity
+  if entity.name == "ee-infinity-loader-logic-combinator" then
+    infinity_loader.destroy(entity)
+  elseif constants.infinity_wagon_names[entity.name] then
+    infinity_wagon.destroy(entity)
+  elseif constants.ia.entity_names[entity.name] then
+    infinity_accumulator.close_open_guis(entity)
+  elseif linked_belt.check_is_linked_belt(entity) then
+    local players = global.linked_belt_sources[entity.unit_number]
+    if players then
+      for player_index in pairs(players) do
+        local player = game.get_player(player_index)
+        local player_table = global.players[player_index]
+        linked_belt.cancel_connection(player, player_table)
       end
     end
   end
-)
+end)
 
 event.on_player_rotated_entity(function(e)
   local entity = e.entity
@@ -311,7 +301,7 @@ event.on_player_rotated_entity(function(e)
   end
 end)
 
-event.register({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, function(e)
+event.register({ defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction }, function(e)
   -- event filter removes the need for a check here
   infinity_wagon.clear_inventory(e.entity)
 end)
@@ -346,14 +336,16 @@ event.on_entity_settings_pasted(function(e)
     local control = source.get_or_create_control_behavior()
     for _, signal in pairs(control.parameters) do
       if signal.signal.type == "fluid" then
-        destination.set_infinity_pipe_filter{name = signal.signal.name, percentage = 1}
+        destination.set_infinity_pipe_filter({ name = signal.signal.name, percentage = 1 })
       end
     end
   elseif source_name == "ee-infinity-pipe" and destination_name == "constant-combinator" then
     local filter = source.get_infinity_pipe_filter()
     if filter then
       local control = destination.get_or_create_control_behavior()
-      control.parameters = {{signal = {type = "fluid", name = filter.name}, count = filter.percentage * 100, index = 1}}
+      control.parameters = {
+        { signal = { type = "fluid", name = filter.name }, count = filter.percentage * 100, index = 1 },
+      }
     end
   end
 end)
@@ -426,7 +418,7 @@ event.on_player_removed(function(e)
   global.players[e.player_index] = nil
 end)
 
-event.register({defines.events.on_player_promoted, defines.events.on_player_demoted}, function(e)
+event.register({ defines.events.on_player_promoted, defines.events.on_player_demoted }, function(e)
   local player = game.get_player(e.player_index)
   -- lock or unlock the shortcut depending on if they're an admin
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
@@ -451,7 +443,9 @@ event.on_player_setup_blueprint(function(e)
 
   -- get blueprint entities and mapping
   local entities = bp.get_blueprint_entities()
-  if not entities then return end
+  if not entities then
+    return
+  end
   local mapping = e.mapping.get()
 
   -- iterate each entity
@@ -477,7 +471,9 @@ end)
 
 event.on_pre_player_toggled_map_editor(function(e)
   local player_table = global.players[e.player_index]
-  if not player_table then return end
+  if not player_table then
+    return
+  end
   if player_table.settings.inventory_sync_enabled then
     inventory.create_sync_inventories(player_table, game.get_player(e.player_index))
   end
@@ -485,7 +481,9 @@ end)
 
 event.on_player_toggled_map_editor(function(e)
   local player_table = global.players[e.player_index]
-  if not player_table then return end
+  if not player_table then
+    return
+  end
 
   -- the first time someone toggles the map editor, unpause the current tick
   if global.flags.map_editor_toggled == false then
@@ -581,55 +579,52 @@ end)
 -- -----------------------------------------------------------------------------
 -- EVENT FILTERS
 
-event.set_filters(
-  {
-    defines.events.on_built_entity,
-    defines.events.on_entity_cloned,
-    defines.events.on_robot_built_entity
-  },
-  {
-    {filter = "name", name = "ee-aggregate-chest-passive-provider"},
-    {filter = "name", name = "ee-aggregate-chest"},
-    {filter = "name", name = "ee-infinity-cargo-wagon"},
-    {filter = "name", name = "ee-infinity-fluid-wagon"},
-    {filter = "name", name = "ee-infinity-loader-dummy-combinator"},
-    {filter = "name", name = "ee-infinity-loader-logic-combinator"},
-    {filter = "name", name = "ee-infinity-pipe"},
-    {filter = "name", name = "ee-super-inserter"},
-    {filter = "name", name = "ee-super-pump"},
-    {filter = "type", type = "transport-belt"},
-    {filter = "type", type = "underground-belt"},
-    {filter = "type", type = "splitter"},
-    {filter = "type", type = "loader"},
-    {filter = "type", type = "loader-1x1"},
-    {filter = "type", type = "linked-belt"},
-    {filter = "ghost"},
-    {filter = "ghost_name", name = "ee-infinity-loader-logic-combinator"},
-    {filter = "ghost_name", name = "ee-super-pump"}
-  }
-)
-
-event.set_filters({defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity}, {
-  {filter = "name", name = "ee-infinity-accumulator-primary-output"},
-  {filter = "name", name = "ee-infinity-accumulator-primary-input"},
-  {filter = "name", name = "ee-infinity-accumulator-secondary-output"},
-  {filter = "name", name = "ee-infinity-accumulator-secondary-input"},
-  {filter = "name", name = "ee-infinity-accumulator-tertiary-buffer"},
-  {filter = "name", name = "ee-infinity-accumulator-tertiary-input"},
-  {filter = "name", name = "ee-infinity-accumulator-tertiary-output"},
-  {filter = "name", name = "ee-infinity-loader-dummy-combinator"},
-  {filter = "name", name = "ee-infinity-loader-logic-combinator"},
-  {filter = "name", name = "ee-infinity-cargo-wagon"},
-  {filter = "name", name = "ee-infinity-fluid-wagon"},
-  {filter = "type", type = "linked-belt"}
+event.set_filters({
+  defines.events.on_built_entity,
+  defines.events.on_entity_cloned,
+  defines.events.on_robot_built_entity,
+}, {
+  { filter = "name", name = "ee-aggregate-chest-passive-provider" },
+  { filter = "name", name = "ee-aggregate-chest" },
+  { filter = "name", name = "ee-infinity-cargo-wagon" },
+  { filter = "name", name = "ee-infinity-fluid-wagon" },
+  { filter = "name", name = "ee-infinity-loader-dummy-combinator" },
+  { filter = "name", name = "ee-infinity-loader-logic-combinator" },
+  { filter = "name", name = "ee-infinity-pipe" },
+  { filter = "name", name = "ee-super-inserter" },
+  { filter = "name", name = "ee-super-pump" },
+  { filter = "type", type = "transport-belt" },
+  { filter = "type", type = "underground-belt" },
+  { filter = "type", type = "splitter" },
+  { filter = "type", type = "loader" },
+  { filter = "type", type = "loader-1x1" },
+  { filter = "type", type = "linked-belt" },
+  { filter = "ghost" },
+  { filter = "ghost_name", name = "ee-infinity-loader-logic-combinator" },
+  { filter = "ghost_name", name = "ee-super-pump" },
 })
 
-event.set_filters({defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction}, {
-  {filter = "name", name = "ee-infinity-cargo-wagon"}
+event.set_filters({ defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity }, {
+  { filter = "name", name = "ee-infinity-accumulator-primary-output" },
+  { filter = "name", name = "ee-infinity-accumulator-primary-input" },
+  { filter = "name", name = "ee-infinity-accumulator-secondary-output" },
+  { filter = "name", name = "ee-infinity-accumulator-secondary-input" },
+  { filter = "name", name = "ee-infinity-accumulator-tertiary-buffer" },
+  { filter = "name", name = "ee-infinity-accumulator-tertiary-input" },
+  { filter = "name", name = "ee-infinity-accumulator-tertiary-output" },
+  { filter = "name", name = "ee-infinity-loader-dummy-combinator" },
+  { filter = "name", name = "ee-infinity-loader-logic-combinator" },
+  { filter = "name", name = "ee-infinity-cargo-wagon" },
+  { filter = "name", name = "ee-infinity-fluid-wagon" },
+  { filter = "type", type = "linked-belt" },
+})
+
+event.set_filters({ defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction }, {
+  { filter = "name", name = "ee-infinity-cargo-wagon" },
 })
 
 event.set_filters(defines.events.on_cancelled_deconstruction, {
-  {filter = "name", name = "ee-infinity-cargo-wagon"}
+  { filter = "name", name = "ee-infinity-cargo-wagon" },
 })
 
 -- -----------------------------------------------------------------------------

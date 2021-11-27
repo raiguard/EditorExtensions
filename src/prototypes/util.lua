@@ -30,7 +30,7 @@ end
 
 -- consolidate icon information into a table to use in "icons"
 function util.extract_icon_info(obj, skip_cleanup)
-  local icons = obj.icons or {{icon = obj.icon, icon_size = obj.icon_size, icon_mipmaps = obj.icon_mipmaps}}
+  local icons = obj.icons or { { icon = obj.icon, icon_size = obj.icon_size, icon_mipmaps = obj.icon_mipmaps } }
   icons[1].icon_size = icons[1].icon_size or obj.icon_size
   if not skip_cleanup then
     obj.icon = nil
@@ -45,15 +45,17 @@ function util.chest_description(suffix, is_aggregate)
   if is_aggregate then
     return {
       "",
-      {"entity-description.ee-aggregate-chest"},
-      suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or "",
-      "\n[color=255,57,48]", {"entity-description.ee-performance-warning"}, "[/color]"
+      { "entity-description.ee-aggregate-chest" },
+      suffix ~= "" and { "", "\n", { "entity-description.logistic-chest" .. suffix } } or "",
+      "\n[color=255,57,48]",
+      { "entity-description.ee-performance-warning" },
+      "[/color]",
     }
   else
     return {
       "",
-      {"entity-description.ee-infinity-chest"},
-      suffix ~= "" and {"", "\n", {"entity-description.logistic-chest"..suffix}} or ""
+      { "entity-description.ee-infinity-chest" },
+      suffix ~= "" and { "", "\n", { "entity-description.logistic-chest" .. suffix } } or "",
     }
   end
 end

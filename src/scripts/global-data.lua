@@ -13,7 +13,7 @@ end
 function global_data.read_fastest_belt_type()
   local fastest_speed = 0
   local fastest_suffix = ""
-  for name, prototype in pairs(game.get_filtered_entity_prototypes{{filter = "type", type = "loader-1x1"}}) do
+  for name, prototype in pairs(game.get_filtered_entity_prototypes({ { filter = "type", type = "loader-1x1" } })) do
     if string.find(name, "ee%-infinity%-loader%-loader") and prototype.belt_speed > fastest_speed then
       fastest_speed = prototype.belt_speed
       fastest_suffix = string.gsub(name, "ee%-infinity%-loader%-loader%-?", "")

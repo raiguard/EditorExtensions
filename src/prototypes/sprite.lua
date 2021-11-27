@@ -1,11 +1,11 @@
-data:extend{
+data:extend({
   {
     type = "sprite",
     name = "ee_logo",
     filename = "__EditorExtensions__/graphics/gui/crafting-group.png",
     size = 128,
     mipmap_count = 2,
-    flags = {"gui-icon"}
+    flags = { "gui-icon" },
   },
   {
     type = "sprite",
@@ -14,7 +14,7 @@ data:extend{
     y = 0,
     size = 32,
     mipmap_count = 2,
-    flags = {"gui-icon"}
+    flags = { "gui-icon" },
   },
   {
     type = "sprite",
@@ -23,14 +23,14 @@ data:extend{
     y = 32,
     size = 32,
     mipmap_count = 2,
-    flags = {"gui-icon"}
+    flags = { "gui-icon" },
   },
   {
     type = "sprite",
     name = "ee_open_default_gui_black",
     filename = "__EditorExtensions__/graphics/gui/frame-action-icons.png",
     size = 32,
-    flags = {"gui-icon"}
+    flags = { "gui-icon" },
   },
   {
     type = "sprite",
@@ -38,6 +38,6 @@ data:extend{
     filename = "__EditorExtensions__/graphics/gui/frame-action-icons.png",
     x = 32,
     size = 32,
-    flags = {"gui-icon"}
-  }
-}
+    flags = { "gui-icon" },
+  },
+})

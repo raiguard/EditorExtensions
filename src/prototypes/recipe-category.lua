@@ -1,6 +1,6 @@
-data:extend{
+data:extend({
   {
     type = "recipe-category",
-    name = "ee-testing-tool"
-  }
-}
+    name = "ee-testing-tool",
+  },
+})

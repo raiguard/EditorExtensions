@@ -15,7 +15,7 @@ local function get_settings_from_name(name)
 end
 
 local function set_entity_settings(entity, mode, buffer_size)
-  local watts = util.parse_energy((buffer_size * 60).."W")
+  local watts = util.parse_energy((buffer_size * 60) .. "W")
 
   if mode == "output" then
     entity.power_production = watts
@@ -33,13 +33,13 @@ local function set_entity_settings(entity, mode, buffer_size)
 end
 
 local function change_entity(entity, priority, mode)
-  local new_entity = entity.surface.create_entity{
-    name = "ee-infinity-accumulator-"..priority.."-"..mode,
+  local new_entity = entity.surface.create_entity({
+    name = "ee-infinity-accumulator-" .. priority .. "-" .. mode,
     position = entity.position,
     force = entity.force,
     last_user = entity.last_user,
-    create_build_effect_smoke = false
-  }
+    create_build_effect_smoke = false,
+  })
 
   -- calculate new buffer size
   local buffer_size = entity.electric_buffer_size
@@ -66,12 +66,12 @@ local function calc_gui_values(buffer_size, mode)
   -- `power` is the dropdown value - how many sets of three orders of magnitude there are, rounded down
   local power = math.floor((len - 1) / 3)
   -- slider value is the buffer size scaled to its base-three order of magnitude
-  return math.floor_to(buffer_size / 10^(power * 3), 3), math.max(power, 1)
+  return math.floor_to(buffer_size / 10 ^ (power * 3), 3), math.max(power, 1)
 end
 
 -- returns the entity buffer size based on the slider value and dropdown selected index
 local function calc_buffer_size(slider_value, dropdown_index)
-  return util.parse_energy(slider_value..constants.ia.si_suffixes_joule[dropdown_index]) / 60
+  return util.parse_energy(slider_value .. constants.ia.si_suffixes_joule[dropdown_index]) / 60
 end
 
 -- -----------------------------------------------------------------------------
@@ -86,98 +86,124 @@ local function create_gui(player, player_table, entity)
     {
       type = "frame",
       direction = "vertical",
-      actions = {on_closed = {gui = "ia", action = "close"}},
-      ref = {"window"},
+      actions = { on_closed = { gui = "ia", action = "close" } },
+      ref = { "window" },
       children = {
-        {type = "flow", style = "flib_titlebar_flow", ref = {"titlebar_flow"}, children = {
-          {
-            type = "label",
-            style = "frame_title",
-            caption = {"entity-name.ee-infinity-accumulator"},
-            ignored_by_interaction = true
+        {
+          type = "flow",
+          style = "flib_titlebar_flow",
+          ref = { "titlebar_flow" },
+          children = {
+            {
+              type = "label",
+              style = "frame_title",
+              caption = { "entity-name.ee-infinity-accumulator" },
+              ignored_by_interaction = true,
+            },
+            { type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true },
+            util.close_button({ on_click = { gui = "ia", action = "close" } }),
           },
-          {type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true},
-          util.close_button{on_click = {gui = "ia", action = "close"}}
-        }},
-        {type = "frame", style = "entity_frame", direction = "vertical", children = {
-          {type = "frame", style = "deep_frame_in_shallow_frame", children = {
+        },
+        {
+          type = "frame",
+          style = "entity_frame",
+          direction = "vertical",
+          children = {
             {
-              type = "entity-preview",
-              style = "wide_entity_button",
-              elem_mods = {entity = entity},
-              ref = {"preview"}
-            }
-          }},
-          {type = "flow", style_mods = {top_margin = 4, vertical_align = "center"}, children = {
-            {type = "label", caption = {"ee-gui.mode"}},
-            {type = "empty-widget", style = "flib_horizontal_pusher"},
-            {
-              type = "drop-down",
-              items = constants.ia.localised_modes,
-              selected_index = constants.ia.mode_to_index[mode],
-              actions = {on_selection_state_changed = {gui = "ia", action = "update_mode"}},
-              ref = {"mode_dropdown"}
-            }
-          }},
-          {type = "line", style_mods = {horizontally_stretchable = true}, direction = "horizontal"},
-          {type = "flow", style_mods = {vertical_align = "center"}, children = {
-            {
-              type = "label",
-              caption = {"", {"ee-gui.priority"}, " [img=info]"},
-              tooltip = {"ee-gui.ia-priority-description"}
-            },
-            {type = "empty-widget", style = "flib_horizontal_pusher"},
-            {
-              type = "drop-down",
-              items = constants.ia.localised_priorities,
-              selected_index = constants.ia.priority_to_index[priority],
-              elem_mods = {enabled = mode ~= "buffer"},
-              actions = {on_selection_state_changed = {gui = "ia", action = "update_priority"}},
-              ref = {"priority_dropdown"}
-            }
-          }},
-          {type = "line", style_mods = {horizontally_stretchable = true}, direction = "horizontal"},
-          {type = "flow", style_mods = {vertical_align = "center"}, children = {
-            {
-              type = "label",
-              style_mods = {right_margin = 6},
-              caption = {"ee-gui.power"}
-            },
-            {
-              type = "slider",
-              style_mods = {horizontally_stretchable = true},
-              minimum_value = 0,
-              maximum_value = 999,
-              value = slider_value,
-              actions = {on_value_changed = {gui = "ia", action = "update_power_from_slider"}},
-              ref = {"slider"}
-            },
-            {
-              type = "textfield",
-              style = "ee_slider_textfield",
-              text = slider_value,
-              numeric = true,
-              allow_decimal = true,
-              lose_focus_on_confirm = true,
-              clear_and_focus_on_right_click = true,
-              actions = {
-                on_confirmed = {gui = "ia", action = "confirm_textfield"},
-                on_text_changed = {gui = "ia", action = "update_power_from_textfield"}
+              type = "frame",
+              style = "deep_frame_in_shallow_frame",
+              children = {
+                {
+                  type = "entity-preview",
+                  style = "wide_entity_button",
+                  elem_mods = { entity = entity },
+                  ref = { "preview" },
+                },
               },
-              ref = {"slider_textfield"}
             },
             {
-              type = "drop-down",
-              style_mods = {width = 69},
-              selected_index = dropdown_index,
-              items = constants.ia["localised_si_suffixes_"..constants.ia.power_suffixes_by_mode[mode]],
-              actions = {on_selection_state_changed = {gui = "ia", action = "update_units_of_measure"}},
-              ref = {"slider_dropdown"}
-            }
-          }}
-        }
-      }
-    }}
+              type = "flow",
+              style_mods = { top_margin = 4, vertical_align = "center" },
+              children = {
+                { type = "label", caption = { "ee-gui.mode" } },
+                { type = "empty-widget", style = "flib_horizontal_pusher" },
+                {
+                  type = "drop-down",
+                  items = constants.ia.localised_modes,
+                  selected_index = constants.ia.mode_to_index[mode],
+                  actions = { on_selection_state_changed = { gui = "ia", action = "update_mode" } },
+                  ref = { "mode_dropdown" },
+                },
+              },
+            },
+            { type = "line", style_mods = { horizontally_stretchable = true }, direction = "horizontal" },
+            {
+              type = "flow",
+              style_mods = { vertical_align = "center" },
+              children = {
+                {
+                  type = "label",
+                  caption = { "", { "ee-gui.priority" }, " [img=info]" },
+                  tooltip = { "ee-gui.ia-priority-description" },
+                },
+                { type = "empty-widget", style = "flib_horizontal_pusher" },
+                {
+                  type = "drop-down",
+                  items = constants.ia.localised_priorities,
+                  selected_index = constants.ia.priority_to_index[priority],
+                  elem_mods = { enabled = mode ~= "buffer" },
+                  actions = { on_selection_state_changed = { gui = "ia", action = "update_priority" } },
+                  ref = { "priority_dropdown" },
+                },
+              },
+            },
+            { type = "line", style_mods = { horizontally_stretchable = true }, direction = "horizontal" },
+            {
+              type = "flow",
+              style_mods = { vertical_align = "center" },
+              children = {
+                {
+                  type = "label",
+                  style_mods = { right_margin = 6 },
+                  caption = { "ee-gui.power" },
+                },
+                {
+                  type = "slider",
+                  style_mods = { horizontally_stretchable = true },
+                  minimum_value = 0,
+                  maximum_value = 999,
+                  value = slider_value,
+                  actions = { on_value_changed = { gui = "ia", action = "update_power_from_slider" } },
+                  ref = { "slider" },
+                },
+                {
+                  type = "textfield",
+                  style = "ee_slider_textfield",
+                  text = slider_value,
+                  numeric = true,
+                  allow_decimal = true,
+                  lose_focus_on_confirm = true,
+                  clear_and_focus_on_right_click = true,
+                  actions = {
+                    on_confirmed = { gui = "ia", action = "confirm_textfield" },
+                    on_text_changed = { gui = "ia", action = "update_power_from_textfield" },
+                  },
+                  ref = { "slider_textfield" },
+                },
+                {
+                  type = "drop-down",
+                  style_mods = { width = 69 },
+                  selected_index = dropdown_index,
+                  items = constants.ia["localised_si_suffixes_" .. constants.ia.power_suffixes_by_mode[mode]],
+                  actions = { on_selection_state_changed = { gui = "ia", action = "update_units_of_measure" } },
+                  ref = { "slider_dropdown" },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   })
 
   refs.window.force_auto_center()
@@ -188,16 +214,16 @@ local function create_gui(player, player_table, entity)
   player_table.gui.ia = {
     state = {
       entity = entity,
-      power = tonumber(refs.slider_textfield.text)
+      power = tonumber(refs.slider_textfield.text),
     },
-    refs = refs
+    refs = refs,
   }
 end
 
 local function destroy_gui(player, player_table)
   player_table.gui.ia.refs.window.destroy()
   player_table.gui.ia = nil
-  player.play_sound{path = "entity-close/ee-infinity-accumulator-tertiary-buffer"}
+  player.play_sound({ path = "entity-close/ee-infinity-accumulator-tertiary-buffer" })
 end
 
 local function update_gui_mode(gui_data, mode)
@@ -209,7 +235,7 @@ local function update_gui_mode(gui_data, mode)
   else
     refs.priority_dropdown.enabled = true
   end
-  refs.slider_dropdown.items = constants.ia["localised_si_suffixes_"..constants.ia.power_suffixes_by_mode[mode]]
+  refs.slider_dropdown.items = constants.ia["localised_si_suffixes_" .. constants.ia.power_suffixes_by_mode[mode]]
 
   refs.preview.entity = gui_data.state.entity
 end
@@ -306,7 +332,7 @@ function infinity_accumulator.open(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
-  player.play_sound{path = "entity-open/ee-infinity-accumulator-tertiary-buffer"}
+  player.play_sound({ path = "entity-open/ee-infinity-accumulator-tertiary-buffer" })
 end
 
 function infinity_accumulator.paste_settings(source, destination)
@@ -314,7 +340,7 @@ function infinity_accumulator.paste_settings(source, destination)
   local to_update = {}
   for i, player_table in pairs(global.players) do
     if player_table.gui.ia and player_table.gui.ia.state.entity == destination then
-      to_update[#to_update+1] = i
+      to_update[#to_update + 1] = i
     end
   end
   -- update entity

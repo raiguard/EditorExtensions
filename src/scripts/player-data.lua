@@ -8,7 +8,7 @@ function player_data.init(player)
     flags = {
       map_editor_toggled = false,
       opening_default_gui = false, -- currently for super pump, but can be used generically
-      update_character_cheats_when_possible = false
+      update_character_cheats_when_possible = false,
     },
     gui = {},
     last_cleared_cursor_tick = 0,
@@ -35,7 +35,7 @@ end
 
 function player_data.refresh(player, player_table)
   -- close any open GUIs
-  for _, name in ipairs{"ia", "il", "sp"} do
+  for _, name in ipairs({ "ia", "il", "sp" }) do
     if player_table.gui[name] then
       player_table.gui[name].refs.window.destroy()
       player_table.gui[name] = nil

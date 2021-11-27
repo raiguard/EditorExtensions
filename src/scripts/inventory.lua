@@ -9,15 +9,15 @@ local reverse_defines = require("__flib__.reverse-defines")
 
 function inventory.create_sync_inventories(player_table, player)
   -- determine prefix based on controller type
-  local prefix = reverse_defines.controllers[player.controller_type].."_"
+  local prefix = reverse_defines.controllers[player.controller_type] .. "_"
   -- hand location
   local hand_location = player.hand_location or {}
   -- iterate all inventories
   local sync_tables = {}
-  for _, name in ipairs{"cursor", "main", "guns", "armor", "ammo"} do
+  for _, name in ipairs({ "cursor", "main", "guns", "armor", "ammo" }) do
     local sync_filters = {}
     local sync_inventory
-    local inventory_def = defines.inventory[prefix..name]
+    local inventory_def = defines.inventory[prefix .. name]
     if name == "cursor" then
       sync_inventory = game.create_inventory(1)
       local cursor_stack = player.cursor_stack
@@ -43,7 +43,7 @@ function inventory.create_sync_inventories(player_table, player)
       sync_tables[name] = {
         filters = sync_filters,
         hand_location = (hand_location.inventory == inventory_def and hand_location.slot or nil),
-        inventory = sync_inventory
+        inventory = sync_inventory,
       }
     end
   end
@@ -52,10 +52,10 @@ end
 
 function inventory.get_from_sync_inventories(player_table, player)
   -- determine prefix based on controller type
-  local prefix = reverse_defines.controllers[player.controller_type].."_"
+  local prefix = reverse_defines.controllers[player.controller_type] .. "_"
   -- iterate all inventories
   local sync_data = player_table.sync_data
-  for _, name in ipairs{"ammo", "armor", "cursor", "guns", "main"} do
+  for _, name in ipairs({ "ammo", "armor", "cursor", "guns", "main" }) do
     local sync_table = sync_data[name]
     -- god mode doesn't have every inventory
     if sync_table then
@@ -64,7 +64,7 @@ function inventory.get_from_sync_inventories(player_table, player)
       if name == "cursor" and player.cursor_stack then
         player.cursor_stack.transfer_stack(sync_inventory[1])
       else
-        local inventory_def = defines.inventory[prefix..name]
+        local inventory_def = defines.inventory[prefix .. name]
         if inventory_def then
           local destination_inventory = player.get_inventory(inventory_def)
           local set_filter = destination_inventory.set_filter
@@ -77,7 +77,7 @@ function inventory.get_from_sync_inventories(player_table, player)
           end
           local hand_location = sync_table.hand_location
           if hand_location then
-            player.hand_location = {inventory = inventory_def, slot = hand_location}
+            player.hand_location = { inventory = inventory_def, slot = hand_location }
           end
         end
       end
@@ -114,7 +114,7 @@ function inventory.import_filters(player, string)
       local filter = filters[i]
       if item_prototypes[filter.name] then
         output_index = output_index + 1
-        output[output_index] = {name = filter.name, count = filter.count, mode = filter.mode, index = output_index}
+        output[output_index] = { name = filter.name, count = filter.count, mode = filter.mode, index = output_index }
       end
     end
     player.infinity_inventory_filters = output
@@ -128,13 +128,10 @@ local function export_filters(player)
   local filters = player.infinity_inventory_filters
   local output = {
     filters = filters,
-    remove_unfiltered_items = player.remove_unfiltered_items
+    remove_unfiltered_items = player.remove_unfiltered_items,
   }
   return game.encode_string(
-    "EditorExtensions-inventory_filters-"
-    ..filters_table_version
-    .."-"
-    ..game.table_to_json(output)
+    "EditorExtensions-inventory_filters-" .. filters_table_version .. "-" .. game.table_to_json(output)
   )
 end
 
@@ -147,60 +144,67 @@ local function open_string_gui(player, player_table, mode)
     {
       type = "frame",
       direction = "vertical",
-      ref = {"window"},
+      ref = { "window" },
       children = {
-        {type = "flow", style = "flib_titlebar_flow", ref = {"titlebar_flow"}, children = {
-          {
-            type = "label",
-            style = "frame_title",
-            caption = {"ee-gui."..mode.."-infinity-filters"},
-            ignored_by_interaction = true
+        {
+          type = "flow",
+          style = "flib_titlebar_flow",
+          ref = { "titlebar_flow" },
+          children = {
+            {
+              type = "label",
+              style = "frame_title",
+              caption = { "ee-gui." .. mode .. "-infinity-filters" },
+              ignored_by_interaction = true,
+            },
+            { type = "empty-widget", style = "flib_dialog_titlebar_drag_handle", ignored_by_interaction = true },
           },
-          {type = "empty-widget", style = "flib_dialog_titlebar_drag_handle", ignored_by_interaction = true}
-        }},
-        {type = "frame", style = "inside_shallow_frame_with_padding", children = {
-          {
-            type = "text-box",
-            style_mods = {width = 400, height = 300},
-            clear_and_focus_on_right_click = true,
-            text = mode == "import" and "" or export_filters(player),
-            elem_mods = {word_wrap = true},
-            actions = (
-              mode == "import"
-              and {on_text_changed = {gui = "inv_filters", action = "update_confirm_button_enabled"}}
-              or nil
-            ),
-            ref = {"textbox"}
-          }
-        }},
-        {type = "flow", style = "dialog_buttons_horizontal_flow", children = {
-          {
-            type = "button",
-            style = "back_button",
-            caption = {"gui.cancel"},
-            actions = {on_click = {gui = "inv_filters", action = "close_string_gui"}}
+        },
+        {
+          type = "frame",
+          style = "inside_shallow_frame_with_padding",
+          children = {
+            {
+              type = "text-box",
+              style_mods = { width = 400, height = 300 },
+              clear_and_focus_on_right_click = true,
+              text = mode == "import" and "" or export_filters(player),
+              elem_mods = { word_wrap = true },
+              actions = (mode == "import" and {
+                on_text_changed = { gui = "inv_filters", action = "update_confirm_button_enabled" },
+              } or nil),
+              ref = { "textbox" },
+            },
           },
-          {
-            type = "empty-widget",
-            style = "flib_dialog_footer_drag_handle",
-            style_mods = mode == "export" and {right_margin = 0} or nil,
-            ref = {"footer_drag_handle"}
-          },
-          (
-            mode == "import"
-            and {
+        },
+        {
+          type = "flow",
+          style = "dialog_buttons_horizontal_flow",
+          children = {
+            {
+              type = "button",
+              style = "back_button",
+              caption = { "gui.cancel" },
+              actions = { on_click = { gui = "inv_filters", action = "close_string_gui" } },
+            },
+            {
+              type = "empty-widget",
+              style = "flib_dialog_footer_drag_handle",
+              style_mods = mode == "export" and { right_margin = 0 } or nil,
+              ref = { "footer_drag_handle" },
+            },
+            (mode == "import" and {
               type = "button",
               style = "confirm_button",
-              caption = {"gui.confirm"},
-              elem_mods = {enabled = false},
-              actions = {on_click = {gui = "inv_filters", action = "import_filters"}},
-              ref = {"confirm_button"}
-            }
-            or nil
-          )
-        }}
-      }
-    }
+              caption = { "gui.confirm" },
+              elem_mods = { enabled = false },
+              actions = { on_click = { gui = "inv_filters", action = "import_filters" } },
+              ref = { "confirm_button" },
+            } or nil),
+          },
+        },
+      },
+    },
   })
 
   refs.textbox.select_all()
@@ -225,33 +229,38 @@ function inventory.create_filters_buttons(player, player_table)
     {
       type = "frame",
       style = "quick_bar_window_frame",
-      ref = {"window"},
+      ref = { "window" },
       anchor = {
         gui = "controller-gui",
         position = defines.relative_gui_position.left,
-        name = "editor"
+        name = "editor",
       },
       children = {
-        {type = "frame", style = "shortcut_bar_inner_panel", direction = "vertical", children = {
-          {
-            type = "sprite-button",
-            style = "shortcut_bar_button",
-            sprite = "ee_import_inventory_filters",
-            tooltip = {"ee-gui.import-infinity-filters"},
-            tags = {mode = "import"},
-            actions = {on_click = {gui = "inv_filters", action = "open_string_gui"}}
+        {
+          type = "frame",
+          style = "shortcut_bar_inner_panel",
+          direction = "vertical",
+          children = {
+            {
+              type = "sprite-button",
+              style = "shortcut_bar_button",
+              sprite = "ee_import_inventory_filters",
+              tooltip = { "ee-gui.import-infinity-filters" },
+              tags = { mode = "import" },
+              actions = { on_click = { gui = "inv_filters", action = "open_string_gui" } },
+            },
+            {
+              type = "sprite-button",
+              style = "shortcut_bar_button",
+              sprite = "ee_export_inventory_filters",
+              tooltip = { "ee-gui.export-infinity-filters" },
+              tags = { mode = "export" },
+              actions = { on_click = { gui = "inv_filters", action = "open_string_gui" } },
+            },
           },
-          {
-            type = "sprite-button",
-            style = "shortcut_bar_button",
-            sprite = "ee_export_inventory_filters",
-            tooltip = {"ee-gui.export-infinity-filters"},
-            tags = {mode = "export"},
-            actions = {on_click = {gui = "inv_filters", action = "open_string_gui"}}
-          }
-        }
-      }
-    }}
+        },
+      },
+    },
   })
 
   player_table.gui.inventory_filters_buttons = refs
@@ -300,16 +309,16 @@ function inventory.handle_gui_action(e, msg)
 
     if inventory.import_filters(player, string) then
       close_string_gui(player_table)
-      player.create_local_flying_text{
-        text = {"ee-message.imported-infinity-filters"},
-        create_at_cursor = true
-      }
+      player.create_local_flying_text({
+        text = { "ee-message.imported-infinity-filters" },
+        create_at_cursor = true,
+      })
     else
-      player.create_local_flying_text{
-        text = {"ee-message.invalid-infinity-filters-string"},
-        create_at_cursor = true
-      }
-      player.play_sound{path = "utility/cannot_build", volume_modifier = 0.75}
+      player.create_local_flying_text({
+        text = { "ee-message.invalid-infinity-filters-string" },
+        create_at_cursor = true,
+      })
+      player.play_sound({ path = "utility/cannot_build", volume_modifier = 0.75 })
     end
   end
 end

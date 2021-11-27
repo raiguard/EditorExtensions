@@ -1,11 +1,11 @@
 local infinity_wagon = {}
 
 function infinity_wagon.build(entity, tags)
-  local proxy = entity.surface.create_entity{
-    name = "ee-infinity-wagon-"..(entity.name == "ee-infinity-cargo-wagon" and "chest" or "pipe"),
+  local proxy = entity.surface.create_entity({
+    name = "ee-infinity-wagon-" .. (entity.name == "ee-infinity-cargo-wagon" and "chest" or "pipe"),
     position = entity.position,
-    force = entity.force
-  }
+    force = entity.force,
+  })
   -- create all api lookups here to save time in on_tick()
   local data = {
     flip = 0,
@@ -16,7 +16,7 @@ function infinity_wagon.build(entity, tags)
     wagon_fluidbox = entity.fluidbox,
     wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
     wagon_last_position = entity.position,
-    wagon_name = entity.name
+    wagon_name = entity.name,
   }
   global.wagons[entity.unit_number] = data
   -- apply any pre-existing filters
@@ -64,25 +64,38 @@ function infinity_wagon.flip_inventories()
       if t.wagon_name == "ee-infinity-cargo-wagon" then
         if t.flip == 0 then
           t.wagon_inv.clear()
-          for n, c in pairs(t.proxy_inv.get_contents()) do t.wagon_inv.insert{name = n, count = c} end
+          for n, c in pairs(t.proxy_inv.get_contents()) do
+            t.wagon_inv.insert({ name = n, count = c })
+          end
           t.flip = 1
         elseif t.flip == 1 then
           t.proxy_inv.clear()
-          for n, c in pairs(t.wagon_inv.get_contents()) do t.proxy_inv.insert{name = n, count = c} end
+          for n, c in pairs(t.wagon_inv.get_contents()) do
+            t.proxy_inv.insert({ name = n, count = c })
+          end
           t.flip = 0
         end
       elseif t.wagon_name == "ee-infinity-fluid-wagon" then
         if t.flip == 0 then
           local fluid = t.proxy_fluidbox[1]
-          t.wagon_fluidbox[1] = fluid and fluid.amount > 0
-            and {name = fluid.name, amount = (abs(fluid.amount) * 250), temperature = fluid.temperature}
+          t.wagon_fluidbox[1] = fluid
+              and fluid.amount > 0
+              and {
+                name = fluid.name,
+                amount = (abs(fluid.amount) * 250),
+                temperature = fluid.temperature,
+              }
             or nil
           t.flip = 1
         elseif t.flip == 1 then
           local fluid = t.wagon_fluidbox[1]
           t.proxy_fluidbox[1] = fluid
-            and fluid.amount > 0
-            and {name = fluid.name, amount = (abs(fluid.amount) / 250), temperature = fluid.temperature}
+              and fluid.amount > 0
+              and {
+                name = fluid.name,
+                amount = (abs(fluid.amount) / 250),
+                temperature = fluid.temperature,
+              }
             or nil
           t.flip = 0
         end
@@ -106,20 +119,24 @@ function infinity_wagon.paste_settings(source, destination)
 end
 
 function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
-    if entity then
-      local proxy = global.wagons[entity.unit_number].proxy
-      if not blueprint_entity.tags then blueprint_entity.tags = {} end
-      blueprint_entity.tags.EditorExtensions = {
-        filters = proxy.infinity_container_filters,
-        remove_unfiltered_items = proxy.remove_unfiltered_items,
-      }
+  if entity then
+    local proxy = global.wagons[entity.unit_number].proxy
+    if not blueprint_entity.tags then
+      blueprint_entity.tags = {}
     end
-    return blueprint_entity
+    blueprint_entity.tags.EditorExtensions = {
+      filters = proxy.infinity_container_filters,
+      remove_unfiltered_items = proxy.remove_unfiltered_items,
+    }
+  end
+  return blueprint_entity
 end
 
 function infinity_wagon.setup_fluid_blueprint(blueprint_entity, entity)
   if entity then
-    if not blueprint_entity.tags then blueprint_entity.tags = {} end
+    if not blueprint_entity.tags then
+      blueprint_entity.tags = {}
+    end
     blueprint_entity.tags.EditorExtensions = global.wagons[entity.unit_number].proxy.get_infinity_pipe_filter()
   end
   return blueprint_entity

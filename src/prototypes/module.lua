@@ -6,7 +6,7 @@ local module_template = {
   type = "module",
   subgroup = "ee-modules",
   stack_size = 50,
-  art_style = "vanilla"
+  art_style = "vanilla",
 }
 
 for _, module_data in pairs(constants.module_data) do
@@ -18,17 +18,17 @@ for _, module_data in pairs(constants.module_data) do
   module.effect = module_data.effect
   module.icons = {
     {
-      icon = "__EditorExtensions__/graphics/item/"..module_data.icon_ref..".png",
+      icon = "__EditorExtensions__/graphics/item/" .. module_data.icon_ref .. ".png",
       icon_size = 64,
       icon_mipmaps = 4,
-      tint = module_data.tint
-    }
+      tint = module_data.tint,
+    },
   }
   module.beacon_tint = {
     primary = module_data.tint,
     secondary = module_data.tint,
     tertiary = module_data.tint,
-    quaternary = module_data.tint
+    quaternary = module_data.tint,
   }
-  data:extend{module}
+  data:extend({ module })
 end

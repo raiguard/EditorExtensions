@@ -39,16 +39,16 @@ return {
   ["1.3.1"] = function()
     -- update all infinity wagon names in global
     for _, t in pairs(global.wagons) do
-      t.wagon_name = "ee-"..t.wagon_name
+      t.wagon_name = "ee-" .. t.wagon_name
     end
   end,
   ["1.4.0"] = function()
     -- remove any sync chests that have somehow remained
-    for _,  player_table in pairs(global.players) do
+    for _, player_table in pairs(global.players) do
       player_table.sync_chests = nil
     end
     -- add flag to all players for inventory sync
-    for i,  player in pairs(game.players) do
+    for i, player in pairs(game.players) do
       local player_table = global.players[i]
       -- we don't have a settings table yet (that will be created in generic migrations) so do it manually
       player_table.flags.inventory_sync_enabled = player.mod_settings["ee-inventory-sync"].value and player.cheat_mode
@@ -92,7 +92,7 @@ return {
   ["1.5.21"] = function()
     -- find every non-buffer IA and divide its buffer size by 60
     for _, surface in pairs(game.surfaces) do
-      for _, entity in pairs(surface.find_entities_filtered{type = "electric-energy-interface"}) do
+      for _, entity in pairs(surface.find_entities_filtered({ type = "electric-energy-interface" })) do
         if constants.ia.entity_names[entity.name] and not string.find(entity.name, "tertiary") then
           entity.electric_buffer_size = entity.electric_buffer_size / 60
         end
@@ -105,11 +105,11 @@ return {
     end
     -- add speedfluid to all existing pumps
     for _, surface in pairs(game.surfaces) do
-      for _, entity in pairs(surface.find_entities_filtered{name = "ee-super-pump"}) do
+      for _, entity in pairs(surface.find_entities_filtered({ name = "ee-super-pump" })) do
         entity.fluidbox[2] = {
           name = "ee-super-pump-speed-fluid",
           amount = 100000000000,
-          temperature = 30000.01
+          temperature = 30000.01,
         }
       end
     end
@@ -155,7 +155,7 @@ return {
         if players then
           players[player_index] = true
         else
-          linked_belt_sources[source.unit_number] = {player_index}
+          linked_belt_sources[source.unit_number] = { player_index }
         end
       end
     end
