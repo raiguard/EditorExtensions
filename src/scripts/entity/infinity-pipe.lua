@@ -20,7 +20,7 @@ function Gui:destroy()
   if self.refs.window.valid then
     self.refs.window.destroy()
     self.player.opened = nil
-    self.player.play_sound({ path = "entity-close/ee-infinity-pipe" })
+    self.player.play_sound({ path = "entity-close/ee-infinity-pipe-100" })
   end
 end
 

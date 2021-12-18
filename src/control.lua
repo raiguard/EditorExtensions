@@ -381,7 +381,7 @@ gui.hook_events(function(e)
       local entity_name = entity.name
       if constants.ia.entity_names[entity_name] then
         infinity_accumulator.open(e.player_index, entity)
-      elseif entity_name == "ee-infinity-pipe" then
+      elseif string.find(entity_name, "ee%-infinity%-pipe") then
         infinity_pipe.create_gui(e.player_index, entity)
       elseif entity_name == "ee-infinity-loader-logic-combinator" then
         infinity_loader.open(e.player_index, entity)

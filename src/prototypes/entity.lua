@@ -326,6 +326,7 @@ end
 
 local infinity_pipe = table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
 infinity_pipe.name = "ee-infinity-pipe"
+infinity_pipe.localised_name = { "entity-name.ee-infinity-pipe" }
 infinity_pipe.localised_description = { "entity-description.ee-infinity-pipe" }
 infinity_pipe.map_color = constants.infinity_tint
 infinity_pipe.friendly_map_color = constants.infinity_tint
@@ -335,15 +336,23 @@ infinity_pipe.minable = { mining_time = 0.5, result = "ee-infinity-pipe" }
 infinity_pipe.placeable_by = { item = "ee-infinity-pipe", count = 1 }
 infinity_pipe.additional_pastable_entities = { "constant-combinator" }
 util.recursive_tint(infinity_pipe)
-data:extend({ infinity_pipe })
+
+-- Create a pipe for each of the volume options
+for _, volume in pairs({ 100, 500, 1000, 5000, 10000, 25000, 100000 }) do
+  local pipe = table.deepcopy(infinity_pipe)
+  pipe.name = pipe.name .. "-" .. volume
+  pipe.fluid_box.height = volume / 100
+  data:extend({ pipe })
+end
 
 -- modify constant combinator to be pastable to infinity pipes
+-- TODO: Pipe volume variants
 local constant_combinator = data.raw["constant-combinator"]["constant-combinator"]
 local pastable = constant_combinator.additional_pastable_entities
 if pastable then
-  pastable[#pastable + 1] = "ee-infinity-pipe"
+  pastable[#pastable + 1] = "ee-infinity-pipe-100"
 else
-  constant_combinator.additional_pastable_entities = { "ee-infinity-pipe" }
+  constant_combinator.additional_pastable_entities = { "ee-infinity-pipe-100" }
 end
 
 -- infinity wagons
