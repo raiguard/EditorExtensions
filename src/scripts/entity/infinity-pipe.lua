@@ -1,4 +1,8 @@
 local gui = require("__flib__.gui")
+local misc = require("__flib__.misc")
+local table = require("__flib__.table")
+
+local shared_constants = require("shared-constants")
 
 local constants = require("scripts.constants")
 local util = require("scripts.util")
@@ -66,6 +70,7 @@ function infinity_pipe.create_gui(player_index, entity)
         {
           type = "frame",
           style = "deep_frame_in_shallow_frame",
+          style_mods = { bottom_margin = 4 },
           { type = "entity-preview", style = "wide_entity_button", elem_mods = { entity = entity } },
         },
         {
@@ -75,7 +80,9 @@ function infinity_pipe.create_gui(player_index, entity)
           { type = "empty-widget", style = "flib_horizontal_pusher" },
           {
             type = "drop-down",
-            items = { "100", "500", "1,000", "5,000", "10,000", "25,000", "100,000" },
+            items = table.map(shared_constants.infinity_pipe_capacities, function(capacity)
+              return misc.delineate_number(capacity)
+            end),
             selected_index = 1,
           },
         },
@@ -96,13 +103,20 @@ function infinity_pipe.create_gui(player_index, entity)
     refs = refs,
     state = {},
   }
-  -- TODO: Restore during on_load
   setmetatable(self, { __index = Gui })
   player_table.gui.infinity_pipe = self
 end
 
+--- @param self InfinityPipeGui
+function infinity_pipe.load_gui(self)
+  setmetatable(self, { __index = Gui })
+end
+
 -- ENTITY
 
+-- TODO: Move the player setting check out of here?
+--- @param entity LuaEntity
+--- @param player_settings table
 function infinity_pipe.snap(entity, player_settings)
   local own_id = entity.unit_number
 
