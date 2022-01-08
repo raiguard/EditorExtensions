@@ -112,7 +112,7 @@ data:extend({
     name = "ee-infinity-pipe-crafter-snapping",
     setting_type = "runtime-per-user",
     default_value = true,
-    order = "aa",
+    order = "a",
   },
   {
     type = "string-setting",
@@ -120,14 +120,21 @@ data:extend({
     setting_type = "runtime-per-user",
     allow_blank = true,
     default_value = "",
-    order = "ba",
+    order = "b",
   },
   {
     type = "bool-setting",
     name = "ee-inventory-sync",
     setting_type = "runtime-per-user",
     default_value = true,
-    order = "ca",
+    order = "c",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-start-in-editor",
+    setting_type = "runtime-per-user",
+    default_value = false,
+    order = "d",
   },
   {
     type = "string-setting",
@@ -135,6 +142,6 @@ data:extend({
     setting_type = "runtime-per-user",
     allowed_values = { "off", "personal", "shared" },
     default_value = "off",
-    order = "da",
+    order = "e",
   },
 })
