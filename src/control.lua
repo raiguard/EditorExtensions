@@ -47,6 +47,15 @@ commands.add_command("cheatmode", { "command-help.cheatmode" }, function(e)
 end)
 
 -- -----------------------------------------------------------------------------
+-- INTERFACES
+
+remote.add_interface("EditorExtensions", {
+  debug_world_ready_event = function()
+    return constants.debug_world_ready_event
+  end,
+})
+
+-- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
 -- picker dollies handler is kept in `scripts.entity.infinity-loader` and is registered in `scripts.compatibility`
 -- all other event handlers are here
@@ -415,9 +424,19 @@ event.on_player_created(function(e)
   player_data.init(player)
 
   local in_debug_world = global.flags.in_debug_world
+  local in_testing_scenario = compatibility.check_for_testing_scenario()
   if in_debug_world or player.cheat_mode then
     cheat_mode.enable_recipes(player)
-    cheat_mode.enable(player, in_debug_world or compatibility.check_for_testing_scenario())
+    cheat_mode.enable(player, in_debug_world or in_testing_scenario)
+  end
+
+  local player_table = global.players[e.player_index]
+  if
+    (in_debug_world or in_testing_scenario)
+    and player_table.settings.start_in_editor
+    and player.controller_type == defines.controllers.character
+  then
+    player.toggle_map_editor()
   end
 end)
 
@@ -574,6 +593,15 @@ event.on_runtime_mod_setting_changed(function(e)
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
     player_data.update_settings(player, player_table)
+  end
+end)
+
+-- SURFACE
+
+event.on_surface_cleared(function(e)
+  local surface = game.get_surface(e.surface_index)
+  if surface and surface.name == "nauvis" and game.tick == 1 and global.flags.in_debug_world then
+    event.raise(constants.debug_world_ready_event, {})
   end
 end)
 

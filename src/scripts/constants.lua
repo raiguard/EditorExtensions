@@ -1,3 +1,4 @@
+local event = require("__flib__.event")
 local table = require("__flib__.table")
 
 local constants = {}
@@ -77,6 +78,9 @@ constants.cursor_enhancements_overrides = {
 constants.debug_world = {
   size = { height = 50, width = 50 },
 }
+
+constants.debug_world_ready_event = event.generate_id()
+constants.debug_world_player_ready_event = event.generate_id()
 
 -- INFINITY ACCUMULATOR
 
@@ -186,6 +190,7 @@ constants.setting_names = {
   ["ee-default-infinity-filters"] = "default_infinity_filters",
   ["ee-inventory-sync"] = "inventory_sync_enabled",
   ["ee-testing-lab"] = "testing_lab",
+  ["ee-start-in-editor"] = "start_in_editor",
 }
 
 -- SUPER PUMP
@@ -224,7 +229,9 @@ constants.sp_temperature_to_slider = table.invert(constants.sp_slider_to_tempera
 constants.empty_map_gen_settings = {
   default_enable_all_autoplace_controls = false,
   property_expression_names = { cliffiness = 0 },
-  autoplace_settings = { tile = { settings = { ["out-of-map"] = { frequency = "normal", size = "normal", richness = "normal" } } } },
+  autoplace_settings = {
+    tile = { settings = { ["out-of-map"] = { frequency = "normal", size = "normal", richness = "normal" } } },
+  },
   starting_area = "none",
 }
 
