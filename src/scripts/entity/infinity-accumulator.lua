@@ -136,7 +136,7 @@ local function create_gui(player, player_table, entity)
                 },
               },
             },
-            { type = "line", style_mods = { horizontally_stretchable = true }, direction = "horizontal" },
+            { type = "line", direction = "horizontal" },
             {
               type = "flow",
               style_mods = { vertical_align = "center" },
@@ -157,7 +157,7 @@ local function create_gui(player, player_table, entity)
                 },
               },
             },
-            { type = "line", style_mods = { horizontally_stretchable = true }, direction = "horizontal" },
+            { type = "line", direction = "horizontal" },
             {
               type = "flow",
               style_mods = { vertical_align = "center" },
