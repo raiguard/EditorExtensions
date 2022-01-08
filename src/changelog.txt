@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.11.3
+Version: 1.12.0
 Date: ????
   Features:
     - Added custom event for when the debug world has finished setup
