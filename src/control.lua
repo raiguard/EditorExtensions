@@ -87,6 +87,13 @@ end)
 
 event.on_load(function()
   compatibility.register_picker_dollies()
+
+  for _, player_table in pairs(global.players) do
+    local pipe_gui = player_table.gui.infinity_pipe
+    if pipe_gui then
+      infinity_pipe.load_gui(pipe_gui)
+    end
+  end
 end)
 
 event.on_configuration_changed(function(e)
