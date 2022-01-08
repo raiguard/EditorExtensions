@@ -60,3 +60,10 @@ styles.ee_invalid_slider_textfield = {
   horizontal_align = "center",
   left_margin = 8,
 }
+
+styles.ee_invalid_slider_value_textfield = {
+  type = "textbox_style",
+  parent = "slider_value_textfield",
+  default_background = styles.invalid_value_textfield.default_background,
+  active_background = styles.invalid_value_textfield.active_background,
+}

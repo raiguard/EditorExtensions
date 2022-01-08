@@ -1,4 +1,5 @@
 local gui = require("__flib__.gui")
+local math = require("__flib__.math")
 local misc = require("__flib__.misc")
 local table = require("__flib__.table")
 
@@ -16,28 +17,24 @@ local infinity_pipe = {}
 --- @field titlebar_flow LuaGuiElement
 --- @field drag_handle LuaGuiElement
 --- @field entity_preview LuaGuiElement
+--- @field amount_slider LuaGuiElement
+--- @field amount_textfield LuaGuiElement
 --- @field radio_buttons table<string, LuaGuiElement>
 
 --- @type InfinityPipeGui
 local Gui = {}
 
-Gui.actions = {}
+-- Actions
 
---- @param Gui InfinityPipeGui
-function Gui.actions.close(Gui, _, _)
-  Gui:destroy()
-end
-
---- @param Gui InfinityPipeGui
 --- @param e on_gui_selection_state_changed
-function Gui.actions.change_capacity(Gui, _, e)
+function Gui:change_capacity(_, e)
   local selected_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
   local new_name = "ee-infinity-pipe-" .. selected_capacity
   if not game.entity_prototypes[new_name] then
     return
   end
 
-  local entity = Gui.entity
+  local entity = self.entity
   if not entity or not entity.valid then
     return
   end
@@ -53,13 +50,96 @@ function Gui.actions.change_capacity(Gui, _, e)
   })
 
   if new_entity then
-    Gui.entity = new_entity
-    Gui.refs.entity_preview.entity = new_entity
+    self.entity = new_entity
+    self.refs.entity_preview.entity = new_entity
 
     -- TODO: Absolute filling migration
   end
 end
 
+--- @param e on_gui_elem_changed
+function Gui:change_fluid(_, e)
+  local fluid_name = e.element.elem_value
+  local filter = self.entity.get_infinity_pipe_filter()
+
+  if fluid_name then
+    if filter then
+      filter.name = fluid_name
+      local prototype = game.fluid_prototypes[fluid_name]
+      filter.temperature = math.clamp(filter.temperature, prototype.default_temperature, prototype.max_temperature)
+      -- TODO: Update temperature slider
+    else
+      -- TODO: Amount mode
+      -- TODO: Temperature
+      filter = { name = fluid_name, percentage = self.refs.amount_slider.slider_value / 100 }
+    end
+  elseif filter then
+    filter = nil
+  end
+
+  self.entity.set_infinity_pipe_filter(filter)
+end
+
+--- @param msg table
+--- @param e on_gui_value_changed|on_gui_text_changed
+function Gui:change_amount(msg, e)
+  local element = e.element
+  local type = msg.elem
+  local new_amount
+  if type == "slider" then
+    new_amount = element.slider_value
+    self.refs.amount_textfield.text = tostring(new_amount)
+    self.refs.amount_textfield.style = "slider_value_textfield"
+    self.state.last_valid_amount = new_amount
+  else
+    new_amount = tonumber(element.text)
+    -- TODO: Amount mode
+    if new_amount and new_amount <= 100 then
+      element.style = "slider_value_textfield"
+      self.refs.amount_slider.slider_value = new_amount
+      self.state.last_valid_amount = new_amount
+    else
+      element.style = "ee_invalid_slider_value_textfield"
+      return
+    end
+  end
+
+  local filter = self.entity.get_infinity_pipe_filter()
+  if filter then
+    -- TODO: Amount mode
+    filter.percentage = new_amount / 100
+
+    self.entity.set_infinity_pipe_filter(filter)
+  end
+end
+
+--- @param e on_gui_confirmed
+function Gui:confirm_amount(_, e)
+  e.element.text = tostring(self.state.last_valid_amount)
+  e.element.style = "slider_value_textfield"
+end
+
+function Gui:change_amount_mode(msg, e) end
+
+function Gui:change_temperature(msg, e) end
+
+-- Functions
+
+function Gui:merge_filter(changes)
+  local filter = self.entity.get_infinity_pipe_filter()
+  if not filter then
+    if changes.name then
+      -- filter =
+    else
+      return
+    end
+  end
+end
+
+-- --- @param source string
+-- function Gui:update(source) end
+
+-- This one is technically an action too
 function Gui:destroy()
   if self.refs.window.valid then
     self.refs.window.destroy()
@@ -70,7 +150,7 @@ end
 
 function Gui:dispatch(msg, e)
   if msg.action then
-    local handler = self.actions[msg.action]
+    local handler = self[msg.action]
     if handler then
       handler(self, msg, e)
     end
@@ -83,13 +163,32 @@ function infinity_pipe.create_gui(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
 
+  local filter = entity.get_infinity_pipe_filter() or {}
+
+  local _, _, capacity = string.find(entity.name, "%d+$")
+  log(capacity)
+
+  local radio_buttons = {}
+  for _, mode in pairs(constants.infinity_pipe_modes) do
+    table.insert(radio_buttons, {
+      type = "radiobutton",
+      caption = { "gui-infinity-container." .. mode },
+      tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
+      state = false,
+      ref = { "radio_buttons", string.gsub(mode, "%-", "_") },
+    })
+    table.insert(radio_buttons, { type = "empty-widget", style = "flib_horizontal_pusher" })
+  end
+  -- Remove the last pusher
+  radio_buttons[#radio_buttons] = nil
+
   --- @type InfinityPipeGuiRefs
   local refs = gui.build(player.gui.screen, {
     {
       type = "frame",
       direction = "vertical",
       ref = { "window" },
-      actions = { on_closed = { gui = "infinity_pipe", action = "close" } },
+      actions = { on_closed = { gui = "infinity_pipe", action = "destroy" } },
       {
         type = "flow",
         style = "flib_titlebar_flow",
@@ -102,7 +201,7 @@ function infinity_pipe.create_gui(player_index, entity)
           ignored_by_interaction = true,
         },
         { type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true },
-        util.close_button({ on_click = { gui = "infinity_pipe", action = "close" } }),
+        util.close_button({ on_click = { gui = "infinity_pipe", action = "destroy" } }),
       },
       {
         type = "frame",
@@ -140,14 +239,14 @@ function infinity_pipe.create_gui(player_index, entity)
           type = "flow",
           style_mods = { vertical_align = "center" },
           direction = "horizontal",
-          -- TODO: Pre-populate this
           {
             type = "choose-elem-button",
             style = "flib_standalone_slot_button_default",
             elem_type = "fluid",
+            fluid = filter.name,
             ref = { "fluid_button" },
             actions = {
-              on_elem_changed = { gui = "infinity_pipe", action = "update_filter" },
+              on_elem_changed = { gui = "infinity_pipe", action = "change_fluid" },
             },
           },
           {
@@ -155,29 +254,40 @@ function infinity_pipe.create_gui(player_index, entity)
             style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
             minimum_value = 0,
             maximum_value = 100,
+            value = tonumber((filter.percentage or 0) * 100),
+            ref = { "amount_slider" },
+            actions = {
+              on_value_changed = { gui = "infinity_pipe", action = "change_amount", elem = "slider" },
+            },
           },
-          -- TODO: Initial populate
-          { type = "textfield", style = "slider_value_textfield", text = "0" },
+          {
+            type = "textfield",
+            style = "slider_value_textfield",
+            numeric = true,
+            clear_and_focus_on_right_click = true,
+            lose_focus_on_confirm = true,
+            text = tonumber((filter.percentage or 0) * 100),
+            ref = { "amount_textfield" },
+            actions = {
+              on_confirmed = { gui = "infinity_pipe", action = "confirm_amount" },
+              on_text_changed = { gui = "infinity_pipe", action = "change_amount", elem = "textfield" },
+            },
+          },
           {
             type = "drop-down",
             style_mods = { width = 55 },
             items = { { "gui-infinity-pipe.percent" }, { "gui-infinity-pipe.ee-units" } },
             selected_index = 1,
+            actions = {
+              on_selection_state_changed = { gui = "infinity_pipe", action = "change_amount_mode" },
+            },
           },
         },
         {
           type = "flow",
-          style_mods = { horizontal_spacing = 12 },
+          style_mods = { horizontal_spacing = 0 },
           direction = "horizontal",
-          children = table.map(constants.infinity_pipe_modes, function(mode)
-            return {
-              type = "radiobutton",
-              caption = { "gui-infinity-container." .. mode },
-              tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
-              state = false,
-              ref = { "radio_buttons", string.gsub(mode, "%-", "_") },
-            }
-          end),
+          children = radio_buttons,
         },
         { type = "line", direction = "horizontal" },
         {
@@ -192,9 +302,19 @@ function infinity_pipe.create_gui(player_index, entity)
             minimum_value = -100,
             maximum_value = 100,
             value = 0,
+            actions = {
+              on_value_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "slider" },
+            },
           },
           -- TODO: Initial populate
-          { type = "textfield", style = "slider_value_textfield", text = "0" },
+          {
+            type = "textfield",
+            style = "slider_value_textfield",
+            text = "0",
+            actions = {
+              on_text_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "textfield" },
+            },
+          },
         },
       },
     },
@@ -211,7 +331,10 @@ function infinity_pipe.create_gui(player_index, entity)
     player = player,
     player_table = player_table,
     refs = refs,
-    state = {},
+    state = {
+      last_valid_amount = 0,
+      last_valid_temperature = 0,
+    },
   }
   setmetatable(self, { __index = Gui })
   player_table.gui.infinity_pipe = self
