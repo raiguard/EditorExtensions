@@ -11,13 +11,52 @@ local infinity_pipe = {}
 
 -- GUI
 
---- @class InfinityPipeGui
+--- @class InfinityPipeGuiRefs
+--- @field window LuaGuiElement
+--- @field titlebar_flow LuaGuiElement
+--- @field drag_handle LuaGuiElement
+--- @field entity_preview LuaGuiElement
+
+--- @type InfinityPipeGui
 local Gui = {}
 
 Gui.actions = {}
 
+--- @param Gui InfinityPipeGui
 function Gui.actions.close(Gui, _, _)
   Gui:destroy()
+end
+
+--- @param Gui InfinityPipeGui
+--- @param e on_gui_selection_state_changed
+function Gui.actions.change_capacity(Gui, _, e)
+  local selected_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
+  local new_name = "ee-infinity-pipe-" .. selected_capacity
+  if not game.entity_prototypes[new_name] then
+    return
+  end
+
+  local entity = Gui.entity
+  if not entity or not entity.valid then
+    return
+  end
+
+  local new_entity = entity.surface.create_entity({
+    name = new_name,
+    position = entity.position,
+    direction = entity.direction,
+    force = entity.force,
+    fast_replace = true,
+    create_build_effect_smoke = false,
+    spill = false,
+  })
+
+  if new_entity then
+    Gui.entity = new_entity
+    Gui.refs.entity_preview.entity = new_entity
+
+    -- TODO: Absolute filling migration
+  end
 end
 
 function Gui:destroy()
@@ -43,6 +82,7 @@ function infinity_pipe.create_gui(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
 
+  --- @type InfinityPipeGuiRefs
   local refs = gui.build(player.gui.screen, {
     {
       type = "frame",
@@ -60,7 +100,7 @@ function infinity_pipe.create_gui(player_index, entity)
           caption = { "entity-name.ee-infinity-pipe" },
           ignored_by_interaction = true,
         },
-        { type = "empty-widget", style = "flib_titlebar_drag_handle" },
+        { type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true },
         util.close_button({ on_click = { gui = "infinity_pipe", action = "close" } }),
       },
       {
@@ -71,7 +111,12 @@ function infinity_pipe.create_gui(player_index, entity)
           type = "frame",
           style = "deep_frame_in_shallow_frame",
           style_mods = { bottom_margin = 4 },
-          { type = "entity-preview", style = "wide_entity_button", elem_mods = { entity = entity } },
+          {
+            type = "entity-preview",
+            style = "wide_entity_button",
+            elem_mods = { entity = entity },
+            ref = { "entity_preview" },
+          },
         },
         {
           type = "flow",
@@ -84,6 +129,9 @@ function infinity_pipe.create_gui(player_index, entity)
               return misc.delineate_number(capacity)
             end),
             selected_index = 1,
+            actions = {
+              on_selection_state_changed = { gui = "infinity_pipe", action = "change_capacity" },
+            },
           },
         },
       },
@@ -95,7 +143,7 @@ function infinity_pipe.create_gui(player_index, entity)
 
   player.opened = refs.window
 
-  --- @type InfinityPipeGui
+  --- @class InfinityPipeGui
   local self = {
     entity = entity,
     player = player,
