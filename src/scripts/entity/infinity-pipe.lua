@@ -16,6 +16,7 @@ local infinity_pipe = {}
 --- @field titlebar_flow LuaGuiElement
 --- @field drag_handle LuaGuiElement
 --- @field entity_preview LuaGuiElement
+--- @field radio_buttons table<string, LuaGuiElement>
 
 --- @type InfinityPipeGui
 local Gui = {}
@@ -121,7 +122,7 @@ function infinity_pipe.create_gui(player_index, entity)
         {
           type = "flow",
           style_mods = { vertical_align = "center" },
-          { type = "label", caption = "Capacity" },
+          { type = "label", caption = { "description.fluid-capacity" } },
           { type = "empty-widget", style = "flib_horizontal_pusher" },
           {
             type = "drop-down",
@@ -133,6 +134,67 @@ function infinity_pipe.create_gui(player_index, entity)
               on_selection_state_changed = { gui = "infinity_pipe", action = "change_capacity" },
             },
           },
+        },
+        { type = "line", direction = "horizontal" },
+        {
+          type = "flow",
+          style_mods = { vertical_align = "center" },
+          direction = "horizontal",
+          -- TODO: Pre-populate this
+          {
+            type = "choose-elem-button",
+            style = "flib_standalone_slot_button_default",
+            elem_type = "fluid",
+            ref = { "fluid_button" },
+            actions = {
+              on_elem_changed = { gui = "infinity_pipe", action = "update_filter" },
+            },
+          },
+          {
+            type = "slider",
+            style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
+            minimum_value = 0,
+            maximum_value = 100,
+          },
+          -- TODO: Initial populate
+          { type = "textfield", style = "slider_value_textfield", text = "0" },
+          {
+            type = "drop-down",
+            style_mods = { width = 55 },
+            items = { { "gui-infinity-pipe.percent" }, { "gui-infinity-pipe.ee-units" } },
+            selected_index = 1,
+          },
+        },
+        {
+          type = "flow",
+          style_mods = { horizontal_spacing = 12 },
+          direction = "horizontal",
+          children = table.map(constants.infinity_pipe_modes, function(mode)
+            return {
+              type = "radiobutton",
+              caption = { "gui-infinity-container." .. mode },
+              tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
+              state = false,
+              ref = { "radio_buttons", string.gsub(mode, "%-", "_") },
+            }
+          end),
+        },
+        { type = "line", direction = "horizontal" },
+        {
+          type = "flow",
+          style_mods = { vertical_align = "center" },
+          direction = "horizontal",
+          { type = "label", caption = { "gui-infinity-pipe.temperature" } },
+          {
+            type = "slider",
+            style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
+            -- TODO: Figure these out
+            minimum_value = -100,
+            maximum_value = 100,
+            value = 0,
+          },
+          -- TODO: Initial populate
+          { type = "textfield", style = "slider_value_textfield", text = "0" },
         },
       },
     },

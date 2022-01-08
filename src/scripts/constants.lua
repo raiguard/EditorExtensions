@@ -172,6 +172,14 @@ constants.ip_crafter_snapping_types = {
   ["rocket-silo"] = true,
 }
 
+constants.infinity_pipe_modes = {
+  "at-least",
+  "at-most",
+  "exactly",
+  "add",
+  "remove",
+}
+
 -- INFINITY WAGON
 
 constants.infinity_wagon_names = {
