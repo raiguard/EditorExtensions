@@ -1,6 +1,21 @@
 data:extend({
   -- STARTUP SETTINGS
   {
+    type = "string-setting",
+    name = "ee-lab-tile-graphics",
+    setting_type = "startup",
+    allowed_values = { "default", "all-light", "all-dark", "tutorial-grid", "refined-concrete" },
+    default_value = "default",
+    order = "aa",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-allow-changing-aggregate-chest-filters",
+    setting_type = "startup",
+    default_value = false,
+    order = "ab",
+  },
+  {
     type = "int-setting",
     name = "ee-controller-inventory_size",
     setting_type = "startup",
@@ -76,13 +91,6 @@ data:extend({
     setting_type = "startup",
     default_value = true,
     order = "bgb",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-allow-changing-aggregate-chest-filters",
-    setting_type = "startup",
-    default_value = false,
-    order = "c",
   },
   -- MAP SETTINGS
   {
