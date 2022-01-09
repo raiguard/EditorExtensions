@@ -3,6 +3,7 @@ Version: 1.12.0
 Date: ????
   Features:
     - Added a per-player setting to start the debug world or testing scenario in the map editor
+    - Added startup settings to change the appearance of lab tiles
     - Added custom event for when the debug world has finished setup
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.2
