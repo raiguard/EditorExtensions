@@ -22,6 +22,7 @@ local infinity_pipe = {}
 --- @field fluid_button LuaGuiElement
 --- @field amount_slider LuaGuiElement
 --- @field amount_textfield LuaGuiElement
+--- @field amount_type_dropdown LuaGuiElement
 --- @field amount_radio_buttons table<string, LuaGuiElement>
 --- @field temperature_slider LuaGuiElement
 --- @field temperature_textfield LuaGuiElement
@@ -104,9 +105,10 @@ function Gui:change_amount(msg, e)
     new_percentage = element.slider_value
   else
     new_percentage = tonumber(element.text)
-    -- TODO: Amount type
-    if new_percentage and new_percentage <= 100 then
-      new_percentage = new_percentage / 100
+    local is_percent = self.state.amount_type == constants.infinity_pipe_amount_type.percent
+    local max = is_percent and 100 or self.state.capacity
+    if new_percentage and new_percentage <= max then
+      new_percentage = new_percentage / max
     else
       element.style = "ee_invalid_slider_value_textfield"
       return
@@ -120,7 +122,12 @@ function Gui:change_amount(msg, e)
   self:update()
 end
 
-function Gui:change_amount_type(msg, e) end
+function Gui:change_amount_type(_, e)
+  -- This is a 1:1 representation
+  self.state.amount_type = e.element.selected_index
+
+  self:update()
+end
 
 --- @param msg table
 function Gui:change_amount_mode(msg)
@@ -236,7 +243,10 @@ function Gui:update()
   amount_slider.enabled = filter_exists
   amount_textfield.enabled = filter_exists
 
-  -- TODO: Amount type dropdown
+  -- Amount type dropdown
+  local amount_type_dropdown = self.refs.amount_type_dropdown
+  amount_type_dropdown.selected_index = self.state.amount_type
+  amount_type_dropdown.enabled = filter_exists
 
   -- Amount mode buttons
   local mode = filter and filter.mode or self.state.selected_mode
@@ -355,8 +365,6 @@ function infinity_pipe.create_gui(player_index, entity)
         {
           type = "flow",
           style_mods = { horizontal_spacing = 8, vertical_align = "center" },
-          -- { type = "label", caption = { "description.fluid-capacity" } },
-          -- { type = "empty-widget", style = "flib_horizontal_pusher" },
           {
             type = "progressbar",
             style = "production_progressbar",
@@ -418,6 +426,7 @@ function infinity_pipe.create_gui(player_index, entity)
             style_mods = { width = 55 },
             items = { { "gui-infinity-pipe.percent" }, { "gui-infinity-pipe.ee-units" } },
             selected_index = 1,
+            ref = { "amount_type_dropdown" },
             actions = {
               on_selection_state_changed = { gui = "infinity_pipe", action = "change_amount_type" },
             },
