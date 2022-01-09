@@ -56,9 +56,13 @@ function Gui:change_capacity(_, e)
   if new_entity then
     self.entity = new_entity
     self.refs.entity_preview.entity = new_entity
-    self.state.capacity = new_capacity
 
-    -- TODO: Update percentage for units type
+    local filter = self.state.filter
+    if filter and self.state.amount_type == constants.infinity_pipe_amount_type.units then
+      filter.percentage = filter.percentage * (self.state.capacity / new_capacity)
+    end
+
+    self.state.capacity = new_capacity
 
     self:update()
   end
@@ -107,7 +111,8 @@ function Gui:change_amount(msg, e)
     new_percentage = tonumber(element.text)
     local is_percent = self.state.amount_type == constants.infinity_pipe_amount_type.percent
     local max = is_percent and 100 or self.state.capacity
-    if new_percentage and new_percentage <= max then
+    local typing_decimal = string.find(element.text, "%.$")
+    if not typing_decimal and new_percentage and new_percentage <= max then
       new_percentage = new_percentage / max
     else
       element.style = "ee_invalid_slider_value_textfield"
@@ -227,7 +232,7 @@ function Gui:update()
   local amount = 0
   if filter then
     if self.state.amount_type == constants.infinity_pipe_amount_type.percent then
-      amount = math.round(filter.percentage * 100)
+      amount = math.round_to(filter.percentage * 100, 2)
     else
       amount = math.round(filter.percentage * self.state.capacity)
     end
@@ -414,6 +419,7 @@ function infinity_pipe.create_gui(player_index, entity)
             type = "textfield",
             style = "slider_value_textfield",
             numeric = true,
+            allow_decimal = true,
             clear_and_focus_on_right_click = true,
             text = "0",
             ref = { "amount_textfield" },
