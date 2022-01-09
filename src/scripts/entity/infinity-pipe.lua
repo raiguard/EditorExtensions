@@ -157,12 +157,6 @@ function Gui:change_amount(msg, e)
   end
 end
 
---- @param e on_gui_confirmed
-function Gui:confirm_amount(_, e)
-  e.element.text = tostring(self.state.amount)
-  e.element.style = "slider_value_textfield"
-end
-
 function Gui:change_amount_type(msg, e) end
 
 --- @param msg table
@@ -392,11 +386,9 @@ function infinity_pipe.create_gui(player_index, entity)
             style = "slider_value_textfield",
             numeric = true,
             clear_and_focus_on_right_click = true,
-            lose_focus_on_confirm = true,
             text = "0",
             ref = { "amount_textfield" },
             actions = {
-              on_confirmed = { gui = "infinity_pipe", action = "confirm_amount" },
               on_text_changed = { gui = "infinity_pipe", action = "change_amount", elem = "textfield" },
             },
           },
@@ -436,7 +428,8 @@ function infinity_pipe.create_gui(player_index, entity)
           {
             type = "textfield",
             style = "slider_value_textfield",
-            text = 0,
+            clear_and_focus_on_right_click = true,
+            text = "0",
             ref = { "temperature_textfield" },
             actions = {
               on_text_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "textfield" },
