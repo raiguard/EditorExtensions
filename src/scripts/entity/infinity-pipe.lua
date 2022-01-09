@@ -71,6 +71,7 @@ function Gui:change_fluid()
     if filter then
       -- Changed fluids
       filter.name = fluid_name
+      filter.temperature = prototype.default_temperature
     else
       -- Added fluid
       -- TODO: Amount type
@@ -105,13 +106,7 @@ function Gui:change_fluid()
   self.refs.amount_textfield.style = "slider_value_textfield"
 
   -- Update temperature
-  temperature = math.clamp(temperature, min_temp, max_temp)
-  if filter then
-    filter.temperature = temperature
-  end
   self.state.temperature = temperature
-
-  -- Update temperature inputs
   local slider = self.refs.temperature_slider
   local textfield = self.refs.temperature_textfield
   if min_temp == max_temp then
