@@ -180,6 +180,11 @@ constants.infinity_pipe_modes = {
   "remove",
 }
 
+constants.infinity_pipe_amount_type = {
+  percent = 1,
+  units = 2,
+}
+
 -- INFINITY WAGON
 
 constants.infinity_wagon_names = {

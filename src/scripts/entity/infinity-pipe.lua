@@ -57,15 +57,15 @@ function Gui:change_capacity(_, e)
     self.refs.entity_preview.entity = new_entity
     self.state.capacity = new_capacity
 
-    -- TODO: Absolute filling migration
+    -- TODO: Update percentage for units type
+
+    self:update()
   end
 end
 
 function Gui:change_fluid()
   local fluid_name = self.refs.fluid_button.elem_value
-  local filter = self.entity.get_infinity_pipe_filter()
-
-  local min_temp, max_temp, temperature, amount
+  local filter = self.state.filter
   if fluid_name then
     local prototype = game.fluid_prototypes[fluid_name]
     if filter then
@@ -75,7 +75,7 @@ function Gui:change_fluid()
     else
       -- Added fluid
       -- TODO: Amount type
-      filter = {
+      self.state.filter = {
         name = fluid_name,
         -- Default to 100% like the vanilla infinity pipe
         percentage = 1,
@@ -83,46 +83,15 @@ function Gui:change_fluid()
         mode = self.state.selected_mode,
       }
     end
-    min_temp = prototype.default_temperature
-    max_temp = prototype.max_temperature
-    amount = filter.percentage * 100
-    temperature = filter.temperature
   elseif filter then
     -- Removed fluid
-    filter = nil
-    min_temp = 0
-    max_temp = 100
-    amount = 0
-    temperature = 0
+    self.state.filter = nil
   else
     -- Just opened the GUI with no fluid
     return
   end
 
-  -- Update amount
-  self.state.amount = amount
-  self.refs.amount_slider.slider_value = amount
-  self.refs.amount_textfield.text = tostring(amount)
-  self.refs.amount_textfield.style = "slider_value_textfield"
-
-  -- Update temperature
-  self.state.temperature = temperature
-  local slider = self.refs.temperature_slider
-  local textfield = self.refs.temperature_textfield
-  if min_temp == max_temp then
-    slider.enabled = false
-    textfield.enabled = false
-  else
-    slider.enabled = true
-    slider.set_slider_minimum_maximum(min_temp, max_temp)
-    slider.slider_value = temperature
-    textfield.enabled = true
-  end
-  textfield.style = "slider_value_textfield"
-  textfield.text = tostring(temperature)
-
-  -- Update filter
-  self.entity.set_infinity_pipe_filter(filter)
+  self:update()
 end
 
 --- @param msg table
@@ -130,63 +99,51 @@ end
 function Gui:change_amount(msg, e)
   local element = e.element
   local type = msg.elem
-  local new_amount
+  local new_percentage
   if type == "slider" then
-    new_amount = element.slider_value
-    self.refs.amount_textfield.text = tostring(new_amount)
-    self.refs.amount_textfield.style = "slider_value_textfield"
-    self.state.amount = new_amount
+    new_percentage = element.slider_value
   else
-    new_amount = tonumber(element.text)
+    new_percentage = tonumber(element.text)
     -- TODO: Amount type
-    if new_amount and new_amount <= 100 then
-      element.style = "slider_value_textfield"
-      self.refs.amount_slider.slider_value = new_amount
-      self.state.amount = new_amount
+    if new_percentage and new_percentage <= 100 then
+      new_percentage = new_percentage / 100
     else
       element.style = "ee_invalid_slider_value_textfield"
       return
     end
   end
 
-  local filter = self.entity.get_infinity_pipe_filter()
-  if filter then
-    -- TODO: Amount type
-    filter.percentage = new_amount / 100
-
-    self.entity.set_infinity_pipe_filter(filter)
+  if self.state.filter then
+    self.state.filter.percentage = new_percentage
   end
+
+  self:update()
 end
 
 function Gui:change_amount_type(msg, e) end
 
 --- @param msg table
 function Gui:change_amount_mode(msg)
-  local to_mode = msg.mode
+  self.state.selected_mode = msg.mode
 
-  for _, button in pairs(self.refs.amount_radio_buttons) do
-    button.state = gui.get_tags(button).mode == to_mode
+  if self.state.filter then
+    self.state.filter.mode = msg.mode
   end
 
-  self.state.selected_mode = to_mode
-
-  local filter = self.entity.get_infinity_pipe_filter()
-  if not filter then
-    return
-  end
-  filter.mode = to_mode
-  self.entity.set_infinity_pipe_filter(filter)
+  self:update()
 end
 
 function Gui:change_temperature(msg, e)
+  local filter = self.state.filter
+  if not filter then
+    return
+  end
+
   local element = e.element
   local type = msg.elem
   local new_temperature
   if type == "slider" then
     new_temperature = element.slider_value
-    self.refs.temperature_textfield.text = tostring(new_temperature)
-    self.refs.temperature_textfield.style = "slider_value_textfield"
-    self.state.temperature = new_temperature
   else
     new_temperature = tonumber(element.text)
     local slider = self.refs.temperature_slider
@@ -195,21 +152,18 @@ function Gui:change_temperature(msg, e)
       and new_temperature >= slider.get_slider_minimum()
       and new_temperature <= slider.get_slider_maximum()
     then
-      element.style = "slider_value_textfield"
-      slider.slider_value = new_temperature
-      self.state.temperature = new_temperature
+      -- Pass
     else
       element.style = "ee_invalid_slider_value_textfield"
       return
     end
   end
 
-  local filter = self.entity.get_infinity_pipe_filter()
   if filter then
     filter.temperature = new_temperature
-
-    self.entity.set_infinity_pipe_filter(filter)
   end
+
+  self:update()
 end
 
 function Gui:display_fluid_contents()
@@ -256,6 +210,7 @@ function Gui:update()
   dropdown.selected_index = table.find(shared_constants.infinity_pipe_capacities, self.state.capacity)
 
   local filter = self.state.filter
+  local filter_exists = filter and true or false
 
   -- Fluid button
   local fluid_button = self.refs.fluid_button
@@ -273,12 +228,21 @@ function Gui:update()
 
   -- Amount slider and textfield
   local amount_slider = self.refs.amount_slider
-  amount_slider.slider_value = filter and filter.percentage or 0
   local amount_textfield = self.refs.amount_textfield
+  amount_slider.slider_value = filter and filter.percentage or 0
   amount_textfield.text = tostring(amount)
   amount_textfield.style = "slider_value_textfield"
 
+  amount_slider.enabled = filter_exists
+  amount_textfield.enabled = filter_exists
+
   -- TODO: Amount type dropdown
+
+  -- Amount mode buttons
+  local mode = filter and filter.mode or self.state.selected_mode
+  for _, button in pairs(self.refs.amount_radio_buttons) do
+    button.state = gui.get_tags(button).mode == mode
+  end
 
   -- Calculate temperature range
   local min_temp = 0
@@ -296,6 +260,7 @@ function Gui:update()
     temperature_slider.set_slider_minimum_maximum(min_temp, max_temp)
     -- If we are here, then `filter` is guaranteed to exist
     temperature_slider.slider_value = filter.temperature
+    temperature_textfield.enabled = true
   else
     temperature_slider.enabled = false
     temperature_textfield.enabled = false
@@ -332,10 +297,6 @@ function infinity_pipe.create_gui(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
 
-  local filter = entity.get_infinity_pipe_filter() or { mode = "at-least" }
-
-  local capacity = entity.fluidbox.get_capacity(1)
-
   local radio_buttons = {}
   for _, mode in pairs(constants.infinity_pipe_modes) do
     local ref = string.gsub(mode, "%-", "_")
@@ -343,7 +304,7 @@ function infinity_pipe.create_gui(player_index, entity)
       type = "radiobutton",
       caption = { "gui-infinity-container." .. mode },
       tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
-      state = filter.mode == mode,
+      state = false,
       ref = { "amount_radio_buttons", ref },
       tags = { mode = mode },
       actions = {
@@ -408,7 +369,7 @@ function infinity_pipe.create_gui(player_index, entity)
             items = table.map(shared_constants.infinity_pipe_capacities, function(capacity)
               return misc.delineate_number(capacity)
             end),
-            selected_index = table.find(shared_constants.infinity_pipe_capacities, capacity),
+            selected_index = 0,
             ref = { "capacity_dropdown" },
             actions = {
               on_selection_state_changed = { gui = "infinity_pipe", action = "change_capacity" },
@@ -424,7 +385,6 @@ function infinity_pipe.create_gui(player_index, entity)
             type = "choose-elem-button",
             style = "flib_standalone_slot_button_default",
             elem_type = "fluid",
-            fluid = filter.name,
             ref = { "fluid_button" },
             actions = {
               on_elem_changed = { gui = "infinity_pipe", action = "change_fluid" },
@@ -505,6 +465,8 @@ function infinity_pipe.create_gui(player_index, entity)
 
   player.opened = refs.window
 
+  local filter = entity.get_infinity_pipe_filter()
+
   --- @class InfinityPipeGui
   local self = {
     entity = entity,
@@ -513,9 +475,9 @@ function infinity_pipe.create_gui(player_index, entity)
     refs = refs,
     state = {
       amount_type = constants.infinity_pipe_amount_type.percent,
-      capacity = capacity,
-      filter = entity.get_infinity_pipe_filter(),
-      selected_mode = filter.mode,
+      capacity = entity.fluidbox.get_capacity(1),
+      filter = filter,
+      selected_mode = filter and filter.mode or "at-least",
     },
   }
   setmetatable(self, { __index = Gui })
