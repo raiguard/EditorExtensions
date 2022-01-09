@@ -28,8 +28,6 @@ local infinity_pipe = {}
 --- @type InfinityPipeGui
 local Gui = {}
 
--- Actions
-
 --- @param e on_gui_selection_state_changed
 function Gui:change_capacity(_, e)
   local selected_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
@@ -218,19 +216,6 @@ function Gui:change_temperature(msg, e)
   end
 end
 
--- Functions
-
-function Gui:merge_filter(changes)
-  local filter = self.entity.get_infinity_pipe_filter()
-  if not filter then
-    if changes.name then
-      -- filter =
-    else
-      return
-    end
-  end
-end
-
 function Gui:update_actual_amount()
   if not self.entity or not self.entity.valid or not self.refs.window.valid then
     return
@@ -267,7 +252,6 @@ function Gui:update_actual_amount()
   end
 end
 
--- This one is technically an action too
 function Gui:destroy()
   if self.refs.window.valid then
     self.refs.window.destroy()
