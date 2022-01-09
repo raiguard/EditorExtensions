@@ -16,6 +16,7 @@ local infinity_pipe = {}
 --- @field window LuaGuiElement
 --- @field titlebar_flow LuaGuiElement
 --- @field drag_handle LuaGuiElement
+--- @field amount_progressbar LuaGuiElement
 --- @field entity_preview LuaGuiElement
 --- @field amount_slider LuaGuiElement
 --- @field amount_textfield LuaGuiElement
@@ -136,8 +137,42 @@ function Gui:merge_filter(changes)
   end
 end
 
--- --- @param source string
--- function Gui:update(source) end
+function Gui:update_actual_amount()
+  if not self.entity or not self.entity.valid or not self.refs.window.valid then
+    return
+  end
+
+  local progressbar = self.refs.amount_progressbar
+
+  -- This entity only ever has one fluid
+  local contents = self.entity.get_fluid_contents()
+  local fluid_name = next(contents)
+  if not fluid_name then
+    progressbar.caption = "0"
+    progressbar.value = 0
+    return
+  end
+
+  local fluid_amount = contents[fluid_name]
+  progressbar.value = fluid_amount / self.entity.fluidbox.get_capacity(1)
+  progressbar.caption = misc.delineate_number(math.round_to(fluid_amount, 2))
+
+  if fluid_name ~= self.state.current_fluid_name then
+    self.state.current_fluid_name = fluid_name
+    local bar_color = game.fluid_prototypes[fluid_name].base_color
+    -- Calculate luminance of the background color
+    -- Source: https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+    local luminance = (0.2126 * bar_color.r) + (0.7152 * bar_color.g) + (0.0722 * bar_color.b)
+    if luminance > 0.55 then
+      progressbar.style = "production_progressbar"
+    else
+      progressbar.style = "ee_production_progressbar_light_text"
+    end
+
+    progressbar.style.horizontally_stretchable = true
+    progressbar.style.color = bar_color
+  end
+end
 
 -- This one is technically an action too
 function Gui:destroy()
@@ -145,6 +180,8 @@ function Gui:destroy()
     self.refs.window.destroy()
     self.player.opened = nil
     self.player.play_sound({ path = "entity-close/ee-infinity-pipe-100" })
+
+    self.player_table.gui.infinity_pipe = nil
   end
 end
 
@@ -165,8 +202,8 @@ function infinity_pipe.create_gui(player_index, entity)
 
   local filter = entity.get_infinity_pipe_filter() or {}
 
-  local _, _, capacity = string.find(entity.name, "%d+$")
-  log(capacity)
+  local _, _, capacity = string.find(entity.name, ".*%-(%d+)$")
+  capacity = tonumber(capacity)
 
   local radio_buttons = {}
   for _, mode in pairs(constants.infinity_pipe_modes) do
@@ -220,15 +257,22 @@ function infinity_pipe.create_gui(player_index, entity)
         },
         {
           type = "flow",
-          style_mods = { vertical_align = "center" },
-          { type = "label", caption = { "description.fluid-capacity" } },
-          { type = "empty-widget", style = "flib_horizontal_pusher" },
+          style_mods = { horizontal_spacing = 8, vertical_align = "center" },
+          -- { type = "label", caption = { "description.fluid-capacity" } },
+          -- { type = "empty-widget", style = "flib_horizontal_pusher" },
+          {
+            type = "progressbar",
+            style = "production_progressbar",
+            style_mods = { horizontally_stretchable = true, bottom_margin = 2 },
+            ref = { "amount_progressbar" },
+          },
+          { type = "label", caption = "/" },
           {
             type = "drop-down",
             items = table.map(shared_constants.infinity_pipe_capacities, function(capacity)
               return misc.delineate_number(capacity)
             end),
-            selected_index = 1,
+            selected_index = table.find(shared_constants.infinity_pipe_capacities, capacity),
             actions = {
               on_selection_state_changed = { gui = "infinity_pipe", action = "change_capacity" },
             },
@@ -338,6 +382,8 @@ function infinity_pipe.create_gui(player_index, entity)
   }
   setmetatable(self, { __index = Gui })
   player_table.gui.infinity_pipe = self
+
+  self:update_actual_amount()
 end
 
 --- @param self InfinityPipeGui

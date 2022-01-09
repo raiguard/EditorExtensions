@@ -616,6 +616,14 @@ end)
 
 event.on_tick(function()
   infinity_wagon.flip_inventories()
+
+  for _, player_table in pairs(global.players) do
+    --- @type InfinityPipeGui
+    local pipe_gui = player_table.gui.infinity_pipe
+    if pipe_gui then
+      pipe_gui:update_actual_amount()
+    end
+  end
 end)
 
 -- -----------------------------------------------------------------------------

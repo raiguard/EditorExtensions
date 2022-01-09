@@ -44,6 +44,14 @@ styles.ee_super_pump_per_second_label = {
   left_margin = 4,
 }
 
+-- PROGRESSBAR STYLES
+
+styles.ee_production_progressbar_light_text = {
+  type = "progressbar_style",
+  parent = "production_progressbar",
+  filled_font_color = default_font_color,
+}
+
 -- TEXTFIELD STYLES
 
 styles.ee_slider_textfield = {
