@@ -395,6 +395,7 @@ function infinity_pipe.create_gui(player_index, entity)
             style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
             minimum_value = 0,
             maximum_value = 1,
+            value_step = 0.01,
             value = 0,
             ref = { "amount_slider" },
             actions = {
