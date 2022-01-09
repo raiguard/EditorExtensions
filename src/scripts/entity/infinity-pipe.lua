@@ -30,8 +30,8 @@ local Gui = {}
 
 --- @param e on_gui_selection_state_changed
 function Gui:change_capacity(_, e)
-  local selected_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
-  local new_name = "ee-infinity-pipe-" .. selected_capacity
+  local new_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
+  local new_name = "ee-infinity-pipe-" .. new_capacity
   if not game.entity_prototypes[new_name] then
     return
   end
@@ -54,6 +54,7 @@ function Gui:change_capacity(_, e)
   if new_entity then
     self.entity = new_entity
     self.refs.entity_preview.entity = new_entity
+    self.state.capacity = new_capacity
 
     -- TODO: Absolute filling migration
   end
@@ -216,28 +217,29 @@ function Gui:change_temperature(msg, e)
   end
 end
 
-function Gui:update_actual_amount()
+function Gui:display_fluid_contents()
   if not self.entity or not self.entity.valid or not self.refs.window.valid then
     return
   end
 
   local progressbar = self.refs.amount_progressbar
 
-  local fluidbox = self.entity.fluidbox
-  --- @type Fluid
-  local fluid = fluidbox[1]
-  if not fluid then
+  -- There is only one fluidbox on an infinity pipe
+  local fluid_contents = self.entity.get_fluid_contents()
+  local fluid_name = next(fluid_contents)
+  if not fluid_name then
     progressbar.caption = "0"
     progressbar.value = 0
     return
   end
+  local fluid_amount = fluid_contents[fluid_name]
 
-  progressbar.value = fluid.amount / fluidbox.get_capacity(1)
-  progressbar.caption = misc.delineate_number(math.round_to(fluid.amount, 2))
+  progressbar.value = fluid_amount / self.state.capacity
+  progressbar.caption = misc.delineate_number(math.round_to(fluid_amount, 2))
 
-  if fluid.name ~= self.state.current_fluid_name then
-    self.state.current_fluid_name = fluid.name
-    local bar_color = game.fluid_prototypes[fluid.name].base_color
+  if fluid_name ~= self.state.current_fluid_name then
+    self.state.current_fluid_name = fluid_name
+    local bar_color = game.fluid_prototypes[fluid_name].base_color
     -- Calculate luminance of the background color
     -- Source: https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
     local luminance = (0.2126 * bar_color.r) + (0.7152 * bar_color.g) + (0.0722 * bar_color.b)
@@ -279,8 +281,7 @@ function infinity_pipe.create_gui(player_index, entity)
 
   local filter = entity.get_infinity_pipe_filter() or { mode = "at-least" }
 
-  local _, _, capacity = string.find(entity.name, ".*%-(%d+)$")
-  capacity = tonumber(capacity)
+  local capacity = entity.fluidbox.get_capacity(1)
 
   local radio_buttons = {}
   for _, mode in pairs(constants.infinity_pipe_modes) do
@@ -458,8 +459,9 @@ function infinity_pipe.create_gui(player_index, entity)
     player_table = player_table,
     refs = refs,
     state = {
-      selected_mode = filter.mode,
       amount = 0,
+      capacity = capacity,
+      selected_mode = filter.mode,
       temperature = filter.default_temperature or 0,
     },
   }
@@ -468,7 +470,7 @@ function infinity_pipe.create_gui(player_index, entity)
 
   -- Set GUI state
   self:change_fluid()
-  self:update_actual_amount()
+  self:display_fluid_contents()
 end
 
 --- @param self InfinityPipeGui

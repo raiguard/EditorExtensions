@@ -621,7 +621,7 @@ event.on_tick(function()
     --- @type InfinityPipeGui
     local pipe_gui = player_table.gui.infinity_pipe
     if pipe_gui then
-      pipe_gui:update_actual_amount()
+      pipe_gui:display_fluid_contents()
     end
   end
 end)
