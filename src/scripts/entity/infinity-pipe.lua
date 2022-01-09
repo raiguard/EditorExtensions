@@ -21,6 +21,8 @@ local infinity_pipe = {}
 --- @field amount_slider LuaGuiElement
 --- @field amount_textfield LuaGuiElement
 --- @field amount_radio_buttons table<string, LuaGuiElement>
+--- @field temperature_slider LuaGuiElement
+--- @field temperature_textfield LuaGuiElement
 
 --- @type InfinityPipeGui
 local Gui = {}
@@ -63,25 +65,53 @@ function Gui:change_fluid(_, e)
   local fluid_name = e.element.elem_value
   local filter = self.entity.get_infinity_pipe_filter()
 
+  local min_temp, max_temp, temperature
   if fluid_name then
     if filter then
       filter.name = fluid_name
-      local prototype = game.fluid_prototypes[fluid_name]
-      filter.temperature = math.clamp(filter.temperature, prototype.default_temperature, prototype.max_temperature)
-      -- TODO: Update temperature slider
     else
       -- TODO: Amount type
-      -- TODO: Temperature
       filter = {
         name = fluid_name,
-        percentage = self.refs.amount_slider.slider_value / 100,
+        percentage = self.state.last_valid_amount / 100,
+        temperature = self.state.last_valid_temperature,
         mode = self.state.selected_mode,
       }
     end
+    local prototype = game.fluid_prototypes[fluid_name]
+    min_temp = prototype.default_temperature
+    max_temp = prototype.max_temperature
+    temperature = filter.temperature
   elseif filter then
+    temperature = filter.temperature
     filter = nil
+    min_temp = 0
+    max_temp = 100
   end
 
+  -- Update temperature
+  temperature = math.clamp(temperature, min_temp, max_temp)
+  if filter then
+    filter.temperature = temperature
+  end
+  self.state.last_valid_temperature = temperature
+
+  -- Update temperature inputs
+  local slider = self.refs.temperature_slider
+  local textfield = self.refs.temperature_textfield
+  if min_temp == max_temp then
+    slider.enabled = false
+    textfield.enabled = false
+  else
+    slider.enabled = true
+    slider.set_slider_minimum_maximum(min_temp, max_temp)
+    slider.slider_value = temperature
+    textfield.enabled = true
+  end
+  textfield.style = "slider_value_textfield"
+  textfield.text = tostring(temperature)
+
+  -- Update filter
   self.entity.set_infinity_pipe_filter(filter)
 end
 
@@ -144,7 +174,39 @@ function Gui:change_amount_mode(msg)
   self.entity.set_infinity_pipe_filter(filter)
 end
 
-function Gui:change_temperature(msg, e) end
+function Gui:change_temperature(msg, e)
+  local element = e.element
+  local type = msg.elem
+  local new_temperature
+  if type == "slider" then
+    new_temperature = element.slider_value
+    self.refs.temperature_textfield.text = tostring(new_temperature)
+    self.refs.temperature_textfield.style = "slider_value_textfield"
+    self.state.last_valid_temperature = new_temperature
+  else
+    new_temperature = tonumber(element.text)
+    local slider = self.refs.temperature_slider
+    if
+      new_temperature
+      and new_temperature >= slider.get_slider_minimum()
+      and new_temperature <= slider.get_slider_maximum()
+    then
+      element.style = "slider_value_textfield"
+      slider.slider_value = new_temperature
+      self.state.last_valid_temperature = new_temperature
+    else
+      element.style = "ee_invalid_slider_value_textfield"
+      return
+    end
+  end
+
+  local filter = self.entity.get_infinity_pipe_filter()
+  if filter then
+    filter.temperature = new_temperature
+
+    self.entity.set_infinity_pipe_filter(filter)
+  end
+end
 
 -- Functions
 
@@ -166,22 +228,21 @@ function Gui:update_actual_amount()
 
   local progressbar = self.refs.amount_progressbar
 
-  -- This entity only ever has one fluid
-  local contents = self.entity.get_fluid_contents()
-  local fluid_name = next(contents)
-  if not fluid_name then
+  local fluidbox = self.entity.fluidbox
+  --- @type Fluid
+  local fluid = fluidbox[1]
+  if not fluid then
     progressbar.caption = "0"
     progressbar.value = 0
     return
   end
 
-  local fluid_amount = contents[fluid_name]
-  progressbar.value = fluid_amount / self.entity.fluidbox.get_capacity(1)
-  progressbar.caption = misc.delineate_number(math.round_to(fluid_amount, 2))
+  progressbar.value = fluid.amount / fluidbox.get_capacity(1)
+  progressbar.caption = misc.delineate_number(math.round_to(fluid.amount, 2))
 
-  if fluid_name ~= self.state.current_fluid_name then
-    self.state.current_fluid_name = fluid_name
-    local bar_color = game.fluid_prototypes[fluid_name].base_color
+  if fluid.name ~= self.state.current_fluid_name then
+    self.state.current_fluid_name = fluid.name
+    local bar_color = game.fluid_prototypes[fluid.name].base_color
     -- Calculate luminance of the background color
     -- Source: https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
     local luminance = (0.2126 * bar_color.r) + (0.7152 * bar_color.g) + (0.0722 * bar_color.b)
@@ -223,6 +284,8 @@ function infinity_pipe.create_gui(player_index, entity)
   local player_table = global.players[player_index]
 
   local filter = entity.get_infinity_pipe_filter() or { mode = "at-least" }
+  --- @type LuaFluidPrototype
+  local prototype = filter.name and game.fluid_prototypes[filter.name] or nil
 
   local _, _, capacity = string.find(entity.name, ".*%-(%d+)$")
   capacity = tonumber(capacity)
@@ -245,6 +308,10 @@ function infinity_pipe.create_gui(player_index, entity)
   end
   -- Remove the last pusher
   radio_buttons[#radio_buttons] = nil
+
+  local min_temp = prototype and prototype.default_temperature or 0
+  local max_temp = prototype and prototype.max_temperature or 100
+  local temperature_enabled = min_temp ~= max_temp
 
   --- @type InfinityPipeGuiRefs
   local refs = gui.build(player.gui.screen, {
@@ -369,19 +436,21 @@ function infinity_pipe.create_gui(player_index, entity)
           {
             type = "slider",
             style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
-            -- TODO: Figure these out
-            minimum_value = -100,
-            maximum_value = 100,
-            value = 0,
+            minimum_value = temperature_enabled and min_temp or 0,
+            maximum_value = temperature_enabled and max_temp or 100,
+            value = filter.temperature or 0,
+            enabled = temperature_enabled,
+            ref = { "temperature_slider" },
             actions = {
               on_value_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "slider" },
             },
           },
-          -- TODO: Initial populate
           {
             type = "textfield",
             style = "slider_value_textfield",
-            text = "0",
+            text = tostring(filter.temperature or 0),
+            ref = { "temperature_textfield" },
+            enabled = temperature_enabled,
             actions = {
               on_text_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "textfield" },
             },
@@ -405,7 +474,7 @@ function infinity_pipe.create_gui(player_index, entity)
     state = {
       selected_mode = filter.mode,
       last_valid_amount = 0,
-      last_valid_temperature = 0,
+      last_valid_temperature = filter.default_temperature or 0,
     },
   }
   setmetatable(self, { __index = Gui })
