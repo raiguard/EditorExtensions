@@ -20,7 +20,7 @@ local infinity_pipe = {}
 --- @field entity_preview LuaGuiElement
 --- @field amount_slider LuaGuiElement
 --- @field amount_textfield LuaGuiElement
---- @field radio_buttons table<string, LuaGuiElement>
+--- @field amount_radio_buttons table<string, LuaGuiElement>
 
 --- @type InfinityPipeGui
 local Gui = {}
@@ -70,9 +70,13 @@ function Gui:change_fluid(_, e)
       filter.temperature = math.clamp(filter.temperature, prototype.default_temperature, prototype.max_temperature)
       -- TODO: Update temperature slider
     else
-      -- TODO: Amount mode
+      -- TODO: Amount type
       -- TODO: Temperature
-      filter = { name = fluid_name, percentage = self.refs.amount_slider.slider_value / 100 }
+      filter = {
+        name = fluid_name,
+        percentage = self.refs.amount_slider.slider_value / 100,
+        mode = self.state.selected_mode,
+      }
     end
   elseif filter then
     filter = nil
@@ -94,7 +98,7 @@ function Gui:change_amount(msg, e)
     self.state.last_valid_amount = new_amount
   else
     new_amount = tonumber(element.text)
-    -- TODO: Amount mode
+    -- TODO: Amount type
     if new_amount and new_amount <= 100 then
       element.style = "slider_value_textfield"
       self.refs.amount_slider.slider_value = new_amount
@@ -107,7 +111,7 @@ function Gui:change_amount(msg, e)
 
   local filter = self.entity.get_infinity_pipe_filter()
   if filter then
-    -- TODO: Amount mode
+    -- TODO: Amount type
     filter.percentage = new_amount / 100
 
     self.entity.set_infinity_pipe_filter(filter)
@@ -120,7 +124,25 @@ function Gui:confirm_amount(_, e)
   e.element.style = "slider_value_textfield"
 end
 
-function Gui:change_amount_mode(msg, e) end
+function Gui:change_amount_type(msg, e) end
+
+--- @param msg table
+function Gui:change_amount_mode(msg)
+  local to_mode = msg.mode
+
+  for _, button in pairs(self.refs.amount_radio_buttons) do
+    button.state = gui.get_tags(button).mode == to_mode
+  end
+
+  self.state.selected_mode = to_mode
+
+  local filter = self.entity.get_infinity_pipe_filter()
+  if not filter then
+    return
+  end
+  filter.mode = to_mode
+  self.entity.set_infinity_pipe_filter(filter)
+end
 
 function Gui:change_temperature(msg, e) end
 
@@ -200,19 +222,24 @@ function infinity_pipe.create_gui(player_index, entity)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
 
-  local filter = entity.get_infinity_pipe_filter() or {}
+  local filter = entity.get_infinity_pipe_filter() or { mode = "at-least" }
 
   local _, _, capacity = string.find(entity.name, ".*%-(%d+)$")
   capacity = tonumber(capacity)
 
   local radio_buttons = {}
   for _, mode in pairs(constants.infinity_pipe_modes) do
+    local ref = string.gsub(mode, "%-", "_")
     table.insert(radio_buttons, {
       type = "radiobutton",
       caption = { "gui-infinity-container." .. mode },
       tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
-      state = false,
-      ref = { "radio_buttons", string.gsub(mode, "%-", "_") },
+      state = filter.mode == mode,
+      ref = { "amount_radio_buttons", ref },
+      tags = { mode = mode },
+      actions = {
+        on_checked_state_changed = { gui = "infinity_pipe", action = "change_amount_mode", mode = mode },
+      },
     })
     table.insert(radio_buttons, { type = "empty-widget", style = "flib_horizontal_pusher" })
   end
@@ -323,7 +350,7 @@ function infinity_pipe.create_gui(player_index, entity)
             items = { { "gui-infinity-pipe.percent" }, { "gui-infinity-pipe.ee-units" } },
             selected_index = 1,
             actions = {
-              on_selection_state_changed = { gui = "infinity_pipe", action = "change_amount_mode" },
+              on_selection_state_changed = { gui = "infinity_pipe", action = "change_amount_type" },
             },
           },
         },
@@ -376,6 +403,7 @@ function infinity_pipe.create_gui(player_index, entity)
     player_table = player_table,
     refs = refs,
     state = {
+      selected_mode = filter.mode,
       last_valid_amount = 0,
       last_valid_temperature = 0,
     },
