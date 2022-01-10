@@ -1,5 +1,6 @@
 local cheat_mode = require("scripts.cheat-mode")
 local constants = require("scripts.constants")
+local infinity_pipe = require("scripts.entity.infinity-pipe")
 
 return {
   ["1.1.0"] = function()
@@ -169,5 +170,8 @@ return {
         global.wagons[unit_number] = nil
       end
     end
+  end,
+  ["1.12.0"] = function()
+    infinity_pipe.init()
   end,
 }

@@ -71,6 +71,8 @@ event.on_init(function()
 
   aggregate_chest.update_data()
 
+  infinity_pipe.init()
+
   if settings.global["ee-hijack-debug-world"].value then
     debug_world()
   end
@@ -228,14 +230,12 @@ event.register({
   -- aggregate chest
   if constants.aggregate_chest_names[entity_name] then
     aggregate_chest.set_filters(entity)
-    -- infinity loader
   elseif entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
     infinity_loader.build_from_ghost(entity)
   elseif
     entity_name == "ee-infinity-loader-dummy-combinator" or entity_name == "ee-infinity-loader-logic-combinator"
   then
     infinity_loader.build(entity)
-    -- transport belt connectables
   elseif
     entity.type == "transport-belt"
     or entity.type == "underground-belt"
@@ -248,20 +248,18 @@ event.register({
     if entity.type == "underground-belt" and entity.neighbours then
       shared.snap_belt_neighbours(entity.neighbours)
     end
-    -- infinity wagon
   elseif constants.infinity_wagon_names[entity_name] then
     infinity_wagon.build(entity, e.tags)
-    -- linked belt
   elseif linked_belt.check_is_linked_belt(entity) then
     linked_belt.snap(entity)
-    -- super pump
   elseif entity_name == "ee-super-pump" then
     super_pump.setup(entity, e.tags)
-    -- only snap manually built entities
-  elseif e.name == defines.events.on_built_entity then
-    if entity_name == "ee-super-inserter" then
-      super_inserter.snap(entity)
-    elseif entity_name == "ee-infinity-pipe" then
+  elseif entity_name == "ee-super-inserter" and e.name == defines.events.on_built_entity then
+    super_inserter.snap(entity)
+  elseif infinity_pipe.check_is_our_pipe(entity) then
+    infinity_pipe.store_amount_type(entity, e.tags)
+    -- Only snap manually built pipes
+    if e.name == defines.events.on_built_entity then
       infinity_pipe.snap(entity, global.players[e.player_index].settings)
     end
   end
@@ -287,6 +285,16 @@ event.register({
         local player = game.get_player(player_index)
         local player_table = global.players[player_index]
         linked_belt.cancel_connection(player, player_table)
+      end
+    end
+  elseif infinity_pipe.check_is_our_pipe(entity) then
+    infinity_pipe.remove_stored_amount_type(entity)
+    local unit_number = entity.unit_number
+    for _, player_table in pairs(global.players) do
+      --- @type InfinityPipeGui
+      local pipe_gui = player_table.gui.infinity_pipe
+      if pipe_gui and pipe_gui.entity.valid and pipe_gui.entity.unit_number == unit_number then
+        pipe_gui:destroy()
       end
     end
   end
@@ -368,8 +376,9 @@ event.on_entity_settings_pasted(function(e)
         { signal = { type = "fluid", name = filter.name }, count = filter.percentage * 100, index = 1 },
       }
     end
-  elseif source_type == "infinity-pipe" and destination_type == "infinity-pipe" then
+  elseif infinity_pipe.check_is_our_pipe(source) and infinity_pipe.check_is_our_pipe(destination) then
     infinity_pipe_updated = true
+    global.infinity_pipe_amount_types[destination.unit_number] = global.infinity_pipe_amount_types[source.unit_number]
   end
 
   if infinity_pipe_updated then
@@ -379,6 +388,8 @@ event.on_entity_settings_pasted(function(e)
       local pipe_gui = player_table.gui.infinity_pipe
       if pipe_gui and pipe_gui.entity.valid and pipe_gui.entity.unit_number == unit_number then
         pipe_gui.state.filter = destination.get_infinity_pipe_filter()
+        pipe_gui.state.amount_type = global.infinity_pipe_amount_types[destination.unit_number]
+          or constants.infinity_pipe_amount_type.percent
         pipe_gui:update()
       end
     end
@@ -514,6 +525,8 @@ event.on_player_setup_blueprint(function(e)
       entities[i] = infinity_wagon.setup_fluid_blueprint(entity, mapping[entity.entity_number])
     elseif entity_name == "ee-super-pump" then
       entities[i] = super_pump.setup_blueprint(entity, mapping[entity.entity_number])
+    elseif infinity_pipe.check_is_our_pipe(entity) then
+      entities[i] = infinity_pipe.setup_blueprint(entity, mapping[entity.entity_number])
     end
   end
 
@@ -659,10 +672,10 @@ event.set_filters({
   { filter = "name", name = "ee-infinity-fluid-wagon" },
   { filter = "name", name = "ee-infinity-loader-dummy-combinator" },
   { filter = "name", name = "ee-infinity-loader-logic-combinator" },
-  { filter = "name", name = "ee-infinity-pipe" },
   { filter = "name", name = "ee-super-inserter" },
   { filter = "name", name = "ee-super-pump" },
   { filter = "type", type = "transport-belt" },
+  { filter = "type", type = "infinity-pipe" },
   { filter = "type", type = "underground-belt" },
   { filter = "type", type = "splitter" },
   { filter = "type", type = "loader" },
@@ -686,6 +699,7 @@ event.set_filters({ defines.events.on_player_mined_entity, defines.events.on_rob
   { filter = "name", name = "ee-infinity-cargo-wagon" },
   { filter = "name", name = "ee-infinity-fluid-wagon" },
   { filter = "type", type = "linked-belt" },
+  { filter = "type", type = "infinity-pipe" },
 })
 
 event.set_filters({ defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction }, {

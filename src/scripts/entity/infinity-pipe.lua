@@ -10,6 +10,70 @@ local util = require("scripts.util")
 
 local infinity_pipe = {}
 
+-- BOOTSTRAP
+
+function infinity_pipe.init()
+  global.infinity_pipe_amount_types = {}
+end
+
+-- ENTITY
+
+function infinity_pipe.store_amount_type(entity, tags)
+  if tags and tags.EditorExtensions then
+    global.infinity_pipe_amount_types[entity.unit_number] = tags.EditorExtensions.amount_type
+  end
+end
+
+--- @param entity LuaEntity
+function infinity_pipe.remove_stored_amount_type(entity)
+  global.infinity_pipe_amount_types[entity.unit_number] = nil
+end
+
+--- @param entity LuaEntity
+function infinity_pipe.check_is_our_pipe(entity)
+  return string.find(entity.name, "^ee%-infinity%-pipe%-%d+$")
+end
+
+--- @param blueprint_entity BlueprintEntity
+--- @param entity LuaEntity
+function infinity_pipe.setup_blueprint(blueprint_entity, entity)
+  if not blueprint_entity.tags then
+    blueprint_entity.tags = {}
+  end
+  blueprint_entity.tags.EditorExtensions = { amount_type = global.infinity_pipe_amount_types[entity.unit_number] }
+  return blueprint_entity
+end
+
+-- TODO: Move the player setting check out of here?
+--- @param entity LuaEntity
+--- @param player_settings table
+function infinity_pipe.snap(entity, player_settings)
+  local own_id = entity.unit_number
+
+  if player_settings.infinity_pipe_crafter_snapping then
+    for _, fluidbox in ipairs(entity.fluidbox.get_connections(1)) do
+      local owner_type = fluidbox.owner.type
+      if constants.ip_crafter_snapping_types[owner_type] then
+        for i = 1, #fluidbox do
+          local connections = fluidbox.get_connections(i)
+          for j = 1, #connections do
+            if connections[j].owner.unit_number == own_id then
+              local prototype = fluidbox.get_prototype(i)
+              if prototype.production_type == "input" then
+                local fluid = fluidbox.get_locked_fluid(i)
+                if fluid then
+                  entity.set_infinity_pipe_filter({ name = fluid, percentage = 1, mode = "at-least" })
+                  return
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 -- GUI
 
 --- @class InfinityPipeGuiRefs
@@ -127,9 +191,11 @@ function Gui:change_amount(msg, e)
   self:update()
 end
 
+--- @param e on_gui_selection_state_changed
 function Gui:change_amount_type(_, e)
   -- This is a 1:1 representation
   self.state.amount_type = e.element.selected_index
+  global.infinity_pipe_amount_types[self.entity.unit_number] = self.state.amount_type
 
   self:update()
 end
@@ -331,10 +397,17 @@ function infinity_pipe.create_gui(player_index, entity)
   -- Remove the last pusher
   radio_buttons[#radio_buttons] = nil
 
+  -- Clean up disassociated GUI if one exists
+  local existing = player.gui.screen["ee_infinity_pipe_window"]
+  if existing then
+    existing.destroy()
+  end
+
   --- @type InfinityPipeGuiRefs
   local refs = gui.build(player.gui.screen, {
     {
       type = "frame",
+      name = "ee_infinity_pipe_window",
       direction = "vertical",
       ref = { "window" },
       actions = { on_closed = { gui = "infinity_pipe", action = "destroy" } },
@@ -490,7 +563,8 @@ function infinity_pipe.create_gui(player_index, entity)
     player_table = player_table,
     refs = refs,
     state = {
-      amount_type = constants.infinity_pipe_amount_type.percent,
+      amount_type = global.infinity_pipe_amount_types[entity.unit_number]
+        or constants.infinity_pipe_amount_type.percent,
       capacity = entity.fluidbox.get_capacity(1),
       filter = filter,
       selected_mode = filter and filter.mode or "at-least",
@@ -507,38 +581,6 @@ end
 --- @param self InfinityPipeGui
 function infinity_pipe.load_gui(self)
   setmetatable(self, { __index = Gui })
-end
-
--- ENTITY
-
--- TODO: Move the player setting check out of here?
---- @param entity LuaEntity
---- @param player_settings table
-function infinity_pipe.snap(entity, player_settings)
-  local own_id = entity.unit_number
-
-  if player_settings.infinity_pipe_crafter_snapping then
-    for _, fluidbox in ipairs(entity.fluidbox.get_connections(1)) do
-      local owner_type = fluidbox.owner.type
-      if constants.ip_crafter_snapping_types[owner_type] then
-        for i = 1, #fluidbox do
-          local connections = fluidbox.get_connections(i)
-          for j = 1, #connections do
-            if connections[j].owner.unit_number == own_id then
-              local prototype = fluidbox.get_prototype(i)
-              if prototype.production_type == "input" then
-                local fluid = fluidbox.get_locked_fluid(i)
-                if fluid then
-                  entity.set_infinity_pipe_filter({ name = fluid, percentage = 1, mode = "at-least" })
-                  return
-                end
-              end
-            end
-          end
-        end
-      end
-    end
-  end
 end
 
 return infinity_pipe
