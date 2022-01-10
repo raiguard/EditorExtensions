@@ -2,9 +2,13 @@
 Version: 1.12.0
 Date: ????
   Features:
+    - Added a custom GUI for the infinity pipe
+      - Amount of fluid currently in the pipe is shown in the GUI
+      - New "units" mode allows you to specify exact units for the filter instead of a percentage
+      - The pipe's capacity can be changed between 100, 500, 1000, 5000, 10000, 25000, 50000, and 100000
+    - Added a custom event for when the debug world has finished setup
     - Added a per-player setting to start the debug world or testing scenario in the map editor
     - Added startup settings to change the appearance of lab tiles
-    - Added custom event for when the debug world has finished setup
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.2
 Date: 2021-11-01

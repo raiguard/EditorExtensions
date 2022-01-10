@@ -174,6 +174,15 @@ event.register("ee-open-gui", function(e)
   end
 end)
 
+event.register("ee-copy-entity-settings", function(e)
+  local player = game.get_player(e.player_index)
+  local selected = player.selected
+  if selected and linked_belt.check_is_linked_belt(selected) and selected.linked_belt_neighbour then
+    local player_table = global.players[e.player_index]
+    linked_belt.sever_connection(player, player_table, selected)
+  end
+end)
+
 event.register("ee-paste-entity-settings", function(e)
   local player = game.get_player(e.player_index)
   local selected = player.selected
@@ -184,15 +193,6 @@ event.register("ee-paste-entity-settings", function(e)
     else
       linked_belt.start_connection(player, player_table, selected, true)
     end
-  end
-end)
-
-event.register("ee-copy-entity-settings", function(e)
-  local player = game.get_player(e.player_index)
-  local selected = player.selected
-  if selected and linked_belt.check_is_linked_belt(selected) and selected.linked_belt_neighbour then
-    local player_table = global.players[e.player_index]
-    linked_belt.sever_connection(player, player_table, selected)
   end
 end)
 
@@ -330,8 +330,12 @@ end)
 event.on_entity_settings_pasted(function(e)
   local source = e.source
   local destination = e.destination
+  local source_type = source.type
   local source_name = source.name
+  local destination_type = destination.type
   local destination_name = destination.name
+
+  local infinity_pipe_updated = false
 
   if
     constants.ia.entity_names[source_name]
@@ -348,20 +352,35 @@ event.on_entity_settings_pasted(function(e)
     infinity_wagon.paste_settings(source, destination)
   elseif source_name == "ee-super-pump" and destination_name == "ee-super-pump" then
     super_pump.paste_settings(source, destination)
-  elseif source_name == "constant-combinator" and destination_name == "ee-infinity-pipe" then
+  elseif source_name == "constant-combinator" and destination_type == "infinity-pipe" then
     local control = source.get_or_create_control_behavior()
     for _, signal in pairs(control.parameters) do
       if signal.signal.type == "fluid" then
         destination.set_infinity_pipe_filter({ name = signal.signal.name, percentage = 1 })
+        infinity_pipe_updated = true
       end
     end
-  elseif source_name == "ee-infinity-pipe" and destination_name == "constant-combinator" then
+  elseif source_type == "infinity-pipe" and destination_name == "constant-combinator" then
     local filter = source.get_infinity_pipe_filter()
     if filter then
       local control = destination.get_or_create_control_behavior()
       control.parameters = {
         { signal = { type = "fluid", name = filter.name }, count = filter.percentage * 100, index = 1 },
       }
+    end
+  elseif source_type == "infinity-pipe" and destination_type == "infinity-pipe" then
+    infinity_pipe_updated = true
+  end
+
+  if infinity_pipe_updated then
+    local unit_number = destination.unit_number
+    for _, player_table in pairs(global.players) do
+      --- @type InfinityPipeGui
+      local pipe_gui = player_table.gui.infinity_pipe
+      if pipe_gui and pipe_gui.entity.valid and pipe_gui.entity.unit_number == unit_number then
+        pipe_gui.state.filter = destination.get_infinity_pipe_filter()
+        pipe_gui:update()
+      end
     end
   end
 end)
