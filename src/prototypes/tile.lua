@@ -1,23 +1,23 @@
+local function generate_tile(source_name, destination_name)
+  local tile = table.deepcopy(data.raw["tile"][source_name])
+  tile.name = destination_name
+  tile.variants = {
+    main = tile.variants.main,
+    material_background = tile.variants.material_background,
+    empty_transitions = true,
+  }
+  tile.transitions = nil
+  return tile
+end
+
 local graphics_setting = settings.startup["ee-lab-tile-graphics"].value
 
 if graphics_setting == "all-light" then
-  local tile = table.deepcopy(data.raw["tile"]["lab-dark-2"])
-  tile.name = "lab-dark-1"
-  data:extend({ tile })
+  data:extend({ generate_tile("lab-dark-2", "lab-dark-1") })
 elseif graphics_setting == "all-dark" then
-  local tile = table.deepcopy(data.raw["tile"]["lab-dark-1"])
-  tile.name = "lab-dark-2"
-  data:extend({ tile })
+  data:extend({ generate_tile("lab-dark-1", "lab-dark-2") })
 elseif graphics_setting == "tutorial-grid" then
-  local tile_1 = table.deepcopy(data.raw["tile"]["tutorial-grid"])
-  tile_1.name = "lab-dark-1"
-  local tile_2 = table.deepcopy(data.raw["tile"]["tutorial-grid"])
-  tile_2.name = "lab-dark-2"
-  data:extend({ tile_1, tile_2 })
+  data:extend({ generate_tile("tutorial-grid", "lab-dark-1"), generate_tile("tutorial-grid", "lab-dark-2") })
 elseif graphics_setting == "refined-concrete" then
-  local tile_1 = table.deepcopy(data.raw["tile"]["refined-concrete"])
-  tile_1.name = "lab-dark-1"
-  local tile_2 = table.deepcopy(data.raw["tile"]["refined-concrete"])
-  tile_2.name = "lab-dark-2"
-  data:extend({ tile_1, tile_2 })
+  data:extend({ generate_tile("refined-concrete", "lab-dark-1"), generate_tile("refined-concrete", "lab-dark-2") })
 end
