@@ -387,12 +387,14 @@ event.on_entity_settings_pasted(function(e)
       --- @type InfinityPipeGui
       local pipe_gui = player_table.gui.infinity_pipe
       if pipe_gui and pipe_gui.entity_unit_number == destination_unit_number then
+        -- Update state for the new entity
         pipe_gui.entity = destination
         pipe_gui.entity_unit_number = destination.unit_number
-        pipe_gui.state.filter = source.get_infinity_pipe_filter()
         pipe_gui.state.amount_type = global.infinity_pipe_amount_types[destination.unit_number]
           or constants.infinity_pipe_amount_type.percent
         pipe_gui.state.capacity = destination.fluidbox.get_capacity(1)
+        pipe_gui.state.filter = source.get_infinity_pipe_filter()
+        -- Update the GUI, including entity preview
         pipe_gui:update(true)
       end
     end
