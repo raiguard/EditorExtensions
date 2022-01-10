@@ -342,6 +342,7 @@ event.on_entity_settings_pasted(function(e)
   local source_name = source.name
   local destination_type = destination.type
   local destination_name = destination.name
+  local destination_unit_number = destination.unit_number
 
   local infinity_pipe_updated = false
 
@@ -378,19 +379,21 @@ event.on_entity_settings_pasted(function(e)
     end
   elseif infinity_pipe.check_is_our_pipe(source) and infinity_pipe.check_is_our_pipe(destination) then
     infinity_pipe_updated = true
-    global.infinity_pipe_amount_types[destination.unit_number] = global.infinity_pipe_amount_types[source.unit_number]
+    destination = infinity_pipe.paste_settings(source, destination)
   end
 
   if infinity_pipe_updated then
-    local unit_number = destination.unit_number
     for _, player_table in pairs(global.players) do
       --- @type InfinityPipeGui
       local pipe_gui = player_table.gui.infinity_pipe
-      if pipe_gui and pipe_gui.entity.valid and pipe_gui.entity.unit_number == unit_number then
-        pipe_gui.state.filter = destination.get_infinity_pipe_filter()
+      if pipe_gui and pipe_gui.entity_unit_number == destination_unit_number then
+        pipe_gui.entity = destination
+        pipe_gui.entity_unit_number = destination.unit_number
+        pipe_gui.state.filter = source.get_infinity_pipe_filter()
         pipe_gui.state.amount_type = global.infinity_pipe_amount_types[destination.unit_number]
           or constants.infinity_pipe_amount_type.percent
-        pipe_gui:update()
+        pipe_gui.state.capacity = destination.fluidbox.get_capacity(1)
+        pipe_gui:update(true)
       end
     end
   end

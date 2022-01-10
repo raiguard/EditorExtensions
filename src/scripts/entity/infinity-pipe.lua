@@ -10,6 +10,18 @@ local util = require("scripts.util")
 
 local infinity_pipe = {}
 
+local function swap_entity(entity, new_name)
+  return entity.surface.create_entity({
+    name = new_name,
+    position = entity.position,
+    direction = entity.direction,
+    force = entity.force,
+    fast_replace = true,
+    create_build_effect_smoke = false,
+    spill = false,
+  })
+end
+
 -- BOOTSTRAP
 
 function infinity_pipe.init()
@@ -42,6 +54,19 @@ function infinity_pipe.setup_blueprint(blueprint_entity, entity)
   end
   blueprint_entity.tags.EditorExtensions = { amount_type = global.infinity_pipe_amount_types[entity.unit_number] }
   return blueprint_entity
+end
+
+--- @param source LuaEntity
+--- @param destination LuaEntity
+--- @return LuaEntity
+function infinity_pipe.paste_settings(source, destination)
+  if source.name ~= destination.name then
+    destination = swap_entity(destination, source.name)
+    destination.set_infinity_pipe_filter(source.get_infinity_pipe_filter())
+  end
+  global.infinity_pipe_amount_types[destination.unit_number] = global.infinity_pipe_amount_types[source.unit_number]
+
+  return destination
 end
 
 -- TODO: Move the player setting check out of here?
@@ -107,19 +132,11 @@ function Gui:change_capacity(_, e)
     return
   end
 
-  local new_entity = entity.surface.create_entity({
-    name = new_name,
-    position = entity.position,
-    direction = entity.direction,
-    force = entity.force,
-    fast_replace = true,
-    create_build_effect_smoke = false,
-    spill = false,
-  })
+  local new_entity = swap_entity(entity, new_name)
 
   if new_entity then
     self.entity = new_entity
-    self.refs.entity_preview.entity = new_entity
+    self.entity_unit_number = new_entity.unit_number
 
     local filter = self.state.filter
     if filter and self.state.amount_type == constants.infinity_pipe_amount_type.units then
@@ -128,7 +145,7 @@ function Gui:change_capacity(_, e)
 
     self.state.capacity = new_capacity
 
-    self:update()
+    self:update(true)
   end
 end
 
@@ -282,7 +299,13 @@ function Gui:display_fluid_contents()
 end
 
 -- Updates all GUI elements and sets the filter on the entity
-function Gui:update()
+--- @param update_entity_preview boolean
+function Gui:update(update_entity_preview)
+  -- Entity preview
+  if update_entity_preview then
+    self.refs.entity_preview.entity = self.entity
+  end
+
   -- Capacity dropdown
   local dropdown = self.refs.capacity_dropdown
   dropdown.selected_index = table.find(shared_constants.infinity_pipe_capacities, self.state.capacity)
@@ -559,6 +582,7 @@ function infinity_pipe.create_gui(player_index, entity)
   --- @class InfinityPipeGui
   local self = {
     entity = entity,
+    entity_unit_number = entity.unit_number,
     player = player,
     player_table = player_table,
     refs = refs,
