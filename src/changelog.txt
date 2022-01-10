@@ -8,7 +8,7 @@ Date: ????
       - The pipe's capacity can be changed between 100, 500, 1000, 5000, 10000, 25000, 50000, and 100000
     - Added a custom event for when the debug world has finished setup
     - Added a per-player setting to start the debug world or testing scenario in the map editor
-    - Added startup settings to change the appearance of lab tiles
+    - Added a startup setting to change the appearance of lab tiles
 ---------------------------------------------------------------------------------------------------
 Version: 1.11.2
 Date: 2021-11-01
