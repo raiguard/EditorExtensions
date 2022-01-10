@@ -160,7 +160,6 @@ function Gui:change_fluid()
       filter.temperature = prototype.default_temperature
     else
       -- Added fluid
-      -- TODO: Amount type
       self.state.filter = {
         name = fluid_name,
         -- Default to 100% like the vanilla infinity pipe
@@ -279,7 +278,7 @@ function Gui:display_fluid_contents()
   local fluid_amount = fluid_contents[fluid_name]
 
   progressbar.value = fluid_amount / self.state.capacity
-  progressbar.caption = misc.delineate_number(string.format("%.2f", fluid_amount))
+  progressbar.caption = misc.delineate_number(string.format("%.2f", )
 
   if fluid_name ~= self.state.current_fluid_name then
     self.state.current_fluid_name = fluid_name
