@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.0
-Date: ????
+Date: 2022-01-10
   Features:
     - Added a custom GUI for the infinity pipe
       - Amount of fluid currently in the pipe is shown in the GUI
