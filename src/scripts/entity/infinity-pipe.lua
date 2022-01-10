@@ -278,7 +278,7 @@ function Gui:display_fluid_contents()
   local fluid_amount = fluid_contents[fluid_name]
 
   progressbar.value = fluid_amount / self.state.capacity
-  progressbar.caption = misc.delineate_number(string.format("%.2f"))
+  progressbar.caption = misc.delineate_number(string.format("%.2f", fluid_amount))
 
   if fluid_name ~= self.state.current_fluid_name then
     self.state.current_fluid_name = fluid_name
