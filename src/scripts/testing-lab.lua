@@ -2,7 +2,9 @@ local constants = require("scripts.constants")
 
 local testing_lab = {}
 
----@type LuaPlayer
+--- @param player LuaPlayer
+--- @param player_table table
+--- @param ts_setting? string
 function testing_lab.toggle(player, player_table, ts_setting)
   local key = ts_setting == constants.testing_lab_setting.personal and player.index or "shared"
   local testing_surface_name = "EE_TESTSURFACE_" .. key
@@ -71,10 +73,22 @@ function testing_lab.toggle(player, player_table, ts_setting)
     current_surface_data = temp
   else
     player.teleport(last_surface_data.position, last_surface_data.surface)
-    player.force = last_surface_data.force
+    -- Switching from editor -> character/god requires us to change the force in the pre event
+    if in_editor then
+      player.force = last_surface_data.force
+    end
   end
 
   player_table.last_surface = current_surface_data
+end
+
+--- Called during on_pre_player_toggled_map_editor
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+function testing_lab.pre_change_force(player, player_table)
+  if player.controller_type == defines.controllers.editor then
+    player.force = player_table.last_surface.force
+  end
 end
 
 return testing_lab

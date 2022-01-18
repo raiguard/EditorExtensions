@@ -13,8 +13,11 @@ function player_data.init(player)
     },
     gui = {},
     last_cleared_cursor_tick = 0,
+    last_surface = nil,
     linked_belt_render_objects = {},
     linked_belt_source = nil,
+    --- @type table<string, string|boolean>
+    settings = {},
   }
   global.players[player.index] = player_table
 
