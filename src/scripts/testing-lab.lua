@@ -57,7 +57,7 @@ function testing_lab.toggle(player, player_table, ts_setting)
   end
 
   local current_surface_data = {
-    force = player.force,
+    force = last_surface_data and last_surface_data.to_force_temp or player.force,
     position = player.position,
     surface = player.surface,
   }
@@ -86,7 +86,8 @@ end
 --- @param player LuaPlayer
 --- @param player_table PlayerTable
 function testing_lab.pre_change_force(player, player_table)
-  if player.controller_type == defines.controllers.editor then
+  if player.controller_type == defines.controllers.editor and player_table.last_surface then
+    player_table.last_surface.to_force_temp = player.force
     player.force = player_table.last_surface.force
   end
 end
