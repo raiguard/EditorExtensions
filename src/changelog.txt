@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.3
-Date: ????
+Date: 2022-01-18
   Bugfixes:
     - Fixed that personal robots that were out when switching to the testing lab would not have their force restored when switching back
 ---------------------------------------------------------------------------------------------------
