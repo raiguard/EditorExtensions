@@ -49,6 +49,9 @@ end
 --- @param blueprint_entity BlueprintEntity
 --- @param entity LuaEntity
 function infinity_pipe.setup_blueprint(blueprint_entity, entity)
+  if not entity then
+    return
+  end
   if not blueprint_entity.tags then
     blueprint_entity.tags = {}
   end

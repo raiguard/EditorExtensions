@@ -2,6 +2,7 @@
 Version: 1.12.5
 Date: ????
   Bugfixes:
+    - Fixed a crash when an infinity pipe is removed from a blueprint prematurely (#86)
     - Fixed error message when an infinity loader snapped to a ghost belt (#85)
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.4
