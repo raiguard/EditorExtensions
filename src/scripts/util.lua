@@ -23,8 +23,9 @@ function util.position.to_tile_area(pos)
   }
 end
 
+--- @param entity LuaEntity
 function util.get_belt_type(entity)
-  local type = entity.name
+  local type = entity.type == "entity-ghost" and entity.ghost_name or entity.name
   for pattern, replacement in pairs(constants.belt_type_patterns) do
     type = string.gsub(type, pattern, replacement)
   end
