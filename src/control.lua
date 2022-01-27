@@ -51,8 +51,23 @@ end)
 -- INTERFACES
 
 remote.add_interface("EditorExtensions", {
+  --- An event that fires when the debug world has finished generating.
   debug_world_ready_event = function()
     return constants.debug_world_ready_event
+  end,
+  --- Get the force the player is actually on, ignoring the testing lab force.
+  --- @param player LuaPlayer
+  --- @return LuaForce
+  get_player_proper_force = function(player)
+    if not player or not player.valid then
+      error("Did not pass a valid LuaPlayer")
+    end
+    local player_table = global.players[player.index]
+    if player_table and player_table.last_surface and player.controller_type == defines.controllers.editor then
+      return player_table.last_surface.force
+    else
+      return player.force
+    end
   end,
 })
 
