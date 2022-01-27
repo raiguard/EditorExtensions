@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.6
-Date: ????
+Date: 2022-01-27
   Compatibility:
     - Added a remote interface function `get_player_proper_force` to get the player's force when they're inside the testing lab
 ---------------------------------------------------------------------------------------------------
