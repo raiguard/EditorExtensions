@@ -18,6 +18,8 @@ constants.belt_name_patterns = {
   ["%-v%d$"] = "",
   -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
   ["%-?transport%-belt%-to%-ground"] = "",
+  -- krastorio 2:
+  ["^kr%-?"] = "",
   -- vanilla and 99% of mods
   ["%-?underground%-belt"] = "",
 }
