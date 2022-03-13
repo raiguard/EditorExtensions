@@ -63,8 +63,8 @@ remote.add_interface("EditorExtensions", {
       error("Did not pass a valid LuaPlayer")
     end
     local player_table = global.players[player.index]
-    if player_table and player_table.last_surface and player.controller_type == defines.controllers.editor then
-      return player_table.last_surface.force
+    if player_table and player_table.normal_state and player.controller_type == defines.controllers.editor then
+      return player_table.normal_state.force
     else
       return player.force
     end
@@ -562,12 +562,6 @@ event.on_pre_player_toggled_map_editor(function(e)
   end
   if player_table.settings.inventory_sync_enabled then
     inventory.create_sync_inventories(player_table, game.get_player(e.player_index))
-  end
-  -- Change force back to what it should be
-  local ts_setting = player_table.settings.testing_lab
-  if ts_setting ~= constants.testing_lab_setting.off then
-    local player = game.get_player(e.player_index)
-    testing_lab.pre_change_force(player, player_table)
   end
 end)
 

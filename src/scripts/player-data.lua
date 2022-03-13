@@ -12,12 +12,14 @@ function player_data.init(player)
       update_character_cheats_when_possible = false,
     },
     gui = {},
+    lab_state = nil,
     last_cleared_cursor_tick = 0,
-    last_surface = nil,
     linked_belt_render_objects = {},
     linked_belt_source = nil,
+    normal_state = nil,
     --- @type table<string, string|boolean>
     settings = {},
+    sync_data = nil,
   }
   global.players[player.index] = player_table
 

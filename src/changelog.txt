@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.8
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed several edge cases with the testing lab and switching forces while in the editor (#92)
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.7
 Date: 2022-02-25
