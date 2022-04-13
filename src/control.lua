@@ -62,6 +62,9 @@ remote.add_interface("EditorExtensions", {
     if not player or not player.valid then
       error("Did not pass a valid LuaPlayer")
     end
+    if not global.players then
+      return player.force
+    end
     local player_table = global.players[player.index]
     if player_table and player_table.normal_state and player.controller_type == defines.controllers.editor then
       return player_table.normal_state.force
@@ -533,26 +536,35 @@ event.on_player_setup_blueprint(function(e)
   local mapping = e.mapping.get()
 
   -- iterate each entity
+  local set = false
   for i = 1, #entities do
     local entity = entities[i]
     local entity_name = entity.name
     if constants.aggregate_chest_names[entity_name] then
+      set = true
       aggregate_chest.setup_blueprint(entity)
     elseif entity_name == "ee-infinity-loader-logic-combinator" then
+      set = true
       entities[i] = infinity_loader.setup_blueprint(entity)
     elseif entity_name == "ee-infinity-cargo-wagon" then
+      set = true
       entities[i] = infinity_wagon.setup_cargo_blueprint(entity, mapping[entity.entity_number])
     elseif entity_name == "ee-infinity-fluid-wagon" then
+      set = true
       entities[i] = infinity_wagon.setup_fluid_blueprint(entity, mapping[entity.entity_number])
     elseif entity_name == "ee-super-pump" then
+      set = true
       entities[i] = super_pump.setup_blueprint(entity, mapping[entity.entity_number])
     elseif infinity_pipe.check_is_our_pipe(entity) then
+      set = true
       entities[i] = infinity_pipe.setup_blueprint(entity, mapping[entity.entity_number])
     end
   end
 
   -- set entities
-  bp.set_blueprint_entities(entities)
+  if set then
+    bp.set_blueprint_entities(entities)
+  end
 end)
 
 event.on_pre_player_toggled_map_editor(function(e)
