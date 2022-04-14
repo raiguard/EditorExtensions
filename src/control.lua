@@ -10,7 +10,6 @@ local global_data = require("scripts.global-data")
 local inventory = require("scripts.inventory")
 local migrations = require("scripts.migrations")
 local player_data = require("scripts.player-data")
-
 local shared = require("scripts.shared")
 local testing_lab = require("scripts.testing-lab")
 local util = require("scripts.util")

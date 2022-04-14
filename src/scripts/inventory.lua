@@ -76,7 +76,7 @@ function inventory.get_from_sync_inventories(player_table, player)
             destination_inventory[i].transfer_stack(sync_inventory[i])
           end
           local hand_location = sync_table.hand_location
-          if hand_location then
+          if hand_location and hand_location <= #destination_inventory then
             player.hand_location = { inventory = inventory_def, slot = hand_location }
           end
         end

@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.10
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed a crash when holding an item in a slot that no longer exists while exiting the editor (#95)
 ---------------------------------------------------------------------------------------------------
 Version: 1.12.9
 Date: 2022-04-13
