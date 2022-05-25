@@ -6,7 +6,15 @@ local testing_lab = {}
 --- @param player_table table
 --- @param ts_setting? string
 function testing_lab.toggle(player, player_table, ts_setting)
-  local key = ts_setting == constants.testing_lab_setting.personal and player.index or "shared"
+  local key
+  if ts_setting == constants.testing_lab_setting.personal then
+    key = player.index
+  elseif game.forces["EE_TESTSURFACE_shared"] then
+    -- For versions prior to 1.13.0, all forces used the "shared" lab
+    key = "shared"
+  else
+    key = player.force.name
+  end
   local testing_surface_name = "EE_TESTSURFACE_" .. key
   local testing_force_name = "EE_TESTFORCE_" .. key
   local in_editor = player.controller_type == defines.controllers.editor
@@ -46,7 +54,14 @@ function testing_lab.toggle(player, player_table, ts_setting)
       end
 
       force = game.create_force(testing_force_name)
-      force.research_all_technologies()
+      if settings.global["ee-testing-lab-match-research"].value then
+        -- Sync research techs with the parent force
+        for name, tech in pairs(player.force.technologies) do
+          force.technologies[name].researched = tech.researched
+        end
+      else
+        force.research_all_technologies()
+      end
     end
 
     player_table.lab_state = { force = force, position = { x = 0, y = 0 }, surface = testing_surface }

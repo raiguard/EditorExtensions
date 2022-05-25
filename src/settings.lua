@@ -114,6 +114,13 @@ data:extend({
     default_value = true,
     order = "c",
   },
+  {
+    type = "bool-setting",
+    name = "ee-testing-lab-match-research",
+    setting_type = "runtime-global",
+    default_value = false,
+    order = "d",
+  },
   -- PLAYER SETTINGS
   {
     type = "bool-setting",

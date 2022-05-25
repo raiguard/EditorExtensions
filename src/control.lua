@@ -425,6 +425,69 @@ event.on_selected_entity_changed(function(e)
   linked_belt.render_connection(player, player_table)
 end)
 
+-- FORCE
+
+event.on_research_reversed(function(e)
+  local parent_force = e.research.force
+  -- Don't do anything if this is a testing force
+  if string.find(parent_force.name, "EE_TESTFORCE_") then
+    return
+  end
+
+  if settings.global["ee-testing-lab-match-research"].value then
+    local force = game.forces["EE_TESTFORCE_" .. parent_force.name]
+    if force then
+      force.technologies[e.research.name].researched = false
+    end
+
+    for i in pairs(parent_force.players) do
+      local force = game.forces["EE_TESTFORCE_" .. i]
+      if force then
+        force.technologies[e.research.name].researched = false
+      end
+    end
+  end
+end)
+
+event.on_research_finished(function(e)
+  local parent_force = e.research.force
+  -- Don't do anything if a testing force finished a research
+  if string.find(parent_force.name, "EE_TESTFORCE_") then
+    return
+  end
+
+  if settings.global["ee-testing-lab-match-research"].value then
+    local force = game.forces["EE_TESTFORCE_" .. parent_force.name]
+    if force then
+      force.technologies[e.research.name].researched = true
+    end
+
+    for i in pairs(parent_force.players) do
+      local force = game.forces["EE_TESTFORCE_" .. i]
+      if force then
+        force.technologies[e.research.name].researched = true
+      end
+    end
+  end
+end)
+
+event.on_force_reset(function(e)
+  local parent_force = e.force
+  -- Don't do anything if this is a testing force
+  if string.find(parent_force.name, "EE_TESTFORCE_") then
+    return
+  end
+
+  if settings.global["ee-testing-lab-match-research"].value then
+    local force = game.forces["EE_TESTFORCE_" .. parent_force.name]
+    -- Sync research techs with the parent force
+    for name, tech in pairs(parent_force.technologies) do
+      force.technologies[name].researched = tech.researched
+    end
+    force.reset_technology_effects()
+  end
+end)
+
 -- GUI
 
 gui.hook_events(function(e)
@@ -660,6 +723,33 @@ event.on_runtime_mod_setting_changed(function(e)
   if e.setting == "ee-aggregate-include-hidden" then
     aggregate_chest.update_data()
     aggregate_chest.update_all_filters()
+  elseif e.setting == "ee-testing-lab-match-research" then
+    for _, force in pairs(game.forces) do
+      local _, _, force_key = string.find(force.name, "EE_TESTFORCE_(.*)")
+      if force_key then
+        if settings.global["ee-testing-lab-match-research"].value then
+          local parent_force
+          if tonumber(force_key) then
+            parent_force = remote.call(
+              "EditorExtensions",
+              "get_player_proper_force",
+              game.get_player(tonumber(force_key))
+            )
+          else
+            parent_force = game.forces[force_key]
+          end
+          if parent_force then
+            -- Sync research techs with the parent force
+            for name, tech in pairs(parent_force.technologies) do
+              force.technologies[name].researched = tech.researched
+            end
+          end
+        else
+          force.research_all_technologies()
+        end
+        force.reset_technology_effects()
+      end
+    end
   elseif game.mod_setting_prototypes[e.setting].mod == "EditorExtensions" and e.setting_type == "runtime-per-user" then
     local player = game.get_player(e.player_index)
     local player_table = global.players[e.player_index]
