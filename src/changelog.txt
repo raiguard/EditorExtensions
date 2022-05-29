@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.0
-Date: ????
+Date: 2022-05-29
   Features:
     - Added a map setting to sync testing force technologies with their parent forces
   Changes:
