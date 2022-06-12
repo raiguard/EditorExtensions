@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.1
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed a crash when toggling the editor while holding an item from the ammor or armor inventories with inventory sync enabled (https://todo.sr.ht/~raiguard/factorio-mods/27)
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.0
 Date: 2022-05-29

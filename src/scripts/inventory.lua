@@ -55,7 +55,7 @@ function inventory.get_from_sync_inventories(player_table, player)
   local prefix = reverse_defines.controllers[player.controller_type] .. "_"
   -- iterate all inventories
   local sync_data = player_table.sync_data
-  for _, name in ipairs({ "ammo", "armor", "cursor", "guns", "main" }) do
+  for _, name in ipairs({ "cursor", "main", "guns", "armor", "ammo" }) do
     local sync_table = sync_data[name]
     -- god mode doesn't have every inventory
     if sync_table then
