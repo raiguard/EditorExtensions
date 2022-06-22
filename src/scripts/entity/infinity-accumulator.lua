@@ -265,6 +265,18 @@ local function handle_gui_action(e, msg)
   local player = game.get_player(e.player_index)
   local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
+  -- See https://todo.sr.ht/~raiguard/factorio-mods/34
+  if not gui_data then
+    -- We foolishly did not name the window, so walk backwards until we find it
+    local elem = e.element
+    local parent = e.element.parent
+    while parent.name ~= "screen" do
+      elem = parent
+      parent = elem.parent
+    end
+    elem.destroy()
+    return
+  end
   local state = gui_data.state
   local refs = gui_data.refs
 

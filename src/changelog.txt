@@ -2,6 +2,7 @@
 Version: 1.13.2
 Date: ????
   Bugfixes:
+    - Fixed a crash when the infinity accumulator GUI data is deleted, but the GUI remains behind (https://todo.sr.ht/~raiguard/factorio-mods/34)
     - Fixed that items could get deleted from your inventory when exiting the editor (https://todo.sr.ht/~raiguard/factorio-mods/33)
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.1
