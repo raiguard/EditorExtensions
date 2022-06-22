@@ -7,6 +7,7 @@ local reverse_defines = require("__flib__.reverse-defines")
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
+--- @param player LuaPlayer
 function inventory.create_sync_inventories(player_table, player)
   -- determine prefix based on controller type
   local prefix = reverse_defines.controllers[player.controller_type] .. "_"
@@ -55,7 +56,8 @@ function inventory.get_from_sync_inventories(player_table, player)
   local prefix = reverse_defines.controllers[player.controller_type] .. "_"
   -- iterate all inventories
   local sync_data = player_table.sync_data
-  for _, name in ipairs({ "cursor", "main", "guns", "armor", "ammo" }) do
+  -- Cursor first to allow setting the hand, then armor to correct the inventory size
+  for _, name in ipairs({ "cursor", "armor", "main", "guns", "ammo" }) do
     local sync_table = sync_data[name]
     -- god mode doesn't have every inventory
     if sync_table then
