@@ -51,6 +51,7 @@ function inventory.create_sync_inventories(player_table, player)
   player_table.sync_data = sync_tables
 end
 
+--- @param player LuaPlayer
 function inventory.get_from_sync_inventories(player_table, player)
   -- determine prefix based on controller type
   local prefix = reverse_defines.controllers[player.controller_type] .. "_"
@@ -75,6 +76,7 @@ function inventory.get_from_sync_inventories(player_table, player)
             if supports_filters then
               set_filter(i, sync_filters[i])
             end
+            destination_inventory[i].clear()
             destination_inventory[i].transfer_stack(sync_inventory[i])
           end
           local hand_location = sync_table.hand_location
