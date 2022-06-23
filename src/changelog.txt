@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.3
-Date: ????
+Date: 2022-06-22
   Changes:
     - Inventory sync will overwrite the destination inventory's contents (https://todo.sr.ht/~raiguard/factorio-mods/36)
 ---------------------------------------------------------------------------------------------------
