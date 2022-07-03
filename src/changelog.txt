@@ -4,6 +4,7 @@ Date: ????
   Features:
     - Warn the player about the passage of time when entering the testing lab for the first time (https://todo.sr.ht/~raiguard/factorio-mods/44)
   Bugfixes:
+    - Fixed duplicate info icons on mod settings with tooltips in newer versions of Factorio
     - Fixed that two surfaces were being created per testing lab
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.3
