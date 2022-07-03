@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.4
-Date: ????
+Date: 2022-07-03
   Features:
     - Warn the player about the passage of time when entering the testing lab for the first time (https://todo.sr.ht/~raiguard/factorio-mods/44)
   Bugfixes:
