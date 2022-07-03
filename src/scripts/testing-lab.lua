@@ -13,7 +13,8 @@ function testing_lab.toggle(player, player_table, ts_setting)
     -- For versions prior to 1.13.0, all forces used the "shared" lab
     key = "shared"
   else
-    key = player.force.name
+    -- Use the actual force name, not the testing lab force name
+    key = string.gsub(player.force.name, "EE_TESTFORCE_", "")
   end
   local testing_surface_name = "EE_TESTSURFACE_" .. key
   local testing_force_name = "EE_TESTFORCE_" .. key
