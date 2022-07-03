@@ -42,6 +42,9 @@ function testing_lab.toggle(player, player_table, ts_setting)
       testing_surface.freeze_daytime = true
       testing_surface.show_clouds = false
       testing_surface.daytime = 0
+      -- Warn the player about the passage of time
+      player.print({ "ee-message.time-passes-in-lab" })
+      player.print(testing_surface_name)
     end
 
     local force = game.forces[testing_force_name]
