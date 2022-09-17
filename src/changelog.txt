@@ -3,6 +3,7 @@ Version: 1.13.5
 Date: ????
   Bugfixes:
     - Fixed several crashes when processing blueprints that have been edited by other mods (https://todo.sr.ht/~raiguard/factorio-mods/64)
+    - Fixed that the infinity pipe's amount type was not carried over when adjusting the capacity
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.4
 Date: 2022-07-03

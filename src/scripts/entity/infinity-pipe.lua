@@ -12,8 +12,10 @@ local infinity_pipe = {}
 
 --- @param entity LuaEntity
 --- @param new_name string
+--- @return LuaEntity
 local function swap_entity(entity, new_name)
-  return entity.surface.create_entity({
+  local amount_type = infinity_pipe.remove_stored_amount_type(entity)
+  local new_entity = entity.surface.create_entity({
     name = new_name,
     position = entity.position,
     direction = entity.direction,
@@ -21,7 +23,9 @@ local function swap_entity(entity, new_name)
     fast_replace = true,
     create_build_effect_smoke = false,
     spill = false,
-  })
+  }) --[[@as LuaEntity]]
+  infinity_pipe.store_amount_type(new_entity, { EditorExtensions = { amount_type = amount_type } })
+  return new_entity
 end
 
 -- BOOTSTRAP
@@ -41,8 +45,11 @@ function infinity_pipe.store_amount_type(entity, tags)
 end
 
 --- @param entity LuaEntity
+--- @return number?
 function infinity_pipe.remove_stored_amount_type(entity)
+  local value = global.infinity_pipe_amount_types[entity.unit_number]
   global.infinity_pipe_amount_types[entity.unit_number] = nil
+  return value
 end
 
 --- @param entity BlueprintEntity|LuaEntity
@@ -75,12 +82,11 @@ function infinity_pipe.paste_settings(source, destination)
   return destination
 end
 
--- TODO: Move the player setting check out of here?
 --- @param entity LuaEntity
 --- @param player_settings table
 function infinity_pipe.snap(entity, player_settings)
   local own_id = entity.unit_number
-
+  -- TODO: Move the player setting check out of here?
   if player_settings.infinity_pipe_crafter_snapping then
     for _, fluidbox in ipairs(entity.fluidbox.get_connections(1)) do
       local owner_type = fluidbox.owner.type
