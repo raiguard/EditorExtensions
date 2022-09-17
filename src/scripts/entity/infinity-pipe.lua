@@ -41,7 +41,7 @@ function infinity_pipe.remove_stored_amount_type(entity)
   global.infinity_pipe_amount_types[entity.unit_number] = nil
 end
 
---- @param entity LuaEntity
+--- @param entity BlueprintEntity|LuaEntity
 function infinity_pipe.check_is_our_pipe(entity)
   return string.find(entity.name, "^ee%-infinity%-pipe%-%d+$")
 end
@@ -83,6 +83,7 @@ function infinity_pipe.snap(entity, player_settings)
       local owner_type = fluidbox.owner.type
       if constants.ip_crafter_snapping_types[owner_type] then
         for i = 1, #fluidbox do
+          --- @cast i uint
           local connections = fluidbox.get_connections(i)
           for j = 1, #connections do
             if connections[j].owner.unit_number == own_id then
@@ -119,7 +120,7 @@ end
 --- @field temperature_slider LuaGuiElement
 --- @field temperature_textfield LuaGuiElement
 
---- @type InfinityPipeGui
+--- @class InfinityPipeGui
 local Gui = {}
 
 --- @param e on_gui_selection_state_changed
@@ -301,7 +302,7 @@ function Gui:display_fluid_contents()
 end
 
 -- Updates all GUI elements and sets the filter on the entity
---- @param update_entity_preview boolean
+--- @param update_entity_preview boolean?
 function Gui:update(update_entity_preview)
   -- Entity preview
   if update_entity_preview then
@@ -323,7 +324,7 @@ function Gui:update(update_entity_preview)
   local amount = 0
   if filter then
     if self.state.amount_type == constants.infinity_pipe_amount_type.percent then
-      amount = math.round_to(filter.percentage * 100, 2)
+      amount = math.round(filter.percentage * 100, 0.01)
     else
       amount = math.round(filter.percentage * self.state.capacity)
     end
@@ -350,7 +351,7 @@ function Gui:update(update_entity_preview)
     button.state = gui.get_tags(button).mode == mode
   end
 
-  -- Calculate temperature range
+  -- Get minimum and maximum temperatures
   local min_temp = 0
   local max_temp = 0
   if filter then
@@ -359,12 +360,12 @@ function Gui:update(update_entity_preview)
     max_temp = prototype.max_temperature
   end
 
+  -- Slider and textfield
   local temperature_slider = self.refs.temperature_slider
   local temperature_textfield = self.refs.temperature_textfield
-  if min_temp ~= max_temp then
+  if filter and min_temp ~= max_temp then
     temperature_slider.enabled = true
     temperature_slider.set_slider_minimum_maximum(min_temp, max_temp)
-    -- If we are here, then `filter` is guaranteed to exist
     temperature_slider.slider_value = filter.temperature
     temperature_textfield.enabled = true
   else
@@ -397,10 +398,10 @@ function Gui:dispatch(msg, e)
   end
 end
 
---- @param player_index number
+--- @param player_index uint
 --- @param entity LuaEntity
 function infinity_pipe.create_gui(player_index, entity)
-  local player = game.get_player(player_index)
+  local player = game.get_player(player_index) --- @cast player LuaPlayer
   local player_table = global.players[player_index]
 
   local radio_buttons = {}
