@@ -1,5 +1,6 @@
 local infinity_inserter = {}
 
+--- @param entity LuaEntity
 function infinity_inserter.snap(entity)
   local control = entity.get_control_behavior()
   if not control then

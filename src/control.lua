@@ -28,7 +28,7 @@ local super_pump = require("scripts.entity.super-pump")
 
 commands.add_command("cheatmode", { "command-help.cheatmode" }, function(e)
   local parameter = e.parameter
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   if not parameter then
     util.freeze_time_on_all_surfaces(player)
     cheat_mode.enable(player)
@@ -139,7 +139,7 @@ end)
 -- CHEAT MODE
 
 event.on_player_cheat_mode_enabled(function(e)
-  local player = game.get_player(e.player_index)
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
 
   -- if the scenario enabled it, the player hasn't been initialized yet
@@ -158,7 +158,7 @@ end)
 -- CUSTOM INPUT
 
 event.register("ee-toggle-map-editor", function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   -- quick item search compatibility
   if not compatibility.in_qis_window(player) then
@@ -171,7 +171,7 @@ event.register("ee-toggle-map-editor", function(e)
 end)
 
 event.register("ee-open-gui", function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected then
     if infinity_wagon.check_is_wagon(selected) then
@@ -195,7 +195,7 @@ event.register("ee-open-gui", function(e)
 end)
 
 event.register("ee-copy-entity-settings", function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) and selected.linked_belt_neighbour then
     local player_table = global.players[e.player_index]
@@ -204,7 +204,7 @@ event.register("ee-copy-entity-settings", function(e)
 end)
 
 event.register("ee-paste-entity-settings", function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) then
     local player_table = global.players[e.player_index]
@@ -217,7 +217,7 @@ event.register("ee-paste-entity-settings", function(e)
 end)
 
 event.register("ee-fast-entity-transfer", function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) then
     linked_belt.sync_belt_types(player, selected)
@@ -227,7 +227,7 @@ end)
 event.register("ee-clear-cursor", function(e)
   local player_table = global.players[e.player_index]
   if player_table.flags.connecting_linked_belts then
-    local player = game.get_player(e.player_index)
+    local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
     linked_belt.cancel_connection(player, player_table)
     player_table.last_cleared_cursor_tick = game.ticks_played
   end
@@ -300,7 +300,7 @@ event.register({
     local players = global.linked_belt_sources[entity.unit_number]
     if players then
       for player_index in pairs(players) do
-        local player = game.get_player(player_index)
+        local player = game.get_player(player_index) --[[@as LuaPlayer]]
         local player_table = global.players[player_index]
         linked_belt.cancel_connection(player, player_table)
       end
@@ -421,7 +421,7 @@ event.on_entity_settings_pasted(function(e)
 end)
 
 event.on_selected_entity_changed(function(e)
-  local player = game.get_player(e.player_index)
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   linked_belt.render_connection(player, player_table)
 end)
@@ -521,7 +521,7 @@ gui.hook_events(function(e)
       elseif entity_name == "ee-super-pump" then
         super_pump.open(e.player_index, entity)
       elseif infinity_wagon.check_is_wagon(entity) then
-        local player = game.get_player(e.player_index)
+        local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
         infinity_wagon.open(player, entity)
       end
     end
@@ -543,7 +543,7 @@ end)
 -- PLAYER
 
 event.on_player_created(function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   player_data.init(player)
 
@@ -569,13 +569,13 @@ event.on_player_removed(function(e)
 end)
 
 event.register({ defines.events.on_player_promoted, defines.events.on_player_demoted }, function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   -- lock or unlock the shortcut depending on if they're an admin
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
 end)
 
 event.on_player_setup_blueprint(function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   -- get blueprint
   local blueprint = player.blueprint_to_setup
@@ -636,7 +636,7 @@ event.on_pre_player_toggled_map_editor(function(e)
     return
   end
   if player_table.settings.inventory_sync_enabled then
-    local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+    local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
     inventory.create_sync_inventories(player_table, player)
   end
 end)
@@ -655,7 +655,7 @@ event.on_player_toggled_map_editor(function(e)
     end
   end
 
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local to_state = player.controller_type == defines.controllers.editor
 
   -- update shortcut toggled state
@@ -703,12 +703,16 @@ event.on_player_toggled_map_editor(function(e)
   -- Toggle surface
   local ts_setting = player_table.settings.testing_lab
   if ts_setting ~= constants.testing_lab_setting.off then
-    testing_lab.toggle(player, player_table, ts_setting)
+    testing_lab.toggle(
+      player,
+      player_table,
+      ts_setting --[[@as number]]
+    )
   end
 end)
 
 event.on_player_cursor_stack_changed(function(e)
-  local player = game.get_player(e.player_index) --- @cast player LuaPlayer
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   if player_table.flags.connecting_linked_belts then
     linked_belt.cancel_connection(player, player_table)
@@ -733,7 +737,7 @@ event.on_runtime_mod_setting_changed(function(e)
           local parent_force
           local force_key_num = tonumber(force_key) --- @cast force_key_num uint?
           if force_key_num then
-            local player = game.get_player(force_key_num) --- @cast player LuaPlayer
+            local player = game.get_player(force_key_num) --[[@as LuaPlayer]]
             parent_force = remote.call("EditorExtensions", "get_player_proper_force", player)
           else
             parent_force = game.forces[force_key]
@@ -751,7 +755,7 @@ event.on_runtime_mod_setting_changed(function(e)
       end
     end
   elseif game.mod_setting_prototypes[e.setting].mod == "EditorExtensions" and e.setting_type == "runtime-per-user" then
-    local player = game.get_player(e.player_index)
+    local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
     local player_table = global.players[e.player_index]
     player_data.update_settings(player, player_table)
   end

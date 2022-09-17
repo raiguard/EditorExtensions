@@ -10,6 +10,8 @@ local util = require("scripts.util")
 
 local infinity_pipe = {}
 
+--- @param entity LuaEntity
+--- @param new_name string
 local function swap_entity(entity, new_name)
   return entity.surface.create_entity({
     name = new_name,
@@ -30,6 +32,8 @@ end
 
 -- ENTITY
 
+--- @param entity LuaEntity
+--- @param tags table?
 function infinity_pipe.store_amount_type(entity, tags)
   if tags and tags.EditorExtensions then
     global.infinity_pipe_amount_types[entity.unit_number] = tags.EditorExtensions.amount_type
@@ -154,7 +158,7 @@ function Gui:change_capacity(_, e)
 end
 
 function Gui:change_fluid()
-  local fluid_name = self.refs.fluid_button.elem_value
+  local fluid_name = self.refs.fluid_button.elem_value --[[@as string]]
   local filter = self.state.filter
   if fluid_name then
     local prototype = game.fluid_prototypes[fluid_name]
@@ -401,7 +405,7 @@ end
 --- @param player_index uint
 --- @param entity LuaEntity
 function infinity_pipe.create_gui(player_index, entity)
-  local player = game.get_player(player_index) --- @cast player LuaPlayer
+  local player = game.get_player(player_index) --[[@as LuaPlayer]]
   local player_table = global.players[player_index]
 
   local radio_buttons = {}

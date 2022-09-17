@@ -9,11 +9,15 @@ local constants = require("scripts.constants")
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
+--- @param name string
 local function get_settings_from_name(name)
   local _, _, priority, mode = string.find(name, "^ee%-infinity%-accumulator%-(%a+)%-(%a+)$")
   return priority, mode
 end
 
+--- @param entity LuaEntity
+--- @param mode string
+--- @param buffer_size double?
 local function set_entity_settings(entity, mode, buffer_size)
   local watts = util.parse_energy((buffer_size * 60) .. "W")
 
@@ -32,6 +36,10 @@ local function set_entity_settings(entity, mode, buffer_size)
   end
 end
 
+--- @param entity LuaEntity
+--- @param priority string
+--- @param mode string
+--- @return LuaEntity?
 local function change_entity(entity, priority, mode)
   local new_entity = entity.surface.create_entity({
     name = "ee-infinity-accumulator-" .. priority .. "-" .. mode,
@@ -40,6 +48,9 @@ local function change_entity(entity, priority, mode)
     last_user = entity.last_user,
     create_build_effect_smoke = false,
   })
+  if not new_entity then
+    return
+  end
 
   -- calculate new buffer size
   local buffer_size = entity.electric_buffer_size
@@ -66,7 +77,7 @@ local function calc_gui_values(buffer_size, mode)
   -- `power` is the dropdown value - how many sets of three orders of magnitude there are, rounded down
   local power = math.floor((len - 1) / 3)
   -- slider value is the buffer size scaled to its base-three order of magnitude
-  return math.floor_to(buffer_size / 10 ^ (power * 3), 3), math.max(power, 1)
+  return math.floored(buffer_size / 10 ^ (power * 3), 0.001), math.max(power, 1)
 end
 
 -- returns the entity buffer size based on the slider value and dropdown selected index
@@ -79,6 +90,9 @@ end
 
 -- TODO: when changing settings, update GUI for everyone to avoid crashes
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+--- @param entity LuaEntity
 local function create_gui(player, player_table, entity)
   local priority, mode = get_settings_from_name(entity.name)
   local slider_value, dropdown_index = calc_gui_values(entity.electric_buffer_size, mode)
@@ -211,6 +225,7 @@ local function create_gui(player, player_table, entity)
 
   player.opened = refs.window
 
+  --- @class InfinityAccumulatorGuiData
   player_table.gui.ia = {
     state = {
       entity = entity,
@@ -220,12 +235,16 @@ local function create_gui(player, player_table, entity)
   }
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
 local function destroy_gui(player, player_table)
   player_table.gui.ia.refs.window.destroy()
   player_table.gui.ia = nil
   player.play_sound({ path = "entity-close/ee-infinity-accumulator-tertiary-buffer" })
 end
 
+--- @param gui_data InfinityAccumulatorGuiData
+--- @param mode string
 local function update_gui_mode(gui_data, mode)
   local refs = gui_data.refs
   if mode == "buffer" then
@@ -240,6 +259,7 @@ local function update_gui_mode(gui_data, mode)
   refs.preview.entity = gui_data.state.entity
 end
 
+--- @param gui_data InfinityAccumulatorGuiData
 local function update_gui_settings(gui_data)
   local state = gui_data.state
   local refs = gui_data.refs
@@ -262,7 +282,7 @@ local function update_gui_settings(gui_data)
 end
 
 local function handle_gui_action(e, msg)
-  local player = game.get_player(e.player_index)
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.ia
   -- See https://todo.sr.ht/~raiguard/factorio-mods/34
@@ -315,7 +335,7 @@ local function handle_gui_action(e, msg)
     else
       refs.slider_textfield.style = "ee_slider_textfield"
 
-      local processed_value = math.round_to(math.clamp(new_value, 0, 999.999), 3)
+      local processed_value = math.round(math.clamp(new_value, 0, 999.999), 0.001)
       state.power = processed_value
       refs.slider.slider_value = processed_value
 
@@ -340,13 +360,17 @@ end
 -- -----------------------------------------------------------------------------
 -- FUNCTIONS
 
+--- @param player_index uint
+--- @param entity LuaEntity
 function infinity_accumulator.open(player_index, entity)
-  local player = game.get_player(player_index)
+  local player = game.get_player(player_index) --[[@as LuaPlayer]]
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
   player.play_sound({ path = "entity-open/ee-infinity-accumulator-tertiary-buffer" })
 end
 
+--- @param source LuaEntity
+--- @param destination LuaEntity
 function infinity_accumulator.paste_settings(source, destination)
   -- get players viewing the destination accumulator
   local to_update = {}
@@ -374,7 +398,8 @@ end
 function infinity_accumulator.close_open_guis(entity)
   for player_index, player_table in pairs(global.players) do
     if player_table.gui.ia and player_table.gui.ia.state.entity == entity then
-      destroy_gui(game.get_player(player_index), player_table)
+      local player = game.get_player(player_index) --[[@as LuaPlayer]]
+      destroy_gui(player, player_table)
     end
   end
 end

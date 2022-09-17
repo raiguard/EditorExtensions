@@ -7,6 +7,7 @@ local reverse_defines = require("__flib__.reverse-defines")
 -- -----------------------------------------------------------------------------
 -- INVENTORY AND CURSOR STACK SYNC
 
+--- @param player_table PlayerTable
 --- @param player LuaPlayer
 function inventory.create_sync_inventories(player_table, player)
   -- determine prefix based on controller type
@@ -26,13 +27,14 @@ function inventory.create_sync_inventories(player_table, player)
         sync_inventory[1].transfer_stack(cursor_stack)
       end
     elseif inventory_def then
-      local source_inventory = player.get_inventory(inventory_def)
+      local source_inventory = player.get_inventory(inventory_def) --[[@as LuaInventory]]
       local get_filter = source_inventory.get_filter
       local set_filter = source_inventory.set_filter
       local supports_filters = source_inventory.supports_filters()
-      local source_inventory_len = #source_inventory
+      local source_inventory_len = #source_inventory --[[@as uint16]]
       sync_inventory = game.create_inventory(source_inventory_len)
       for i = 1, source_inventory_len do
+        --- @cast i uint
         sync_inventory[i].transfer_stack(source_inventory[i])
         if supports_filters then
           sync_filters[i] = get_filter(i)
@@ -51,6 +53,7 @@ function inventory.create_sync_inventories(player_table, player)
   player_table.sync_data = sync_tables
 end
 
+--- @param player_table PlayerTable
 --- @param player LuaPlayer
 function inventory.get_from_sync_inventories(player_table, player)
   -- determine prefix based on controller type
@@ -69,10 +72,11 @@ function inventory.get_from_sync_inventories(player_table, player)
       else
         local inventory_def = defines.inventory[prefix .. name]
         if inventory_def then
-          local destination_inventory = player.get_inventory(inventory_def)
+          local destination_inventory = player.get_inventory(inventory_def) --[[@as LuaInventory]]
           local set_filter = destination_inventory.set_filter
           local supports_filters = destination_inventory.supports_filters()
           for i = 1, math.min(#destination_inventory, #sync_inventory) do
+            --- @cast i uint
             if supports_filters then
               set_filter(i, sync_filters[i])
             end
@@ -107,23 +111,25 @@ function inventory.import_filters(player, string)
     -- extract version for migrations
     local _, _, version, json = string.find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
     local input = game.json_to_table(json)
-    -- run migrations
-    migration.run(version, filters_table_migrations, nil, input)
-    -- sanitize the filters to only include currently existing prototypes
-    local item_prototypes = game.item_prototypes
-    local output = {}
-    local output_index = 0
-    local filters = input.filters
-    for i = 1, #filters do
-      local filter = filters[i]
-      if item_prototypes[filter.name] then
-        output_index = output_index + 1
-        output[output_index] = { name = filter.name, count = filter.count, mode = filter.mode, index = output_index }
+    if input then
+      -- run migrations
+      migration.run(version, filters_table_migrations, nil, input)
+      -- sanitize the filters to only include currently existing prototypes
+      local item_prototypes = game.item_prototypes
+      local output = {}
+      local output_index = 0
+      local filters = input.filters
+      for i = 1, #filters do
+        local filter = filters[i]
+        if item_prototypes[filter.name] then
+          output_index = output_index + 1
+          output[output_index] = { name = filter.name, count = filter.count, mode = filter.mode, index = output_index }
+        end
       end
+      player.infinity_inventory_filters = output
+      player.remove_unfiltered_items = input.remove_unfiltered_items
+      return true
     end
-    player.infinity_inventory_filters = output
-    player.remove_unfiltered_items = input.remove_unfiltered_items
-    return true
   end
   return false
 end
@@ -142,6 +148,9 @@ end
 -- -----------------------------------------------------------------------------
 -- INFINITY INVENTORY FILTERS GUI
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+--- @param mode string
 local function open_string_gui(player, player_table, mode)
   -- create GUI
   local refs = gui.build(player.gui.screen, {
@@ -174,9 +183,13 @@ local function open_string_gui(player, player_table, mode)
               clear_and_focus_on_right_click = true,
               text = mode == "import" and "" or export_filters(player),
               elem_mods = { word_wrap = true },
-              actions = (mode == "import" and {
-                on_text_changed = { gui = "inv_filters", action = "update_confirm_button_enabled" },
-              } or nil),
+              actions = (
+                mode == "import"
+                  and {
+                    on_text_changed = { gui = "inv_filters", action = "update_confirm_button_enabled" },
+                  }
+                or nil
+              ),
               ref = { "textbox" },
             },
           },
@@ -222,12 +235,15 @@ local function open_string_gui(player, player_table, mode)
   player_table.gui.inventory_filters_string = refs
 end
 
+--- @param player_table PlayerTable
 local function close_string_gui(player_table)
   local refs = player_table.gui.inventory_filters_string
   refs.window.destroy()
   player_table.gui.inventory_filters_string = nil
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
 function inventory.create_filters_buttons(player, player_table)
   local refs = gui.build(player.gui.relative, {
     {
@@ -270,6 +286,7 @@ function inventory.create_filters_buttons(player, player_table)
   player_table.gui.inventory_filters_buttons = refs
 end
 
+--- @param player_table PlayerTable
 function inventory.destroy_filters_buttons(player_table)
   local buttons_gui_data = player_table.gui.inventory_filters_buttons
   if buttons_gui_data then
@@ -278,6 +295,7 @@ function inventory.destroy_filters_buttons(player_table)
   end
 end
 
+--- @param player_index uint
 function inventory.close_string_gui(player_index)
   local player = game.get_player(player_index)
   local player_table = global.players[player_index]
@@ -291,7 +309,7 @@ function inventory.close_string_gui(player_index)
 end
 
 function inventory.handle_gui_action(e, msg)
-  local player = game.get_player(e.player_index)
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   local refs = player_table.gui.inventory_filters_string
 

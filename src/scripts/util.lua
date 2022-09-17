@@ -5,6 +5,7 @@ local constants = require("scripts.constants")
 
 -- GENERAL
 
+--- @param player LuaPlayer
 function util.freeze_time_on_all_surfaces(player)
   player.print({ "ee-message.time-frozen" })
   for _, surface in pairs(game.surfaces) do
@@ -16,6 +17,7 @@ end
 util.position = math2d.position
 
 -- creates an area that is the tile the position is contained in
+--- @param pos MapPosition
 function util.position.to_tile_area(pos)
   return {
     left_top = { x = math.floor(pos.x), y = math.floor(pos.y) },
@@ -53,6 +55,9 @@ function util.close_button(actions)
   }
 end
 
+--- @param player LuaPlayer
+--- @param text LocalisedString
+--- @position MapPosition?
 function util.error_text(player, text, position)
   player.create_local_flying_text({
     text = text,

@@ -1,11 +1,13 @@
 local infinity_wagon = {}
 
+--- @param entity LuaEntity
+--- @param tags table?
 function infinity_wagon.build(entity, tags)
   local proxy = entity.surface.create_entity({
     name = "ee-infinity-wagon-" .. (entity.name == "ee-infinity-cargo-wagon" and "chest" or "pipe"),
     position = entity.position,
     force = entity.force,
-  })
+  }) --[[@as LuaEntity]]
   -- create all api lookups here to save time in on_tick()
   local data = {
     flip = 0,
@@ -36,27 +38,30 @@ function infinity_wagon.build(entity, tags)
   end
 end
 
--- clear the wagon's inventory and set FLIP to 3 to prevent it from being refilled
+--- Clear the wagon's inventory and set FLIP to 3 to prevent it from being refilled
+--- @param entity LuaEntity
 function infinity_wagon.clear_inventory(entity)
   global.wagons[entity.unit_number].flip = 3
   entity.get_inventory(defines.inventory.cargo_wagon).clear()
 end
 
--- restart syncing the proxy's inventory
+--- Restart syncing the proxy's inventory
+--- @param entity LuaEntity
 function infinity_wagon.reset(entity)
   global.wagons[entity.unit_number].flip = 0
 end
 
+--- @param entity LuaEntity
 function infinity_wagon.destroy(entity)
   global.wagons[entity.unit_number].proxy.destroy()
   global.wagons[entity.unit_number] = nil
 end
 
+--- @param selected LuaEntity
 function infinity_wagon.check_is_wagon(selected)
   return selected.name == "ee-infinity-cargo-wagon" or selected.name == "ee-infinity-fluid-wagon"
 end
 
--- called during `on_tick`
 function infinity_wagon.flip_inventories()
   local abs = math.abs
   for _, t in pairs(global.wagons) do
@@ -110,14 +115,20 @@ function infinity_wagon.flip_inventories()
   end
 end
 
+--- @param player LuaPlayer
+--- @param entity LuaEntity
 function infinity_wagon.open(player, entity)
   player.opened = global.wagons[entity.unit_number].proxy
 end
 
+--- @param source LuaEntity
+--- @param destination LuaEntity
 function infinity_wagon.paste_settings(source, destination)
   global.wagons[destination.unit_number].proxy.copy_settings(global.wagons[source.unit_number].proxy)
 end
 
+--- @param blueprint_entity BlueprintEntity
+--- @param entity LuaEntity
 function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
   if entity then
     local proxy = global.wagons[entity.unit_number].proxy
@@ -132,6 +143,8 @@ function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
   return blueprint_entity
 end
 
+--- @param blueprint_entity BlueprintEntity
+--- @param entity LuaEntity
 function infinity_wagon.setup_fluid_blueprint(blueprint_entity, entity)
   if entity then
     if not blueprint_entity.tags then

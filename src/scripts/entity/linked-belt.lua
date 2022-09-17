@@ -5,10 +5,15 @@ local util = require("scripts.util")
 
 local linked_belt = {}
 
+--- @param entity LuaEntity
 function linked_belt.check_is_linked_belt(entity)
   return string.find(entity.name, "ee%-linked%-belt")
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+--- @param entity LuaEntity
+--- @param shift boolean?
 function linked_belt.start_connection(player, player_table, entity, shift)
   local neighbour = entity.linked_belt_neighbour
   local source
@@ -31,6 +36,10 @@ function linked_belt.start_connection(player, player_table, entity, shift)
   linked_belt.render_connection(player, player_table)
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+--- @param entity LuaEntity
+--- @param shift boolean?
 function linked_belt.finish_connection(player, player_table, entity, shift)
   local neighbour = entity.linked_belt_neighbour
   local source = player_table.linked_belt_source
@@ -54,6 +63,8 @@ function linked_belt.finish_connection(player, player_table, entity, shift)
   end
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
 function linked_belt.cancel_connection(player, player_table)
   player_table.flags.connecting_linked_belts = false
   local source = player_table.linked_belt_source
@@ -66,11 +77,20 @@ function linked_belt.cancel_connection(player, player_table)
   linked_belt.render_connection(player, player_table)
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+--- @param entity LuaEntity
 function linked_belt.sever_connection(player, player_table, entity)
   entity.disconnect_linked_belts()
   linked_belt.render_connection(player, player_table)
 end
 
+--- @param objects table
+--- @param color Color
+--- @param dashed boolean
+--- @param player_index uint
+--- @param source LuaEntity
+--- @param destination LuaEntity?
 local function draw_connection(objects, color, dashed, player_index, source, destination)
   for _, entity in ipairs({ source, destination }) do
     objects[#objects + 1] = rendering.draw_circle({
@@ -103,6 +123,8 @@ local colors = {
   teal = { r = 0.5, g = 1, b = 1 },
 }
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
 function linked_belt.render_connection(player, player_table)
   local objects = player_table.linked_belt_render_objects
   for i = 1, #objects do
@@ -139,6 +161,7 @@ function linked_belt.render_connection(player, player_table)
   player_table.linked_belt_render_objects = objects
 end
 
+--- @param e on_player_rotated_entity
 function linked_belt.handle_rotation(e)
   local entity = e.entity
 
@@ -158,6 +181,7 @@ end
 
 -- SNAPPING
 
+--- @param belt LuaEntity
 local function get_linked_belt_direction(belt)
   if belt.linked_belt_type == "output" then
     return direction.opposite(belt.direction)
@@ -165,6 +189,8 @@ local function get_linked_belt_direction(belt)
   return belt.direction
 end
 
+--- @param entity LuaEntity
+--- @param new_type string
 local function replace_linked_belt(entity, new_type)
   local entity_data = {
     direction = get_linked_belt_direction(entity),
@@ -190,6 +216,8 @@ local function replace_linked_belt(entity, new_type)
   return new_entity
 end
 
+--- @param entity LuaEntity
+--- @param target LuaEntity?
 function linked_belt.snap(entity, target)
   if not entity or not entity.valid then
     return
@@ -232,6 +260,8 @@ function linked_belt.snap(entity, target)
   end
 end
 
+--- @param player LuaPlayer
+--- @param entity LuaEntity
 function linked_belt.sync_belt_types(player, entity)
   local neighbour = entity.linked_belt_neighbour
   if neighbour then

@@ -11,6 +11,8 @@ local util = require("scripts.util")
 
 -- TODO: keep disabled until both connections are made, to avoid WATER HAMMER
 
+--- @param entity LuaEntity
+--- @param speed number
 local function set_speed(entity, speed)
   entity.fluidbox[2] = {
     name = "ee-super-pump-speed-fluid",
@@ -19,6 +21,7 @@ local function set_speed(entity, speed)
   }
 end
 
+--- @param entity LuaEntity
 local function get_speed(entity)
   return math.floor(entity.fluidbox[2].temperature)
 end
@@ -26,6 +29,7 @@ end
 -- -----------------------------------------------------------------------------
 -- GUI
 
+--- @param speed number
 local function to_slider_value(speed)
   local index
   if speed == 0 then
@@ -42,10 +46,12 @@ local function to_slider_value(speed)
   return constants.sp_temperature_to_slider[index]
 end
 
+--- @param value number
 local function from_slider_value(value)
   return constants.sp_slider_to_temperature[value]
 end
 
+--- @param gui_data SuperPumpGuiData
 local function update_gui(gui_data)
   local entity = gui_data.state.entity
   local refs = gui_data.refs
@@ -58,6 +64,9 @@ local function update_gui(gui_data)
   refs.speed_textfield.text = tostring(speed)
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+--- @param entity LuaEntity
 local function create_gui(player, player_table, entity)
   local refs = gui.build(player.gui.screen, {
     {
@@ -167,6 +176,7 @@ local function create_gui(player, player_table, entity)
   refs.titlebar_flow.drag_target = refs.window
   refs.window.force_auto_center()
 
+  --- @class SuperPumpGuiData
   player_table.gui.sp = {
     state = {
       entity = entity,
@@ -183,7 +193,7 @@ local function create_gui(player, player_table, entity)
 end
 
 local function handle_gui_action(e, msg)
-  local player = game.get_player(e.player_index)
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.sp
   local state = gui_data.state
@@ -225,7 +235,10 @@ local function handle_gui_action(e, msg)
       state.speed = clamped_value
       refs.speed_slider.slider_value = to_slider_value(clamped_value)
 
-      set_speed(state.entity, tonumber(clamped_value))
+      set_speed(
+        state.entity,
+        tonumber(clamped_value) --[[@as number]]
+      )
     end
   elseif msg.action == "update_active" then
     local player_table = global.players[e.player_index]
@@ -237,6 +250,8 @@ end
 -- -----------------------------------------------------------------------------
 -- PUBLIC FUNCTIONS
 
+--- @param entity LuaEntity
+--- @param tags table?
 function super_pump.setup(entity, tags)
   local speed = 12000
   if tags and tags.EditorExtensions then
@@ -246,6 +261,8 @@ function super_pump.setup(entity, tags)
   set_speed(entity, speed)
 end
 
+--- @param blueprint_entity BlueprintEntity
+--- @param entity LuaEntity
 function super_pump.setup_blueprint(blueprint_entity, entity)
   if not blueprint_entity.tags then
     blueprint_entity.tags = {}
@@ -254,12 +271,16 @@ function super_pump.setup_blueprint(blueprint_entity, entity)
   return blueprint_entity
 end
 
+--- @param source LuaEntity
+--- @param destination LuaEntity
 function super_pump.paste_settings(source, destination)
   set_speed(destination, get_speed(source))
 end
 
+--- @param player_index uint
+--- @param entity LuaEntity
 function super_pump.open(player_index, entity)
-  local player = game.get_player(player_index)
+  local player = game.get_player(player_index) --[[@as LuaPlayer]]
   local player_table = global.players[player_index]
   if not player_table.flags.opening_default_gui then
     create_gui(player, player_table, entity)

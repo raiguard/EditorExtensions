@@ -2,6 +2,8 @@ local cheat_mode = {}
 
 local constants = require("scripts.constants")
 
+--- @param player LuaPlayer
+--- @param skip_message boolean?
 function cheat_mode.enable_recipes(player, skip_message)
   local force = player.force
   local recipes = force.recipes
@@ -18,6 +20,8 @@ function cheat_mode.enable_recipes(player, skip_message)
   end
 end
 
+--- @param player LuaPlayer
+--- @param skip_message boolean?
 function cheat_mode.disable_recipes(player, skip_message)
   local force = player.force
   local recipes = force.recipes
@@ -33,6 +37,7 @@ function cheat_mode.disable_recipes(player, skip_message)
   end
 end
 
+--- @param inventory LuaInventory
 local function set_armor(inventory)
   if inventory[1] and inventory[1].valid_for_read and inventory[1].name == "power-armor-mk2" then
     inventory[1].grid.clear()
@@ -46,9 +51,13 @@ local function set_armor(inventory)
   end
 end
 
+--- @param player LuaPlayer
 function cheat_mode.set_loadout(player)
   -- remove default items
   local main_inventory = player.get_main_inventory()
+  if not main_inventory then
+    return
+  end
   local items_to_remove = constants.cheat_mode.items_to_remove
   for i = 1, #items_to_remove do
     main_inventory.remove(items_to_remove[i])
@@ -60,12 +69,16 @@ function cheat_mode.set_loadout(player)
   end
   if player.controller_type == defines.controllers.character then
     -- overwrite the default armor loadout
-    set_armor(player.get_inventory(defines.inventory.character_armor))
+    set_armor(
+      player.get_inventory(defines.inventory.character_armor) --[[@as LuaInventory]]
+    )
     -- apply character cheats
     cheat_mode.update_character_cheats(player)
   elseif player.controller_type == defines.controllers.editor then
     -- overwrite the default armor loadout
-    set_armor(player.get_inventory(defines.inventory.editor_armor))
+    set_armor(
+      player.get_inventory(defines.inventory.editor_armor) --[[@as LuaInventory]]
+    )
     -- if the player uses a character, apply cheats to it upon exit
     if player.stashed_controller_type == defines.controllers.character then
       global.players[player.index].flags.update_character_cheats_when_possible = true
@@ -73,6 +86,7 @@ function cheat_mode.set_loadout(player)
   end
 end
 
+--- @param player LuaPlayer
 function cheat_mode.update_character_cheats(player)
   -- abort if they were already applied
   -- we can safely assume that only this mod or Creative Mod would increase the reach this much
@@ -91,6 +105,8 @@ function cheat_mode.update_character_cheats(player)
   end
 end
 
+--- @param player LuaPlayer
+--- @param set_loadout boolean?
 function cheat_mode.enable(player, set_loadout)
   -- recipes will be enabled automatically
   player.cheat_mode = true
@@ -104,6 +120,8 @@ function cheat_mode.enable(player, set_loadout)
   end
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
 function cheat_mode.disable(player, player_table)
   -- disable cheat mode
   player.cheat_mode = false

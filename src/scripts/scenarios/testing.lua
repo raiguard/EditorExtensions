@@ -7,6 +7,7 @@ local callbacks = {}
 -- -----------------------------------------------------------------------------
 -- UTILITIES
 
+--- @param force LuaForce
 local function setup_force(force)
   force.research_all_technologies()
 

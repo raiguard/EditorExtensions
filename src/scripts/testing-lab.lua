@@ -4,7 +4,7 @@ local testing_lab = {}
 
 --- @param player LuaPlayer
 --- @param player_table table
---- @param ts_setting? string
+--- @param ts_setting number
 function testing_lab.toggle(player, player_table, ts_setting)
   local key
   if ts_setting == constants.testing_lab_setting.personal then

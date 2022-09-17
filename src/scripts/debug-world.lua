@@ -4,6 +4,9 @@ return function()
   end
 
   local nauvis = game.get_surface("nauvis")
+  if not nauvis then
+    return
+  end
   local map_gen_settings = nauvis.map_gen_settings
   if map_gen_settings.height == 50 and map_gen_settings.width == 50 then
     -- Update surface settings

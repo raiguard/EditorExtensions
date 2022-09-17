@@ -6,6 +6,7 @@ function global_data.init()
     map_editor_toggled = false,
   }
   global.linked_belt_sources = {}
+  --- @type PlayerTable[]
   global.players = {}
   global.wagons = {}
 end

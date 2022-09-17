@@ -3,6 +3,7 @@ local player_data = {}
 local constants = require("scripts.constants")
 local inventory = require("scripts.inventory")
 
+--- @param player LuaPlayer
 function player_data.init(player)
   --- @class PlayerTable
   local player_table = {
@@ -26,6 +27,8 @@ function player_data.init(player)
   player_data.refresh(player, player_table)
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
 function player_data.update_settings(player, player_table)
   local player_settings = player.mod_settings
   local settings = {}
@@ -39,9 +42,11 @@ function player_data.update_settings(player, player_table)
   player_table.settings = settings
 end
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
 function player_data.refresh(player, player_table)
   -- close any open GUIs
-  for _, name in ipairs({ "ia", "il", "sp" }) do
+  for _, name in pairs({ "ia", "il", "sp" }) do
     if player_table.gui[name] then
       player_table.gui[name].refs.window.destroy()
       player_table.gui[name] = nil

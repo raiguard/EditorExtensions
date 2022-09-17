@@ -1,5 +1,6 @@
 local direction = require("__flib__.direction")
 local gui = require("__flib__.gui")
+local table = require("__flib__.table")
 local util = require("scripts.util")
 
 local constants = require("scripts.constants")
@@ -9,11 +10,14 @@ local infinity_loader = {}
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES
 
+--- @param entity LuaEntity
 local function num_inserters(entity)
   return math.ceil(entity.prototype.belt_speed / constants.belt_speed_for_60_per_second) * 2
 end
 
--- update inserter and chest filters
+--- Update inserter and chest filters
+--- @param combinator LuaEntity
+--- @param entities table?
 local function update_filters(combinator, entities)
   entities = entities or {}
   local loader = entities.loader
@@ -31,9 +35,9 @@ local function update_filters(combinator, entities)
       name = "ee-infinity-loader-chest",
       position = combinator.position,
     })[1]
-  local control = combinator.get_control_behavior()
+  local control = combinator.get_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
   local enabled = control.enabled
-  local filters = control.parameters
+  local filters = control.parameters --[[ @as ConstantCombinatorParameters[] ]]
   local inserter_filter_mode
   if filters[1].signal.name or filters[2].signal.name or loader.loader_type == "output" then
     inserter_filter_mode = "whitelist"
@@ -81,7 +85,9 @@ local function update_filters(combinator, entities)
   chest.remove_unfiltered_items = true
 end
 
--- update inserter pickup/drop positions
+--- Update inserter pickup/drop positions
+--- @param loader LuaEntity
+--- @param entities table?
 local function update_inserters(loader, entities)
   entities = entities or {}
   local surface = loader.surface
@@ -126,10 +132,8 @@ local function update_inserters(loader, entities)
     if e_type == "input" then
       -- pickup on belt, drop in chest
       inserter.pickup_target = loader
-      inserter.pickup_position = util.position.add(
-        e_position,
-        direction.to_vector_2d(e_direction, (-mod * 0.2 + 0.3), orthogonal)
-      )
+      inserter.pickup_position =
+        util.position.add(e_position, direction.to_vector_2d(e_direction, (-mod * 0.2 + 0.3), orthogonal))
       inserter.drop_target = chest
       inserter.drop_position = e_position
     elseif e_type == "output" then
@@ -137,10 +141,8 @@ local function update_inserters(loader, entities)
       inserter.pickup_target = chest
       inserter.pickup_position = chest.position
       inserter.drop_target = loader
-      inserter.drop_position = util.position.add(
-        e_position,
-        direction.to_vector_2d(e_direction, (mod * 0.2 - 0.3), orthogonal)
-      )
+      inserter.drop_position =
+        util.position.add(e_position, direction.to_vector_2d(e_direction, (mod * 0.2 - 0.3), orthogonal))
     end
     -- TEMPORARY rendering
     -- rendering.draw_circle{
@@ -162,7 +164,10 @@ local function update_inserters(loader, entities)
   end
 end
 
--- update belt type of the given loader
+--- Update belt type of the given loader
+--- @param loader LuaEntity
+--- @param belt_type string
+--- @param overrides table?
 local function update_loader_type(loader, belt_type, overrides)
   overrides = overrides or {}
   -- save settings first
@@ -186,12 +191,18 @@ local function update_loader_type(loader, belt_type, overrides)
     player = last_user,
     type = loader_type,
     create_build_effect_smoke = false,
-  })
+  }) --[[@as LuaEntity]]
   update_inserters(new_loader)
   return new_loader
 end
 
--- create an infinity loader
+--- Create an infinity loader
+--- @param type string
+--- @param mode string
+--- @param surface LuaSurface
+--- @param position MapPosition
+--- @param loader_direction defines.direction
+--- @param force ForceIdentification
 local function create_loader(type, mode, surface, position, loader_direction, force)
   local name = "ee-infinity-loader-loader" .. (type == "" and "" or "-" .. type)
   if not game.entity_prototypes[name] then
@@ -241,10 +252,13 @@ end
 
 -- TODO: update GUI state when any other players change something
 
+--- @param player LuaPlayer
+--- @param player_table PlayerTable
+--- @param entity LuaEntity
 local function create_gui(player, player_table, entity)
   local preview_entity = entity.surface.find_entities_filtered({ position = entity.position, type = "loader-1x1" })[1]
-  local control = entity.get_or_create_control_behavior()
-  local parameters = control.parameters
+  local control = entity.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
+  local parameters = control.parameters --[[ @as ConstantCombinatorParameters[] ]]
   local refs = gui.build(player.gui.screen, {
     {
       type = "frame",
@@ -336,14 +350,14 @@ local function create_gui(player, player_table, entity)
 
   player.opened = refs.window
 
+  --- @class InfinityLoaderGuiData
   player_table.gui.il = {
     entity = entity,
     refs = refs,
   }
 end
-
 local function handle_gui_action(e, msg)
-  local player = game.get_player(e.player_index)
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   local gui_data = player_table.gui.il
 
@@ -371,8 +385,10 @@ end
 -- SNAPPING
 -- "snapping" in this case usually means matching both direction and belt type
 
--- snaps the loader to the transport-belt-connectable entity that it's facing
--- if `target` is supplied, it will check against that entity, and will not snap if it cannot connect to it
+--- Snaps the loader to the transport-belt-connectable entity that it's facing
+--- If `target` is supplied, it will check against that entity, and will not snap if it cannot connect to it
+--- @param entity LuaEntity
+--- @param target LuaEntity?
 function infinity_loader.snap(entity, target)
   if not entity or not entity.valid then
     return
@@ -417,10 +433,12 @@ function infinity_loader.picker_dollies_move(e)
   if moved_entity and moved_entity.name == "ee-infinity-loader-logic-combinator" then
     local loader
     -- move all entities to new position
-    for _, entity in pairs(e.moved_entity.surface.find_entities_filtered({
-      type = { "loader-1x1", "inserter", "infinity-container" },
-      position = e.start_pos,
-    })) do
+    for _, entity in
+      pairs(e.moved_entity.surface.find_entities_filtered({
+        type = { "loader-1x1", "inserter", "infinity-container" },
+        position = e.start_pos,
+      }))
+    do
       if infinity_loader.check_is_loader(entity) then
         -- we need to move the loader very last, after all of the other entities are in the new position
         loader = entity
@@ -437,13 +455,15 @@ end
 -- -----------------------------------------------------------------------------
 -- FUNCTIONS
 
+--- @param entity LuaEntity
 function infinity_loader.check_is_loader(entity)
   return string.find(entity.name, "infinity%-loader%-loader")
 end
 
+--- @param entity LuaEntity
 function infinity_loader.build_from_ghost(entity)
   -- convert to dummy combinator ghost
-  local old_control = entity.get_or_create_control_behavior()
+  local old_control = entity.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
   local new_entity = entity.surface.create_entity({
     name = "entity-ghost",
     ghost_name = "ee-infinity-loader-dummy-combinator",
@@ -452,31 +472,24 @@ function infinity_loader.build_from_ghost(entity)
     force = entity.force,
     player = entity.last_user,
     create_build_effect_smoke = false,
-  })
+  }) --[[@as LuaEntity]]
   -- transfer control behavior
-  local new_control = new_entity.get_or_create_control_behavior()
+  local new_control = new_entity.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
   new_control.parameters = old_control.parameters
   new_control.enabled = old_control.enabled
   entity.destroy()
 end
 
+--- @param entity LuaEntity
 function infinity_loader.build(entity)
-  -- create the loader with default belt type, we will snap it later
-  local loader, _, _, combinator = create_loader(
-    global.fastest_belt_type,
-    "output",
-    entity.surface,
-    entity.position,
-    entity.direction,
-    entity.force
-  )
-  -- if the loader failed to build, skip the rest of the logic
-  if not loader then
+  local loader, _, _, combinator =
+    create_loader(global.fastest_belt_type, "output", entity.surface, entity.position, entity.direction, entity.force)
+  if not loader or not combinator then
     return
   end
   -- get and set previous filters, if any
-  local old_control = entity.get_or_create_control_behavior()
-  local new_control = combinator.get_or_create_control_behavior()
+  local old_control = entity.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
+  local new_control = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
   new_control.parameters = old_control.parameters
   new_control.enabled = old_control.enabled
   entity.destroy()
@@ -484,6 +497,8 @@ function infinity_loader.build(entity)
   infinity_loader.snap(loader)
 end
 
+--- @param entity LuaEntity
+--- @param previous_direction defines.direction
 function infinity_loader.rotate(entity, previous_direction)
   -- rotate loader instead of combinator
   entity.direction = previous_direction
@@ -495,6 +510,7 @@ function infinity_loader.rotate(entity, previous_direction)
   return loader
 end
 
+--- @param entity LuaEntity
 function infinity_loader.destroy(entity)
   -- close open GUIs
   for i, t in pairs(global.players) do
@@ -511,20 +527,24 @@ function infinity_loader.destroy(entity)
   end
 end
 
+--- @param blueprint_entity BlueprintEntity
 function infinity_loader.setup_blueprint(blueprint_entity)
   blueprint_entity.name = "ee-infinity-loader-dummy-combinator"
   blueprint_entity.direction = blueprint_entity.direction or defines.direction.north
   return blueprint_entity
 end
 
+--- @param source LuaEntity
+--- @param destination LuaEntity
 function infinity_loader.paste_settings(source, destination)
   -- check if the source has control behavior
   local source_control_behavior = source.get_control_behavior()
   if source_control_behavior then
+    --- @cast source_control_behavior LuaConstantCombinatorControlBehavior
     -- sanitize filters to remove any non-items
     local parameters = {}
     local items = 0
-    for _, parameter in pairs(table.deepcopy(source_control_behavior.parameters)) do
+    for _, parameter in pairs(table.deep_copy(source_control_behavior.parameters)) do
       if parameter.signal and parameter.signal.type == "item" and parameter.signal.name then
         items = items + 1
         parameter.index = items
@@ -540,20 +560,22 @@ function infinity_loader.paste_settings(source, destination)
   end
 end
 
+--- @param player_index uint
+--- @param entity LuaEntity
 function infinity_loader.open(player_index, entity)
-  local player = game.get_player(player_index)
+  local player = game.get_player(player_index) --[[@as LuaPlayer]]
   local player_table = global.players[player_index]
   create_gui(player, player_table, entity)
   player.play_sound({ path = "entity-open/ee-infinity-loader-loader" })
 end
 
--- check every single infinity loader on every surface to see if it no longer has a loader entity
--- called in on_configuration_changed
+--- Check every single infinity loader on every surface to see if it no longer has a loader entity
 function infinity_loader.check_loaders()
   for _, surface in pairs(game.surfaces) do
     for _, entity in ipairs(surface.find_entities_filtered({ name = "ee-infinity-loader-logic-combinator" })) do
       -- if its loader is gone, give it a new one with default settings
       if #surface.find_entities_filtered({ type = "loader-1x1", position = entity.position }) == 0 then
+        --- @diagnostic disable-next-line
         infinity_loader.snap(update_loader_type(nil, global.fastest_belt_type, {
           position = entity.position,
           direction = entity.direction,
