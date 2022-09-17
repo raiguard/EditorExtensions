@@ -128,7 +128,7 @@ function infinity_wagon.paste_settings(source, destination)
 end
 
 --- @param blueprint_entity BlueprintEntity
---- @param entity LuaEntity
+--- @param entity LuaEntity?
 function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
   if entity then
     local proxy = global.wagons[entity.unit_number].proxy
@@ -144,7 +144,7 @@ function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
 end
 
 --- @param blueprint_entity BlueprintEntity
---- @param entity LuaEntity
+--- @param entity LuaEntity?
 function infinity_wagon.setup_fluid_blueprint(blueprint_entity, entity)
   if entity then
     if not blueprint_entity.tags then

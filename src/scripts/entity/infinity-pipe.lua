@@ -51,15 +51,14 @@ function infinity_pipe.check_is_our_pipe(entity)
 end
 
 --- @param blueprint_entity BlueprintEntity
---- @param entity LuaEntity
+--- @param entity LuaEntity?
 function infinity_pipe.setup_blueprint(blueprint_entity, entity)
-  if not entity then
-    return
+  if entity then
+    if not blueprint_entity.tags then
+      blueprint_entity.tags = {}
+    end
+    blueprint_entity.tags.EditorExtensions = { amount_type = global.infinity_pipe_amount_types[entity.unit_number] }
   end
-  if not blueprint_entity.tags then
-    blueprint_entity.tags = {}
-  end
-  blueprint_entity.tags.EditorExtensions = { amount_type = global.infinity_pipe_amount_types[entity.unit_number] }
   return blueprint_entity
 end
 

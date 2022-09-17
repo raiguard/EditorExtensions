@@ -262,12 +262,14 @@ function super_pump.setup(entity, tags)
 end
 
 --- @param blueprint_entity BlueprintEntity
---- @param entity LuaEntity
+--- @param entity LuaEntity?
 function super_pump.setup_blueprint(blueprint_entity, entity)
-  if not blueprint_entity.tags then
-    blueprint_entity.tags = {}
+  if entity then
+    if not blueprint_entity.tags then
+      blueprint_entity.tags = {}
+    end
+    blueprint_entity.tags.EditorExtensions = { active = entity.active, speed = get_speed(entity) }
   end
-  blueprint_entity.tags.EditorExtensions = { active = entity.active, speed = get_speed(entity) }
   return blueprint_entity
 end
 

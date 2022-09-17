@@ -581,12 +581,16 @@ event.on_player_setup_blueprint(function(e)
   local blueprint = player.blueprint_to_setup
   if not blueprint or not blueprint.valid_for_read then
     local cursor_blueprint = player.cursor_stack
-    if cursor_blueprint and cursor_blueprint.type == "blueprint-book" then
-      local item_inventory = cursor_blueprint.get_inventory(defines.inventory.item_main)
-      if item_inventory then
-        cursor_blueprint = item_inventory[cursor_blueprint.active_index]
+    if cursor_blueprint and cursor_blueprint.valid then
+      if cursor_blueprint.type == "blueprint-book" then
+        local item_inventory = cursor_blueprint.get_inventory(defines.inventory.item_main)
+        if item_inventory then
+          blueprint = item_inventory[cursor_blueprint.active_index]
+        else
+          return
+        end
       else
-        return
+        blueprint = cursor_blueprint
       end
     end
   end
@@ -596,7 +600,7 @@ event.on_player_setup_blueprint(function(e)
   if not entities then
     return
   end
-  local mapping = e.mapping.get()
+  local surface = e.surface
 
   -- iterate each entity
   local set = false
@@ -611,16 +615,16 @@ event.on_player_setup_blueprint(function(e)
       entities[i] = infinity_loader.setup_blueprint(entity)
     elseif entity_name == "ee-infinity-cargo-wagon" then
       set = true
-      entities[i] = infinity_wagon.setup_cargo_blueprint(entity, mapping[entity.entity_number])
+      entities[i] = infinity_wagon.setup_cargo_blueprint(entity, surface.find_entity(entity.name, entity.position))
     elseif entity_name == "ee-infinity-fluid-wagon" then
       set = true
-      entities[i] = infinity_wagon.setup_fluid_blueprint(entity, mapping[entity.entity_number])
+      entities[i] = infinity_wagon.setup_fluid_blueprint(entity, surface.find_entity(entity.name, entity.position))
     elseif entity_name == "ee-super-pump" then
       set = true
-      entities[i] = super_pump.setup_blueprint(entity, mapping[entity.entity_number])
+      entities[i] = super_pump.setup_blueprint(entity, surface.find_entity(entity.name, entity.position))
     elseif infinity_pipe.check_is_our_pipe(entity) then
       set = true
-      entities[i] = infinity_pipe.setup_blueprint(entity, mapping[entity.entity_number])
+      entities[i] = infinity_pipe.setup_blueprint(entity, surface.find_entity(entity.name, entity.position))
     end
   end
 

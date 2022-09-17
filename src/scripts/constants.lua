@@ -73,6 +73,11 @@ constants.cursor_enhancements_overrides = {
   ["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon",
 }
 
+constants.curved_rail_selection_sizes = {
+  { left_top = { x = -2, y = -4 }, right_bottom = { x = 2, y = 4 } },
+  { left_top = { x = -4, y = -2 }, right_bottom = { x = 4, y = 2 } },
+}
+
 -- DEBUG WORLD
 
 constants.debug_world = {
