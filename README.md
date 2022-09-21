@@ -3,7 +3,7 @@ Extends the Factorio map editor with new tools and utilities, and makes tweaks t
 
 ### Testing tools
 
-![](resources/tools-preview.png)
+![](screenshots/tools-preview.png)
 
 This mod includes a ton of items and tools to aid with testing your setups. Supercharged robots, energy-free inserters, infinite item, fluid, heat, and electricity manipulation, and overpowered modules are just a few of the tools at your disposal.
 
@@ -11,6 +11,12 @@ These tools are normally only available inside of the editor. If you would like 
 
 ### Mode switching
 
-![](resources/shortcut-preview.png)
+![](screenshots/shortcut-preview.png)
 
 This mod adds a shortcut button to toggle the map editor. This makes it painless to switch to the editor when you need it, and switch back when you want to have a body again. You can also toggle modes with `Ctrl + Shift + E`.
+
+### Attributions
+
+Icons from Font Awesome 5 Free are used under the Creative Commons BY 4.0 license.
+https://fontawesome.com
+https://creativecommons.org/licenses/by/4.0/
