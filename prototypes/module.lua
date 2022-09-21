@@ -1,6 +1,6 @@
 local table = require("__flib__.table")
 
-local constants = require("prototypes.constants")
+local constants = require("__EditorExtensions__.prototypes.constants")
 
 local module_template = {
   type = "module",

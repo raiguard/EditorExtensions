@@ -1,9 +1,9 @@
 local direction = require("__flib__.direction")
 local gui = require("__flib__.gui")
 local table = require("__flib__.table")
-local util = require("scripts.util")
+local util = require("__EditorExtensions__.scripts.util")
 
-local constants = require("scripts.constants")
+local constants = require("__EditorExtensions__.scripts.constants")
 
 local infinity_loader = {}
 

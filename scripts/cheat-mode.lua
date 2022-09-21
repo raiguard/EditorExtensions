@@ -1,6 +1,6 @@
 local cheat_mode = {}
 
-local constants = require("scripts.constants")
+local constants = require("__EditorExtensions__.scripts.constants")
 
 --- @param player LuaPlayer
 --- @param skip_message boolean?

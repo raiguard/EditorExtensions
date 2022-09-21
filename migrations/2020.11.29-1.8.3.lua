@@ -1,1 +1,1 @@
-require("scripts.update-scenario")
+require("__EditorExtensions__.migrations.scripts.update-scenario")

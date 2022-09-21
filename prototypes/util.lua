@@ -1,4 +1,4 @@
-local constants = require("prototypes.constants")
+local constants = require("__EditorExtensions__.prototypes.constants")
 local util = {}
 
 local core_util = require("__core__.lualib.util")

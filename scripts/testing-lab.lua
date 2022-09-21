@@ -1,4 +1,4 @@
-local constants = require("scripts.constants")
+local constants = require("__EditorExtensions__.scripts.constants")
 
 local testing_lab = {}
 

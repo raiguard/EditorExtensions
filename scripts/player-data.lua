@@ -1,7 +1,7 @@
 local player_data = {}
 
-local constants = require("scripts.constants")
-local inventory = require("scripts.inventory")
+local constants = require("__EditorExtensions__.scripts.constants")
+local inventory = require("__EditorExtensions__.scripts.inventory")
 
 --- @param player LuaPlayer
 function player_data.init(player)

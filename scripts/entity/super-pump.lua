@@ -3,8 +3,8 @@ local super_pump = {}
 local gui = require("__flib__.gui")
 local math = require("__flib__.math")
 
-local constants = require("scripts.constants")
-local util = require("scripts.util")
+local constants = require("__EditorExtensions__.scripts.constants")
+local util = require("__EditorExtensions__.scripts.util")
 
 -- -----------------------------------------------------------------------------
 -- ENTITY FUNCTIONS

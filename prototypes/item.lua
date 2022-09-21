@@ -1,5 +1,5 @@
-local constants = require("prototypes.constants")
-local util = require("prototypes.util")
+local constants = require("__EditorExtensions__.prototypes.constants")
+local util = require("__EditorExtensions__.prototypes.util")
 
 -- infinity accumulator
 data:extend({

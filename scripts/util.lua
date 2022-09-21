@@ -1,7 +1,7 @@
 local math2d = require("__core__.lualib.math2d")
 local util = require("__core__.lualib.util")
 
-local constants = require("scripts.constants")
+local constants = require("__EditorExtensions__.scripts.constants")
 
 -- GENERAL
 
