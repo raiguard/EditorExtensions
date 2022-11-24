@@ -8,6 +8,8 @@ function global_data.init()
   global.linked_belt_sources = {}
   --- @type PlayerTable[]
   global.players = {}
+  global.executed_cheat_command = {}
+  global.tried_cheat_command = {}
   global.wagons = {}
 end
 

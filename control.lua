@@ -23,29 +23,6 @@ local super_inserter = require("__EditorExtensions__/scripts/entity/super-insert
 local super_pump = require("__EditorExtensions__/scripts/entity/super-pump")
 
 -- -----------------------------------------------------------------------------
--- COMMANDS
-
-commands.add_command("cheatmode", { "command-help.cheatmode" }, function(e)
-  local parameter = e.parameter
-  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-  if not parameter then
-    util.freeze_time_on_all_surfaces(player)
-    cheat_mode.enable(player)
-  elseif parameter == "all" then
-    util.freeze_time_on_all_surfaces(player)
-    cheat_mode.enable(player, true)
-  elseif parameter == "off" then
-    if player.cheat_mode then
-      cheat_mode.disable(player, global.players[e.player_index])
-    else
-      player.print({ "ee-message.cheat-mode-already-disabled" })
-    end
-  else
-    player.print({ "ee-message.unrecognized-cheatmode-subcommand" })
-  end
-end)
-
--- -----------------------------------------------------------------------------
 -- INTERFACES
 
 remote.add_interface("EditorExtensions", {
@@ -90,9 +67,7 @@ script.on_init(function()
 
   infinity_pipe.init()
 
-  if settings.global["ee-hijack-debug-world"].value then
-    debug_world()
-  end
+  debug_world.init()
 
   for _, player in pairs(game.players) do
     player_data.init(player)
@@ -152,6 +127,29 @@ script.on_event(defines.events.on_player_cheat_mode_enabled, function(e)
   end
 
   cheat_mode.enable_recipes(player)
+end)
+
+-- COMMAND
+
+script.on_event(defines.events.on_console_command, function(e)
+  if e.command == "cheat" then
+    local tried_tick = global.tried_cheat_command[e.player_index]
+    if
+      global.executed_cheat_command[e.player_index] or (tried_tick and tried_tick + (60 * 60) >= game.ticks_played)
+    then
+      global.executed_cheat_command[e.player_index] = true
+      global.tried_cheat_command[e.player_index] = nil
+
+      local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+      if e.parameters == "lab" then
+        debug_world.lab(player.surface)
+      elseif e.parameters == "all" then
+        cheat_mode.set_loadout(player)
+      end
+    else
+      global.tried_cheat_command[e.player_index] = game.ticks_played
+    end
+  end
 end)
 
 -- CUSTOM INPUT
@@ -547,9 +545,8 @@ script.on_event(defines.events.on_player_created, function(e)
   player_data.init(player)
 
   local in_debug_world = global.flags.in_debug_world
-  if in_debug_world or player.cheat_mode then
-    cheat_mode.enable_recipes(player)
-    cheat_mode.enable(player, in_debug_world)
+  if player.cheat_mode or (in_debug_world and settings.global["ee-debug-world-cheat-mode"].value) then
+    cheat_mode.enable(player)
   end
 
   local player_table = global.players[e.player_index]

@@ -109,17 +109,38 @@ data:extend({
   },
   {
     type = "bool-setting",
-    name = "ee-hijack-debug-world",
+    name = "ee-testing-lab-match-research",
     setting_type = "runtime-global",
-    default_value = true,
+    default_value = false,
     order = "c",
   },
   {
     type = "bool-setting",
-    name = "ee-testing-lab-match-research",
+    name = "ee-debug-world-cheat-mode",
     setting_type = "runtime-global",
-    default_value = false,
-    order = "d",
+    default_value = true,
+    order = "da",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-debug-world-research-all",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "db",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-debug-world-lab-tiles",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "dc",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-debug-world-infinite",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "dd",
   },
   -- PLAYER SETTINGS
   {

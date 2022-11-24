@@ -45,6 +45,9 @@ local function set_armor(inventory)
     inventory[1].set_stack({ name = "power-armor-mk2" })
   end
   local grid = inventory[1].grid
+  if not grid then
+    return
+  end
   local equipment_to_add = constants.cheat_mode.equipment_to_add
   for i = 1, #equipment_to_add do
     grid.put(equipment_to_add[i])
@@ -69,16 +72,12 @@ function cheat_mode.set_loadout(player)
   end
   if player.controller_type == defines.controllers.character then
     -- overwrite the default armor loadout
-    set_armor(
-      player.get_inventory(defines.inventory.character_armor) --[[@as LuaInventory]]
-    )
+    set_armor(player.get_inventory(defines.inventory.character_armor) --[[@as LuaInventory]])
     -- apply character cheats
     cheat_mode.update_character_cheats(player)
   elseif player.controller_type == defines.controllers.editor then
     -- overwrite the default armor loadout
-    set_armor(
-      player.get_inventory(defines.inventory.editor_armor) --[[@as LuaInventory]]
-    )
+    set_armor(player.get_inventory(defines.inventory.editor_armor) --[[@as LuaInventory]])
     -- if the player uses a character, apply cheats to it upon exit
     if player.stashed_controller_type == defines.controllers.character then
       global.players[player.index].flags.update_character_cheats_when_possible = true
@@ -106,35 +105,9 @@ function cheat_mode.update_character_cheats(player)
 end
 
 --- @param player LuaPlayer
---- @param set_loadout boolean?
-function cheat_mode.enable(player, set_loadout)
+function cheat_mode.enable(player)
   -- recipes will be enabled automatically
   player.cheat_mode = true
-
-  player.force.research_all_technologies()
-
-  cheat_mode.update_character_cheats(player)
-
-  if set_loadout then
-    cheat_mode.set_loadout(player)
-  end
-end
-
---- @param player LuaPlayer
---- @param player_table PlayerTable
-function cheat_mode.disable(player, player_table)
-  -- disable cheat mode
-  player.cheat_mode = false
-
-  -- remove recipes
-  cheat_mode.disable_recipes(player)
-
-  -- reset bonuses or set a flag to do so
-  if player.controller_type == defines.controllers.character then
-    cheat_mode.update_character_cheats(player)
-  elseif player.stashed_controller_type == defines.controllers.character then
-    player_table.flags.update_character_cheats_when_possible = true
-  end
 end
 
 return cheat_mode

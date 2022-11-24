@@ -2,6 +2,12 @@
 Version: 1.14.0
 Date: ????
   Features:
+    - Added '/cheat lab' command to convert the current surface into a lab
+      - Careful - this will delete all entities on the surface!
+  Changes:
+    - Removed the testing scenario in favor of the debug world
+      - Control+click the "singleplayer" or "new game" buttons in the main menu to enter the debug world
+    - Removed '/cheatmode' command in favor of the built-in '/cheat' command
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.5
 Date: 2022-09-16
