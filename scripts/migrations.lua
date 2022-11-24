@@ -1,6 +1,6 @@
-local cheat_mode = require("__EditorExtensions__.scripts.cheat-mode")
-local constants = require("__EditorExtensions__.scripts.constants")
-local infinity_pipe = require("__EditorExtensions__.scripts.entity.infinity-pipe")
+local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
+local constants = require("__EditorExtensions__/scripts/constants")
+local infinity_pipe = require("__EditorExtensions__/scripts/entity/infinity-pipe")
 
 return {
   ["1.1.0"] = function()

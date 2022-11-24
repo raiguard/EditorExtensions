@@ -1,9 +1,9 @@
-local table = require("__flib__.table")
+local table = require("__flib__/table")
 
-local shared_constants = require("__EditorExtensions__.shared-constants")
+local shared_constants = require("__EditorExtensions__/shared-constants")
 
-local constants = require("__EditorExtensions__.prototypes.constants")
-local util = require("__EditorExtensions__.prototypes.util")
+local constants = require("__EditorExtensions__/prototypes/constants")
+local util = require("__EditorExtensions__/prototypes/util")
 
 -- INFINITY ACCUMULATOR
 do

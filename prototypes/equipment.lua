@@ -1,5 +1,5 @@
-local constants = require("__EditorExtensions__.prototypes.constants")
-local util = require("__EditorExtensions__.prototypes.util")
+local constants = require("__EditorExtensions__/prototypes/constants")
+local util = require("__EditorExtensions__/prototypes/util")
 
 local personal_battery = table.deepcopy(data.raw["battery-equipment"]["battery-equipment"])
 personal_battery.name = "ee-super-battery-equipment"

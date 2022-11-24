@@ -1,7 +1,7 @@
-local direction = require("__flib__.direction")
+local direction = require("__flib__/direction")
 
-local shared = require("__EditorExtensions__.scripts.shared")
-local util = require("__EditorExtensions__.scripts.util")
+local shared = require("__EditorExtensions__/scripts/shared")
+local util = require("__EditorExtensions__/scripts/util")
 
 local linked_belt = {}
 

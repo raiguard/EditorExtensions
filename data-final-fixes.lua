@@ -1,7 +1,7 @@
-local sounds = require("__base__.prototypes.entity.sounds")
+local sounds = require("__base__/prototypes/entity/sounds")
 
-local constants = require("__EditorExtensions__.prototypes.constants")
-local util = require("__EditorExtensions__.prototypes.util")
+local constants = require("__EditorExtensions__/prototypes/constants")
+local util = require("__EditorExtensions__/prototypes/util")
 
 -- set aggregate chest inventory size
 local to_check = {

@@ -1,6 +1,6 @@
-local event = require("__flib__.event")
-local migration = require("__flib__.migration")
-local mod_gui = require("__EditorExtensions__.mod-gui")
+local event = require("__flib__/event")
+local migration = require("__flib__/migration")
+local mod_gui = require("__EditorExtensions__/mod-gui")
 
 local callbacks = {}
 

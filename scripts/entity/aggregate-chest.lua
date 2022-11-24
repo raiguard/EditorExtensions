@@ -1,6 +1,6 @@
 local aggregate_chest = {}
 
-local constants = require("__EditorExtensions__.scripts.constants")
+local constants = require("__EditorExtensions__/scripts/constants")
 
 --- Set the filters for the given aggregate chest and removes the bar if there is one
 --- @param entity LuaEntity

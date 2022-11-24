@@ -1,10 +1,10 @@
 local infinity_accumulator = {}
 
-local gui = require("__flib__.gui")
-local math = require("__flib__.math")
-local util = require("__EditorExtensions__.scripts.util")
+local gui = require("__flib__/gui")
+local math = require("__flib__/math")
+local util = require("__EditorExtensions__/scripts/util")
 
-local constants = require("__EditorExtensions__.scripts.constants")
+local constants = require("__EditorExtensions__/scripts/constants")
 
 -- -----------------------------------------------------------------------------
 -- LOCAL UTILITIES

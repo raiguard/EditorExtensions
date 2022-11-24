@@ -2,7 +2,7 @@ if not script.active_mods["EditorExtensions"] then
   error("Editor Extensions must be active for this scenario to function.")
 end
 
-local callbacks = require("__EditorExtensions__.scripts.scenarios.testing")
+local callbacks = require("__EditorExtensions__/scripts/scenarios/testing")
 
 --[[
   MOD DEVELOPERS:

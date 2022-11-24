@@ -1,7 +1,7 @@
-local constants = require("__EditorExtensions__.prototypes.constants")
+local constants = require("__EditorExtensions__/prototypes/constants")
 local util = {}
 
-local core_util = require("__core__.lualib.util")
+local core_util = require("__core__/lualib/util")
 
 util.by_pixel = core_util.by_pixel
 

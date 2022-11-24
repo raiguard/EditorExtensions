@@ -1,9 +1,9 @@
 local compatibility = {}
 
-local event = require("__flib__.event")
+local event = require("__flib__/event")
 
-local constants = require("__EditorExtensions__.scripts.constants")
-local infinity_loader = require("__EditorExtensions__.scripts.entity.infinity-loader")
+local constants = require("__EditorExtensions__/scripts/constants")
+local infinity_loader = require("__EditorExtensions__/scripts/entity/infinity-loader")
 
 function compatibility.add_cursor_enhancements_overrides()
   if
