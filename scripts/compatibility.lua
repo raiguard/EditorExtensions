@@ -29,11 +29,6 @@ function compatibility.in_qis_window(player)
   return false
 end
 
-function compatibility.check_for_testing_scenario()
-  -- TODO: Use `script.level`?
-  return remote.interfaces["EditorExtensions_TestingScenario"] and true or false
-end
-
 function compatibility.register_picker_dollies()
   if remote.interfaces["PickerDollies"] then
     script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
