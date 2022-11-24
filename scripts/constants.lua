@@ -1,4 +1,3 @@
-local event = require("__flib__/event")
 local table = require("__flib__/table")
 
 local constants = {}
@@ -84,8 +83,8 @@ constants.debug_world = {
   size = { height = 50, width = 50 },
 }
 
-constants.debug_world_ready_event = event.generate_id()
-constants.debug_world_player_ready_event = event.generate_id()
+constants.debug_world_ready_event = script.generate_event_name()
+constants.debug_world_player_ready_event = script.generate_event_name()
 
 -- INFINITY ACCUMULATOR
 

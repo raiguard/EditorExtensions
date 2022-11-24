@@ -1,7 +1,5 @@
 local compatibility = {}
 
-local event = require("__flib__/event")
-
 local constants = require("__EditorExtensions__/scripts/constants")
 local infinity_loader = require("__EditorExtensions__/scripts/entity/infinity-loader")
 
@@ -38,7 +36,7 @@ end
 
 function compatibility.register_picker_dollies()
   if remote.interfaces["PickerDollies"] then
-    event.register(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
+    script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
   end
 end
 

@@ -1,4 +1,3 @@
-local event = require("__flib__/event")
 local gui = require("__flib__/gui")
 local migration = require("__flib__/migration")
 
@@ -80,7 +79,7 @@ remote.add_interface("EditorExtensions", {
 
 -- BOOTSTRAP
 
-event.on_init(function()
+script.on_init(function()
   global_data.init()
   global_data.read_fastest_belt_type()
 
@@ -105,7 +104,7 @@ event.on_init(function()
   end
 end)
 
-event.on_load(function()
+script.on_load(function()
   compatibility.register_picker_dollies()
 
   for _, player_table in pairs(global.players) do
@@ -116,7 +115,7 @@ event.on_load(function()
   end
 end)
 
-event.on_configuration_changed(function(e)
+script.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
     global_data.read_fastest_belt_type()
 
@@ -138,7 +137,7 @@ end)
 
 -- CHEAT MODE
 
-event.on_player_cheat_mode_enabled(function(e)
+script.on_event(defines.events.on_player_cheat_mode_enabled, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
 
@@ -157,7 +156,7 @@ end)
 
 -- CUSTOM INPUT
 
-event.register("ee-toggle-map-editor", function(e)
+script.on_event("ee-toggle-map-editor", function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   -- quick item search compatibility
@@ -170,7 +169,7 @@ event.register("ee-toggle-map-editor", function(e)
   end
 end)
 
-event.register("ee-open-gui", function(e)
+script.on_event("ee-open-gui", function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected then
@@ -194,7 +193,7 @@ event.register("ee-open-gui", function(e)
   end
 end)
 
-event.register("ee-copy-entity-settings", function(e)
+script.on_event("ee-copy-entity-settings", function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) and selected.linked_belt_neighbour then
@@ -203,7 +202,7 @@ event.register("ee-copy-entity-settings", function(e)
   end
 end)
 
-event.register("ee-paste-entity-settings", function(e)
+script.on_event("ee-paste-entity-settings", function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) then
@@ -216,7 +215,7 @@ event.register("ee-paste-entity-settings", function(e)
   end
 end)
 
-event.register("ee-fast-entity-transfer", function(e)
+script.on_event("ee-fast-entity-transfer", function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local selected = player.selected
   if selected and linked_belt.check_is_linked_belt(selected) then
@@ -224,7 +223,7 @@ event.register("ee-fast-entity-transfer", function(e)
   end
 end)
 
-event.register("ee-clear-cursor", function(e)
+script.on_event("ee-clear-cursor", function(e)
   local player_table = global.players[e.player_index]
   if player_table.flags.connecting_linked_belts then
     local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
@@ -235,7 +234,7 @@ end)
 
 -- ENTITY
 
-event.register({
+script.on_event({
   defines.events.on_built_entity,
   defines.events.on_entity_cloned,
   defines.events.on_robot_built_entity,
@@ -247,7 +246,7 @@ event.register({
 
   -- aggregate chest
   if constants.aggregate_chest_names[entity_name] then
-    aggregate_chest.set_filters(entity)
+    aggregate_chest.set_event_filter(entity)
   elseif entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
     infinity_loader.build_from_ghost(entity)
   elseif
@@ -283,7 +282,7 @@ event.register({
   end
 end)
 
-event.register({
+script.on_event({
   defines.events.on_player_mined_entity,
   defines.events.on_robot_mined_entity,
   defines.events.on_entity_died,
@@ -318,7 +317,7 @@ event.register({
   end
 end)
 
-event.on_player_rotated_entity(function(e)
+script.on_event(defines.events.on_player_rotated_entity, function(e)
   local entity = e.entity
   if entity.name == "ee-infinity-loader-logic-combinator" then
     shared.snap_belt_neighbours(infinity_loader.rotate(entity, e.previous_direction))
@@ -343,17 +342,17 @@ event.on_player_rotated_entity(function(e)
   end
 end)
 
-event.register({ defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction }, function(e)
+script.on_event({ defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction }, function(e)
   -- event filter removes the need for a check here
   infinity_wagon.clear_inventory(e.entity)
 end)
 
-event.on_cancelled_deconstruction(function(e)
+script.on_event(defines.events.on_cancelled_deconstruction, function(e)
   -- event filter removes the need for a check here
   infinity_wagon.reset(e.entity)
 end)
 
-event.on_entity_settings_pasted(function(e)
+script.on_event(defines.events.on_entity_settings_pasted, function(e)
   local source = e.source
   local destination = e.destination
   local source_type = source.type
@@ -420,7 +419,7 @@ event.on_entity_settings_pasted(function(e)
   end
 end)
 
-event.on_selected_entity_changed(function(e)
+script.on_event(defines.events.on_selected_entity_changed, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   linked_belt.render_connection(player, player_table)
@@ -428,7 +427,7 @@ end)
 
 -- FORCE
 
-event.on_research_reversed(function(e)
+script.on_event(defines.events.on_research_reversed, function(e)
   local parent_force = e.research.force
   -- Don't do anything if this is a testing force
   if string.find(parent_force.name, "EE_TESTFORCE_") then
@@ -450,7 +449,7 @@ event.on_research_reversed(function(e)
   end
 end)
 
-event.on_research_finished(function(e)
+script.on_event(defines.events.on_research_finished, function(e)
   local parent_force = e.research.force
   -- Don't do anything if a testing force finished a research
   if string.find(parent_force.name, "EE_TESTFORCE_") then
@@ -472,7 +471,7 @@ event.on_research_finished(function(e)
   end
 end)
 
-event.on_force_reset(function(e)
+script.on_event(defines.events.on_force_reset, function(e)
   local parent_force = e.force
   -- Don't do anything if this is a testing force
   if string.find(parent_force.name, "EE_TESTFORCE_") then
@@ -534,7 +533,7 @@ end)
 
 -- SHORTCUT
 
-event.on_lua_shortcut(function(e)
+script.on_event(defines.events.on_lua_shortcut, function(e)
   if e.prototype_name == "ee-toggle-map-editor" then
     game.get_player(e.player_index).toggle_map_editor()
   end
@@ -542,7 +541,7 @@ end)
 
 -- PLAYER
 
-event.on_player_created(function(e)
+script.on_event(defines.events.on_player_created, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   player_data.init(player)
@@ -564,17 +563,17 @@ event.on_player_created(function(e)
   end
 end)
 
-event.on_player_removed(function(e)
+script.on_event(defines.events.on_player_removed, function(e)
   global.players[e.player_index] = nil
 end)
 
-event.register({ defines.events.on_player_promoted, defines.events.on_player_demoted }, function(e)
+script.on_event({ defines.events.on_player_promoted, defines.events.on_player_demoted }, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   -- lock or unlock the shortcut depending on if they're an admin
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
 end)
 
-event.on_player_setup_blueprint(function(e)
+script.on_event(defines.events.on_player_setup_blueprint, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   -- get blueprint
@@ -634,7 +633,7 @@ event.on_player_setup_blueprint(function(e)
   end
 end)
 
-event.on_pre_player_toggled_map_editor(function(e)
+script.on_event(defines.events.on_pre_player_toggled_map_editor, function(e)
   local player_table = global.players[e.player_index]
   if not player_table then
     return
@@ -645,7 +644,7 @@ event.on_pre_player_toggled_map_editor(function(e)
   end
 end)
 
-event.on_player_toggled_map_editor(function(e)
+script.on_event(defines.events.on_player_toggled_map_editor, function(e)
   local player_table = global.players[e.player_index]
   if not player_table then
     return
@@ -707,15 +706,11 @@ event.on_player_toggled_map_editor(function(e)
   -- Toggle surface
   local ts_setting = player_table.settings.testing_lab
   if ts_setting ~= constants.testing_lab_setting.off then
-    testing_lab.toggle(
-      player,
-      player_table,
-      ts_setting --[[@as number]]
-    )
+    testing_lab.toggle(player, player_table, ts_setting --[[@as number]])
   end
 end)
 
-event.on_player_cursor_stack_changed(function(e)
+script.on_event(defines.events.on_player_cursor_stack_changed, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   local player_table = global.players[e.player_index]
   if player_table.flags.connecting_linked_belts then
@@ -729,7 +724,7 @@ end)
 
 -- SETTINGS
 
-event.on_runtime_mod_setting_changed(function(e)
+script.on_event(defines.events.on_runtime_mod_setting_changed, function(e)
   if e.setting == "ee-aggregate-include-hidden" then
     aggregate_chest.update_data()
     aggregate_chest.update_all_filters()
@@ -767,16 +762,16 @@ end)
 
 -- SURFACE
 
-event.on_surface_cleared(function(e)
+script.on_event(defines.events.on_surface_cleared, function(e)
   local surface = game.get_surface(e.surface_index)
   if surface and surface.name == "nauvis" and game.tick == 1 and global.flags.in_debug_world then
-    event.raise(constants.debug_world_ready_event, {})
+    script.raise_event(constants.debug_world_ready_event, {})
   end
 end)
 
 -- TICK
 
-event.on_tick(function()
+script.on_event(defines.events.on_tick, function()
   infinity_wagon.flip_inventories()
 
   for _, player_table in pairs(global.players) do
@@ -791,7 +786,14 @@ end)
 -- -----------------------------------------------------------------------------
 -- EVENT FILTERS
 
-event.set_filters({
+--- @param events defines.events[]
+local function set_filters(events, filters)
+  for _, name in pairs(events) do
+    script.set_event_filter(name --[[@as uint]], filters)
+  end
+end
+
+set_filters({
   defines.events.on_built_entity,
   defines.events.on_entity_cloned,
   defines.events.on_robot_built_entity,
@@ -816,7 +818,7 @@ event.set_filters({
   { filter = "ghost_name", name = "ee-super-pump" },
 })
 
-event.set_filters({ defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity }, {
+set_filters({ defines.events.on_player_mined_entity, defines.events.on_robot_mined_entity }, {
   { filter = "name", name = "ee-infinity-accumulator-primary-output" },
   { filter = "name", name = "ee-infinity-accumulator-primary-input" },
   { filter = "name", name = "ee-infinity-accumulator-secondary-output" },
@@ -832,11 +834,11 @@ event.set_filters({ defines.events.on_player_mined_entity, defines.events.on_rob
   { filter = "type", type = "infinity-pipe" },
 })
 
-event.set_filters({ defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction }, {
+set_filters({ defines.events.on_pre_player_mined_item, defines.events.on_marked_for_deconstruction }, {
   { filter = "name", name = "ee-infinity-cargo-wagon" },
 })
 
-event.set_filters(defines.events.on_cancelled_deconstruction, {
+script.set_event_filter(defines.events.on_cancelled_deconstruction --[[@as uint]], {
   { filter = "name", name = "ee-infinity-cargo-wagon" },
 })
 

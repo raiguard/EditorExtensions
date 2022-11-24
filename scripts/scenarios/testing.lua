@@ -1,6 +1,5 @@
-local event = require("__flib__/event")
 local migration = require("__flib__/migration")
-local mod_gui = require("__EditorExtensions__/mod-gui")
+local mod_gui = require("__core__/lualib/mod-gui")
 
 local callbacks = {}
 
@@ -42,7 +41,7 @@ local migrations = {
 -- -----------------------------------------------------------------------------
 -- EVENT HANDLERS
 
-event.on_init(function()
+script.on_init(function()
   if remote.interfaces["kr-crash-site"] then
     remote.call("kr-crash-site", "crash_site_enabled", false)
   end
@@ -56,7 +55,7 @@ event.on_init(function()
   end
 end)
 
-event.on_configuration_changed(function(e)
+script.on_configuration_changed(function(e)
   migration.on_config_changed(e, migrations, "EditorExtensions")
 
   if callbacks.on_configuration_changed then
@@ -64,7 +63,7 @@ event.on_configuration_changed(function(e)
   end
 end)
 
-event.on_force_created(function(e)
+script.on_event(defines.events.on_force_created, function(e)
   setup_force(e.force)
 
   if callbacks.on_force_created then
@@ -72,7 +71,7 @@ event.on_force_created(function(e)
   end
 end)
 
-event.on_player_created(function(e)
+script.on_event(defines.events.on_player_created, function(e)
   game.get_player(e.player_index).cheat_mode = true
 
   if callbacks.on_player_created then
