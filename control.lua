@@ -548,6 +548,9 @@ script.on_event(defines.events.on_player_created, function(e)
   if player.cheat_mode or (in_debug_world and settings.global["ee-debug-world-cheat-mode"].value) then
     cheat_mode.enable(player)
   end
+  if in_debug_world and settings.global["ee-debug-world-give-testing-items"].value then
+    cheat_mode.set_loadout(player)
+  end
 
   local player_table = global.players[e.player_index]
   if

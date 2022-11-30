@@ -123,24 +123,31 @@ data:extend({
   },
   {
     type = "bool-setting",
-    name = "ee-debug-world-research-all",
+    name = "ee-debug-world-give-testing-items",
     setting_type = "runtime-global",
     default_value = true,
     order = "db",
   },
   {
     type = "bool-setting",
-    name = "ee-debug-world-lab-tiles",
+    name = "ee-debug-world-research-all",
     setting_type = "runtime-global",
     default_value = true,
     order = "dc",
   },
   {
     type = "bool-setting",
-    name = "ee-debug-world-infinite",
+    name = "ee-debug-world-lab-tiles",
     setting_type = "runtime-global",
     default_value = true,
     order = "dd",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-debug-world-infinite",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "de",
   },
   -- PLAYER SETTINGS
   {
