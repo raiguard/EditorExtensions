@@ -1,3 +1,2 @@
-*.zip
-!src/scenarios/testing/blueprint.zip
+.kakrc
 .vscode
