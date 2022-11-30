@@ -36,7 +36,7 @@ end
 --- Remove filters on aggregate chests when blueprinted
 --- @param entity BlueprintEntity
 function aggregate_chest.setup_blueprint(entity)
-  entity.infinity_settings.filters = nil
+  entity.infinity_settings.filters = nil --- @diagnostic disable-line
 end
 
 return aggregate_chest

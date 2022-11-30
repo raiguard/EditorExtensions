@@ -6,7 +6,7 @@ function global_data.init()
     map_editor_toggled = false,
   }
   global.linked_belt_sources = {}
-  --- @type PlayerTable[]
+  --- @type table<uint, PlayerTable>
   global.players = {}
   global.executed_cheat_command = {}
   global.tried_cheat_command = {}
