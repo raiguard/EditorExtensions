@@ -1,6 +1,5 @@
 local direction = require("__flib__/direction")
 
-local shared = require("__EditorExtensions__/scripts/shared")
 local util = require("__EditorExtensions__/scripts/util")
 
 local linked_belt = {}
@@ -57,7 +56,6 @@ function linked_belt.finish_connection(player, player_table, entity, shift)
       global.linked_belt_sources[source.unit_number] = nil
     end
     linked_belt.render_connection(player, player_table)
-    shared.snap_belt_neighbours(entity)
   else
     util.error_text(player, { "ee-message.connection-blocked" }, entity.position)
   end

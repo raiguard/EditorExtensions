@@ -26,13 +26,14 @@ function util.position.to_tile_area(pos)
 end
 
 --- @param entity LuaEntity
+--- @return string
 function util.get_belt_type(entity)
   local type = entity.type == "entity-ghost" and entity.ghost_name or entity.name
   for pattern, replacement in pairs(constants.belt_type_patterns) do
     type = string.gsub(type, pattern, replacement)
   end
   -- check to see if the loader prototype exists
-  if type ~= "" and not game.entity_prototypes["ee-infinity-loader-loader-" .. type] then
+  if type ~= "" and not game.entity_prototypes["ee-infinity-loader-" .. type] then
     -- print warning message
     game.print({ "", "EDITOR EXTENSIONS: ", { "ee-message.unable-to-identify-belt" } })
     game.print('entity_name = "' .. entity.name .. '", parse_result = "' .. type .. '"')

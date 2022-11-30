@@ -9,7 +9,6 @@ local global_data = require("__EditorExtensions__/scripts/global-data")
 local inventory = require("__EditorExtensions__/scripts/inventory")
 local migrations = require("__EditorExtensions__/scripts/migrations")
 local player_data = require("__EditorExtensions__/scripts/player-data")
-local shared = require("__EditorExtensions__/scripts/shared")
 local testing_lab = require("__EditorExtensions__/scripts/testing-lab")
 local util = require("__EditorExtensions__/scripts/util")
 
@@ -22,8 +21,49 @@ local linked_belt = require("__EditorExtensions__/scripts/entity/linked-belt")
 local super_inserter = require("__EditorExtensions__/scripts/entity/super-inserter")
 local super_pump = require("__EditorExtensions__/scripts/entity/super-pump")
 
--- -----------------------------------------------------------------------------
--- INTERFACES
+--- @param entity LuaEntity
+local function snap_belt_neighbours(entity)
+  local loaders = {}
+  local linked_belts = {}
+
+  local linked_belt_neighbour
+  if entity.type == "linked-belt" then
+    linked_belt_neighbour = entity.linked_belt_neighbour
+    if linked_belt_neighbour then
+      entity.disconnect_linked_belts()
+    end
+  end
+
+  for _ = 1, entity.type == "transport-belt" and 4 or 2 do
+    -- catalog belt neighbours for this rotation
+    for _, neighbours in pairs(entity.belt_neighbours) do
+      for _, neighbour in ipairs(neighbours) do
+        if infinity_loader.check_is_loader(neighbour) then
+          loaders[neighbour.unit_number or (#loaders + 1)] = neighbour
+        elseif linked_belt.check_is_linked_belt(neighbour) then
+          linked_belts[neighbour.unit_number or (#linked_belts + 1)] = neighbour
+        end
+      end
+    end
+    -- rotate or flip linked belt type
+    if entity.type == "linked-belt" then
+      entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
+    else
+      entity.rotate()
+    end
+  end
+
+  if linked_belt_neighbour then
+    entity.connect_linked_belts(linked_belt_neighbour)
+  end
+
+  for _, loader in pairs(loaders) do
+    infinity_loader.snap(loader, entity)
+  end
+  for _, belt in pairs(linked_belts) do
+    linked_belt.snap(belt, entity)
+  end
+end
 
 remote.add_interface("EditorExtensions", {
   --- An event that fires when the debug world has finished generating.
@@ -49,11 +89,6 @@ remote.add_interface("EditorExtensions", {
   end,
 })
 
--- -----------------------------------------------------------------------------
--- EVENT HANDLERS
--- picker dollies handler is kept in `scripts.entity.infinity-loader` and is registered in `scripts.compatibility`
--- all other event handlers are here
-
 -- BOOTSTRAP
 
 script.on_init(function()
@@ -65,6 +100,7 @@ script.on_init(function()
 
   aggregate_chest.update_data()
 
+  infinity_loader.init()
   infinity_pipe.init()
 
   debug_world.init()
@@ -98,7 +134,7 @@ script.on_configuration_changed(function(e)
 
     aggregate_chest.update_data()
     aggregate_chest.update_all_filters()
-    infinity_loader.check_loaders()
+    infinity_loader.cleanup_orphans()
 
     for i, player in pairs(game.players) do
       player_data.refresh(player, global.players[i])
@@ -245,12 +281,8 @@ script.on_event({
   -- aggregate chest
   if constants.aggregate_chest_names[entity_name] then
     aggregate_chest.set_event_filter(entity)
-  elseif entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
-    infinity_loader.build_from_ghost(entity)
-  elseif
-    entity_name == "ee-infinity-loader-dummy-combinator" or entity_name == "ee-infinity-loader-logic-combinator"
-  then
-    infinity_loader.build(entity)
+  elseif infinity_loader.check_is_loader(entity) then
+    infinity_loader.on_built(entity)
   elseif
     entity.type == "transport-belt"
     or entity.type == "underground-belt"
@@ -259,9 +291,9 @@ script.on_event({
     or entity.type == "loader-1x1"
   then
     -- generic other snapping
-    shared.snap_belt_neighbours(entity)
+    snap_belt_neighbours(entity)
     if entity.type == "underground-belt" and entity.neighbours then
-      shared.snap_belt_neighbours(entity.neighbours)
+      snap_belt_neighbours(entity.neighbours)
     end
   elseif constants.infinity_wagon_names[entity_name] then
     infinity_wagon.build(entity, e.tags)
@@ -287,8 +319,8 @@ script.on_event({
   defines.events.script_raised_destroy,
 }, function(e)
   local entity = e.entity
-  if entity.name == "ee-infinity-loader-logic-combinator" then
-    infinity_loader.destroy(entity)
+  if infinity_loader.check_is_loader(entity) then
+    infinity_loader.on_destroyed(entity)
   elseif constants.infinity_wagon_names[entity.name] then
     infinity_wagon.destroy(entity)
   elseif constants.ia.entity_names[entity.name] then
@@ -317,25 +349,26 @@ end)
 
 script.on_event(defines.events.on_player_rotated_entity, function(e)
   local entity = e.entity
-  if entity.name == "ee-infinity-loader-logic-combinator" then
-    shared.snap_belt_neighbours(infinity_loader.rotate(entity, e.previous_direction))
-  elseif
+  if
     entity.type == "transport-belt"
     or entity.type == "underground-belt"
     or entity.type == "splitter"
     or entity.type == "loader"
     or entity.type == "loader-1x1"
   then
-    shared.snap_belt_neighbours(entity)
+    snap_belt_neighbours(entity)
     if entity.type == "underground-belt" and entity.neighbours then
-      shared.snap_belt_neighbours(entity.neighbours)
+      snap_belt_neighbours(entity.neighbours)
     end
+  elseif infinity_loader.check_is_loader(entity) then
+    infinity_loader.sync_chest_filter(entity)
+    snap_belt_neighbours(entity)
   elseif linked_belt.check_is_linked_belt(entity) then
     linked_belt.handle_rotation(e)
-    shared.snap_belt_neighbours(entity)
+    snap_belt_neighbours(entity)
     local neighbour = entity.linked_belt_neighbour
     if neighbour and neighbour.type ~= "entity-ghost" then
-      shared.snap_belt_neighbours(neighbour)
+      snap_belt_neighbours(neighbour)
     end
   end
 end)
@@ -367,8 +400,9 @@ script.on_event(defines.events.on_entity_settings_pasted, function(e)
     and source_name ~= destination_name
   then
     infinity_accumulator.paste_settings(source, destination)
-  elseif source.type == "constant-combinator" and destination_name == "ee-infinity-loader-logic-combinator" then
-    infinity_loader.paste_settings(source, destination)
+  elseif infinity_loader.check_is_loader(destination) then
+    -- TODO: Handle to/from a constant combinator
+    infinity_loader.sync_chest_filter(destination)
   elseif
     source_name == "ee-infinity-cargo-wagon" and destination_name == "ee-infinity-cargo-wagon"
     or source_name == "ee-infinity-fluid-wagon" and destination_name == "ee-infinity-fluid-wagon"
@@ -488,6 +522,7 @@ end)
 
 -- GUI
 
+--- @param e GuiEventData
 gui.hook_events(function(e)
   local msg = gui.read_action(e)
   if msg then
@@ -498,8 +533,6 @@ gui.hook_events(function(e)
       if player_table and player_table.gui.infinity_pipe then
         player_table.gui.infinity_pipe:dispatch(msg, e)
       end
-    elseif msg.gui == "il" then
-      infinity_loader.handle_gui_action(e, msg)
     elseif msg.gui == "sp" then
       super_pump.handle_gui_action(e, msg)
     elseif msg.gui == "inv_filters" then
@@ -513,10 +546,10 @@ gui.hook_events(function(e)
         infinity_accumulator.open(e.player_index, entity)
       elseif string.find(entity_name, "ee%-infinity%-pipe") then
         infinity_pipe.create_gui(e.player_index, entity)
-      elseif entity_name == "ee-infinity-loader-logic-combinator" then
-        infinity_loader.open(e.player_index, entity)
       elseif entity_name == "ee-super-pump" then
         super_pump.open(e.player_index, entity)
+      elseif infinity_loader.check_is_loader(entity) then
+        global.infinity_loader_open[e.player_index] = entity
       elseif infinity_wagon.check_is_wagon(entity) then
         local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
         infinity_wagon.open(player, entity)
@@ -525,6 +558,12 @@ gui.hook_events(function(e)
   elseif e.name == defines.events.on_gui_closed then
     if e.gui_type and e.gui_type == defines.gui_type.controller then
       inventory.close_string_gui(e.player_index)
+    elseif e.gui_type == defines.gui_type.entity then
+      local loader = global.infinity_loader_open[e.player_index]
+      if loader and loader.valid then
+        infinity_loader.sync_chest_filter(loader)
+        global.infinity_loader_open[e.player_index] = nil
+      end
     end
   end
 end)
@@ -562,7 +601,12 @@ script.on_event(defines.events.on_player_created, function(e)
   end
 end)
 
+script.on_event(defines.events.on_player_left_game, function(e)
+  global.infinity_loader_open[e.player_index] = nil
+end)
+
 script.on_event(defines.events.on_player_removed, function(e)
+  global.infinity_loader_open[e.player_index] = nil
   global.players[e.player_index] = nil
 end)
 
@@ -608,9 +652,6 @@ script.on_event(defines.events.on_player_setup_blueprint, function(e)
     if constants.aggregate_chest_names[entity_name] then
       set = true
       aggregate_chest.setup_blueprint(entity)
-    elseif entity_name == "ee-infinity-loader-logic-combinator" then
-      set = true
-      entities[i] = infinity_loader.setup_blueprint(entity)
     elseif entity_name == "ee-infinity-cargo-wagon" then
       set = true
       entities[i] = infinity_wagon.setup_cargo_blueprint(entity, surface.find_entity(entity.name, entity.position))
@@ -782,6 +823,12 @@ script.on_event(defines.events.on_tick, function()
   end
 end)
 
+script.on_nth_tick(5, function()
+  for _, loader in pairs(global.infinity_loader_open) do
+    infinity_loader.sync_chest_filter(loader)
+  end
+end)
+
 -- -----------------------------------------------------------------------------
 -- EVENT FILTERS
 
@@ -801,8 +848,6 @@ set_filters({
   { filter = "name", name = "ee-aggregate-chest" },
   { filter = "name", name = "ee-infinity-cargo-wagon" },
   { filter = "name", name = "ee-infinity-fluid-wagon" },
-  { filter = "name", name = "ee-infinity-loader-dummy-combinator" },
-  { filter = "name", name = "ee-infinity-loader-logic-combinator" },
   { filter = "name", name = "ee-super-inserter" },
   { filter = "name", name = "ee-super-pump" },
   { filter = "type", type = "transport-belt" },
@@ -813,7 +858,6 @@ set_filters({
   { filter = "type", type = "loader-1x1" },
   { filter = "type", type = "linked-belt" },
   { filter = "ghost" },
-  { filter = "ghost_name", name = "ee-infinity-loader-logic-combinator" },
   { filter = "ghost_name", name = "ee-super-pump" },
 })
 
@@ -825,10 +869,10 @@ set_filters({ defines.events.on_player_mined_entity, defines.events.on_robot_min
   { filter = "name", name = "ee-infinity-accumulator-tertiary-buffer" },
   { filter = "name", name = "ee-infinity-accumulator-tertiary-input" },
   { filter = "name", name = "ee-infinity-accumulator-tertiary-output" },
-  { filter = "name", name = "ee-infinity-loader-dummy-combinator" },
-  { filter = "name", name = "ee-infinity-loader-logic-combinator" },
   { filter = "name", name = "ee-infinity-cargo-wagon" },
   { filter = "name", name = "ee-infinity-fluid-wagon" },
+  { filter = "name", name = "ee-infinity-loader-chest" },
+  { filter = "type", type = "loader-1x1" },
   { filter = "type", type = "linked-belt" },
   { filter = "type", type = "infinity-pipe" },
 })
@@ -837,52 +881,4 @@ set_filters({ defines.events.on_pre_player_mined_item, defines.events.on_marked_
   { filter = "name", name = "ee-infinity-cargo-wagon" },
 })
 
-script.set_event_filter(defines.events.on_cancelled_deconstruction --[[@as uint]], {
-  { filter = "name", name = "ee-infinity-cargo-wagon" },
-})
-
--- -----------------------------------------------------------------------------
--- SHARED
-
-function shared.snap_belt_neighbours(entity)
-  local loaders = {}
-  local linked_belts = {}
-
-  local linked_belt_neighbour
-  if entity.type == "linked-belt" then
-    linked_belt_neighbour = entity.linked_belt_neighbour
-    if linked_belt_neighbour then
-      entity.disconnect_linked_belts()
-    end
-  end
-
-  for _ = 1, entity.type == "transport-belt" and 4 or 2 do
-    -- catalog belt neighbours for this rotation
-    for _, neighbours in pairs(entity.belt_neighbours) do
-      for _, neighbour in ipairs(neighbours) do
-        if infinity_loader.check_is_loader(neighbour) then
-          loaders[neighbour.unit_number or (#loaders + 1)] = neighbour
-        elseif linked_belt.check_is_linked_belt(neighbour) then
-          linked_belts[neighbour.unit_number or (#linked_belts + 1)] = neighbour
-        end
-      end
-    end
-    -- rotate or flip linked belt type
-    if entity.type == "linked-belt" then
-      entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
-    else
-      entity.rotate()
-    end
-  end
-
-  if linked_belt_neighbour then
-    entity.connect_linked_belts(linked_belt_neighbour)
-  end
-
-  for _, loader in pairs(loaders) do
-    infinity_loader.snap(loader, entity)
-  end
-  for _, belt in pairs(linked_belts) do
-    linked_belt.snap(belt, entity)
-  end
-end
+set_filters({ defines.events.on_cancelled_deconstruction }, { { filter = "name", name = "ee-infinity-cargo-wagon" } })

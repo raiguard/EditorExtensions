@@ -125,14 +125,11 @@ end
 
 -- INFINITY LOADER
 
--- 60 items/second / 60 ticks/second / 8 items/tile = X tiles/tick
-constants.belt_speed_for_60_per_second = 60 / 60 / 8
-
 -- pattern -> replacement
 -- iterate through all of these to result in the belt type
 constants.belt_type_patterns = {
   -- editor extensions :D
-  ["ee%-infinity%-loader%-loader%-?"] = "",
+  ["ee%-infinity%-loader%-?"] = "",
   ["ee%-linked%-belt%-?"] = "",
   -- better belts: https://mods.factorio.com/mod/BetterBelts
   ["%-v%d$"] = "",

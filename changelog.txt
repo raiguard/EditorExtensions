@@ -5,6 +5,10 @@ Date: ????
     - Added '/cheat lab' command to convert the current surface into a lab
       - Careful - this will delete all entities on the surface!
   Changes:
+    - Significantly simplified the infinity loader implementation
+      - Fixes several known issues with the invisible inserters approach
+      - Only a single filter is supported (sorry)
+      - UPS impact is now the smallest possible
     - Removed the testing scenario in favor of the debug world
       - Control+click the "singleplayer" or "new game" buttons in the main menu to enter the debug world
     - Removed '/cheatmode' command in favor of the built-in '/cheat' command

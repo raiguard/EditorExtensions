@@ -107,7 +107,6 @@ data:extend({
       { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 },
     }),
     stack_size = 50,
-    place_result = "ee-infinity-loader-dummy-combinator",
     subgroup = "ee-misc",
     order = "aa",
   },

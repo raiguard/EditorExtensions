@@ -117,30 +117,35 @@ local function create_linked_belt(base_prototype, suffix)
   data:extend({ entity })
 end
 
-local loader_base = table.deepcopy(data.raw["loader-1x1"]["loader-1x1"])
-loader_base.structure = table.deepcopy(linked_belt_base.structure)
+local loader_base = {
+  type = "loader-1x1",
+  localised_name = { "entity-name.ee-infinity-loader" },
+  localised_description = { "entity-name.ee-infinity-loader" },
+  icons = table.deepcopy(linked_belt_base.icons),
+  flags = { "player-creation" },
+  minable = { mining_time = 0.1, result = "ee-infinity-loader" },
+  placeable_by = { item = "ee-infinity-loader", count = 1 },
+  collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
+  selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
+  animation_speed_coefficient = 32,
+  structure = table.deepcopy(linked_belt_base.structure),
+  fast_replaceable_group = "transport-belt",
+  open_sound = sounds.machine_open,
+  close_sound = sounds.machine_close,
+  container_distance = 0,
+  filter_count = 1,
+}
 loader_base.structure.direction_in_side_loading = nil
 loader_base.structure.direction_out_side_loading = nil
-loader_base.icons = table.deepcopy(linked_belt_base.icons)
-loader_base.icon = nil
-loader_base.icon_size = nil
-loader_base.icon_mipmaps = nil
-loader_base.localised_name = { "entity-name.ee-infinity-loader" }
-loader_base.localised_description = { "entity-name.ee-infinity-loader" }
-loader_base.selectable_in_game = false
-loader_base.belt_length = 0.6
-loader_base.container_distance = 0
-loader_base.fast_replaceable_group = "transport-belt"
-loader_base.open_sound = sounds.machine_open
-loader_base.close_sound = sounds.machine_close
 util.recursive_tint(loader_base)
 
 local function create_loader(base_prototype, suffix)
   local entity = table.deepcopy(loader_base)
-  entity.name = "ee-infinity-loader-loader" .. suffix
+  entity.name = "ee-infinity-loader" .. suffix
   entity.speed = base_prototype.speed
-  -- Account for both variants
+  -- Preferred
   entity.belt_animation_set = base_prototype.belt_animation_set
+  -- Legacy
   entity.belt_horizontal = base_prototype.belt_horizontal
   entity.belt_vertical = base_prototype.belt_vertical
   entity.ending_bottom = base_prototype.ending_bottom
@@ -177,4 +182,19 @@ for name, prototype in pairs(table.deepcopy(data.raw["underground-belt"])) do
   end
 end
 
+data.raw["item"]["ee-infinity-loader"].place_result = "ee-infinity-loader" .. fastest_suffix
 data.raw["item"]["ee-linked-belt"].place_result = "ee-linked-belt" .. fastest_suffix
+
+-- Internal chest for infinity loader
+data:extend({
+  {
+    type = "infinity-container",
+    name = "ee-infinity-loader-chest",
+    erase_contents_when_mined = true,
+    inventory_size = 10, -- Five for output, five for input
+    flags = { "hide-alt-info", "player-creation" },
+    selectable_in_game = false,
+    picture = constants.empty_sheet,
+    collision_box = { { -0.1, -0.1 }, { 0.1, 0.1 } },
+  },
+})
