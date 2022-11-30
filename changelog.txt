@@ -1,13 +1,15 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.14.0
+Version: 2.0.0
 Date: ????
+  Info:
+    - This is a BREAKING UPDATE. Your existing testing setups may no longer function as they once did.
   Features:
     - Added '/cheat lab' command to convert the current surface into a lab
       - Careful - this will delete all entities on the surface!
   Changes:
     - Significantly simplified the infinity loader implementation
       - Fixes several known issues with the invisible inserters approach
-      - Only a single filter is supported (sorry)
+      - Only a single filter is supported - place two loaders if you need a different item on each lane
       - UPS impact is now the smallest possible
     - Removed the testing scenario in favor of the debug world
       - Control+click the "singleplayer" or "new game" buttons in the main menu to enter the debug world
@@ -41,7 +43,7 @@ Date: 2022-06-21
 Version: 1.13.1
 Date: 2022-06-12
   Bugfixes:
-    - Fixed a crash when toggling the editor while holding an item from the ammor or armor inventories with inventory sync enabled (https://todo.sr.ht/~raiguard/factorio-mods/27)
+    - Fixed a crash when toggling the editor while holding an item from the ammo or armor inventories with inventory sync enabled (https://todo.sr.ht/~raiguard/factorio-mods/27)
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.0
 Date: 2022-05-29
