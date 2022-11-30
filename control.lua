@@ -280,7 +280,7 @@ script.on_event({
 
   -- aggregate chest
   if constants.aggregate_chest_names[entity_name] then
-    aggregate_chest.set_event_filter(entity)
+    aggregate_chest.set_filters(entity)
   elseif infinity_loader.check_is_loader(entity) then
     infinity_loader.on_built(entity)
   elseif
