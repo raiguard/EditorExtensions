@@ -131,6 +131,8 @@ end
 
 --- @class InfinityPipeGui
 local Gui = {}
+local Gui_mt = { __index = Gui }
+script.register_metatable("EditorExtensions_infinity_pipe", Gui_mt)
 
 --- @param e on_gui_selection_state_changed
 function Gui:change_capacity(_, e)
@@ -606,17 +608,12 @@ function infinity_pipe.create_gui(player_index, entity)
       selected_mode = filter and filter.mode or "at-least",
     },
   }
-  setmetatable(self, { __index = Gui })
+  setmetatable(self, Gui_mt)
   player_table.gui.infinity_pipe = self
 
   -- Set GUI state
   self:update()
   self:display_fluid_contents()
-end
-
---- @param self InfinityPipeGui
-function infinity_pipe.load_gui(self)
-  setmetatable(self, { __index = Gui })
 end
 
 return infinity_pipe

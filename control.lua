@@ -112,15 +112,6 @@ script.on_init(function()
   end
 end)
 
-script.on_load(function()
-  for _, player_table in pairs(global.players) do
-    local pipe_gui = player_table.gui.infinity_pipe
-    if pipe_gui then
-      infinity_pipe.load_gui(pipe_gui)
-    end
-  end
-end)
-
 script.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
     aggregate_chest.update_data()
