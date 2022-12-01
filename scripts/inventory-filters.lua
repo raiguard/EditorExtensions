@@ -15,22 +15,22 @@ function inventory_filters.import(player, string)
     and string.sub(decoded_string, 1, 16) == "EditorExtensions"
     and string.sub(decoded_string, 18, 34) == "inventory_filters"
   then
-    -- extract version for migrations
+    -- Extract version for migrations
     local _, _, version, json = string.find(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
     local input = game.json_to_table(json)
     if input then
-      -- run migrations
+      -- Run migrations
       migration.run(version, filters_table_migrations, nil, input)
-      -- sanitize the filters to only include currently existing prototypes
+      -- Sanitize the filters to only include currently existing prototypes
       local item_prototypes = game.item_prototypes
       local output = {}
-      local output_index = 0
+      local i = 0
       local filters = input.filters
-      for i = 1, #filters do
-        local filter = filters[i]
+      for _, filter in pairs(filters) do
         if item_prototypes[filter.name] then
-          output_index = output_index + 1
-          output[output_index] = { name = filter.name, count = filter.count, mode = filter.mode, index = output_index }
+          i = i + 1
+          filter.index = i
+          output[i] = filter
         end
       end
       player.infinity_inventory_filters = output
