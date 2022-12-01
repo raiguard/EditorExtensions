@@ -1,7 +1,7 @@
 local player_data = {}
 
 local constants = require("__EditorExtensions__/scripts/constants")
-local inventory = require("__EditorExtensions__/scripts/inventory")
+local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
 
 --- @param player LuaPlayer
 function player_data.init(player)
@@ -54,8 +54,8 @@ function player_data.refresh(player, player_table)
   end
 
   -- recreate inventory filters buttons
-  inventory.destroy_filters_buttons(player_table)
-  inventory.create_filters_buttons(player, player_table)
+  inventory_filters.destroy_filters_buttons(player_table)
+  inventory_filters.create_filters_buttons(player, player_table)
 
   -- set shortcut availability
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)

@@ -6,6 +6,7 @@ local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
 local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local constants = require("__EditorExtensions__/scripts/constants")
 local debug_world = require("__EditorExtensions__/scripts/debug-world")
+local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
 local inventory = require("__EditorExtensions__/scripts/inventory")
 local migrations = require("__EditorExtensions__/scripts/migrations")
 local player_data = require("__EditorExtensions__/scripts/player-data")
@@ -122,7 +123,7 @@ script.on_configuration_changed(function(e)
 
     for i, player in pairs(game.players) do
       player_data.refresh(player, global.players[i])
-      -- space exploration - do nothing if they are in the satellite view
+      -- Space Exploration - do nothing if they are in the satellite view
       if player.cheat_mode and not script.active_mods["space-exploration"] then
         cheat_mode.enable_recipes(player)
       end
@@ -505,7 +506,7 @@ gui.hook_events(function(e)
     elseif msg.gui == "sp" then
       super_pump.handle_gui_action(e, msg)
     elseif msg.gui == "inv_filters" then
-      inventory.handle_gui_action(e, msg)
+      inventory_filters.handle_gui_action(e, msg)
     end
   elseif e.name == defines.events.on_gui_opened then
     local entity = e.entity
@@ -526,7 +527,7 @@ gui.hook_events(function(e)
     end
   elseif e.name == defines.events.on_gui_closed then
     if e.gui_type and e.gui_type == defines.gui_type.controller then
-      inventory.close_string_gui(e.player_index)
+      inventory_filters.close_string_gui(e.player_index)
     elseif e.gui_type == defines.gui_type.entity then
       local loader = global.infinity_loader_open[e.player_index]
       if loader and loader.valid then
@@ -678,13 +679,13 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
     player_table.flags.map_editor_toggled = true
     local default_filters = player_table.settings.default_infinity_filters
     if default_filters ~= "" then
-      inventory.import_filters(player, default_filters)
+      inventory_filters.import_filters(player, default_filters)
     end
   end
 
   -- close infinity filters GUIs if they're open
   if not to_state then
-    inventory.close_string_gui(e.player_index)
+    inventory_filters.close_string_gui(e.player_index)
   end
 
   -- finish inventory sync
