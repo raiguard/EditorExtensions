@@ -51,41 +51,19 @@ script.on_init(function()
   cheat_command.init()
   debug_world.init()
 
-  aggregate_chest.update_data()
   infinity_loader.init()
   infinity_pipe.init()
   infinity_wagon.init()
   linked_belt.init()
 
-  compatibility.add_cursor_enhancements_overrides()
-
   for _, player in pairs(game.players) do
     player_data.init(player)
-    -- enable recipes for cheat mode
-    -- space exploration - do nothing if they are in the satellite view
-    if player.cheat_mode and not script.active_mods["space-exploration"] then
-      cheat_mode.enable_recipes(player)
-    end
   end
+
+  migrations.generic()
 end)
 
-script.on_configuration_changed(function(e)
-  if migration.on_config_changed(e, migrations) then
-    aggregate_chest.update_data()
-    aggregate_chest.update_all_filters()
-    infinity_loader.cleanup_orphans()
-
-    compatibility.add_cursor_enhancements_overrides()
-
-    for i, player in pairs(game.players) do
-      player_data.refresh(player, global.players[i])
-      -- Space Exploration - do nothing if they are in the satellite view
-      if player.cheat_mode and not script.active_mods["space-exploration"] then
-        cheat_mode.enable_recipes(player)
-      end
-    end
-  end
-end)
+migration.handle_on_configuration_changed(migrations.generic, migrations.by_version)
 
 -- CHEAT MODE
 
@@ -524,6 +502,7 @@ script.on_event(defines.events.on_player_created, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   player_data.init(player)
+  player_data.refresh(player, global.players[e.player_index])
 
   local in_debug_world = global.in_debug_world
   if player.cheat_mode or (in_debug_world and settings.global["ee-debug-world-cheat-mode"].value) then
@@ -657,7 +636,7 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
 
   -- close infinity filters GUIs if they're open
   if not to_state then
-    inventory_filters.close_string_gui(e.player_index)
+    inventory_filters.string_gui.destroy(player)
   end
 
   -- finish inventory sync

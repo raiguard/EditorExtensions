@@ -177,7 +177,6 @@ function relative_gui.destroy(player)
   if window and window.valid then
     window.destroy()
   end
-  player.gui.screen.clear()
 end
 
 --- @param player LuaPlayer

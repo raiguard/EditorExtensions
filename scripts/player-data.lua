@@ -25,8 +25,6 @@ function player_data.init(player)
     sync_data = nil,
   }
   global.players[player.index] = player_table
-
-  player_data.refresh(player, player_table)
 end
 
 --- @param player LuaPlayer
