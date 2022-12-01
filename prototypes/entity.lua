@@ -1,3 +1,4 @@
+local sounds = require("__base__/prototypes/entity/sounds")
 local table = require("__flib__/table")
 
 local shared_constants = require("__EditorExtensions__/shared-constants")
@@ -197,6 +198,43 @@ super_inserter.extension_speed = 1
 super_inserter.rotation_speed = 0.5
 util.recursive_tint(super_inserter)
 data:extend({ super_inserter })
+
+data:extend({
+  util.copy_prototype(data.raw["linked-belt"]["linked-belt"], {
+    name = "ee-linked-belt",
+    icons = "CONVERT",
+    minable = { mining_time = 0.1, result = "ee-linked-belt" },
+    belt_animation_set = express_belt_animation_set,
+    allow_side_loading = true,
+  }, constants.linked_belt_tint),
+  util.recursive_tint({
+    type = "loader-1x1",
+    name = "ee-infinity-loader",
+    icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
+    flags = { "player-creation" },
+    minable = { mining_time = 0.1, result = "ee-infinity-loader" },
+    -- placeable_by = { item = "ee-infinity-loader", count = 1 },
+    collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
+    selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
+    animation_speed_coefficient = 32,
+    belt_animation_set = table.deepcopy(fast_belt_animation_set),
+    container_distance = 0,
+    filter_count = 1,
+    structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure), -- TODO: Remove sideloading sets
+    open_sound = sounds.machine_open,
+    close_sound = sounds.machine_close,
+  }),
+  {
+    type = "infinity-container",
+    name = "ee-infinity-loader-chest",
+    erase_contents_when_mined = true,
+    inventory_size = 10, -- Five for output, five for input
+    flags = { "hide-alt-info", "player-creation" },
+    selectable_in_game = false,
+    picture = constants.empty_sheet,
+    collision_box = { { -0.1, -0.1 }, { 0.1, 0.1 } },
+  },
+})
 
 -- Infinity pipe
 

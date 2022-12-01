@@ -81,7 +81,7 @@ function string_gui.build(player, mode)
         type = "button",
         style = "back_button",
         caption = { "gui.cancel" },
-        handler = { [defines.events.on_gui_click] = string_gui.destroy },
+        handler = string_gui.destroy,
       },
       {
         type = "empty-widget",
@@ -94,7 +94,7 @@ function string_gui.build(player, mode)
         style = "confirm_button",
         caption = { "gui.confirm" },
         visible = mode == "import",
-        handler = { [defines.events.on_gui_click] = string_gui.import },
+        handler = string_gui.import,
       },
     },
   })

@@ -1,5 +1,3 @@
-local util = require("__EditorExtensions__/scripts/util")
-
 local infinity_loader = {}
 
 function infinity_loader.init()
@@ -33,65 +31,58 @@ function infinity_loader.on_destroyed(entity)
   end
 end
 
---- @param entity LuaEntity
---- @return boolean
-function infinity_loader.check_is_loader(entity)
-  local name = entity.name
-  if name == "ee-infinity-loader-chest" then
-    return false
-  end
-  return string.find(entity.name, "ee-infinity-loader", nil, true) and true or false
-end
-
 --- Snaps the loader to the transport-belt-connectable entity that it's facing. If `target` is supplied, it will check
 --- against that entity, and will not snap if it cannot connect to it.
 --- @param entity LuaEntity
 --- @param target LuaEntity?
 function infinity_loader.snap(entity, target)
-  if not entity or not entity.valid then
-    return
-  end
-
   -- Check for a connected belt, then flip and try again, then flip back if failed
   for _ = 1, 2 do
     local connection = entity.belt_neighbours[entity.loader_type .. "s"][1]
     if connection and (not target or connection.unit_number == target.unit_number) then
-      -- Snap the belt type
-      local belt_type = util.get_belt_type(connection)
-      if belt_type and util.get_belt_type(entity) ~= belt_type then
-        -- Fast-replace does not work because the loader collides with the chest
-        local surface = entity.surface
-        local position = entity.position
-        local direction = entity.direction
-        local loader_type = entity.loader_type
-        local force = entity.force
-        local last_user = entity.last_user
-        if last_user == "" then
-          last_user = nil
-        end
-        local filter = entity.get_filter(1)
-        entity.destroy({ raise_destroy = true }) -- The chest will be destroyed here
-        local new = surface.create_entity({
-          name = "ee-infinity-loader" .. (#belt_type > 0 and "-" .. belt_type or ""),
-          position = position,
-          direction = direction,
-          type = loader_type,
-          force = force,
-          player = last_user,
-          create_build_effect_smoke = false,
-          raise_built = true,
-        })
-        if not new then
-          return
-        end
-        new.set_filter(1, filter)
-        infinity_loader.sync_chest_filter(new)
-      end
       break
     else
       -- Flip the direction
       entity.loader_type = entity.loader_type == "output" and "input" or "output"
     end
+  end
+end
+
+--- Snaps all neighbouring infinity loaders.
+--- @param entity LuaEntity
+function infinity_loader.snap_belt_neighbours(entity)
+  local linked_belt_neighbour
+  if entity.type == "linked-belt" then
+    linked_belt_neighbour = entity.linked_belt_neighbour
+    if linked_belt_neighbour then
+      entity.disconnect_linked_belts()
+    end
+  end
+
+  local to_snap = {}
+  for _ = 1, entity.type == "transport-belt" and 4 or 2 do
+    -- Catalog neighbouring loaders for this rotation
+    for _, neighbours in pairs(entity.belt_neighbours) do
+      for _, neighbour in ipairs(neighbours) do
+        if neighbour.name == "ee-infinity-loader" then
+          table.insert(to_snap, neighbour)
+        end
+      end
+    end
+    -- Rotate or flip linked belt type
+    if entity.type == "linked-belt" then
+      entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
+    else
+      entity.rotate()
+    end
+  end
+
+  if linked_belt_neighbour then
+    entity.connect_linked_belts(linked_belt_neighbour)
+  end
+
+  for _, loader in pairs(to_snap) do
+    infinity_loader.snap(loader, entity)
   end
 end
 

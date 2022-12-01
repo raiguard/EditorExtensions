@@ -114,48 +114,6 @@ for i, v in pairs(constants.ia.power_prefixes) do
   constants.ia.localised_si_suffixes_joule[i] = { "", { "si-prefix-symbol-" .. v }, { "si-unit-symbol-joule" } }
 end
 
--- INFINITY LOADER
-
--- pattern -> replacement
--- iterate through all of these to result in the belt type
-constants.belt_type_patterns = {
-  -- editor extensions :D
-  ["ee%-infinity%-loader%-?"] = "",
-  ["ee%-linked%-belt%-?"] = "",
-  -- better belts: https://mods.factorio.com/mod/BetterBelts
-  ["%-v%d$"] = "",
-  -- beltlayer: https://mods.factorio.com/mod/beltlayer
-  ["layer%-connector"] = "",
-  -- ultimate belts: https://mods.factorio.com/mod/UltimateBelts
-  ["ultimate%-belt"] = "original-ultimate",
-  -- krastorio legacy: https://mods.factorio.com/mod/Krastorio
-  ["%-?kr%-01"] = "",
-  ["%-?kr%-02"] = "fast",
-  ["%-?kr%-03"] = "express",
-  ["%-?kr%-04"] = "k",
-  -- krastorio 2: https://mods.factorio.com/mod/Krastorio2
-  ["^kr%-?"] = "",
-  -- replicating belts: https://mods.factorio.com/mod/replicating-belts
-  ["replicating%-?"] = "",
-  -- subterranean: https://mods.factorio.com/mod/Subterranean
-  ["subterranean"] = "",
-  -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
-  ["%-to%-ground"] = "",
-  -- miniloader: https://mods.factorio.com/mod/miniloader
-  ["chute"] = "",
-  ["space%-mini"] = "se-space", -- miniloader + space exploration
-  ["%-?filter%-miniloader"] = "",
-  ["%-?miniloader"] = "",
-  -- vanilla
-  ["%-?belt"] = "",
-  ["%-?transport"] = "",
-  ["%-?underground"] = "",
-  ["%-?splitter"] = "",
-  ["%-?loader"] = "",
-  ["%-?1x1"] = "",
-  ["%-?linked"] = "",
-}
-
 -- INFINITY PIPE
 
 constants.ip_crafter_snapping_types = {

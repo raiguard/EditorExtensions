@@ -15,7 +15,9 @@ function player_data.init(player)
     gui = {},
     lab_state = nil,
     last_cleared_cursor_tick = 0,
+    --- @type table<string, uint>
     linked_belt_render_objects = {},
+    --- @type LuaEntity?
     linked_belt_source = nil,
     normal_state = nil,
     --- @type table<string, string|boolean>
