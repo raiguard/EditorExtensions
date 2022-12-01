@@ -19,6 +19,7 @@ function infinity_loader.on_built(entity)
     entity.destroy()
     return
   end
+  chest.remove_unfiltered_items = true
   infinity_loader.sync_chest_filter(entity, chest)
   infinity_loader.snap(entity)
 end
@@ -98,14 +99,14 @@ function infinity_loader.sync_chest_filter(entity, chest)
   end
   local filter = entity.get_filter(1)
   if filter then
-    chest.set_infinity_container_filter(
-      1,
-      { index = 1, name = filter, count = game.item_prototypes[filter].stack_size * 5, mode = "exactly" }
-    )
-    chest.remove_unfiltered_items = false -- Tiny performance benefit
+    chest.set_infinity_container_filter(1, {
+      index = 1,
+      name = filter,
+      count = game.item_prototypes[filter].stack_size * 5, --- @diagnostic disable-line
+      mode = "exactly",
+    })
   else
     chest.set_infinity_container_filter(1, nil)
-    chest.remove_unfiltered_items = true
   end
 end
 
