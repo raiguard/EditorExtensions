@@ -1,5 +1,9 @@
 local infinity_wagon = {}
 
+function infinity_wagon.init()
+  global.wagons = {}
+end
+
 --- @param entity LuaEntity
 --- @param tags table?
 function infinity_wagon.build(entity, tags)

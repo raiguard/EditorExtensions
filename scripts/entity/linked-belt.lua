@@ -4,6 +4,11 @@ local util = require("__EditorExtensions__/scripts/util")
 
 local linked_belt = {}
 
+function linked_belt.init()
+  --- @type table<uint, table<uint, boolean>>
+  global.linked_belt_sources = {}
+end
+
 --- @param entity LuaEntity
 function linked_belt.check_is_linked_belt(entity)
   return string.find(entity.name, "ee%-linked%-belt")
@@ -238,7 +243,7 @@ function linked_belt.snap(entity, target)
     if connection and (not target or connection.unit_number == target.unit_number) then
       -- snap the belt type
       local belt_type = util.get_belt_type(connection)
-      if util.get_belt_type(entity) ~= belt_type then
+      if belt_type and util.get_belt_type(entity) ~= belt_type then
         entity = replace_linked_belt(entity, belt_type)
       end
       -- prevent an actual flip if the belt has a neighbour
@@ -264,12 +269,14 @@ function linked_belt.sync_belt_types(player, entity)
   local neighbour = entity.linked_belt_neighbour
   if neighbour then
     local belt_type = util.get_belt_type(entity)
-    if belt_type ~= util.get_belt_type(neighbour) then
-      entity.disconnect_linked_belts()
-      neighbour = replace_linked_belt(neighbour, belt_type)
-      entity.connect_linked_belts(neighbour)
-    else
-      util.error_text(player, { "ee-message.belt-types-already-synced" }, entity.position)
+    if belt_type then
+      if belt_type ~= util.get_belt_type(neighbour) then
+        entity.disconnect_linked_belts()
+        neighbour = replace_linked_belt(neighbour, belt_type)
+        entity.connect_linked_belts(neighbour)
+      else
+        util.error_text(player, { "ee-message.belt-types-already-synced" }, entity.position)
+      end
     end
   end
 end

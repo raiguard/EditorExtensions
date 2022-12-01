@@ -12,7 +12,7 @@ function debug_world.init()
   local map_gen_settings = nauvis.map_gen_settings
   if map_gen_settings.height == 50 and map_gen_settings.width == 50 then
     -- Set flag
-    global.flags.in_debug_world = true
+    global.in_debug_world = true
 
     if settings.global["ee-debug-world-research-all"].value then
       game.forces.player.research_all_technologies()

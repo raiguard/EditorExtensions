@@ -5,7 +5,6 @@ local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
 local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local constants = require("__EditorExtensions__/scripts/constants")
 local debug_world = require("__EditorExtensions__/scripts/debug-world")
-local global_data = require("__EditorExtensions__/scripts/global-data")
 local inventory = require("__EditorExtensions__/scripts/inventory")
 local migrations = require("__EditorExtensions__/scripts/migrations")
 local player_data = require("__EditorExtensions__/scripts/player-data")
@@ -66,10 +65,6 @@ local function snap_belt_neighbours(entity)
 end
 
 remote.add_interface("EditorExtensions", {
-  --- An event that fires when the debug world has finished generating.
-  debug_world_ready_event = function()
-    return constants.debug_world_ready_event
-  end,
   --- Get the force the player is actually on, ignoring the testing lab force.
   --- @param player LuaPlayer
   --- @return ForceIdentification
@@ -92,16 +87,19 @@ remote.add_interface("EditorExtensions", {
 -- BOOTSTRAP
 
 script.on_init(function()
-  global_data.init()
-  global_data.read_fastest_belt_type()
+  --- @type table<uint, PlayerTable>
+  global.players = {}
+
+  global.executed_cheat_command = {}
+  global.tried_cheat_command = {}
 
   compatibility.add_cursor_enhancements_overrides()
-  compatibility.register_picker_dollies()
 
   aggregate_chest.update_data()
-
   infinity_loader.init()
   infinity_pipe.init()
+  infinity_wagon.init()
+  linked_belt.init()
 
   debug_world.init()
 
@@ -116,8 +114,6 @@ script.on_init(function()
 end)
 
 script.on_load(function()
-  compatibility.register_picker_dollies()
-
   for _, player_table in pairs(global.players) do
     local pipe_gui = player_table.gui.infinity_pipe
     if pipe_gui then
@@ -128,8 +124,6 @@ end)
 
 script.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
-    global_data.read_fastest_belt_type()
-
     compatibility.add_cursor_enhancements_overrides()
 
     aggregate_chest.update_data()
@@ -583,7 +577,7 @@ script.on_event(defines.events.on_player_created, function(e)
 
   player_data.init(player)
 
-  local in_debug_world = global.flags.in_debug_world
+  local in_debug_world = global.in_debug_world
   if player.cheat_mode or (in_debug_world and settings.global["ee-debug-world-cheat-mode"].value) then
     cheat_mode.enable(player)
   end
@@ -691,8 +685,8 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
   end
 
   -- the first time someone toggles the map editor, unpause the current tick
-  if global.flags.map_editor_toggled == false then
-    global.flags.map_editor_toggled = true
+  if not global.map_editor_toggled then
+    global.map_editor_toggled = true
     if settings.global["ee-prevent-initial-pause"].value then
       game.tick_paused = false
     end
@@ -797,15 +791,6 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(e)
     local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
     local player_table = global.players[e.player_index]
     player_data.update_settings(player, player_table)
-  end
-end)
-
--- SURFACE
-
-script.on_event(defines.events.on_surface_cleared, function(e)
-  local surface = game.get_surface(e.surface_index)
-  if surface and surface.name == "nauvis" and game.tick == 1 and global.flags.in_debug_world then
-    script.raise_event(constants.debug_world_ready_event, {})
   end
 end)
 

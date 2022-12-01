@@ -58,7 +58,7 @@ function infinity_loader.snap(entity, target)
     if connection and (not target or connection.unit_number == target.unit_number) then
       -- Snap the belt type
       local belt_type = util.get_belt_type(connection)
-      if util.get_belt_type(entity) ~= belt_type then
+      if belt_type and util.get_belt_type(entity) ~= belt_type then
         -- Fast-replace does not work because the loader collides with the chest
         local surface = entity.surface
         local position = entity.position

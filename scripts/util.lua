@@ -26,7 +26,7 @@ function util.position.to_tile_area(pos)
 end
 
 --- @param entity LuaEntity
---- @return string
+--- @return string?
 function util.get_belt_type(entity)
   local type = entity.type == "entity-ghost" and entity.ghost_name or entity.name
   for pattern, replacement in pairs(constants.belt_type_patterns) do
@@ -37,8 +37,7 @@ function util.get_belt_type(entity)
     -- print warning message
     game.print({ "", "EDITOR EXTENSIONS: ", { "ee-message.unable-to-identify-belt" } })
     game.print('entity_name = "' .. entity.name .. '", parse_result = "' .. type .. '"')
-    -- set to default type
-    type = global.fastest_belt_type
+    return
   end
   return type
 end

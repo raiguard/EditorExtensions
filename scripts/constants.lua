@@ -77,15 +77,6 @@ constants.curved_rail_selection_sizes = {
   { left_top = { x = -4, y = -2 }, right_bottom = { x = 4, y = 2 } },
 }
 
--- DEBUG WORLD
-
-constants.debug_world = {
-  size = { height = 50, width = 50 },
-}
-
-constants.debug_world_ready_event = script.generate_event_name()
-constants.debug_world_player_ready_event = script.generate_event_name()
-
 -- INFINITY ACCUMULATOR
 
 constants.ia = {}

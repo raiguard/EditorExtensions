@@ -1,7 +1,6 @@
 local compatibility = {}
 
 local constants = require("__EditorExtensions__/scripts/constants")
-local infinity_loader = require("__EditorExtensions__/scripts/entity/infinity-loader")
 
 function compatibility.add_cursor_enhancements_overrides()
   if
@@ -27,12 +26,6 @@ function compatibility.in_qis_window(player)
     return true
   end
   return false
-end
-
-function compatibility.register_picker_dollies()
-  if remote.interfaces["PickerDollies"] then
-    script.on_event(remote.call("PickerDollies", "dolly_moved_entity_id"), infinity_loader.picker_dollies_move)
-  end
 end
 
 return compatibility
