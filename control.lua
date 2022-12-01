@@ -1,6 +1,7 @@
 local gui = require("__flib__/gui")
 local migration = require("__flib__/migration")
 
+local cheat_command = require("__EditorExtensions__/scripts/cheat-command")
 local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
 local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local constants = require("__EditorExtensions__/scripts/constants")
@@ -90,10 +91,8 @@ script.on_init(function()
   --- @type table<uint, PlayerTable>
   global.players = {}
 
-  global.executed_cheat_command = {}
-  global.tried_cheat_command = {}
-
-  compatibility.add_cursor_enhancements_overrides()
+  cheat_command.init()
+  debug_world.init()
 
   aggregate_chest.update_data()
   infinity_loader.init()
@@ -101,13 +100,13 @@ script.on_init(function()
   infinity_wagon.init()
   linked_belt.init()
 
-  debug_world.init()
+  compatibility.add_cursor_enhancements_overrides()
 
   for _, player in pairs(game.players) do
     player_data.init(player)
     -- enable recipes for cheat mode
     -- space exploration - do nothing if they are in the satellite view
-    if player.cheat_mode and not compatibility.in_se_satellite_view(player) then
+    if player.cheat_mode and not script.active_mods["space-exploration"] then
       cheat_mode.enable_recipes(player)
     end
   end
@@ -124,16 +123,16 @@ end)
 
 script.on_configuration_changed(function(e)
   if migration.on_config_changed(e, migrations) then
-    compatibility.add_cursor_enhancements_overrides()
-
     aggregate_chest.update_data()
     aggregate_chest.update_all_filters()
     infinity_loader.cleanup_orphans()
 
+    compatibility.add_cursor_enhancements_overrides()
+
     for i, player in pairs(game.players) do
       player_data.refresh(player, global.players[i])
       -- space exploration - do nothing if they are in the satellite view
-      if player.cheat_mode and not compatibility.in_se_satellite_view(player) then
+      if player.cheat_mode and not script.active_mods["space-exploration"] then
         cheat_mode.enable_recipes(player)
       end
     end
@@ -152,7 +151,7 @@ script.on_event(defines.events.on_player_cheat_mode_enabled, function(e)
   end
 
   -- space exploration - do nothing if they are in the satellite view
-  if compatibility.in_se_satellite_view(player) then
+  if script.active_mods["space-exploration"] then
     return
   end
 
@@ -163,22 +162,7 @@ end)
 
 script.on_event(defines.events.on_console_command, function(e)
   if e.command == "cheat" then
-    local tried_tick = global.tried_cheat_command[e.player_index]
-    if
-      global.executed_cheat_command[e.player_index] or (tried_tick and tried_tick + (60 * 60) >= game.ticks_played)
-    then
-      global.executed_cheat_command[e.player_index] = true
-      global.tried_cheat_command[e.player_index] = nil
-
-      local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-      if e.parameters == "lab" then
-        debug_world.lab(player.surface)
-      elseif e.parameters == "all" then
-        cheat_mode.set_loadout(player)
-      end
-    else
-      global.tried_cheat_command[e.player_index] = game.ticks_played
-    end
+    cheat_command.handle(e)
   end
 end)
 

@@ -14,16 +14,21 @@ function debug_world.init()
     -- Set flag
     global.in_debug_world = true
 
+    local needs_clear = false
     if settings.global["ee-debug-world-research-all"].value then
       game.forces.player.research_all_technologies()
     end
     if settings.global["ee-debug-world-lab-tiles"].value then
+      needs_clear = true
       debug_world.lab(nauvis, true)
     end
     if settings.global["ee-debug-world-infinite"].value then
-      debug_world.infinite(nauvis)
+      needs_clear = true
+      debug_world.infinite(nauvis, true)
     end
-    nauvis.clear(true)
+    if needs_clear then
+      nauvis.clear(true)
+    end
   end
 end
 
