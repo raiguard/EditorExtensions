@@ -7,7 +7,7 @@ local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local constants = require("__EditorExtensions__/scripts/constants")
 local debug_world = require("__EditorExtensions__/scripts/debug-world")
 local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
-local inventory = require("__EditorExtensions__/scripts/inventory")
+local inventory_sync = require("__EditorExtensions__/scripts/inventory-sync")
 local migrations = require("__EditorExtensions__/scripts/migrations")
 local player_data = require("__EditorExtensions__/scripts/player-data")
 local testing_lab = require("__EditorExtensions__/scripts/testing-lab")
@@ -650,7 +650,7 @@ script.on_event(defines.events.on_pre_player_toggled_map_editor, function(e)
   end
   if player_table.settings.inventory_sync_enabled then
     local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-    inventory.create_sync_inventories(player_table, player)
+    inventory_sync.create_sync_inventories(player_table, player)
   end
 end)
 
@@ -690,7 +690,7 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
 
   -- finish inventory sync
   if player_table.settings.inventory_sync_enabled and player_table.sync_data then
-    inventory.get_from_sync_inventories(player_table, player)
+    inventory_sync.get_from_sync_inventories(player_table, player)
   end
 
   -- update character cheats if necessary
