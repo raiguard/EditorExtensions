@@ -1,4 +1,4 @@
-local gui = require("__flib__/gui")
+local gui = require("__flib__/gui-lite")
 local migration = require("__flib__/migration")
 
 local cheat_command = require("__EditorExtensions__/scripts/cheat-command")
@@ -492,42 +492,24 @@ end)
 
 -- GUI
 
---- @param e GuiEventData
-gui.hook_events(function(e)
-  local msg = gui.read_action(e)
-  if msg then
-    if msg.gui == "ia" then
-      infinity_accumulator.handle_gui_action(e, msg)
-    elseif msg.gui == "infinity_pipe" then
-      local player_table = global.players[e.player_index]
-      if player_table and player_table.gui.infinity_pipe then
-        player_table.gui.infinity_pipe:dispatch(msg, e)
-      end
-    elseif msg.gui == "sp" then
-      super_pump.handle_gui_action(e, msg)
-    elseif msg.gui == "inv_filters" then
-      inventory_filters.handle_gui_action(e, msg)
-    end
-  elseif e.name == defines.events.on_gui_opened then
-    local entity = e.entity
-    if entity then
-      local entity_name = entity.name
-      if constants.ia.entity_names[entity_name] then
-        infinity_accumulator.open(e.player_index, entity)
-      elseif string.find(entity_name, "ee%-infinity%-pipe") then
-        infinity_pipe.create_gui(e.player_index, entity)
-      elseif entity_name == "ee-super-pump" then
-        super_pump.open(e.player_index, entity)
-      elseif infinity_loader.check_is_loader(entity) then
+gui.handle_events()
+
+script.on_event(defines.events.on_gui_opened, function(e)
+  if not gui.dispatch(e) then
+    if e.gui_type == defines.gui_type.entity then
+      local entity = e.entity --[[@as LuaEntity]]
+      if infinity_loader.check_is_loader(entity) then
         global.infinity_loader_open[e.player_index] = entity
-      elseif infinity_wagon.check_is_wagon(entity) then
-        local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-        infinity_wagon.open(player, entity)
       end
     end
-  elseif e.name == defines.events.on_gui_closed then
-    if e.gui_type and e.gui_type == defines.gui_type.controller then
-      inventory_filters.close_string_gui(e.player_index)
+  end
+end)
+
+script.on_event(defines.events.on_gui_closed, function(e)
+  if not gui.dispatch(e) then
+    if e.gui_type == defines.gui_type.controller then
+      local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+      inventory_filters.string_gui.destroy(player, e)
     elseif e.gui_type == defines.gui_type.entity then
       local loader = global.infinity_loader_open[e.player_index]
       if loader and loader.valid then
@@ -537,6 +519,53 @@ gui.hook_events(function(e)
     end
   end
 end)
+
+-- --- @param e GuiEventData
+-- gui.hook_events(function(e)
+--   local msg = gui.read_action(e)
+--   if msg then
+--     if msg.gui == "ia" then
+--       infinity_accumulator.handle_gui_action(e, msg)
+--     elseif msg.gui == "infinity_pipe" then
+--       local player_table = global.players[e.player_index]
+--       if player_table and player_table.gui.infinity_pipe then
+--         player_table.gui.infinity_pipe:dispatch(msg, e)
+--       end
+--     elseif msg.gui == "sp" then
+--       super_pump.handle_gui_action(e, msg)
+--     end
+--   elseif e.name == defines.events.on_gui_opened then
+--     local entity = e.entity
+--     if entity then
+--       local entity_name = entity.name
+--       if constants.ia.entity_names[entity_name] then
+--         infinity_accumulator.open(e.player_index, entity)
+--       elseif string.find(entity_name, "ee%-infinity%-pipe") then
+--         infinity_pipe.create_gui(e.player_index, entity)
+--       elseif entity_name == "ee-super-pump" then
+--         super_pump.open(e.player_index, entity)
+--       elseif infinity_loader.check_is_loader(entity) then
+--         global.infinity_loader_open[e.player_index] = entity
+--       elseif infinity_wagon.check_is_wagon(entity) then
+--         local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+--         infinity_wagon.open(player, entity)
+--       end
+--     end
+--   elseif e.name == defines.events.on_gui_closed then
+--     if e.gui_type and e.gui_type == defines.gui_type.controller then
+--       inventory_filters.string_gui.destroy(
+--         game.get_player(e.player_index), --[[@as LuaPlayer]]
+--         e --[[@as on_gui_closed]]
+--       )
+--     elseif e.gui_type == defines.gui_type.entity then
+--       local loader = global.infinity_loader_open[e.player_index]
+--       if loader and loader.valid then
+--         infinity_loader.sync_chest_filter(loader)
+--         global.infinity_loader_open[e.player_index] = nil
+--       end
+--     end
+--   end
+-- end)
 
 -- SHORTCUT
 
@@ -679,7 +708,7 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
     player_table.flags.map_editor_toggled = true
     local default_filters = player_table.settings.default_infinity_filters
     if default_filters ~= "" then
-      inventory_filters.import_filters(player, default_filters)
+      inventory_filters.import(player, default_filters --[[@as string]])
     end
   end
 

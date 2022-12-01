@@ -53,9 +53,9 @@ function player_data.refresh(player, player_table)
     end
   end
 
-  -- recreate inventory filters buttons
-  inventory_filters.destroy_filters_buttons(player_table)
-  inventory_filters.create_filters_buttons(player, player_table)
+  inventory_filters.string_gui.destroy(player)
+  inventory_filters.relative_gui.destroy(player)
+  inventory_filters.relative_gui.build(player)
 
   -- set shortcut availability
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)

@@ -1,15 +1,14 @@
-local gui = require("__flib__/gui")
+local gui = require("__flib__/gui-lite")
 local migration = require("__flib__/migration")
 
 local inventory_filters = {}
 
--- -----------------------------------------------------------------------------
--- INFINITY INVENTORY FILTERS
-
 local filters_table_version = 0
 local filters_table_migrations = {}
 
-function inventory_filters.import_filters(player, string)
+--- @param player LuaPlayer
+--- @param string string
+function inventory_filters.import(player, string)
   local decoded_string = game.decode_string(string)
   if
     decoded_string
@@ -42,7 +41,9 @@ function inventory_filters.import_filters(player, string)
   return false
 end
 
-local function export_filters(player)
+--- @param player LuaPlayer
+--- @return string?
+function inventory_filters.export(player)
   local filters = player.infinity_inventory_filters
   local output = {
     filters = filters,
@@ -53,204 +54,146 @@ local function export_filters(player)
   )
 end
 
--- -----------------------------------------------------------------------------
--- INFINITY INVENTORY FILTERS GUI
+local string_gui = {}
 
 --- @param player LuaPlayer
---- @param player_table PlayerTable
 --- @param mode string
-local function open_string_gui(player, player_table, mode)
-  -- create GUI
-  local refs = gui.build(player.gui.screen, {
+function string_gui.build(player, mode)
+  local elems = gui.add(player.gui.screen, {
+    type = "frame",
+    name = "ee_inventory_filters_window",
+    direction = "vertical",
+    caption = { "ee-gui." .. mode .. "-infinity-filters" },
+    elem_mods = { auto_center = true },
     {
-      type = "frame",
-      direction = "vertical",
-      ref = { "window" },
-      children = {
-        {
-          type = "flow",
-          style = "flib_titlebar_flow",
-          ref = { "titlebar_flow" },
-          children = {
-            {
-              type = "label",
-              style = "frame_title",
-              caption = { "ee-gui." .. mode .. "-infinity-filters" },
-              ignored_by_interaction = true,
-            },
-            { type = "empty-widget", style = "flib_dialog_titlebar_drag_handle", ignored_by_interaction = true },
-          },
-        },
-        {
-          type = "frame",
-          style = "inside_shallow_frame_with_padding",
-          children = {
-            {
-              type = "text-box",
-              style_mods = { width = 400, height = 300 },
-              clear_and_focus_on_right_click = true,
-              text = mode == "import" and "" or export_filters(player),
-              elem_mods = { word_wrap = true },
-              actions = (
-                mode == "import"
-                  and {
-                    on_text_changed = { gui = "inv_filters", action = "update_confirm_button_enabled" },
-                  }
-                or nil
-              ),
-              ref = { "textbox" },
-            },
-          },
-        },
-        {
-          type = "flow",
-          style = "dialog_buttons_horizontal_flow",
-          children = {
-            {
-              type = "button",
-              style = "back_button",
-              caption = { "gui.cancel" },
-              actions = { on_click = { gui = "inv_filters", action = "close_string_gui" } },
-            },
-            {
-              type = "empty-widget",
-              style = "flib_dialog_footer_drag_handle",
-              style_mods = mode == "export" and { right_margin = 0 } or nil,
-              ref = { "footer_drag_handle" },
-            },
-            (mode == "import" and {
-              type = "button",
-              style = "confirm_button",
-              caption = { "gui.confirm" },
-              elem_mods = { enabled = false },
-              actions = { on_click = { gui = "inv_filters", action = "import_filters" } },
-              ref = { "confirm_button" },
-            } or nil),
-          },
-        },
+      type = "text-box",
+      name = "textbox",
+      style_mods = { width = 400, height = 300 },
+      clear_and_focus_on_right_click = true,
+      text = mode == "import" and "" or inventory_filters.export(player),
+      elem_mods = { word_wrap = true },
+    },
+    {
+      type = "flow",
+      style = "dialog_buttons_horizontal_flow",
+      drag_target = "ee_inventory_filters_window",
+      {
+        type = "button",
+        style = "back_button",
+        caption = { "gui.cancel" },
+        handler = { [defines.events.on_gui_click] = string_gui.destroy },
+      },
+      {
+        type = "empty-widget",
+        style = "flib_dialog_footer_drag_handle",
+        style_mods = mode == "export" and { right_margin = 0 } or nil,
+        ignored_by_interaction = true,
+      },
+      {
+        type = "button",
+        style = "confirm_button",
+        caption = { "gui.confirm" },
+        visible = mode == "import",
+        handler = { [defines.events.on_gui_click] = string_gui.import },
       },
     },
   })
 
-  refs.textbox.select_all()
-  refs.textbox.focus()
-
-  refs.titlebar_flow.drag_target = refs.window
-  refs.footer_drag_handle.drag_target = refs.window
-
-  refs.window.force_auto_center()
-
-  player_table.gui.inventory_filters_string = refs
-end
-
---- @param player_table PlayerTable
-local function close_string_gui(player_table)
-  local refs = player_table.gui.inventory_filters_string
-  refs.window.destroy()
-  player_table.gui.inventory_filters_string = nil
+  elems.textbox.select_all()
+  elems.textbox.focus()
 end
 
 --- @param player LuaPlayer
---- @param player_table PlayerTable
-function inventory_filters.create_filters_buttons(player, player_table)
-  local refs = gui.build(player.gui.relative, {
+--- @param e on_gui_click|on_gui_closed?
+function string_gui.destroy(player, e)
+  local window = player.gui.screen.ee_inventory_filters_window
+  if window and window.valid then
+    window.destroy()
+
+    if e and e.name == defines.events.on_gui_closed then
+      -- Keep controller GUI open
+      player.opened = defines.gui_type.controller
+    end
+  end
+end
+
+--- @param player LuaPlayer
+--- @param e on_gui_click
+function string_gui.import(player, e)
+  local string = e.element.parent.parent.textbox.text
+  if inventory_filters.import(player, string) then
+    string_gui.destroy(player)
+    util.flying_text(player, { "ee-message.imported-infinity-filters" })
+  else
+    util.flying_text(player, { "ee-message.invalid-infinity-filters-string" }, true)
+  end
+end
+
+gui.add_handlers(string_gui, function(e, handler)
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+  handler(player, e)
+end, "filters_string")
+
+local relative_gui = {}
+
+--- @param player LuaPlayer
+function relative_gui.build(player)
+  gui.add(player.gui.relative, {
+    type = "frame",
+    name = "ee_inventory_filters_window",
+    style = "quick_bar_window_frame",
+    anchor = {
+      gui = defines.relative_gui_type.controller_gui,
+      position = defines.relative_gui_position.left,
+      name = "editor",
+    },
     {
       type = "frame",
-      style = "quick_bar_window_frame",
-      ref = { "window" },
-      anchor = {
-        gui = "controller-gui",
-        position = defines.relative_gui_position.left,
-        name = "editor",
+      style = "shortcut_bar_inner_panel",
+      direction = "vertical",
+      {
+        type = "sprite-button",
+        name = "import",
+        style = "shortcut_bar_button",
+        sprite = "ee_import_inventory_filters",
+        tooltip = { "ee-gui.import-infinity-filters" },
+        handler = relative_gui.on_button_click,
       },
-      children = {
-        {
-          type = "frame",
-          style = "shortcut_bar_inner_panel",
-          direction = "vertical",
-          children = {
-            {
-              type = "sprite-button",
-              style = "shortcut_bar_button",
-              sprite = "ee_import_inventory_filters",
-              tooltip = { "ee-gui.import-infinity-filters" },
-              tags = { mode = "import" },
-              actions = { on_click = { gui = "inv_filters", action = "open_string_gui" } },
-            },
-            {
-              type = "sprite-button",
-              style = "shortcut_bar_button",
-              sprite = "ee_export_inventory_filters",
-              tooltip = { "ee-gui.export-infinity-filters" },
-              tags = { mode = "export" },
-              actions = { on_click = { gui = "inv_filters", action = "open_string_gui" } },
-            },
-          },
-        },
+      {
+        type = "sprite-button",
+        name = "export",
+        style = "shortcut_bar_button",
+        sprite = "ee_export_inventory_filters",
+        tooltip = { "ee-gui.export-infinity-filters" },
+        handler = relative_gui.on_button_click,
       },
     },
   })
-
-  player_table.gui.inventory_filters_buttons = refs
 end
 
---- @param player_table PlayerTable
-function inventory_filters.destroy_filters_buttons(player_table)
-  local buttons_gui_data = player_table.gui.inventory_filters_buttons
-  if buttons_gui_data then
-    player_table.gui.inventory_filters_buttons.window.destroy()
-    player_table.gui.inventory_filters_buttons = nil
+--- @param player LuaPlayer
+function relative_gui.destroy(player)
+  local window = player.gui.relative.ee_inventory_filters_window
+  if window and window.valid then
+    window.destroy()
   end
+  player.gui.screen.clear()
 end
 
---- @param player_index uint
-function inventory_filters.close_string_gui(player_index)
-  local player = game.get_player(player_index)
-  local player_table = global.players[player_index]
-  local guis = player_table.gui
-
-  if guis.inventory_filters_string then
-    close_string_gui(player_table)
-    -- keep controller GUI open
-    player.opened = defines.gui_type.controller
-  end
+--- @param player LuaPlayer
+--- @param e on_gui_click
+function relative_gui.on_button_click(player, e)
+  local mode = e.element.name
+  string_gui.destroy(player) -- Just in case
+  string_gui.build(player, mode)
 end
 
-function inventory_filters.handle_gui_action(e, msg)
+gui.add_handlers(relative_gui, function(e, handler)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-  local player_table = global.players[e.player_index]
-  local refs = player_table.gui.inventory_filters_string
+  handler(player, e)
+end, "filters_relative")
 
-  if msg.action == "open_string_gui" then
-    if refs then
-      close_string_gui(player_table)
-    end
-    open_string_gui(player, player_table, gui.get_tags(e.element).mode)
-  elseif msg.action == "close_string_gui" then
-    close_string_gui(player_table)
-  elseif msg.action == "update_confirm_button_enabled" then
-    if #refs.textbox.text > 0 then
-      refs.confirm_button.enabled = true
-    else
-      refs.confirm_button.enabled = false
-    end
-  elseif msg.action == "import_filters" then
-    local string = refs.textbox.text
-
-    if inventory_filters.import_filters(player, string) then
-      close_string_gui(player_table)
-      player.create_local_flying_text({
-        text = { "ee-message.imported-infinity-filters" },
-        create_at_cursor = true,
-      })
-    else
-      player.create_local_flying_text({
-        text = { "ee-message.invalid-infinity-filters-string" },
-        create_at_cursor = true,
-      })
-      player.play_sound({ path = "utility/cannot_build", volume_modifier = 0.75 })
-    end
-  end
-end
+inventory_filters.relative_gui = relative_gui
+inventory_filters.string_gui = string_gui
 
 return inventory_filters

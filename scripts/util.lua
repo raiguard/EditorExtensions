@@ -67,4 +67,17 @@ function util.error_text(player, text, position)
   player.play_sound({ path = "utility/cannot_build" })
 end
 
+--- @param player LuaPlayer
+--- @param message LocalisedString
+--- @param play_sound boolean?
+function util.flying_text(player, message, play_sound)
+  player.create_local_flying_text({
+    text = message,
+    create_at_cursor = true,
+  })
+  if play_sound then
+    player.play_sound({ path = "utility/cannot_build" })
+  end
+end
+
 return util
