@@ -246,7 +246,7 @@ script.on_event({
 
   -- aggregate chest
   if constants.aggregate_chest_names[entity_name] then
-    aggregate_chest.set_event_filter(entity)
+    aggregate_chest.set_filters(entity)
   elseif entity_name == "entity-ghost" and entity.ghost_name == "ee-infinity-loader-logic-combinator" then
     infinity_loader.build_from_ghost(entity)
   elseif
