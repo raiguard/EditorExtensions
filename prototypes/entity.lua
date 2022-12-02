@@ -204,7 +204,7 @@ data:extend({
     name = "ee-linked-belt",
     icons = "CONVERT",
     minable = { mining_time = 0.1, result = "ee-linked-belt" },
-    belt_animation_set = express_belt_animation_set,
+    belt_animation_set = table.deepcopy(express_belt_animation_set),
     allow_side_loading = true,
   }, constants.linked_belt_tint),
   util.recursive_tint({
