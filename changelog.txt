@@ -18,6 +18,11 @@ Date: ????
     - Fixed several edge cases with infinity loader filters and snapping
     - Fixed that the infinity loader was not guaranteed to fill/consume high speed belts perfectly
 ---------------------------------------------------------------------------------------------------
+Version: 1.13.7
+Date: 2022-12-02
+  Bugfixes:
+    - Fixed a crash when placing an aggregate chest
+---------------------------------------------------------------------------------------------------
 Version: 1.13.6
 Date: 2022-12-01
   Changes:
