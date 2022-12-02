@@ -61,7 +61,7 @@ function infinity_loader.snap_belt_neighbours(entity)
   end
 
   local to_snap = {}
-  for _ = 1, entity.type == "transport-belt" and 4 or 2 do
+  for _ = 1, (entity.type == "transport-belt" or entity.type == "linked-belt") and 4 or 2 do
     -- Catalog neighbouring loaders for this rotation
     for _, neighbours in pairs(entity.belt_neighbours) do
       for _, neighbour in ipairs(neighbours) do
