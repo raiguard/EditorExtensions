@@ -63,7 +63,7 @@ script.on_init(function()
   migrations.generic()
 end)
 
-migration.handle_on_configuration_changed(migrations.generic, migrations.by_version)
+migration.handle_on_configuration_changed(migrations.by_version, migrations.generic)
 
 -- CHEAT MODE
 
@@ -503,6 +503,12 @@ script.on_event(defines.events.on_player_created, function(e)
 
   player_data.init(player)
   player_data.refresh(player, global.players[e.player_index])
+
+  if player.mod_settings["ee-auto-alt-mode"].value then
+    local gameview = player.game_view_settings
+    gameview.show_entity_info = true
+    player.game_view_settings = gameview
+  end
 
   local in_debug_world = global.in_debug_world
   if player.cheat_mode or (in_debug_world and settings.global["ee-debug-world-cheat-mode"].value) then

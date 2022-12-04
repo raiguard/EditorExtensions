@@ -180,11 +180,18 @@ data:extend({
     order = "d",
   },
   {
+    type = "bool-setting",
+    name = "ee-auto-alt-mode",
+    setting_type = "runtime-per-user",
+    default_value = true,
+    order = "e",
+  },
+  {
     type = "string-setting",
     name = "ee-testing-lab",
     setting_type = "runtime-per-user",
     allowed_values = { "off", "personal", "shared" },
     default_value = "off",
-    order = "e",
+    order = "f",
   },
 })

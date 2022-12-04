@@ -6,6 +6,7 @@ Date: ????
   Features:
     - Added '/cheat lab' command to convert the current surface into a lab
       - Careful - this will delete all entities on the surface!
+    - Added per-player setting to automatically enable alt-mode
   Changes:
     - Infinity loader and linked belt no longer snap belt type - instead, they are always at the max belt speed
     - Infinity loader only supports a single filter - to put a different item on each half of a belt, use two loaders
