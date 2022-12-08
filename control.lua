@@ -518,11 +518,10 @@ script.on_event(defines.events.on_player_created, function(e)
     cheat_mode.set_loadout(player)
   end
 
-  local player_table = global.players[e.player_index]
   if
     in_debug_world
-    and player_table.settings.start_in_editor
     and player.controller_type == defines.controllers.character
+    and settings.global["ee-debug-world-start-in-editor"].value
   then
     player.toggle_map_editor()
   end

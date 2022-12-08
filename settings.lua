@@ -149,6 +149,13 @@ data:extend({
     default_value = true,
     order = "de",
   },
+  {
+    type = "bool-setting",
+    name = "ee-debug-world-start-in-editor",
+    setting_type = "runtime-global",
+    default_value = false,
+    order = "df",
+  },
   -- PLAYER SETTINGS
   {
     type = "bool-setting",
@@ -171,13 +178,6 @@ data:extend({
     setting_type = "runtime-per-user",
     default_value = true,
     order = "c",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-start-in-editor",
-    setting_type = "runtime-per-user",
-    default_value = false,
-    order = "d",
   },
   {
     type = "bool-setting",

@@ -153,7 +153,6 @@ constants.setting_names = {
   ["ee-default-infinity-filters"] = "default_infinity_filters",
   ["ee-inventory-sync"] = "inventory_sync_enabled",
   ["ee-testing-lab"] = "testing_lab",
-  ["ee-start-in-editor"] = "start_in_editor",
 }
 
 -- SUPER PUMP
