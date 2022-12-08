@@ -213,14 +213,14 @@ data:extend({
     icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
     flags = { "player-creation" },
     minable = { mining_time = 0.1, result = "ee-infinity-loader" },
-    -- placeable_by = { item = "ee-infinity-loader", count = 1 },
     collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
     selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
     animation_speed_coefficient = 32,
     belt_animation_set = table.deepcopy(fast_belt_animation_set),
+    speed = 0.03125, -- Temporary, will be overwritten in data-final-fixes
     container_distance = 0,
     filter_count = 1,
-    structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure), -- TODO: Remove sideloading sets
+    structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure), -- TODO: Remove sideloading sets?
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
   }),

@@ -1,6 +1,8 @@
 local gui = require("__flib__/gui-lite")
 local migration = require("__flib__/migration")
 
+local util = require("__EditorExtensions__/scripts/util")
+
 local inventory_filters = {}
 
 local filters_table_version = 0
@@ -104,7 +106,7 @@ function string_gui.build(player, mode)
 end
 
 --- @param player LuaPlayer
---- @param e on_gui_click|on_gui_closed?
+--- @param e EventData.on_gui_click|EventData.on_gui_closed?
 function string_gui.destroy(player, e)
   local window = player.gui.screen.ee_inventory_filters_window
   if window and window.valid then
@@ -118,7 +120,7 @@ function string_gui.destroy(player, e)
 end
 
 --- @param player LuaPlayer
---- @param e on_gui_click
+--- @param e EventData.on_gui_click
 function string_gui.import(player, e)
   local string = e.element.parent.parent.textbox.text
   if inventory_filters.import(player, string) then
@@ -129,10 +131,10 @@ function string_gui.import(player, e)
   end
 end
 
-gui.add_handlers(string_gui, function(e, handler)
+util.add_gui_handlers(string_gui, "filters_string", function(e, handler)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   handler(player, e)
-end, "filters_string")
+end)
 
 local relative_gui = {}
 
@@ -180,17 +182,17 @@ function relative_gui.destroy(player)
 end
 
 --- @param player LuaPlayer
---- @param e on_gui_click
+--- @param e EventData.on_gui_click
 function relative_gui.on_button_click(player, e)
   local mode = e.element.name
   string_gui.destroy(player) -- Just in case
   string_gui.build(player, mode)
 end
 
-gui.add_handlers(relative_gui, function(e, handler)
+util.add_gui_handlers(relative_gui, "relative", function(e, handler)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
   handler(player, e)
-end, "filters_relative")
+end)
 
 inventory_filters.relative_gui = relative_gui
 inventory_filters.string_gui = string_gui

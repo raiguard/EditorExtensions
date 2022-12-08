@@ -1,3 +1,4 @@
+local flib_gui = require("__flib__/gui-lite")
 local math2d = require("__core__/lualib/math2d")
 local util = require("__core__/lualib/util")
 
@@ -78,6 +79,19 @@ function util.flying_text(player, message, play_sound)
   if play_sound then
     player.play_sound({ path = "utility/cannot_build" })
   end
+end
+
+--- @param gui table
+--- @param name string
+--- @param wrapper function
+function util.add_gui_handlers(gui, name, wrapper)
+  local handlers = {}
+  for key, val in pairs(gui) do
+    if type(val) == "function" then
+      handlers[name .. ":" .. key] = val
+    end
+  end
+  flib_gui.add_handlers(handlers, wrapper)
 end
 
 return util
