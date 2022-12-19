@@ -23,6 +23,10 @@ function player_data.init(player)
     sync_data = nil,
   }
   global.players[player.index] = player_table
+
+  if player.connected then
+    player.print({ "message.ee-welcome" })
+  end
 end
 
 --- @param player LuaPlayer

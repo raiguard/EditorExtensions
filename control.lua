@@ -2,7 +2,6 @@ local gui = require("__flib__/gui-lite")
 local migration = require("__flib__/migration")
 
 local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
-local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local constants = require("__EditorExtensions__/scripts/constants")
 local debug_world = require("__EditorExtensions__/scripts/debug-world")
 local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
