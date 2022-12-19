@@ -94,8 +94,8 @@ constants.ia.entity_names = {
 constants.ia.index_to_mode = { "output", "input", "buffer" }
 constants.ia.index_to_priority = { "primary", "secondary", "tertiary" }
 
-constants.ia.localised_modes = { { "ee-gui.output" }, { "ee-gui.input" }, { "ee-gui.buffer" } }
-constants.ia.localised_priorities = { { "ee-gui.primary" }, { "ee-gui.secondary" }, { "ee-gui.tertiary" } }
+constants.ia.localised_modes = { { "gui.ee-output" }, { "gui.ee-input" }, { "gui.ee-buffer" } }
+constants.ia.localised_priorities = { { "gui.ee-primary" }, { "gui.ee-secondary" }, { "gui.ee-tertiary" } }
 constants.ia.localised_si_suffixes_joule = {}
 constants.ia.localised_si_suffixes_watt = {}
 

@@ -15,7 +15,7 @@ function cheat_mode.enable_recipes(player, skip_message)
       end
     end
     if not skip_message then
-      force.print({ "ee-message.testing-tools-enabled", player.name })
+      force.print({ "message.ee-testing-tools-enabled", player.name })
     end
   end
 end
@@ -32,7 +32,7 @@ function cheat_mode.disable_recipes(player, skip_message)
       end
     end
     if not skip_message then
-      force.print({ "ee-message.testing-tools-disabled", player.name })
+      force.print({ "message.ee-testing-tools-disabled", player.name })
     end
   end
 end

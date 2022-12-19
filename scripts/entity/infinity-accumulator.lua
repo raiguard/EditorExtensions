@@ -139,7 +139,7 @@ local function create_gui(player, player_table, entity)
               type = "flow",
               style_mods = { top_margin = 4, vertical_align = "center" },
               children = {
-                { type = "label", caption = { "ee-gui.mode" } },
+                { type = "label", caption = { "gui.ee-mode" } },
                 { type = "empty-widget", style = "flib_horizontal_pusher" },
                 {
                   type = "drop-down",
@@ -157,8 +157,8 @@ local function create_gui(player, player_table, entity)
               children = {
                 {
                   type = "label",
-                  caption = { "", { "ee-gui.priority" }, " [img=info]" },
-                  tooltip = { "ee-gui.ia-priority-description" },
+                  caption = { "", { "gui.ee-priority" }, " [img=info]" },
+                  tooltip = { "gui.ee-ia-priority-description" },
                 },
                 { type = "empty-widget", style = "flib_horizontal_pusher" },
                 {
@@ -179,7 +179,7 @@ local function create_gui(player, player_table, entity)
                 {
                   type = "label",
                   style_mods = { right_margin = 6 },
-                  caption = { "ee-gui.power" },
+                  caption = { "gui.ee-power" },
                 },
                 {
                   type = "slider",

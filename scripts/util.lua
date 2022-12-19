@@ -8,7 +8,7 @@ local constants = require("__EditorExtensions__/scripts/constants")
 
 --- @param player LuaPlayer
 function util.freeze_time_on_all_surfaces(player)
-  player.print({ "ee-message.time-frozen" })
+  player.print({ "message.ee-time-frozen" })
   for _, surface in pairs(game.surfaces) do
     surface.freeze_daytime = true
     surface.daytime = 0
@@ -36,7 +36,7 @@ function util.get_belt_type(entity)
   -- check to see if the loader prototype exists
   if type ~= "" and not game.entity_prototypes["ee-infinity-loader-" .. type] then
     -- print warning message
-    game.print({ "", "EDITOR EXTENSIONS: ", { "ee-message.unable-to-identify-belt" } })
+    game.print({ "", "EDITOR EXTENSIONS: ", { "message.ee-unable-to-identify-belt" } })
     game.print('entity_name = "' .. entity.name .. '", parse_result = "' .. type .. '"')
     return
   end

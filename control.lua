@@ -107,7 +107,7 @@ script.on_event("ee-toggle-map-editor", function(e)
     if player.admin then
       player.toggle_map_editor()
     else
-      player.print({ "ee-message.map-editor-denied" })
+      player.print({ "message.ee-map-editor-denied" })
     end
   end
 end)

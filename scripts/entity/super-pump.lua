@@ -93,7 +93,7 @@ local function create_gui(player, player_table, entity)
               sprite = "ee_open_default_gui_white",
               hovered_sprite = "ee_open_default_gui_black",
               clicked_sprite = "ee_open_default_gui_black",
-              tooltip = { "ee-gui.open-default-gui" },
+              tooltip = { "gui.ee-open-default-gui" },
               actions = { on_click = { gui = "sp", action = "open_default_gui" } },
             },
             util.close_button({ on_click = { gui = "sp", action = "close" } }),
@@ -120,7 +120,7 @@ local function create_gui(player, player_table, entity)
               type = "flow",
               style_mods = { vertical_align = "center" },
               children = {
-                { type = "label", caption = { "ee-gui.state" } },
+                { type = "label", caption = { "gui.ee-state" } },
                 { type = "empty-widget", style = "flib_horizontal_pusher" },
                 {
                   type = "switch",
@@ -140,8 +140,8 @@ local function create_gui(player, player_table, entity)
                 {
                   type = "label",
                   style_mods = { right_margin = 6 },
-                  caption = { "ee-gui.speed" },
-                  tooltip = { "ee-gui.speed-tooltip" },
+                  caption = { "gui.ee-speed" },
+                  tooltip = { "gui.ee-speed-tooltip" },
                 },
                 {
                   type = "slider",
@@ -164,7 +164,7 @@ local function create_gui(player, player_table, entity)
                   },
                   ref = { "speed_textfield" },
                 },
-                { type = "label", style = "ee_super_pump_per_second_label", caption = { "ee-gui.per-second" } },
+                { type = "label", style = "ee_super_pump_per_second_label", caption = { "gui.ee-per-second" } },
               },
             },
           },

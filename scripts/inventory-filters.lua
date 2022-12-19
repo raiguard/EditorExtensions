@@ -65,7 +65,7 @@ function string_gui.build(player, mode)
     type = "frame",
     name = "ee_inventory_filters_window",
     direction = "vertical",
-    caption = { "ee-gui." .. mode .. "-infinity-filters" },
+    caption = { "gui.ee-" .. mode .. "-infinity-filters" },
     elem_mods = { auto_center = true },
     {
       type = "text-box",
@@ -125,9 +125,9 @@ function string_gui.import(player, e)
   local string = e.element.parent.parent.textbox.text
   if inventory_filters.import(player, string) then
     string_gui.destroy(player)
-    util.flying_text(player, { "ee-message.imported-infinity-filters" })
+    util.flying_text(player, { "message.ee-imported-infinity-filters" })
   else
-    util.flying_text(player, { "ee-message.invalid-infinity-filters-string" }, true)
+    util.flying_text(player, { "message.ee-invalid-infinity-filters-string" }, true)
   end
 end
 
@@ -158,7 +158,7 @@ function relative_gui.build(player)
         name = "import",
         style = "shortcut_bar_button",
         sprite = "ee_import_inventory_filters",
-        tooltip = { "ee-gui.import-infinity-filters" },
+        tooltip = { "gui.ee-import-infinity-filters" },
         handler = relative_gui.on_button_click,
       },
       {
@@ -166,7 +166,7 @@ function relative_gui.build(player)
         name = "export",
         style = "shortcut_bar_button",
         sprite = "ee_export_inventory_filters",
-        tooltip = { "ee-gui.export-infinity-filters" },
+        tooltip = { "gui.ee-export-infinity-filters" },
         handler = relative_gui.on_button_click,
       },
     },
