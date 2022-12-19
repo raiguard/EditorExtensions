@@ -99,7 +99,7 @@ script.on_event("ee-open-gui", function(e)
       if player.can_reach_entity(selected) then
         infinity_wagon.open(player, selected)
       else
-        util.error_text(player, { "cant-reach" }, selected.position)
+        util.flying_text(player, { "cant-reach" }, true, selected.position)
       end
     elseif selected.name == "ee-linked-belt" and not (player.cursor_stack and player.cursor_stack.valid_for_read) then
       local player_table = global.players[e.player_index]

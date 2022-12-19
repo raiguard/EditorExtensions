@@ -58,7 +58,7 @@ function linked_belt.finish_connection(player, player_table, entity, shift)
     end
     linked_belt.render_connection(player, player_table)
   else
-    util.error_text(player, { "message.ee-connection-blocked" }, entity.position)
+    util.flying_text(player, { "message.ee-connection-blocked" }, true, entity.position)
   end
 end
 

@@ -1,15 +1,12 @@
-local inventory = {}
+local table = require("__flib__/table")
 
-local reverse_defines = require("__flib__/reverse-defines")
-
--- -----------------------------------------------------------------------------
--- INVENTORY AND CURSOR STACK SYNC
+local inventory_sync = {}
 
 --- @param player_table PlayerTable
 --- @param player LuaPlayer
-function inventory.create_sync_inventories(player_table, player)
+function inventory_sync.create_sync_inventories(player_table, player)
   -- determine prefix based on controller type
-  local prefix = reverse_defines.controllers[player.controller_type] .. "_"
+  local prefix = table.find(defines.controllers, player.controller_type) .. "_"
   -- hand location
   local hand_location = player.hand_location or {}
   -- iterate all inventories
@@ -53,11 +50,14 @@ end
 
 --- @param player_table PlayerTable
 --- @param player LuaPlayer
-function inventory.get_from_sync_inventories(player_table, player)
+function inventory_sync.get_from_sync_inventories(player_table, player)
   -- determine prefix based on controller type
-  local prefix = reverse_defines.controllers[player.controller_type] .. "_"
+  local prefix = table.find(defines.controllers, player.controller_type) .. "_"
   -- iterate all inventories
   local sync_data = player_table.sync_data
+  if not sync_data then
+    return
+  end
   -- Cursor first to allow setting the hand, then armor to correct the inventory size
   for _, name in ipairs({ "cursor", "armor", "main", "guns", "ammo" }) do
     local sync_table = sync_data[name]
@@ -93,4 +93,4 @@ function inventory.get_from_sync_inventories(player_table, player)
   player_table.sync_data = nil
 end
 
-return inventory
+return inventory_sync
