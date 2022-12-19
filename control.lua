@@ -1,7 +1,6 @@
 local gui = require("__flib__/gui-lite")
 local migration = require("__flib__/migration")
 
-local cheat_command = require("__EditorExtensions__/scripts/cheat-command")
 local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
 local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local constants = require("__EditorExtensions__/scripts/constants")
@@ -48,7 +47,6 @@ script.on_init(function()
   --- @type table<uint, PlayerTable>
   global.players = {}
 
-  cheat_command.init()
   debug_world.init()
 
   infinity_loader.init()
@@ -87,8 +85,15 @@ end)
 -- COMMAND
 
 script.on_event(defines.events.on_console_command, function(e)
-  if e.command == "cheat" then
-    cheat_command.handle(e)
+  if e.command ~= "cheat" or not game.console_command_used then
+    return
+  end
+
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+  if e.parameters == "lab" then
+    debug_world.lab(player.surface)
+  elseif e.parameters == "all" then
+    cheat_mode.set_loadout(player)
   end
 end)
 

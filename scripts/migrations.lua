@@ -1,4 +1,3 @@
-local cheat_command = require("__EditorExtensions__/scripts/cheat-command")
 local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
 local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local player_data = require("__EditorExtensions__/scripts/player-data")
@@ -30,7 +29,6 @@ migrations.by_version = {
     infinity_pipe.init()
   end,
   ["2.0.0"] = function()
-    cheat_command.init()
     infinity_loader.init()
   end,
 }
