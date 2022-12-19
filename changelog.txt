@@ -10,6 +10,7 @@ Date: ????
   Changes:
     - Infinity loader and linked belt no longer snap belt type - instead, they are always at the max belt speed
     - Infinity loader only supports a single filter - to put a different item on each half of a belt, use two loaders
+    - Inventory sync is disabled by default
     - Removed the testing scenario in favor of the debug world
       - Control+click the "singleplayer" or "new game" buttons in the main menu to enter the debug world
     - Removed '/cheatmode' command in favor of the built-in '/cheat' command
