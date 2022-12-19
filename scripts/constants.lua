@@ -42,6 +42,7 @@ constants.cheat_mode.items_to_remove = {
   { name = "electric-energy-interface", count = 1 },
   { name = "infinity-chest", count = 20 },
   { name = "infinity-pipe", count = 10 },
+  { name = "linked-chest", count = 10 },
 }
 
 constants.cheat_mode.modifiers = {
