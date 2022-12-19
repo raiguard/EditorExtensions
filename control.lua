@@ -22,7 +22,7 @@ local super_inserter = require("__EditorExtensions__/scripts/entity/super-insert
 local super_pump = require("__EditorExtensions__/scripts/entity/super-pump")
 
 remote.add_interface("EditorExtensions", {
-  --- Get the force the player is actually on, ignoring the testing lab force.
+  --- Get the force that the player is actually on, ignoring the testing lab force.
   --- @param player LuaPlayer
   --- @return ForceIdentification
   get_player_proper_force = function(player)
@@ -62,25 +62,6 @@ script.on_init(function()
 end)
 
 migration.handle_on_configuration_changed(migrations.by_version, migrations.generic)
-
--- CHEAT MODE
-
-script.on_event(defines.events.on_player_cheat_mode_enabled, function(e)
-  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-  local player_table = global.players[e.player_index]
-
-  -- if the scenario enabled it, the player hasn't been initialized yet
-  if not player_table then
-    return
-  end
-
-  -- space exploration - do nothing if they are in the satellite view
-  if script.active_mods["space-exploration"] then
-    return
-  end
-
-  cheat_mode.enable_recipes(player)
-end)
 
 -- COMMAND
 
@@ -516,9 +497,6 @@ script.on_event(defines.events.on_player_created, function(e)
   end
 
   local in_debug_world = global.in_debug_world
-  if player.cheat_mode or (in_debug_world and settings.global["ee-debug-world-cheat-mode"].value) then
-    cheat_mode.enable(player)
-  end
   if in_debug_world and settings.global["ee-debug-world-give-testing-items"].value then
     cheat_mode.set_loadout(player)
   end

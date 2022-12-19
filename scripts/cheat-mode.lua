@@ -1,41 +1,7 @@
+--- @class CheatMode
 local cheat_mode = {}
 
 local constants = require("__EditorExtensions__/scripts/constants")
-
---- @param player LuaPlayer
---- @param skip_message boolean?
-function cheat_mode.enable_recipes(player, skip_message)
-  local force = player.force
-  local recipes = force.recipes
-  -- check if it has already been enabled for this force
-  if recipes["ee-infinity-loader"].enabled == false then
-    for _, recipe in pairs(recipes) do
-      if recipe.category == "ee-testing-tool" and not recipe.enabled then
-        recipe.enabled = true
-      end
-    end
-    if not skip_message then
-      force.print({ "message.ee-testing-tools-enabled", player.name })
-    end
-  end
-end
-
---- @param player LuaPlayer
---- @param skip_message boolean?
-function cheat_mode.disable_recipes(player, skip_message)
-  local force = player.force
-  local recipes = force.recipes
-  if recipes["ee-infinity-loader"].enabled then
-    for _, recipe in pairs(recipes) do
-      if recipe.category == "ee-testing-tool" then
-        recipe.enabled = false
-      end
-    end
-    if not skip_message then
-      force.print({ "message.ee-testing-tools-disabled", player.name })
-    end
-  end
-end
 
 --- @param inventory LuaInventory
 local function set_armor(inventory)
@@ -102,12 +68,6 @@ function cheat_mode.update_character_cheats(player)
       character[modifier] = math.max(character[modifier] + (amount * multiplier), 0)
     end
   end
-end
-
---- @param player LuaPlayer
-function cheat_mode.enable(player)
-  -- recipes will be enabled automatically
-  player.cheat_mode = true
 end
 
 return cheat_mode

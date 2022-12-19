@@ -1,4 +1,3 @@
-local cheat_mode = require("__EditorExtensions__/scripts/cheat-mode")
 local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local player_data = require("__EditorExtensions__/scripts/player-data")
 
@@ -17,10 +16,6 @@ function migrations.generic()
 
   for i, player in pairs(game.players) do
     player_data.refresh(player, global.players[i])
-    -- Space Exploration - do nothing if they are in the satellite view
-    if player.cheat_mode and not script.active_mods["space-exploration"] then
-      cheat_mode.enable_recipes(player)
-    end
   end
 end
 
