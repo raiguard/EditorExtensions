@@ -163,7 +163,7 @@ function linked_belt.render_connection(player, player_table)
   player_table.linked_belt_render_objects = objects
 end
 
---- @param e on_player_rotated_entity
+--- @param e EventData.on_player_rotated_entity
 function linked_belt.on_rotated(e)
   local entity = e.entity
 

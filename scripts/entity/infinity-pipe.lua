@@ -134,7 +134,7 @@ local Gui = {}
 local Gui_mt = { __index = Gui }
 script.register_metatable("EditorExtensions_infinity_pipe", Gui_mt)
 
---- @param e on_gui_selection_state_changed
+--- @param e EventData.on_gui_selection_state_changed
 function Gui:change_capacity(_, e)
   local new_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
   local new_name = "ee-infinity-pipe-" .. new_capacity
@@ -195,7 +195,7 @@ function Gui:change_fluid()
 end
 
 --- @param msg table
---- @param e on_gui_value_changed|on_gui_text_changed
+--- @param e EventData.on_gui_value_changed|EventData.on_gui_text_changed
 function Gui:change_amount(msg, e)
   local element = e.element
   local type = msg.elem
@@ -222,7 +222,7 @@ function Gui:change_amount(msg, e)
   self:update()
 end
 
---- @param e on_gui_selection_state_changed
+--- @param e EventData.on_gui_selection_state_changed
 function Gui:change_amount_type(_, e)
   -- This is a 1:1 representation
   self.state.amount_type = e.element.selected_index
