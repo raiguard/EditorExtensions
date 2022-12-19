@@ -66,7 +66,9 @@ migration.handle_on_configuration_changed(migrations.by_version, migrations.gene
 -- COMMAND
 
 script.on_event(defines.events.on_console_command, function(e)
-  if e.command ~= "cheat" or not game.console_command_used then
+  if
+    e.command ~= "cheat" --[[or not game.console_command_used]]
+  then
     return
   end
 
@@ -83,13 +85,10 @@ end)
 script.on_event("ee-toggle-map-editor", function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
-  -- quick item search compatibility
-  if not compatibility.in_qis_window(player) then
-    if player.admin then
-      player.toggle_map_editor()
-    else
-      player.print({ "message.ee-map-editor-denied" })
-    end
+  if player.admin then
+    player.toggle_map_editor()
+  else
+    player.print({ "message.ee-map-editor-denied" })
   end
 end)
 
