@@ -1,5 +1,5 @@
-local compatibility = require("__EditorExtensions__/scripts/compatibility")
 local player_data = require("__EditorExtensions__/scripts/player-data")
+local util = require("__EditorExtensions__/scripts/util")
 
 local aggregate_chest = require("__EditorExtensions__/scripts/entity/aggregate-chest")
 local infinity_loader = require("__EditorExtensions__/scripts/entity/infinity-loader")
@@ -12,7 +12,7 @@ function migrations.generic()
   aggregate_chest.update_all_filters()
   infinity_loader.cleanup_orphans()
 
-  compatibility.add_cursor_enhancements_overrides()
+  util.add_cursor_enhancements_overrides()
 
   for i, player in pairs(game.players) do
     player_data.refresh(player, global.players[i])

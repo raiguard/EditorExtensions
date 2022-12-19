@@ -1,9 +1,18 @@
 local flib_gui = require("__flib__/gui-lite")
 
+local constants = require("__EditorExtensions__/scripts/constants")
+
 --- @class Util
 local util = {}
 
--- GENERAL
+function util.add_cursor_enhancements_overrides()
+  if
+    remote.interfaces["CursorEnhancements"]
+    and remote.call("CursorEnhancements", "version") == constants.cursor_enhancements_interface_version
+  then
+    remote.call("CursorEnhancements", "add_overrides", constants.cursor_enhancements_overrides)
+  end
+end
 
 function util.close_button(actions)
   return {
