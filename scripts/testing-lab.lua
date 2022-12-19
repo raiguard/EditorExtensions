@@ -4,10 +4,10 @@ local testing_lab = {}
 
 --- @param player LuaPlayer
 --- @param player_table table
---- @param ts_setting number
+--- @param ts_setting string
 function testing_lab.toggle(player, player_table, ts_setting)
   local key
-  if ts_setting == constants.testing_lab_setting.personal then
+  if ts_setting == "personal" then
     key = player.index
   elseif game.forces["EE_TESTSURFACE_shared"] then
     -- For versions prior to 1.13.0, all forces used the "shared" lab

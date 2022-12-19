@@ -656,7 +656,7 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
   -- Toggle surface
   local ts_setting = player.mod_settings["ee-testing-lab"].value
   if ts_setting ~= "off" then
-    testing_lab.toggle(player, player_table, ts_setting --[[@as number]])
+    testing_lab.toggle(player, player_table, ts_setting)
   end
 end)
 

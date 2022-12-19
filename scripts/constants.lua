@@ -1,5 +1,6 @@
 local table = require("__flib__/table")
 
+--- @class Constants
 local constants = {}
 
 -- AGGREGATE_CHEST
@@ -73,11 +74,6 @@ constants.cursor_enhancements_overrides = {
   ["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon",
 }
 
-constants.curved_rail_selection_sizes = {
-  { left_top = { x = -2, y = -4 }, right_bottom = { x = 2, y = 4 } },
-  { left_top = { x = -4, y = -2 }, right_bottom = { x = 4, y = 2 } },
-}
-
 -- INFINITY ACCUMULATOR
 
 constants.ia = {}
@@ -146,15 +142,6 @@ constants.infinity_wagon_names = {
 -- OTHER
 
 constants.editor_gui_width = 474
-
--- SETTINGS
-
-constants.setting_names = {
-  ["ee-infinity-pipe-crafter-snapping"] = "infinity_pipe_crafter_snapping",
-  ["ee-default-infinity-filters"] = "default_infinity_filters",
-  ["ee-inventory-sync"] = "inventory_sync_enabled",
-  ["ee-testing-lab"] = "testing_lab",
-}
 
 -- SUPER PUMP
 
