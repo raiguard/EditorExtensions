@@ -140,6 +140,7 @@ local relative_gui = {}
 
 --- @param player LuaPlayer
 function relative_gui.build(player)
+  relative_gui.destroy(player)
   gui.add(player.gui.relative, {
     type = "frame",
     name = "ee_inventory_filters_window",

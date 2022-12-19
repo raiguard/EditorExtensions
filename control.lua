@@ -184,7 +184,10 @@ script.on_event({
     infinity_pipe.store_amount_type(entity, e.tags)
     -- Only snap manually built pipes
     if e.name == defines.events.on_built_entity then
-      infinity_pipe.snap(entity, global.players[e.player_index].settings)
+      local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+      if player.mod_settings["ee-infinity-pipe-crafter-snapping"].value then
+        infinity_pipe.snap(entity)
+      end
     end
   end
 end)
@@ -587,8 +590,8 @@ script.on_event(defines.events.on_pre_player_toggled_map_editor, function(e)
   if not player_table then
     return
   end
-  if player_table.settings.inventory_sync_enabled then
-    local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+  if player.mod_settings["ee-inventory-sync"].value then
     inventory_sync.create_sync_inventories(player_table, player)
   end
 end)
@@ -616,7 +619,7 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
   -- apply default infinity filters if this is their first time in the editor
   if to_state and not player_table.flags.map_editor_toggled then
     player_table.flags.map_editor_toggled = true
-    local default_filters = player_table.settings.default_infinity_filters
+    local default_filters = player.mod_settings["ee-default-infinity-filters"].value
     if default_filters ~= "" then
       inventory_filters.import(player, default_filters --[[@as string]])
     end
@@ -628,7 +631,7 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
   end
 
   -- finish inventory sync
-  if player_table.settings.inventory_sync_enabled and player_table.sync_data then
+  if player.mod_settings["ee-inventory-sync"].value and player_table.sync_data then
     inventory_sync.get_from_sync_inventories(player_table, player)
   end
 
@@ -653,8 +656,8 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
   end
 
   -- Toggle surface
-  local ts_setting = player_table.settings.testing_lab
-  if ts_setting ~= constants.testing_lab_setting.off then
+  local ts_setting = player.mod_settings["ee-testing-lab"].value
+  if ts_setting ~= "off" then
     testing_lab.toggle(player, player_table, ts_setting --[[@as number]])
   end
 end)
@@ -702,10 +705,6 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, function(e)
         force.reset_technology_effects()
       end
     end
-  elseif game.mod_setting_prototypes[e.setting].mod == "EditorExtensions" and e.setting_type == "runtime-per-user" then
-    local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-    local player_table = global.players[e.player_index]
-    player_data.update_settings(player, player_table)
   end
 end)
 

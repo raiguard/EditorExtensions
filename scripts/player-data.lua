@@ -1,6 +1,6 @@
+--- @class PlayerData
 local player_data = {}
 
-local constants = require("__EditorExtensions__/scripts/constants")
 local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
 
 --- @param player LuaPlayer
@@ -20,26 +20,9 @@ function player_data.init(player)
     --- @type LuaEntity?
     linked_belt_source = nil,
     normal_state = nil,
-    --- @type table<string, string|boolean>
-    settings = {},
     sync_data = nil,
   }
   global.players[player.index] = player_table
-end
-
---- @param player LuaPlayer
---- @param player_table PlayerTable
-function player_data.update_settings(player, player_table)
-  local player_settings = player.mod_settings
-  local settings = {}
-  for prototype, internal in pairs(constants.setting_names) do
-    if internal == "testing_lab" then
-      settings[internal] = constants.testing_lab_setting[player_settings[prototype].value]
-    else
-      settings[internal] = player_settings[prototype].value
-    end
-  end
-  player_table.settings = settings
 end
 
 --- @param player LuaPlayer
@@ -54,14 +37,9 @@ function player_data.refresh(player, player_table)
   end
 
   inventory_filters.string_gui.destroy(player)
-  inventory_filters.relative_gui.destroy(player)
-  inventory_filters.relative_gui.build(player)
+  inventory_filters.relative_gui.build(player) -- Will destroy as well
 
-  -- set shortcut availability
   player.set_shortcut_available("ee-toggle-map-editor", player.admin)
-
-  -- update settings
-  player_data.update_settings(player, player_table)
 end
 
 return player_data
