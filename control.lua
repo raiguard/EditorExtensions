@@ -7,7 +7,6 @@ local debug_world = require("__EditorExtensions__/scripts/debug-world")
 local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
 local inventory_sync = require("__EditorExtensions__/scripts/inventory-sync")
 local migrations = require("__EditorExtensions__/scripts/migrations")
-local player_data = require("__EditorExtensions__/scripts/player-data")
 local testing_lab = require("__EditorExtensions__/scripts/testing-lab")
 local util = require("__EditorExtensions__/scripts/util")
 
@@ -53,8 +52,8 @@ script.on_init(function()
   infinity_wagon.init()
   linked_belt.init()
 
-  for _, player in pairs(game.players) do
-    player_data.init(player)
+  for player_index in pairs(game.players) do
+    migrations.init_player(player_index --[[@as uint]])
   end
 
   migrations.generic()
@@ -83,12 +82,11 @@ end)
 
 script.on_event("ee-toggle-map-editor", function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-
-  if player.admin then
-    player.toggle_map_editor()
-  else
-    player.print({ "message.ee-map-editor-denied" })
+  if not util.player_can_use_editor(player) then
+    player.print({ "message.ee-cannot-use-map-editor" })
+    return
   end
+  player.toggle_map_editor()
 end)
 
 script.on_event("ee-open-gui", function(e)
@@ -486,10 +484,10 @@ end)
 -- PLAYER
 
 script.on_event(defines.events.on_player_created, function(e)
-  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
+  migrations.init_player(e.player_index)
+  migrations.migrate_player(e.player_index)
 
-  player_data.init(player)
-  player_data.refresh(player, global.players[e.player_index])
+  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
 
   if player.mod_settings["ee-auto-alt-mode"].value then
     local gameview = player.game_view_settings
@@ -520,11 +518,18 @@ script.on_event(defines.events.on_player_removed, function(e)
   global.players[e.player_index] = nil
 end)
 
-script.on_event({ defines.events.on_player_promoted, defines.events.on_player_demoted }, function(e)
-  local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
-  -- lock or unlock the shortcut depending on if they're an admin
-  player.set_shortcut_available("ee-toggle-map-editor", player.admin)
-end)
+script.on_event(
+  { defines.events.on_player_promoted, defines.events.on_player_demoted, defines.events.on_permission_group_edited },
+  function(e)
+    if e.action ~= defines.input_action.toggle_map_editor then
+      return
+    end
+    local group = e.group
+    for _, player in pairs(group.players) do
+      util.player_can_use_editor(player)
+    end
+  end
+)
 
 script.on_event(defines.events.on_player_setup_blueprint, function(e)
   local player = game.get_player(e.player_index) --[[@as LuaPlayer]]
@@ -656,7 +661,7 @@ script.on_event(defines.events.on_player_toggled_map_editor, function(e)
   -- Toggle surface
   local ts_setting = player.mod_settings["ee-testing-lab"].value
   if ts_setting ~= "off" then
-    testing_lab.toggle(player, player_table, ts_setting)
+    testing_lab.toggle(player, player_table, ts_setting --[[@as string]])
   end
 end)
 

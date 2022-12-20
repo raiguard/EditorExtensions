@@ -55,4 +55,16 @@ function util.add_gui_handlers(gui, name, wrapper)
   flib_gui.add_handlers(handlers, wrapper)
 end
 
+--- @param player LuaPlayer
+--- @return boolean
+function util.player_can_use_editor(player)
+  local can_use_editor = player.admin
+  local permission_group = player.permission_group
+  if permission_group then
+    can_use_editor = permission_group.allows_action(defines.input_action.toggle_map_editor)
+  end
+  player.set_shortcut_available("ee-toggle-map-editor", can_use_editor)
+  return can_use_editor
+end
+
 return util

@@ -12,6 +12,7 @@ Date: ????
     - Infinity loader and linked belt no longer snap belt type - instead, they are always at the max belt speed
     - Infinity loader only supports a single filter - to put a different item on each half of a belt, use two loaders
     - Inventory sync is disabled by default
+    - Map editor availability is gated behind the "toggle map editor" permission
     - Removed the '/cheatmode' command in favor of the built-in '/cheat' command
       - Consequently, you can no longer enable cheat mode without disabling achievements in your game
     - Removed the testing scenario in favor of the debug world
