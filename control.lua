@@ -64,9 +64,7 @@ migration.handle_on_configuration_changed(migrations.by_version, migrations.gene
 -- COMMAND
 
 script.on_event(defines.events.on_console_command, function(e)
-  if
-    e.command ~= "cheat" --[[or not game.console_command_used]]
-  then
+  if e.command ~= "cheat" or not game.console_command_used then
     return
   end
 
@@ -498,6 +496,9 @@ script.on_event(defines.events.on_player_created, function(e)
   local in_debug_world = global.in_debug_world
   if in_debug_world and settings.global["ee-debug-world-give-testing-items"].value then
     cheat_mode.set_loadout(player)
+  end
+  if in_debug_world and settings.global["ee-debug-world-cheat-mode"].value then
+    player.cheat_mode = true
   end
 
   if
