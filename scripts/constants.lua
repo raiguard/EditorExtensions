@@ -24,54 +24,6 @@ constants.cursor_enhancements_overrides = {
 	["ee-infinity-cargo-wagon"] = "ee-infinity-fluid-wagon",
 }
 
--- INFINITY ACCUMULATOR
-
-constants.ia = {}
-
-constants.ia.index_to_mode = { "output", "input", "buffer" }
-constants.ia.index_to_priority = { "primary", "secondary", "tertiary" }
-
-constants.ia.localised_modes = { { "gui.ee-output" }, { "gui.ee-input" }, { "gui.ee-buffer" } }
-constants.ia.localised_priorities = { { "gui.ee-primary" }, { "gui.ee-secondary" }, { "gui.ee-tertiary" } }
-constants.ia.localised_si_suffixes_joule = {}
-constants.ia.localised_si_suffixes_watt = {}
-
-constants.ia.mode_to_index = { output = 1, input = 2, buffer = 3 }
-
-constants.ia.power_prefixes = { "kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta" }
-constants.ia.power_suffixes_by_mode = { output = "watt", input = "watt", buffer = "joule" }
-
-constants.ia.priority_to_index = { primary = 1, secondary = 2, tertiary = 3 }
-
-constants.ia.si_suffixes_joule = { "kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ" }
-constants.ia.si_suffixes_watt = { "kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW" }
-
-for i, v in pairs(constants.ia.power_prefixes) do
-	constants.ia.localised_si_suffixes_watt[i] = { "", { "si-prefix-symbol-" .. v }, { "si-unit-symbol-watt" } }
-	constants.ia.localised_si_suffixes_joule[i] = { "", { "si-prefix-symbol-" .. v }, { "si-unit-symbol-joule" } }
-end
-
--- INFINITY PIPE
-
-constants.ip_crafter_snapping_types = {
-	["assembling-machine"] = true,
-	["furnace"] = true,
-	["rocket-silo"] = true,
-}
-
-constants.infinity_pipe_modes = {
-	"at-least",
-	"at-most",
-	"exactly",
-	"add",
-	"remove",
-}
-
-constants.infinity_pipe_amount_type = {
-	percent = 1,
-	units = 2,
-}
-
 -- INFINITY WAGON
 
 constants.infinity_wagon_names = {
