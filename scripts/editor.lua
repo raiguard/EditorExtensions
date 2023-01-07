@@ -19,7 +19,15 @@ local function on_toggle_editor(e)
 	player.toggle_map_editor()
 end
 
-local function on_player_toggled_map_editor()
+--- @param e EventData.on_player_toggled_map_editor
+local function on_player_toggled_map_editor(e)
+	local player = game.get_player(e.player_index)
+	if not player then
+		return
+	end
+
+	player.set_shortcut_toggled("ee-toggle-map-editor", player.controller_type == defines.controllers.editor)
+
 	if global.editor_toggled or not game.tick_paused then
 		return
 	end
