@@ -115,12 +115,12 @@ end
 
 --- @param player_index uint
 local function destroy_gui(player_index)
-	local pgui = global.infinity_accumulator_gui[player_index]
-	if not pgui then
+	local self = global.infinity_accumulator_gui[player_index]
+	if not self then
 		return
 	end
 	global.infinity_accumulator_gui[player_index] = nil
-	local window = pgui.elems.ee_infinity_accumulator_window
+	local window = self.elems.ee_infinity_accumulator_window
 	if not window.valid then
 		return
 	end
