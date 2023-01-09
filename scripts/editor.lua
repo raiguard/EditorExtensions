@@ -37,10 +37,33 @@ local function on_player_toggled_map_editor(e)
 	end
 end
 
+--- @param e EventData.on_player_created
+local function on_player_created(e)
+	if global.in_debug_world then
+		-- TODO: Special message?
+		return
+	end
+
+	local player = game.get_player(e.player_index)
+	if not player then
+		return
+	end
+
+	player.print({ "message.ee-welcome" })
+end
+
 local editor = {}
+
+editor.on_init = function()
+	for player_index in pairs(game.players) do
+		--- @cast player_index uint
+		on_player_created({ player_index = player_index })
+	end
+end
 
 editor.events = {
 	[defines.events.on_lua_shortcut] = on_toggle_editor,
+	[defines.events.on_player_created] = on_player_created,
 	[defines.events.on_player_toggled_map_editor] = on_player_toggled_map_editor,
 	["ee-toggle-map-editor"] = on_toggle_editor,
 }
