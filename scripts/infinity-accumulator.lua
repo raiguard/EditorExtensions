@@ -173,122 +173,102 @@ local function update_all_guis(entity)
 	end
 end
 
---- @param e EventData.on_gui_closed|EventData.on_gui_click
-local function on_close_ia_gui(e)
-	local player = game.get_player(e.player_index)
-	if not player then
-		return
-	end
-	destroy_gui(player.index)
-	player.play_sound({ path = "entity-close/ee-infinity-accumulator-tertiary-buffer" })
-end
+local handlers = {
+	--- @param self InfinityAccumulatorGui
+	--- @param e EventData.on_gui_closed|EventData.on_gui_click
+	on_ia_gui_closed = function(self, e)
+		destroy_gui(e.player_index)
+		local player = self.player
+		if not player.valid then
+			return
+		end
+		player.play_sound({ path = "entity-close/ee-infinity-accumulator-tertiary-buffer" })
+	end,
 
---- @param e EventData.on_gui_selection_state_changed
-local function on_ia_gui_mode_dropdown_changed(e)
+	--- @param self InfinityAccumulatorGui
+	--- @param e EventData.on_gui_selection_state_changed
+	on_ia_gui_mode_dropdown_changed = function(self, e)
+		local entity = self.entity
+		local mode = modes[e.element.selected_index]
+		local priority = "tertiary"
+		if mode ~= "buffer" then
+			priority = get_settings_from_name(entity.name)
+		end
+		local new_entity = change_entity(entity, priority, mode)
+		if not new_entity then
+			return
+		end
+		update_all_guis(new_entity)
+	end,
+
+	--- @param self InfinityAccumulatorGui
+	--- @param e EventData.on_gui_selection_state_changed
+	on_ia_gui_priority_dropdown_changed = function(self, e)
+		local entity = self.entity
+		local priority = priorities[e.element.selected_index]
+		local _, mode = get_settings_from_name(entity.name)
+		local new_entity = change_entity(entity, priority, mode)
+		if not new_entity then
+			return
+		end
+		update_all_guis(new_entity)
+	end,
+
+	--- @param self InfinityAccumulatorGui
+	--- @param e EventData.on_gui_selection_state_changed
+	on_ia_gui_power_slider_changed = function(self, e)
+		local entity = self.entity
+		local slider_value = e.element.slider_value
+		local dropdown_index = self.elems.power_dropdown.selected_index
+		local buffer_size = calc_buffer_size(slider_value, dropdown_index)
+		local _, mode = get_settings_from_name(entity.name)
+		set_entity_settings(entity, mode, buffer_size)
+		update_all_guis(entity)
+	end,
+
+	--- @param self InfinityAccumulatorGui
+	--- @param e EventData.on_gui_text_changed
+	on_ia_gui_power_textfield_changed = function(self, e)
+		local entity = self.entity
+		local textfield = e.element
+		local text = textfield.text
+		local value = tonumber(text)
+		if not value or value < 0 or value >= 1000 then
+			textfield.style = "ee_invalid_slider_textfield"
+			return
+		end
+		textfield.style = "ee_slider_textfield"
+
+		self.elems.power_slider.slider_value = value
+
+		local _, mode = get_settings_from_name(entity.name)
+		local buffer_size = calc_buffer_size(value, self.elems.power_dropdown.selected_index)
+		set_entity_settings(entity, mode, buffer_size)
+		update_all_guis(entity)
+	end,
+
+	--- @param self InfinityAccumulatorGui
+	--- @param e EventData.on_gui_selection_state_changed
+	on_ia_gui_power_dropdown_changed = function(self, e)
+		local entity = self.entity
+		local _, mode = get_settings_from_name(entity.name)
+		local buffer_size = calc_buffer_size(self.elems.power_slider.slider_value, e.element.selected_index)
+		set_entity_settings(entity, mode, buffer_size)
+		update_all_guis(entity)
+	end,
+}
+
+gui.add_handlers(handlers, function(e, handler)
 	local self = global.infinity_accumulator_gui[e.player_index]
 	if not self then
 		return
 	end
-	local entity = self.entity
-	if not entity.valid then
+	if not self.entity.valid then
 		return
 	end
 
-	local mode = modes[e.element.selected_index]
-	local priority = "tertiary"
-	if mode ~= "buffer" then
-		priority = get_settings_from_name(entity.name)
-	end
-	local new_entity = change_entity(entity, priority, mode)
-	if not new_entity then
-		return
-	end
-	update_all_guis(new_entity)
-end
-
---- @param e EventData.on_gui_selection_state_changed
-local function on_ia_gui_priority_dropdown_changed(e)
-	local self = global.infinity_accumulator_gui[e.player_index]
-	if not self then
-		return
-	end
-	local entity = self.entity
-	if not entity.valid then
-		return
-	end
-
-	local priority = priorities[e.element.selected_index]
-	local _, mode = get_settings_from_name(entity.name)
-	local new_entity = change_entity(entity, priority, mode)
-	if not new_entity then
-		return
-	end
-	update_all_guis(new_entity)
-end
-
---- @param e EventData.on_gui_selection_state_changed
-local function on_ia_gui_power_slider_changed(e)
-	local self = global.infinity_accumulator_gui[e.player_index]
-	if not self then
-		return
-	end
-	local entity = self.entity
-	if not entity.valid then
-		return
-	end
-
-	local slider_value = e.element.slider_value
-	local dropdown_index = self.elems.power_dropdown.selected_index
-	local buffer_size = calc_buffer_size(slider_value, dropdown_index)
-	local _, mode = get_settings_from_name(entity.name)
-	set_entity_settings(entity, mode, buffer_size)
-	update_all_guis(self.entity)
-end
-
---- @param e EventData.on_gui_text_changed
-local function on_ia_gui_power_textfield_changed(e)
-	local self = global.infinity_accumulator_gui[e.player_index]
-	if not self then
-		return
-	end
-	local entity = self.entity
-	if not entity.valid then
-		return
-	end
-
-	local textfield = e.element
-	local text = textfield.text
-	local value = tonumber(text)
-	if not value or value < 0 or value >= 1000 then
-		textfield.style = "ee_invalid_slider_textfield"
-		return
-	end
-	textfield.style = "ee_slider_textfield"
-
-	self.elems.power_slider.slider_value = value
-
-	local _, mode = get_settings_from_name(entity.name)
-	local buffer_size = calc_buffer_size(value, self.elems.power_dropdown.selected_index)
-	set_entity_settings(entity, mode, buffer_size)
-	update_all_guis(self.entity)
-end
-
---- @param e EventData.on_gui_selection_state_changed
-local function on_ia_gui_power_dropdown_changed(e)
-	local self = global.infinity_accumulator_gui[e.player_index]
-	if not self then
-		return
-	end
-	local entity = self.entity
-	if not entity.valid then
-		return
-	end
-
-	local _, mode = get_settings_from_name(entity.name)
-	local buffer_size = calc_buffer_size(self.elems.power_slider.slider_value, e.element.selected_index)
-	set_entity_settings(entity, mode, buffer_size)
-	update_all_guis(self.entity)
-end
+	handler(self, e)
+end)
 
 --- @param player LuaPlayer
 --- @param entity LuaEntity
@@ -300,7 +280,7 @@ local function create_gui(player, entity)
 		name = "ee_infinity_accumulator_window",
 		direction = "vertical",
 		elem_mods = { auto_center = true },
-		handler = { [defines.events.on_gui_closed] = on_close_ia_gui },
+		handler = { [defines.events.on_gui_closed] = handlers.on_ia_gui_closed },
 		{
 			type = "flow",
 			style = "flib_titlebar_flow",
@@ -312,7 +292,7 @@ local function create_gui(player, entity)
 				ignored_by_interaction = true,
 			},
 			{ type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true },
-			util.close_button(on_close_ia_gui),
+			util.close_button(handlers.on_ia_gui_closed),
 		},
 		{
 			type = "frame",
@@ -338,7 +318,9 @@ local function create_gui(player, entity)
 					name = "mode_dropdown",
 					items = { { "gui.ee-output" }, { "gui.ee-input" }, { "gui.ee-buffer" } },
 					selected_index = 0,
-					handler = { [defines.events.on_gui_selection_state_changed] = on_ia_gui_mode_dropdown_changed },
+					handler = {
+						[defines.events.on_gui_selection_state_changed] = handlers.on_ia_gui_mode_dropdown_changed,
+					},
 				},
 			},
 			{ type = "line", direction = "horizontal" },
@@ -356,7 +338,9 @@ local function create_gui(player, entity)
 					name = "priority_dropdown",
 					items = { { "gui.ee-primary" }, { "gui.ee-secondary" }, { "gui.ee-tertiary" } },
 					selected_index = 0,
-					handler = { [defines.events.on_gui_selection_state_changed] = on_ia_gui_priority_dropdown_changed },
+					handler = {
+						[defines.events.on_gui_selection_state_changed] = handlers.on_ia_gui_priority_dropdown_changed,
+					},
 				},
 			},
 			{ type = "line", direction = "horizontal" },
@@ -375,7 +359,7 @@ local function create_gui(player, entity)
 					minimum_value = 0,
 					maximum_value = 999,
 					value = 0,
-					handler = { [defines.events.on_gui_value_changed] = on_ia_gui_power_slider_changed },
+					handler = { [defines.events.on_gui_value_changed] = handlers.on_ia_gui_power_slider_changed },
 				},
 				{
 					type = "textfield",
@@ -385,14 +369,16 @@ local function create_gui(player, entity)
 					numeric = true,
 					allow_decimal = true,
 					clear_and_focus_on_right_click = true,
-					handler = { [defines.events.on_gui_text_changed] = on_ia_gui_power_textfield_changed },
+					handler = { [defines.events.on_gui_text_changed] = handlers.on_ia_gui_power_textfield_changed },
 				},
 				{
 					type = "drop-down",
 					name = "power_dropdown",
 					style_mods = { width = 69 },
 					selected_index = 0,
-					handler = { [defines.events.on_gui_selection_state_changed] = on_ia_gui_power_dropdown_changed },
+					handler = {
+						[defines.events.on_gui_selection_state_changed] = handlers.on_ia_gui_power_dropdown_changed,
+					},
 				},
 			},
 		},
@@ -486,14 +472,5 @@ infinity_accumulator.events = {
 	[defines.events.script_raised_destroy] = on_entity_destroyed,
 	[defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
 }
-
-gui.add_handlers({
-	on_close_ia_gui = on_close_ia_gui,
-	on_ia_gui_mode_dropdown_changed = on_ia_gui_mode_dropdown_changed,
-	on_ia_gui_power_dropdown_changed = on_ia_gui_power_dropdown_changed,
-	on_ia_gui_power_slider_changed = on_ia_gui_power_slider_changed,
-	on_ia_gui_power_textfield_changed = on_ia_gui_power_textfield_changed,
-	on_ia_gui_priority_dropdown_changed = on_ia_gui_priority_dropdown_changed,
-})
 
 return infinity_accumulator
