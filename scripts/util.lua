@@ -29,6 +29,26 @@ function util.close_button(handler)
 	}
 end
 
+--- @param mode InfinityPipeMode
+--- @return GuiElemDef
+function util.mode_radio_button(mode)
+	return {
+		type = "radiobutton",
+		name = "mode_radio_button_" .. string.gsub(mode, "%-", "_"),
+		caption = { "gui-infinity-container." .. mode },
+		tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
+		state = false,
+		tags = { mode = mode },
+		actions = {
+			on_checked_state_changed = { gui = "infinity_pipe", action = "change_amount_mode", mode = mode },
+		},
+	}
+end
+
+function util.pusher()
+	return { type = "empty-widget", style = "flib_horizontal_pusher", ignored_by_interaction = true }
+end
+
 --- @param player LuaPlayer
 --- @param message LocalisedString
 --- @param play_sound boolean?

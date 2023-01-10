@@ -8,6 +8,7 @@ handler.add_lib(require("__EditorExtensions__/scripts/debug-world"))
 handler.add_lib(require("__EditorExtensions__/scripts/editor"))
 handler.add_lib(require("__EditorExtensions__/scripts/infinity-accumulator"))
 handler.add_lib(require("__EditorExtensions__/scripts/infinity-loader"))
+handler.add_lib(require("__EditorExtensions__/scripts/infinity-pipe"))
 handler.add_lib(require("__EditorExtensions__/scripts/inventory-filters"))
 handler.add_lib(require("__EditorExtensions__/scripts/inventory-sync"))
 

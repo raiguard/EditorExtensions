@@ -1,6 +1,6 @@
+local format = require("__flib__/format")
 local gui = require("__flib__/gui-lite")
 local math = require("__flib__/math")
-local misc = require("__flib__/misc")
 local table = require("__flib__/table")
 
 local shared_constants = require("__EditorExtensions__/shared-constants")
@@ -20,15 +20,6 @@ local crafter_snapping_types = {
 --- | "add",
 --- | "remove",
 
---- @type InfinityPipeMode[]
-local modes = {
-	"at-least",
-	"at-most",
-	"exactly",
-	"add",
-	"remove",
-}
-
 --- @enum InfinityPipeAmountType
 local amount_type = {
 	percent = 1,
@@ -39,32 +30,35 @@ local amount_type = {
 --- @param tags table?
 local function store_amount_type(entity, tags)
 	if tags and tags.EditorExtensions then
-		global.infinity_pipe_amount_types[entity.unit_number] = tags.EditorExtensions.amount_type
+		global.infinity_pipe_amount_type[entity.unit_number] = tags.EditorExtensions.amount_type
 	end
 end
 
 --- @param entity LuaEntity
 --- @return number?
 local function remove_stored_amount_type(entity)
-	local value = global.infinity_pipe_amount_types[entity.unit_number]
-	global.infinity_pipe_amount_types[entity.unit_number] = nil
+	local value = global.infinity_pipe_amount_type[entity.unit_number]
+	global.infinity_pipe_amount_type[entity.unit_number] = nil
 	return value
 end
 
 --- @param entity LuaEntity
---- @param new_name string
---- @return LuaEntity
-local function swap_entity(entity, new_name)
+--- @param new_capacity uint
+--- @return LuaEntity?
+local function swap_entity(entity, new_capacity)
 	local amount_type = remove_stored_amount_type(entity)
 	local new_entity = entity.surface.create_entity({
-		name = new_name,
+		name = "ee-infinity-pipe-" .. new_capacity,
 		position = entity.position,
 		direction = entity.direction,
 		force = entity.force,
 		fast_replace = true,
 		create_build_effect_smoke = false,
 		spill = false,
-	}) --[[@as LuaEntity]]
+	})
+	if not new_entity then
+		return
+	end
 	store_amount_type(new_entity, { EditorExtensions = { amount_type = amount_type } })
 	return new_entity
 end
@@ -74,514 +68,371 @@ local function check_is_our_pipe(entity)
 	return string.find(entity.name, "^ee%-infinity%-pipe%-%d+$")
 end
 
---- @param source LuaEntity
---- @param destination LuaEntity
---- @return LuaEntity
-local function paste_settings(source, destination)
-	if source.name ~= destination.name then
-		destination = swap_entity(destination, source.name)
-		destination.set_infinity_pipe_filter(source.get_infinity_pipe_filter())
-	end
-	global.infinity_pipe_amount_types[destination.unit_number] = global.infinity_pipe_amount_types[source.unit_number]
-
-	return destination
-end
-
 --- @param entity LuaEntity
 local function snap(entity)
 	local own_id = entity.unit_number
 	for _, fluidbox in ipairs(entity.fluidbox.get_connections(1)) do
-		local owner_type = fluidbox.owner.type
-		if constants.ip_crafter_snapping_types[owner_type] then
-			for i = 1, #fluidbox do
-				--- @cast i uint
-				local connections = fluidbox.get_connections(i)
-				for j = 1, #connections do
-					if connections[j].owner.unit_number == own_id then
-						local prototype = fluidbox.get_prototype(i)
-						if prototype.production_type == "input" then
-							local fluid = fluidbox.get_locked_fluid(i)
-							if fluid then
-								entity.set_infinity_pipe_filter({ name = fluid, percentage = 1, mode = "at-least" })
-								return
-							end
-						end
-					end
+		if not crafter_snapping_types[fluidbox.owner.type] then
+			goto continue
+		end
+		for i = 1, #fluidbox do
+			--- @cast i uint
+			local connections = fluidbox.get_connections(i)
+			for j = 1, #connections do
+				if not connections[j].owner.unit_number == own_id then
+					goto continue
+				end
+				local prototype = fluidbox.get_prototype(i)
+				if prototype.production_type ~= "input" then
+					goto continue
+				end
+				local fluid = fluidbox.get_locked_fluid(i)
+				if fluid then
+					entity.set_infinity_pipe_filter({ name = fluid, percentage = 1, mode = "at-least" })
+					return
 				end
 			end
 		end
+		::continue::
 	end
 end
 
 -- GUI
 
---- @class InfinityPipeGuiRefs
---- @field window LuaGuiElement
+--- @class InfinityPipeGui
+--- @field elems InfinityPipeGuiElems
+--- @field entity LuaEntity
+--- @field player LuaPlayer
+
+--- @class InfinityPipeGuiElems
+--- @field ee_infinity_pipe_window LuaGuiElement
 --- @field titlebar_flow LuaGuiElement
 --- @field drag_handle LuaGuiElement
 --- @field capacity_dropdown LuaGuiElement
 --- @field amount_progressbar LuaGuiElement
 --- @field entity_preview LuaGuiElement
---- @field fluid_button LuaGuiElement
+--- @field filter_button LuaGuiElement
 --- @field amount_slider LuaGuiElement
 --- @field amount_textfield LuaGuiElement
 --- @field amount_type_dropdown LuaGuiElement
---- @field amount_radio_buttons table<string, LuaGuiElement>
+--- @field mode_radio_button_at_least LuaGuiElement
+--- @field mode_radio_button_at_most LuaGuiElement
+--- @field mode_radio_button_exactly LuaGuiElement
+--- @field mode_radio_button_add LuaGuiElement
+--- @field mode_radio_button_remove LuaGuiElement
 --- @field temperature_slider LuaGuiElement
 --- @field temperature_textfield LuaGuiElement
 
---- @class InfinityPipeGui
-local Gui = {}
-local Gui_mt = { __index = Gui }
-script.register_metatable("EditorExtensions_infinity_pipe", Gui_mt)
-
---- @param e EventData.on_gui_selection_state_changed
-function Gui:change_capacity(_, e)
-	local new_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
-	local new_name = "ee-infinity-pipe-" .. new_capacity
-	if not game.entity_prototypes[new_name] then
-		return
-	end
-
-	local entity = self.entity
-	if not entity or not entity.valid or entity.name == new_name then
-		return
-	end
-
-	local new_entity = swap_entity(entity, new_name)
-
-	if new_entity then
-		self.entity = new_entity
-		self.entity_unit_number = new_entity.unit_number
-
-		local filter = self.state.filter
-		if filter and self.state.amount_type == constants.infinity_pipe_amount_type.units then
-			filter.percentage = filter.percentage * (self.state.capacity / new_capacity)
-		end
-
-		self.state.capacity = new_capacity
-
-		self:update(true)
-	end
-end
-
-function Gui:change_fluid()
-	local fluid_name = self.refs.fluid_button.elem_value --[[@as string]]
-	local filter = self.state.filter
-	if fluid_name then
-		local prototype = game.fluid_prototypes[fluid_name]
-		if filter then
-			-- Changed fluids
-			filter.name = fluid_name
-			filter.temperature = prototype.default_temperature
-		else
-			-- Added fluid
-			self.state.filter = {
-				name = fluid_name,
-				-- Default to 100% like the vanilla infinity pipe
-				percentage = 1,
-				temperature = prototype.default_temperature,
-				mode = self.state.selected_mode,
-			}
-		end
-	elseif filter then
-		-- Removed fluid
-		self.state.filter = nil
-	else
-		-- Just opened the GUI with no fluid
-		return
-	end
-
-	self:update()
-end
-
---- @param msg table
---- @param e EventData.on_gui_value_changed|EventData.on_gui_text_changed
-function Gui:change_amount(msg, e)
-	local element = e.element
-	local type = msg.elem
-	local new_percentage
-	if type == "slider" then
-		new_percentage = element.slider_value
-	else
-		new_percentage = tonumber(element.text)
-		local is_percent = self.state.amount_type == constants.infinity_pipe_amount_type.percent
-		local max = is_percent and 100 or self.state.capacity
-		local typing_decimal = string.find(element.text, "%.$")
-		if not typing_decimal and new_percentage and new_percentage <= max then
-			new_percentage = new_percentage / max
-		else
-			element.style = "ee_invalid_slider_value_textfield"
-			return
-		end
-	end
-
-	if self.state.filter then
-		self.state.filter.percentage = new_percentage
-	end
-
-	self:update()
-end
-
---- @param e EventData.on_gui_selection_state_changed
-function Gui:change_amount_type(_, e)
-	-- This is a 1:1 representation
-	self.state.amount_type = e.element.selected_index
-	global.infinity_pipe_amount_types[self.entity.unit_number] = self.state.amount_type
-
-	self:update()
-end
-
---- @param msg table
-function Gui:change_amount_mode(msg)
-	self.state.selected_mode = msg.mode
-
-	if self.state.filter then
-		self.state.filter.mode = msg.mode
-	end
-
-	self:update()
-end
-
-function Gui:change_temperature(msg, e)
-	local filter = self.state.filter
-	if not filter then
-		return
-	end
-
-	local element = e.element
-	local type = msg.elem
-	local new_temperature
-	if type == "slider" then
-		new_temperature = element.slider_value
-	else
-		new_temperature = tonumber(element.text)
-		local slider = self.refs.temperature_slider
-		if
-			new_temperature
-			and new_temperature >= slider.get_slider_minimum()
-			and new_temperature <= slider.get_slider_maximum()
-		then
-		-- Pass
-		else
-			element.style = "ee_invalid_slider_value_textfield"
-			return
-		end
-	end
-
-	if filter then
-		filter.temperature = new_temperature
-	end
-
-	self:update()
-end
-
-function Gui:display_fluid_contents()
-	if not self.entity or not self.entity.valid or not self.refs.window.valid then
-		return
-	end
-
-	local progressbar = self.refs.amount_progressbar
-
-	-- There is only one fluidbox on an infinity pipe
-	local fluid_contents = self.entity.get_fluid_contents()
-	local fluid_name = next(fluid_contents)
-	if not fluid_name then
-		progressbar.caption = "0"
-		progressbar.value = 0
-		return
-	end
-	local fluid_amount = fluid_contents[fluid_name]
-
-	progressbar.value = fluid_amount / self.state.capacity
-	progressbar.caption = misc.delineate_number(string.format("%.2f", fluid_amount))
-
-	if fluid_name ~= self.state.current_fluid_name then
-		self.state.current_fluid_name = fluid_name
-		local bar_color = game.fluid_prototypes[fluid_name].base_color
-		-- Calculate luminance of the background color
-		-- Source: https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
-		local luminance = (0.2126 * bar_color.r) + (0.7152 * bar_color.g) + (0.0722 * bar_color.b)
-		if luminance > 0.55 then
-			progressbar.style = "production_progressbar"
-		else
-			progressbar.style = "ee_production_progressbar_light_text"
-		end
-
-		progressbar.style.horizontally_stretchable = true
-		progressbar.style.color = bar_color
-	end
-end
-
--- Updates all GUI elements and sets the filter on the entity
---- @param update_entity_preview boolean?
-function Gui:update(update_entity_preview)
-	-- Entity preview
-	if update_entity_preview then
-		self.refs.entity_preview.entity = self.entity
-	end
-
-	-- Capacity dropdown
-	local dropdown = self.refs.capacity_dropdown
-	dropdown.selected_index = table.find(shared_constants.infinity_pipe_capacities, self.state.capacity)
-
-	local filter = self.state.filter
-	local filter_exists = filter and true or false
-
-	-- Fluid button
-	local fluid_button = self.refs.fluid_button
-	fluid_button.elem_value = filter and filter.name or nil
-
-	-- Calculate amount from percentage
-	local amount = 0
-	if filter then
-		if self.state.amount_type == constants.infinity_pipe_amount_type.percent then
-			amount = math.round(filter.percentage * 100, 0.01)
-		else
-			amount = math.round(filter.percentage * self.state.capacity)
-		end
-	end
-
-	-- Amount slider and textfield
-	local amount_slider = self.refs.amount_slider
-	local amount_textfield = self.refs.amount_textfield
-	amount_slider.slider_value = filter and filter.percentage or 0
-	amount_textfield.text = tostring(amount)
-	amount_textfield.style = "slider_value_textfield"
-
-	amount_slider.enabled = filter_exists
-	amount_textfield.enabled = filter_exists
-
-	-- Amount type dropdown
-	local amount_type_dropdown = self.refs.amount_type_dropdown
-	amount_type_dropdown.selected_index = self.state.amount_type
-	amount_type_dropdown.enabled = filter_exists
-
-	-- Amount mode buttons
-	local mode = filter and filter.mode or self.state.selected_mode
-	for _, button in pairs(self.refs.amount_radio_buttons) do
-		button.state = gui.get_tags(button).mode == mode
-	end
-
-	-- Get minimum and maximum temperatures
-	local min_temp = 0
-	local max_temp = 0
-	if filter then
-		local prototype = game.fluid_prototypes[filter.name]
-		min_temp = prototype.default_temperature
-		max_temp = prototype.max_temperature
-	end
-
-	-- Slider and textfield
-	local temperature_slider = self.refs.temperature_slider
-	local temperature_textfield = self.refs.temperature_textfield
-	if filter and min_temp ~= max_temp then
-		temperature_slider.enabled = true
-		temperature_slider.set_slider_minimum_maximum(min_temp, max_temp)
-		temperature_slider.slider_value = filter.temperature
-		temperature_textfield.enabled = true
-	else
-		temperature_slider.enabled = false
-		temperature_textfield.enabled = false
-	end
-	temperature_textfield.style = "slider_value_textfield"
-	temperature_textfield.text = tostring(filter and filter.temperature or 0)
-
-	-- Set filter on entity
-	self.entity.set_infinity_pipe_filter(filter)
-end
-
-function Gui:destroy()
-	if self.refs.window.valid then
-		self.refs.window.destroy()
-		self.player.opened = nil
-		self.player.play_sound({ path = "entity-close/ee-infinity-pipe-100" })
-
-		self.player_table.gui.infinity_pipe = nil
-	end
-end
-
-function Gui:dispatch(msg, e)
-	if msg.action then
-		local handler = self[msg.action]
-		if handler then
-			handler(self, msg, e)
-		end
-	end
-end
-
 --- @param player_index uint
+local function destroy_gui(player_index)
+	local self = global.infinity_pipe_gui[player_index]
+	if not self then
+		return
+	end
+	global.infinity_pipe_gui[player_index] = nil
+	local window = self.elems.ee_infinity_pipe_window
+	if window.valid then
+		window.destroy()
+	end
+end
+
+--- @param self InfinityPipeGui
+--- @param new_entity LuaEntity?
+local function update_gui(self, new_entity)
+	if not new_entity and not self.entity.valid then
+		destroy_gui(self.player.index)
+		return
+	end
+	local elems = self.elems
+	if new_entity then
+		elems.entity_preview.entity = new_entity
+		self.entity = new_entity
+	end
+	local entity = self.entity
+	local filter = entity.get_infinity_pipe_filter() or {}
+
+	local capacity = entity.fluidbox.get_capacity(1)
+	elems.capacity_dropdown.selected_index = table.find(shared_constants.infinity_pipe_capacities, capacity) --[[@as uint]]
+
+	elems.filter_button.elem_value = filter.name
+	elems.amount_slider.slider_value = filter.percentage or 0
+	elems.amount_textfield.style = "ee_slider_textfield"
+	elems.amount_textfield.text = tostring(math.floor((filter.percentage or 0) * 100))
+
+	elems.mode_radio_button_at_least.state = filter.mode == "at-least" or not filter.mode
+	elems.mode_radio_button_at_most.state = filter.mode == "at-most"
+	elems.mode_radio_button_exactly.state = filter.mode == "exactly"
+	elems.mode_radio_button_add.state = filter.mode == "add"
+	elems.mode_radio_button_remove.state = filter.mode == "remove"
+end
+
 --- @param entity LuaEntity
-local function create_gui(player_index, entity)
-	local player = game.get_player(player_index) --[[@as LuaPlayer]]
-	local player_table = global.players[player_index]
-
-	local radio_buttons = {}
-	for _, mode in pairs(modes) do
-		local name = string.gsub(mode, "%-", "_")
-		table.insert(radio_buttons, {
-			type = "radiobutton",
-			name = mode,
-			caption = { "gui-infinity-container." .. mode },
-			tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
-			state = false,
-			-- actions = {
-			-- 	on_checked_state_changed = { gui = "infinity_pipe", action = "change_amount_mode", mode = mode },
-			-- },
-		})
-		table.insert(radio_buttons, { type = "empty-widget", style = "flib_horizontal_pusher" })
+local function update_all_guis(entity)
+	for _, gui in pairs(global.infinity_pipe_gui) do
+		if not gui.entity.valid then
+			update_gui(gui, entity)
+		elseif gui.entity == entity then
+			update_gui(gui)
+		end
 	end
-	-- Remove the last pusher
-	radio_buttons[#radio_buttons] = nil
+end
 
-	-- Clean up disassociated GUI if one exists
-	local existing = player.gui.screen["ee_infinity_pipe_window"]
-	if existing then
-		existing.destroy()
+local handlers = {
+	--- @param self InfinityPipeGui
+	--- @param e EventData.on_gui_closed|EventData.on_gui_click
+	on_ip_gui_closed = function(self, e)
+		destroy_gui(e.player_index)
+		local player = self.player
+		if not player.valid then
+			return
+		end
+		player.play_sound({ path = "entity-close/ee-infinity-accumulator-tertiary-buffer" })
+	end,
+
+	--- @param self InfinityPipeGui
+	--- @param e EventData.on_gui_selection_state_changed
+	on_ip_gui_capacity_dropdown_selection_state_changed = function(self, e)
+		local entity = self.entity
+		local new_capacity = shared_constants.infinity_pipe_capacities[e.element.selected_index]
+		if new_capacity == entity.fluidbox.get_capacity(1) then
+			return
+		end
+		local new_entity = swap_entity(entity, new_capacity)
+		if not new_entity then
+			return
+		end
+		update_all_guis(new_entity)
+	end,
+
+	--- @param self InfinityPipeGui
+	--- @param e EventData.on_gui_elem_changed
+	on_ip_gui_filter_changed = function(self, e)
+		local entity = self.entity
+		local elem = e.element.elem_value --[[@as string?]]
+		if elem then
+			if not filter then
+				filter = { mode = "at-least", percentage = 1 }
+			end
+			filter.name = elem
+			entity.set_infinity_pipe_filter(filter)
+		else
+			entity.set_infinity_pipe_filter(nil)
+		end
+		update_all_guis(entity)
+	end,
+
+	--- @param self InfinityPipeGui
+	--- @param e EventData.on_gui_elem_changed
+	on_ip_gui_amount_slider_value_changed = function(self, e)
+		local entity = self.entity
+		local value = e.element.slider_value
+		local filter = entity.get_infinity_pipe_filter()
+		if not filter then
+			-- Textfield should always match slider
+			local textfield = self.elems.amount_textfield --
+			textfield.style = "ee_slider_textfield"
+			textfield.text = tostring(math.floor(value * 100))
+			return
+		end
+		filter.percentage = value
+		entity.set_infinity_pipe_filter(filter)
+		update_all_guis(entity)
+	end,
+
+	--- @param self InfinityPipeGui
+	--- @param e EventData.on_gui_text_changed
+	on_ip_gui_amount_textfield_changed = function(self, e)
+		local entity = self.entity
+		local textfield = e.element
+		local text = textfield.text
+		local value = tonumber(text)
+		if not value or value < 0 or value > 100 then
+			textfield.style = "ee_invalid_slider_textfield"
+			return
+		end
+		textfield.style = "ee_slider_textfield"
+		value = value / 100
+
+		self.elems.amount_slider.slider_value = value
+
+		local filter = entity.get_infinity_pipe_filter()
+		if filter then
+			filter.percentage = value
+			entity.set_infinity_pipe_filter(filter)
+			update_all_guis(entity)
+		end
+	end,
+
+	--- @param self InfinityPipeGui
+	--- @param e EventData.on_gui_checked_state_changed
+	on_ip_gui_mode_radio_button_selected = function(self, e)
+		local mode = e.element.tags.mode
+		local entity = self.entity
+		local filter = entity.get_infinity_pipe_filter()
+		-- TODO: Can't rely on update_gui() when the filter is unspecified
+	end,
+}
+
+gui.add_handlers(handlers, function(e, handler)
+	local self = global.infinity_pipe_gui[e.player_index]
+	if not self then
+		return
 	end
+	if not self.entity.valid then
+		return
+	end
+	handler(self, e)
+end)
 
-	--- @type InfinityPipeGuiRefs
-	local refs = gui.build(player.gui.screen, {
+--- @param player LuaPlayer
+--- @param entity LuaEntity
+local function create_gui(player, entity)
+	destroy_gui(player.index)
+
+	--- @type InfinityPipeGuiElems
+	local elems = gui.add(player.gui.screen, {
+		type = "frame",
+		name = "ee_infinity_pipe_window",
+		direction = "vertical",
+		elem_mods = { auto_center = true },
+		handler = { [defines.events.on_gui_closed] = handlers.on_ip_gui_closed },
+		{
+			type = "flow",
+			name = "titlebar_flow",
+			style = "flib_titlebar_flow",
+			drag_target = "ee_infinity_pipe_window",
+			{
+				type = "label",
+				style = "frame_title",
+				caption = { "entity-name.ee-infinity-pipe" },
+				ignored_by_interaction = true,
+			},
+			{ type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true },
+			util.close_button(handlers.on_ip_gui_closed),
+		},
 		{
 			type = "frame",
-			name = "ee_infinity_pipe_window",
+			style = "entity_frame",
 			direction = "vertical",
-			actions = { on_closed = { gui = "infinity_pipe", action = "destroy" } },
-			{
-				type = "flow",
-				name = "titlebar_flow",
-				style = "flib_titlebar_flow",
-				actions = { on_click = { gui = "infinity_pipe", action = "recenter" } },
-				{
-					type = "label",
-					style = "frame_title",
-					caption = { "entity-name.ee-infinity-pipe" },
-					ignored_by_interaction = true,
-				},
-				{ type = "empty-widget", style = "flib_titlebar_drag_handle", ignored_by_interaction = true },
-				util.close_button({ on_click = { gui = "infinity_pipe", action = "destroy" } }),
-			},
 			{
 				type = "frame",
-				style = "entity_frame",
-				direction = "vertical",
+				style = "deep_frame_in_shallow_frame",
+				style_mods = { bottom_margin = 4 },
 				{
-					type = "frame",
-					style = "deep_frame_in_shallow_frame",
-					style_mods = { bottom_margin = 4 },
-					{
-						type = "entity-preview",
-						name = "entity_preview",
-						style = "wide_entity_button",
-						elem_mods = { entity = entity },
+					type = "entity-preview",
+					name = "entity_preview",
+					style = "wide_entity_button",
+					elem_mods = { entity = entity },
+				},
+			},
+			{
+				type = "flow",
+				style_mods = { horizontal_spacing = 8, vertical_align = "center" },
+				{
+					type = "progressbar",
+					name = "amount_progressbar",
+					style = "production_progressbar",
+					style_mods = { horizontally_stretchable = true, bottom_margin = 2 },
+				},
+				{ type = "label", caption = "/" },
+				{
+					type = "drop-down",
+					name = "capacity_dropdown",
+					items = table.map(shared_constants.infinity_pipe_capacities, function(capacity)
+						return format.number(capacity)
+					end),
+					selected_index = 0,
+					handler = {
+						[defines.events.on_gui_selection_state_changed] = handlers.on_ip_gui_capacity_dropdown_selection_state_changed,
+					},
+				},
+			},
+			{ type = "line", direction = "horizontal" },
+			{
+				type = "flow",
+				style = "centering_horizontal_flow",
+				direction = "horizontal",
+				{
+					type = "choose-elem-button",
+					name = "filter_button",
+					style = "flib_standalone_slot_button_default",
+					elem_type = "fluid",
+					handler = { [defines.events.on_gui_elem_changed] = handlers.on_ip_gui_filter_changed },
+				},
+				{
+					type = "slider",
+					name = "amount_slider",
+					style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
+					minimum_value = 0,
+					maximum_value = 1,
+					value_step = 0.01,
+					value = 0,
+					handler = { [defines.events.on_gui_value_changed] = handlers.on_ip_gui_amount_slider_value_changed },
+				},
+				{
+					type = "textfield",
+					name = "amount_textfield",
+					style = "slider_value_textfield",
+					numeric = true,
+					allow_decimal = true,
+					clear_and_focus_on_right_click = true,
+					text = "0",
+					handler = { [defines.events.on_gui_text_changed] = handlers.on_ip_gui_amount_textfield_changed },
+				},
+				{
+					type = "drop-down",
+					name = "amount_type_dropdown",
+					style_mods = { width = 55 },
+					items = { { "gui-infinity-pipe.percent" }, { "gui-infinity-pipe.ee-units" } },
+					selected_index = 1,
+					actions = {
+						on_selection_state_changed = { gui = "infinity_pipe", action = "change_amount_type" },
+					},
+				},
+			},
+			{
+				type = "flow",
+				style_mods = { horizontal_spacing = 0 },
+				direction = "horizontal",
+				util.mode_radio_button("at-least"),
+				util.pusher(),
+				util.mode_radio_button("at-most"),
+				util.pusher(),
+				util.mode_radio_button("exactly"),
+				util.pusher(),
+				util.mode_radio_button("add"),
+				util.pusher(),
+				util.mode_radio_button("remove"),
+			},
+			{ type = "line", direction = "horizontal" },
+			{
+				type = "flow",
+				style = "centering_horizontal_flow",
+				style_mods = { vertical_align = "center" },
+				direction = "horizontal",
+				{ type = "label", caption = { "gui-infinity-pipe.temperature" } },
+				{
+					type = "slider",
+					name = "temperature_slider",
+					style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
+					minimum_value = 0,
+					maximum_value = 100,
+					value = 0,
+					actions = {
+						on_value_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "slider" },
 					},
 				},
 				{
-					type = "flow",
-					style_mods = { horizontal_spacing = 8, vertical_align = "center" },
-					{
-						type = "progressbar",
-						name = "amount_progressbar",
-						style = "production_progressbar",
-						style_mods = { horizontally_stretchable = true, bottom_margin = 2 },
-					},
-					{ type = "label", caption = "/" },
-					{
-						type = "drop-down",
-						name = "capacity_dropdown",
-						items = table.map(shared_constants.infinity_pipe_capacities, function(capacity)
-							return misc.delineate_number(capacity)
-						end),
-						selected_index = 0,
-						actions = {
-							on_selection_state_changed = { gui = "infinity_pipe", action = "change_capacity" },
-						},
-					},
-				},
-				{ type = "line", direction = "horizontal" },
-				{
-					type = "flow",
-					style_mods = { vertical_align = "center" },
-					direction = "horizontal",
-					{
-						type = "choose-elem-button",
-						style = "flib_standalone_slot_button_default",
-						elem_type = "fluid",
-						name = "fluid_button",
-						actions = {
-							on_elem_changed = { gui = "infinity_pipe", action = "change_fluid" },
-						},
-					},
-					{
-						type = "slider",
-						name = "amount_slider",
-						style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
-						minimum_value = 0,
-						maximum_value = 1,
-						value_step = 0.01,
-						value = 0,
-						actions = {
-							on_value_changed = { gui = "infinity_pipe", action = "change_amount", elem = "slider" },
-						},
-					},
-					{
-						type = "textfield",
-						name = "amount_textfield",
-						style = "slider_value_textfield",
-						numeric = true,
-						allow_decimal = true,
-						clear_and_focus_on_right_click = true,
-						text = "0",
-						actions = {
-							on_text_changed = { gui = "infinity_pipe", action = "change_amount", elem = "textfield" },
-						},
-					},
-					{
-						type = "drop-down",
-						name = "amount_type_dropdown",
-						style_mods = { width = 55 },
-						items = { { "gui-infinity-pipe.percent" }, { "gui-infinity-pipe.ee-units" } },
-						selected_index = 1,
-						actions = {
-							on_selection_state_changed = { gui = "infinity_pipe", action = "change_amount_type" },
-						},
-					},
-				},
-				{
-					type = "flow",
-					style_mods = { horizontal_spacing = 0 },
-					direction = "horizontal",
-					children = radio_buttons,
-				},
-				{ type = "line", direction = "horizontal" },
-				{
-					type = "flow",
-					style_mods = { vertical_align = "center" },
-					direction = "horizontal",
-					{ type = "label", caption = { "gui-infinity-pipe.temperature" } },
-					{
-						type = "slider",
-						name = "temperature_slider",
-						style_mods = { horizontally_stretchable = true, margin = { 0, 8, 0, 8 } },
-						minimum_value = 0,
-						maximum_value = 100,
-						value = 0,
-						actions = {
-							on_value_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "slider" },
-						},
-					},
-					{
-						type = "textfield",
-						name = "temperature_textfield",
-						style = "slider_value_textfield",
-						clear_and_focus_on_right_click = true,
-						text = "0",
-						actions = {
-							on_text_changed = {
-								gui = "infinity_pipe",
-								action = "change_temperature",
-								elem = "textfield",
-							},
+					type = "textfield",
+					name = "temperature_textfield",
+					style = "slider_value_textfield",
+					clear_and_focus_on_right_click = true,
+					text = "0",
+					actions = {
+						on_text_changed = {
+							gui = "infinity_pipe",
+							action = "change_temperature",
+							elem = "textfield",
 						},
 					},
 				},
@@ -589,34 +440,39 @@ local function create_gui(player_index, entity)
 		},
 	})
 
-	refs.window.force_auto_center()
-	refs.titlebar_flow.drag_target = refs.window
+	player.opened = elems.ee_infinity_pipe_window
 
-	player.opened = refs.window
-
-	local filter = entity.get_infinity_pipe_filter()
-
-	--- @class InfinityPipeGui
+	--- @type InfinityPipeGui
 	local self = {
+		elems = elems,
 		entity = entity,
-		entity_unit_number = entity.unit_number,
 		player = player,
-		player_table = player_table,
-		refs = refs,
-		state = {
-			amount_type = global.infinity_pipe_amount_types[entity.unit_number]
-				or constants.infinity_pipe_amount_type.percent,
-			capacity = entity.fluidbox.get_capacity(1),
-			filter = filter,
-			selected_mode = filter and filter.mode or "at-least",
-		},
 	}
-	setmetatable(self, Gui_mt)
-	player_table.gui.infinity_pipe = self
+	global.infinity_pipe_gui[player.index] = self
 
-	-- Set GUI state
-	self:update()
-	self:display_fluid_contents()
+	update_gui(self)
+end
+
+--- @param e BuiltEvent
+local function on_built_entity(e)
+	local entity = e.created_entity or e.entity or e.destination
+	if not entity or not entity.valid or not check_is_our_pipe(entity) then
+		return
+	end
+	snap(entity)
+end
+
+--- @param e EventData.on_gui_opened
+local function on_gui_opened(e)
+	local entity = e.entity
+	if not entity or not check_is_our_pipe(entity) then
+		return
+	end
+	local player = game.get_player(e.player_index)
+	if not player then
+		return
+	end
+	create_gui(player, entity)
 end
 
 --- @param e EventData.on_player_setup_blueprint
@@ -625,25 +481,35 @@ local function on_player_setup_blueprint(e)
 	-- 	if not blueprint_entity.tags then
 	-- 		blueprint_entity.tags = {}
 	-- 	end
-	-- 	blueprint_entity.tags.EditorExtensions = { amount_type = global.infinity_pipe_amount_types[entity.unit_number] }
+	-- 	blueprint_entity.tags.EditorExtensions = { amount_type = global.infinity_pipe_amount_type[entity.unit_number] }
 	-- end
 	-- return blueprint_entity
 end
+
+-- TODO: Settings copy/paste
 
 local infinity_pipe = {}
 
 infinity_pipe.on_init = function()
 	global.infinity_pipe_gui = {}
+	--- @type table<uint, InfinityPipeAmountType>
+	global.infinity_pipe_amount_type = {}
 end
 
 infinity_pipe.on_configuration_changed = function()
 	for player_index in pairs(game.players) do
-		destroy_gui(player_index)
+		destroy_gui(player_index --[[@as uint]])
 	end
 end
 
 infinity_pipe.events = {
+	[defines.events.on_built_entity] = on_built_entity,
+	[defines.events.on_entity_cloned] = on_built_entity,
+	[defines.events.on_gui_opened] = on_gui_opened,
 	[defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
+	[defines.events.on_robot_built_entity] = on_built_entity,
+	[defines.events.script_raised_built] = on_built_entity,
+	[defines.events.script_raised_revive] = on_built_entity,
 }
 
 return infinity_pipe
