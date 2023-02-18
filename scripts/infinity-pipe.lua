@@ -155,6 +155,33 @@ local function destroy_gui(player_index)
 end
 
 --- @param self InfinityPipeGui
+local function update_fluid_content_bar(self)
+  local bar = self.elems.amount_progressbar
+  local fluidbox = self.entity.fluidbox
+  local capacity = fluidbox.get_capacity(1)
+  local content = fluidbox[1] or { amount = 0 }
+
+  local caption = format.number(content.amount) .. " / " .. format.number(capacity)
+  bar.caption = caption
+  bar.value = content.amount / capacity
+
+  if not content.name then
+    return
+  end
+
+  local bar_color = game.fluid_prototypes[content.name].base_color
+  -- Calculate luminance of the background color
+  -- Source: https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
+  local luminance = (0.2126 * bar_color.r) + (0.7152 * bar_color.g) + (0.0722 * bar_color.b)
+  if luminance > 0.55 then
+    bar.style = "ee_infinity_pipe_progressbar"
+  else
+    bar.style = "ee_infinity_pipe_progressbar_light_text"
+  end
+  bar.style.color = bar_color
+end
+
+--- @param self InfinityPipeGui
 --- @param new_entity LuaEntity?
 --- @param reset_temperature boolean?
 local function update_gui(self, new_entity, reset_temperature)
@@ -215,6 +242,8 @@ local function update_gui(self, new_entity, reset_temperature)
   end
   elems.temperature_textfield.style = "ee_slider_textfield"
   elems.temperature_textfield.text = tostring(self.temperature)
+
+  update_fluid_content_bar(self)
 end
 
 --- @param entity LuaEntity
@@ -452,8 +481,7 @@ local function create_gui(player, entity)
         {
           type = "progressbar",
           name = "amount_progressbar",
-          style = "production_progressbar",
-          style_mods = { horizontally_stretchable = true, bottom_margin = 2 },
+          style = "ee_infinity_pipe_progressbar",
         },
         { type = "label", caption = "/" },
         {
@@ -646,6 +674,14 @@ infinity_pipe.events = {
   [defines.events.on_robot_built_entity] = on_built_entity,
   [defines.events.script_raised_built] = on_built_entity,
   [defines.events.script_raised_revive] = on_built_entity,
+}
+
+infinity_pipe.on_nth_tick = {
+  [1] = function()
+    for _, gui in pairs(global.infinity_pipe_gui) do
+      update_fluid_content_bar(gui)
+    end
+  end,
 }
 
 return infinity_pipe
