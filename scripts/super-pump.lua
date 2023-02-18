@@ -235,10 +235,7 @@ local function handle_gui_action(e, msg)
       state.speed = clamped_value
       refs.speed_slider.slider_value = to_slider_value(clamped_value)
 
-      set_speed(
-        state.entity,
-        tonumber(clamped_value) --[[@as number]]
-      )
+      set_speed(state.entity, tonumber(clamped_value) --[[@as number]])
     end
   elseif msg.action == "update_active" then
     local player_table = global.players[e.player_index]
