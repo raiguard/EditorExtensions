@@ -70,12 +70,27 @@ local function on_console_command(e)
   end
 end
 
+--- @param e EventData.on_player_created
+local function on_player_created(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+
+  if not settings.global["ee-debug-world-start-in-editor"].value then
+    return
+  end
+
+  player.toggle_map_editor()
+end
+
 local debug_world = {}
 
 debug_world.on_init = on_init
 
 debug_world.events = {
   [defines.events.on_console_command] = on_console_command,
+  [defines.events.on_player_created] = on_player_created,
 }
 
 return debug_world
