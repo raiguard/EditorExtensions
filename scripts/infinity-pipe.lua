@@ -317,6 +317,8 @@ local handlers = {
     update_all_guis(entity)
   end,
 
+  --- @param self InfinityPipeGui
+  --- @param e EventData.on_gui_value_changed
   on_ip_gui_temperature_slider_value_changed = function(self, e)
     local entity = self.entity
     local value = math.floor(e.element.slider_value)
@@ -333,6 +335,8 @@ local handlers = {
     update_all_guis(entity)
   end,
 
+  --- @param self InfinityPipeGui
+  --- @param e EventData.on_gui_text_changed
   on_ip_gui_temperature_textfield_changed = function(self, e)
     local entity = self.entity
     local textfield = e.element
