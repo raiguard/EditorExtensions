@@ -3,13 +3,6 @@ local table = require("__flib__/table")
 --- @class Constants
 local constants = {}
 
--- INFINITY WAGON
-
-constants.infinity_wagon_names = {
-  ["ee-infinity-cargo-wagon"] = true,
-  ["ee-infinity-fluid-wagon"] = true,
-}
-
 -- OTHER
 
 constants.editor_gui_width = 474

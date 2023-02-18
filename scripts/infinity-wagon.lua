@@ -1,18 +1,33 @@
-local infinity_wagon = {}
+local util = require("__EditorExtensions__/scripts/util")
 
-function infinity_wagon.init()
-  global.wagons = {}
+local wagon_names = {
+  ["ee-infinity-cargo-wagon"] = true,
+  ["ee-infinity-fluid-wagon"] = true,
+}
+
+--- @param player LuaPlayer
+--- @param entity LuaEntity
+local function open_gui(player, entity)
+  player.opened = global.wagons[entity.unit_number].proxy
 end
 
---- @param entity LuaEntity
---- @param tags table?
-function infinity_wagon.build(entity, tags)
+--- @param e BuiltEvent
+local function on_entity_built(e)
+  local entity = e.created_entity or e.entity or e.destination
+  if not entity or not entity.valid or not wagon_names[entity.name] then
+    return
+  end
+
   local proxy = entity.surface.create_entity({
     name = "ee-infinity-wagon-" .. (entity.name == "ee-infinity-cargo-wagon" and "chest" or "pipe"),
     position = entity.position,
     force = entity.force,
-  }) --[[@as LuaEntity]]
-  -- create all api lookups here to save time in on_tick()
+  })
+  if not proxy then
+    return
+  end
+
+  -- Create all api lookups here to save time in on_tick()
   local data = {
     flip = 0,
     proxy = proxy,
@@ -25,48 +40,63 @@ function infinity_wagon.build(entity, tags)
     wagon_name = entity.name,
   }
   global.wagons[entity.unit_number] = data
-  -- apply any pre-existing filters
-  if tags and tags.EditorExtensions then
-    local ee_tags = tags.EditorExtensions
-    if entity.name == "ee-infinity-cargo-wagon" then
-      -- LEGACY: Before v1.9.16, we did not store the `remove unfiltered items` setting
-      if ee_tags.filters then
-        data.proxy.infinity_container_filters = ee_tags.filters
-        data.proxy.remove_unfiltered_items = ee_tags.remove_unfiltered_items
-      else
-        data.proxy.infinity_container_filters = ee_tags
-      end
-    elseif entity.name == "ee-infinity-fluid-wagon" then
-      proxy.set_infinity_pipe_filter(ee_tags)
+
+  -- Apply any pre-existing filters
+  local tags = e.tags
+  if not tags or not tags.EditorExtensions then
+    return
+  end
+  local tags = tags.EditorExtensions
+  if entity.name == "ee-infinity-cargo-wagon" then
+    -- LEGACY: Before v1.9.16, we did not store the `remove unfiltered items` setting
+    if tags.filters then
+      data.proxy.infinity_container_filters = tags.filters
+      data.proxy.remove_unfiltered_items = tags.remove_unfiltered_items
+    else
+      --- @cast tags InfinityInventoryFilter[]
+      data.proxy.infinity_container_filters = tags
     end
+  elseif entity.name == "ee-infinity-fluid-wagon" then
+    --- @cast tags InfinityPipeFilter
+    proxy.set_infinity_pipe_filter(tags)
   end
 end
 
---- Clear the wagon's inventory and set FLIP to 3 to prevent it from being refilled
---- @param entity LuaEntity
-function infinity_wagon.clear_inventory(entity)
+--- @param e DestroyedEvent
+local function on_entity_destroyed(e)
+  local entity = e.entity
+  if not entity or not entity.valid or not wagon_names[entity.name] then
+    return
+  end
+
+  local proxy = global.wagons[entity.unit_number].proxy
+  if proxy and proxy.valid then
+    proxy.destroy()
+  end
+  global.wagons[entity.unit_number] = nil
+end
+
+--- @param e EventData.on_marked_for_deconstruction
+local function on_marked_for_deconstruction(e)
+  local entity = e.entity
+  if not entity.valid or entity.name ~= "ee-infinity-cargo-wagon" then
+    return
+  end
   global.wagons[entity.unit_number].flip = 3
   entity.get_inventory(defines.inventory.cargo_wagon).clear()
 end
 
---- Restart syncing the proxy's inventory
---- @param entity LuaEntity
-function infinity_wagon.reset(entity)
+--- @param e EventData.on_cancelled_deconstruction
+local function on_cancelled_deconstruction(e)
+  local entity = e.entity
+  if not entity.valid or entity.name ~= "ee-infinity-cargo-wagon" then
+    return
+  end
+  -- Resume syncing
   global.wagons[entity.unit_number].flip = 0
 end
 
---- @param entity LuaEntity
-function infinity_wagon.destroy(entity)
-  global.wagons[entity.unit_number].proxy.destroy()
-  global.wagons[entity.unit_number] = nil
-end
-
---- @param selected LuaEntity
-function infinity_wagon.check_is_wagon(selected)
-  return selected.name == "ee-infinity-cargo-wagon" or selected.name == "ee-infinity-fluid-wagon"
-end
-
-function infinity_wagon.flip_inventories()
+local function on_tick()
   local abs = math.abs
   for _, t in pairs(global.wagons) do
     if t.wagon.valid and t.proxy.valid then
@@ -119,44 +149,108 @@ function infinity_wagon.flip_inventories()
   end
 end
 
---- @param player LuaPlayer
---- @param entity LuaEntity
-function infinity_wagon.open(player, entity)
-  player.opened = global.wagons[entity.unit_number].proxy
+--- @param e EventData.on_gui_opened
+local function on_gui_opened(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+  local entity = e.entity
+  if not entity or not entity.valid or not wagon_names[entity.name] then
+    return
+  end
+  open_gui(player, entity)
 end
 
---- @param source LuaEntity
---- @param destination LuaEntity
-function infinity_wagon.paste_settings(source, destination)
+--- @param e EventData.CustomInputEvent
+local function on_linked_open_gui(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+  local entity = player.selected
+  if not entity or entity.name ~= "ee-infinity-fluid-wagon" then
+    return
+  end
+  if not player.can_reach_entity(entity) then
+    return
+  end
+  open_gui(player, entity)
+end
+
+--- @param e EventData.on_entity_settings_pasted
+local function on_entity_settings_pasted(e)
+  local source, destination = e.source, e.destination
+  if not source.valid or not destination.valid then
+    return
+  end
+  if not wagon_names[source.name] or not wagon_names[destination.name] then
+    return
+  end
+  if source.name ~= destination.name then
+    return
+  end
+
   global.wagons[destination.unit_number].proxy.copy_settings(global.wagons[source.unit_number].proxy)
 end
 
---- @param blueprint_entity BlueprintEntity
---- @param entity LuaEntity?
-function infinity_wagon.setup_cargo_blueprint(blueprint_entity, entity)
-  if entity then
-    local proxy = global.wagons[entity.unit_number].proxy
-    if not blueprint_entity.tags then
-      blueprint_entity.tags = {}
-    end
-    blueprint_entity.tags.EditorExtensions = {
-      filters = proxy.infinity_container_filters,
-      remove_unfiltered_items = proxy.remove_unfiltered_items,
-    }
+--- @param e EventData.on_player_setup_blueprint
+local function on_player_setup_blueprint(e)
+  local blueprint = util.get_blueprint(e)
+  if not blueprint then
+    return
   end
-  return blueprint_entity
+
+  local entities = blueprint.get_blueprint_entities()
+  if not entities then
+    return
+  end
+  for i, entity in pairs(entities) do
+    --- @cast i uint
+    if not wagon_names[entity.name] then
+      goto continue
+    end
+    local real_entity = e.surface.find_entity(entity.name, entity.position)
+    if not real_entity then
+      goto continue
+    end
+    local proxy = global.wagons[real_entity.unit_number].proxy
+    --- @type InfinityPipeFilter|InfinityInventoryFilter[]?
+    local tags = {}
+    if entity.name == "ee-infinity-cargo-wagon" then
+      tags.filters = proxy.infinity_container_filters
+      tags.remove_unfiltered_items = proxy.remove_unfiltered_items
+    else
+      tags = proxy.get_infinity_pipe_filter()
+    end
+    blueprint.set_blueprint_entity_tag(i, "EditorExtensions", tags --[[@as AnyBasic]])
+    ::continue::
+  end
 end
 
---- @param blueprint_entity BlueprintEntity
---- @param entity LuaEntity?
-function infinity_wagon.setup_fluid_blueprint(blueprint_entity, entity)
-  if entity then
-    if not blueprint_entity.tags then
-      blueprint_entity.tags = {}
-    end
-    blueprint_entity.tags.EditorExtensions = global.wagons[entity.unit_number].proxy.get_infinity_pipe_filter()
-  end
-  return blueprint_entity
+local infinity_wagon = {}
+
+infinity_wagon.on_init = function()
+  global.wagons = {}
 end
+
+infinity_wagon.events = {
+  [defines.events.on_built_entity] = on_entity_built,
+  [defines.events.on_cancelled_deconstruction] = on_cancelled_deconstruction,
+  [defines.events.on_entity_cloned] = on_entity_built,
+  [defines.events.on_entity_died] = on_entity_destroyed,
+  [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
+  [defines.events.on_gui_opened] = on_gui_opened,
+  [defines.events.on_marked_for_deconstruction] = on_marked_for_deconstruction,
+  [defines.events.on_player_mined_entity] = on_entity_destroyed,
+  [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
+  [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.on_robot_mined_entity] = on_entity_destroyed,
+  [defines.events.on_tick] = on_tick,
+  [defines.events.script_raised_built] = on_entity_built,
+  [defines.events.script_raised_destroy] = on_entity_destroyed,
+  [defines.events.script_raised_revive] = on_entity_built,
+  ["ee-linked-open-gui"] = on_linked_open_gui,
+}
 
 return infinity_wagon
