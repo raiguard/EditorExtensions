@@ -66,6 +66,13 @@ local function on_player_created(e)
   end
 end
 
+--- @param e EventData.on_permission_group_edited
+local function on_permission_group_edited(e)
+  for _, player in pairs(e.group.players) do
+    util.player_can_use_editor(player)
+  end
+end
+
 local editor = {}
 
 editor.on_init = function()
@@ -83,6 +90,7 @@ end
 
 editor.events = {
   [defines.events.on_lua_shortcut] = on_toggle_editor,
+  [defines.events.on_permission_group_edited] = on_permission_group_edited,
   [defines.events.on_player_created] = on_player_created,
   [defines.events.on_player_toggled_map_editor] = on_player_toggled_map_editor,
   ["ee-toggle-map-editor"] = on_toggle_editor,

@@ -59,6 +59,13 @@ function util.player_can_use_editor(player)
   local permission_group = player.permission_group
   if permission_group then
     can_use_editor = permission_group.allows_action(defines.input_action.toggle_map_editor)
+    if not can_use_editor and player.controller_type == defines.controllers.editor then
+      player.print({ "message.ee-cannot-use-map-editor" })
+      -- XXX: We need to re-enable the capability in order to get them out of the editor
+      permission_group.set_allows_action(defines.input_action.toggle_map_editor, true)
+      player.toggle_map_editor()
+      permission_group.set_allows_action(defines.input_action.toggle_map_editor, false)
+    end
   end
   player.set_shortcut_available("ee-toggle-map-editor", can_use_editor)
   return can_use_editor
