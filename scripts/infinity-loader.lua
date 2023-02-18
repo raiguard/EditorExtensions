@@ -1,64 +1,42 @@
-local transport_belt_connectables = {
-	["transport-belt"] = true,
-	["underground-belt"] = true,
-	["splitter"] = true,
-	["loader"] = true,
-	["loader-1x1"] = true,
-	["linked-belt"] = true,
+local direction_util = require("__flib__/direction")
+local position = require("__flib__/position")
+
+--- @type table<defines.direction, Vector>
+local offsets = {
+	[defines.direction.north] = { 0, -1 },
+	[defines.direction.east] = { 1, 0 },
+	[defines.direction.south] = { 0, 1 },
+	[defines.direction.west] = { -1, 0 },
 }
 
---- Snaps the loader to the transport-belt-connectable entity that it's facing. If `target` is
---- supplied, it will check against that entity, and will not snap if it cannot connect to it.
+local transport_belt_connectables = {
+	"transport-belt",
+	"underground-belt",
+	"splitter",
+	"loader",
+	"loader-1x1",
+	"linked-belt",
+}
+
 --- @param entity LuaEntity
---- @param target LuaEntity?
-local function snap(entity, target)
-	-- Check for a connected belt, then flip and try again, then flip back if failed
-	for _ = 1, 2 do
-		local connection = entity.belt_neighbours[entity.loader_type .. "s"][1]
-		if connection and (not target or connection.unit_number == target.unit_number) then
-			break
-		end
-		-- Flip the direction
-		entity.loader_type = entity.loader_type == "output" and "input" or "output"
+local function snap(entity)
+	local offset_direction = entity.direction
+	if entity.loader_type == "input" then
+		offset_direction = direction_util.opposite(offset_direction)
 	end
-end
-
---- Snaps all neighbouring infinity loaders.
---- @param entity LuaEntity
-local function snap_belt_neighbours(entity)
-	local linked_belt_neighbour
-	if entity.type == "linked-belt" then
-		linked_belt_neighbour = entity.linked_belt_neighbour
-		if linked_belt_neighbour then
-			entity.disconnect_linked_belts()
-		end
+	local belt_position = position.add(entity.position, offsets[offset_direction])
+	local belt =
+		entity.surface.find_entities_filtered({ position = belt_position, type = transport_belt_connectables })[1]
+	if not belt then
+		belt =
+			entity.surface.find_entities_filtered({ position = belt_position, ghost_type = transport_belt_connectables })[1]
 	end
-
-	local to_snap = {}
-	for _ = 1, (entity.type == "transport-belt" or entity.type == "linked-belt") and 4 or 2 do
-		-- Catalog neighbouring loaders for this rotation
-		for _, neighbours in pairs(entity.belt_neighbours) do
-			for _, neighbour in ipairs(neighbours) do
-				if neighbour.name == "ee-infinity-loader" then
-					table.insert(to_snap, neighbour)
-				end
-			end
-		end
-		-- Rotate or flip linked belt type
-		if entity.type == "linked-belt" then
-			entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
-		else
-			entity.rotate()
-		end
+	if not belt then
+  	return
 	end
-
-	if linked_belt_neighbour then
-		entity.connect_linked_belts(linked_belt_neighbour)
-	end
-
-	for _, loader in pairs(to_snap) do
-		snap(loader, entity)
-	end
+  if belt.direction == direction_util.opposite(entity.direction) then
+    entity.loader_type = entity.loader_type == "output" and "input" or "output"
+  end
 end
 
 --- @param entity LuaEntity
@@ -91,36 +69,27 @@ local function on_built(e)
 		return
 	end
 
-	if entity.name == "ee-infinity-loader" then
-		-- Create chest
-		local chest = entity.surface.create_entity({
-			name = "ee-infinity-loader-chest",
-			position = entity.position,
-			force = entity.force,
-			create_build_effect_smoke = false,
-			raise_built = true,
-		})
-
-		if not chest then
-			entity.destroy()
-			return
-		end
-
-		chest.remove_unfiltered_items = true
-		sync_chest_filter(entity, chest)
-		snap(entity)
-
+	if entity.name ~= "ee-infinity-loader" then
 		return
 	end
 
-	if transport_belt_connectables[entity.type] then
-		snap_belt_neighbours(entity)
-		if entity.type == "underground-belt" and entity.neighbours then
-			snap_belt_neighbours(entity.neighbours)
-		elseif entity.type == "linked-belt" and entity.linked_belt_neighbour then
-			snap_belt_neighbours(entity.linked_belt_neighbour)
-		end
+	-- Create chest
+	local chest = entity.surface.create_entity({
+		name = "ee-infinity-loader-chest",
+		position = entity.position,
+		force = entity.force,
+		create_build_effect_smoke = false,
+		raise_built = true,
+	})
+
+	if not chest then
+		entity.destroy()
+		return
 	end
+
+	chest.remove_unfiltered_items = true
+	sync_chest_filter(entity, chest)
+	snap(entity)
 end
 
 --- @param e DestroyedEvent
@@ -138,20 +107,10 @@ end
 --- @param e EventData.on_player_rotated_entity
 local function on_rotated(e)
 	local entity = e.entity
-	if not entity.valid then
+	if not entity.valid or entity.name ~= "ee-infinity-loader" then
 		return
 	end
-	if entity.name == "ee-infinity-loader" then
-		sync_chest_filter(entity)
-	end
-	if transport_belt_connectables[entity.type] then
-		snap_belt_neighbours(entity)
-		if entity.type == "underground-belt" and entity.neighbours then
-			snap_belt_neighbours(entity.neighbours)
-		end
-		-- elseif entity.type == "linked-belt" and entity.linked_belt_neighbour then
-		--   snap_belt_neighbours(entity.linked_belt_neighbour)
-	end
+	sync_chest_filter(entity)
 end
 
 --- @param e EventData.on_entity_settings_pasted
