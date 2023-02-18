@@ -39,17 +39,20 @@ end
 
 --- @param e EventData.on_player_created
 local function on_player_created(e)
-  if global.in_debug_world then
-    -- TODO: Special message?
-    return
-  end
-
   local player = game.get_player(e.player_index)
   if not player then
     return
   end
 
-  player.print({ "message.ee-welcome" })
+  if player.mod_settings["ee-auto-alt-mode"].value then
+    local game_view_settings = player.game_view_settings
+    game_view_settings.show_entity_info = true
+    player.game_view_settings = game_view_settings
+  end
+
+  if not global.in_debug_world then
+    player.print({ "message.ee-welcome" })
+  end
 end
 
 local editor = {}
