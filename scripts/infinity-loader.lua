@@ -170,7 +170,7 @@ infinity_loader.events = {
 }
 
 infinity_loader.on_nth_tick = {
-  [5] = function()
+  [15] = function()
     for _, loader in pairs(global.infinity_loader_open) do
       sync_chest_filter(loader)
     end
