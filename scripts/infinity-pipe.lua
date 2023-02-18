@@ -20,18 +20,16 @@ local crafter_snapping_types = {
 --- | "add",
 --- | "remove",
 
---- @enum InfinityPipeAmountType
+--- @type table<string, uint>
 local defines_amount_type = {
   percent = 1,
   units = 2,
 }
 
 --- @param entity LuaEntity
---- @param tags table?
-local function store_amount_type(entity, tags)
-  if tags and tags.EditorExtensions then
-    global.infinity_pipe_amount_type[entity.unit_number] = tags.EditorExtensions.amount_type
-  end
+--- @param amount_type uint?
+local function store_amount_type(entity, amount_type)
+  global.infinity_pipe_amount_type[entity.unit_number] = amount_type
 end
 
 --- @param entity LuaEntity
@@ -41,7 +39,7 @@ local function get_stored_amount_type(entity)
 end
 
 --- @param entity LuaEntity
---- @return number?
+--- @return uint?
 local function remove_stored_amount_type(entity)
   local value = global.infinity_pipe_amount_type[entity.unit_number]
   global.infinity_pipe_amount_type[entity.unit_number] = nil
@@ -65,7 +63,7 @@ local function swap_entity(entity, new_capacity)
   if not new_entity then
     return
   end
-  store_amount_type(new_entity, { EditorExtensions = { amount_type = amount_type } })
+  store_amount_type(new_entity, amount_type)
   return new_entity
 end
 
@@ -358,7 +356,7 @@ local handlers = {
   --- @param e EventData.on_gui_selection_state_changed
   on_ip_gui_amount_type_changed = function(self, e)
     local amount_type = e.element.selected_index
-    store_amount_type(self.entity, { EditorExtensions = { amount_type = amount_type } })
+    store_amount_type(self.entity, amount_type)
     update_all_guis(self.entity)
   end,
 
@@ -599,13 +597,23 @@ local function create_gui(player, entity)
 end
 
 --- @param e BuiltEvent
-local function on_built_entity(e)
+local function on_entity_built(e)
   local entity = e.created_entity or e.entity or e.destination
   if not entity or not entity.valid or not check_is_our_pipe(entity) then
     return
   end
+
   snap(entity)
-  store_amount_type(entity, e.tags)
+
+  local tags = e.tags
+  if tags and tags.EditorExtensions then
+    store_amount_type(entity, tags.EditorExtensions.amount_type --[[@as uint]])
+  end
+end
+
+--- @param e DestroyedEvent
+local function on_entity_destroyed(e)
+  remove_stored_amount_type(e.entity)
 end
 
 --- @param e EventData.on_gui_opened
@@ -668,7 +676,7 @@ local function on_entity_settings_pasted(e)
   local source_amount_type = get_stored_amount_type(source)
   local destination_amount_type = get_stored_amount_type(destination)
   if source_amount_type ~= destination_amount_type then
-    store_amount_type(destination, { EditorExtensions = { amount_type = source_amount_type } })
+    store_amount_type(destination, source_amount_type)
   end
 
   update_all_guis(destination)
@@ -678,7 +686,7 @@ local infinity_pipe = {}
 
 infinity_pipe.on_init = function()
   global.infinity_pipe_gui = {}
-  --- @type table<uint, InfinityPipeAmountType>
+  --- @type table<uint, uint>
   global.infinity_pipe_amount_type = {}
 end
 
@@ -689,14 +697,18 @@ infinity_pipe.on_configuration_changed = function()
 end
 
 infinity_pipe.events = {
-  [defines.events.on_built_entity] = on_built_entity,
-  [defines.events.on_entity_cloned] = on_built_entity,
+  [defines.events.on_built_entity] = on_entity_built,
+  [defines.events.on_entity_cloned] = on_entity_built,
+  [defines.events.on_entity_died] = on_entity_destroyed,
   [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
   [defines.events.on_gui_opened] = on_gui_opened,
+  [defines.events.on_player_mined_entity] = on_entity_destroyed,
   [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
-  [defines.events.on_robot_built_entity] = on_built_entity,
-  [defines.events.script_raised_built] = on_built_entity,
-  [defines.events.script_raised_revive] = on_built_entity,
+  [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.on_robot_mined_entity] = on_entity_destroyed,
+  [defines.events.script_raised_built] = on_entity_built,
+  [defines.events.script_raised_destroy] = on_entity_destroyed,
+  [defines.events.script_raised_revive] = on_entity_built,
 }
 
 infinity_pipe.on_nth_tick = {
