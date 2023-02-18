@@ -19,8 +19,9 @@ function util.close_button(handler)
 end
 
 --- @param mode InfinityPipeMode
+--- @param handler GuiElemHandler
 --- @return GuiElemDef
-function util.mode_radio_button(mode)
+function util.mode_radio_button(mode, handler)
   return {
     type = "radiobutton",
     name = "mode_radio_button_" .. string.gsub(mode, "%-", "_"),
@@ -28,9 +29,7 @@ function util.mode_radio_button(mode)
     tooltip = { "gui-infinity-pipe." .. mode .. "-tooltip" },
     state = false,
     tags = { mode = mode },
-    actions = {
-      on_checked_state_changed = { gui = "infinity_pipe", action = "change_amount_mode", mode = mode },
-    },
+    handler = { [defines.events.on_gui_checked_state_changed] = handler },
   }
 end
 

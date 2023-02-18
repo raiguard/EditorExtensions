@@ -103,6 +103,7 @@ end
 --- @field elems InfinityPipeGuiElems
 --- @field entity LuaEntity
 --- @field player LuaPlayer
+--- @field stashed_mode InfinityPipeMode
 
 --- @class InfinityPipeGuiElems
 --- @field ee_infinity_pipe_window LuaGuiElement
@@ -150,6 +151,9 @@ local function update_gui(self, new_entity)
   end
   local entity = self.entity
   local filter = entity.get_infinity_pipe_filter() or {}
+  if filter.mode then
+    self.stashed_mode = filter.mode
+  end
 
   local capacity = entity.fluidbox.get_capacity(1)
   elems.capacity_dropdown.selected_index = table.find(shared_constants.infinity_pipe_capacities, capacity) --[[@as uint]]
@@ -159,11 +163,12 @@ local function update_gui(self, new_entity)
   elems.amount_textfield.style = "ee_slider_textfield"
   elems.amount_textfield.text = tostring(math.floor((filter.percentage or 0) * 100))
 
-  elems.mode_radio_button_at_least.state = filter.mode == "at-least" or not filter.mode
-  elems.mode_radio_button_at_most.state = filter.mode == "at-most"
-  elems.mode_radio_button_exactly.state = filter.mode == "exactly"
-  elems.mode_radio_button_add.state = filter.mode == "add"
-  elems.mode_radio_button_remove.state = filter.mode == "remove"
+  local mode = self.stashed_mode
+  elems.mode_radio_button_at_least.state = mode == "at-least"
+  elems.mode_radio_button_at_most.state = mode == "at-most"
+  elems.mode_radio_button_exactly.state = mode == "exactly"
+  elems.mode_radio_button_add.state = mode == "add"
+  elems.mode_radio_button_remove.state = mode == "remove"
 end
 
 --- @param entity LuaEntity
@@ -211,7 +216,7 @@ local handlers = {
     local elem = e.element.elem_value --[[@as string?]]
     if elem then
       if not filter then
-        filter = { mode = "at-least", percentage = 1 }
+        filter = { mode = self.stashed_mode, percentage = 1 }
       end
       filter.name = elem
       entity.set_infinity_pipe_filter(filter)
@@ -266,10 +271,17 @@ local handlers = {
   --- @param self InfinityPipeGui
   --- @param e EventData.on_gui_checked_state_changed
   on_ip_gui_mode_radio_button_selected = function(self, e)
-    local mode = e.element.tags.mode
+    local mode = e.element.tags.mode --[[@as string]]
+    self.stashed_mode = mode
+
     local entity = self.entity
     local filter = entity.get_infinity_pipe_filter()
-    -- TODO: Can't rely on update_gui() when the filter is unspecified
+    if filter then
+      filter.mode = mode
+      entity.set_infinity_pipe_filter(filter)
+    end
+
+    update_gui(self)
   end,
 }
 
@@ -394,15 +406,15 @@ local function create_gui(player, entity)
         type = "flow",
         style_mods = { horizontal_spacing = 0 },
         direction = "horizontal",
-        util.mode_radio_button("at-least"),
+        util.mode_radio_button("at-least", handlers.on_ip_gui_mode_radio_button_selected),
         util.pusher(),
-        util.mode_radio_button("at-most"),
+        util.mode_radio_button("at-most", handlers.on_ip_gui_mode_radio_button_selected),
         util.pusher(),
-        util.mode_radio_button("exactly"),
+        util.mode_radio_button("exactly", handlers.on_ip_gui_mode_radio_button_selected),
         util.pusher(),
-        util.mode_radio_button("add"),
+        util.mode_radio_button("add", handlers.on_ip_gui_mode_radio_button_selected),
         util.pusher(),
-        util.mode_radio_button("remove"),
+        util.mode_radio_button("remove", handlers.on_ip_gui_mode_radio_button_selected),
       },
       { type = "line", direction = "horizontal" },
       {
@@ -447,6 +459,7 @@ local function create_gui(player, entity)
     elems = elems,
     entity = entity,
     player = player,
+    stashed_mode = "at-least",
   }
   global.infinity_pipe_gui[player.index] = self
 
