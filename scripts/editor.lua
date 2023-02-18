@@ -1,3 +1,5 @@
+local editor_gui_width = 474
+
 --- @param e EventData.CustomInputEvent|EventData.on_lua_shortcut
 local function on_toggle_editor(e)
   local input = e.prototype_name or e.input_name
@@ -27,6 +29,11 @@ local function on_player_toggled_map_editor(e)
   end
 
   player.set_shortcut_toggled("ee-toggle-map-editor", player.controller_type == defines.controllers.editor)
+
+  local in_editor = player.controller_type == defines.controllers.editor
+  local margin = in_editor and editor_gui_width or 0
+  player.gui.top.style.left_margin = margin
+  player.gui.left.style.left_margin = margin
 
   if global.editor_toggled or not game.tick_paused then
     return
