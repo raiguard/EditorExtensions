@@ -21,7 +21,7 @@ local crafter_snapping_types = {
 --- | "remove",
 
 --- @enum InfinityPipeAmountType
-local amount_type = {
+local defines_amount_type = {
   percent = 1,
   units = 2,
 }
@@ -32,6 +32,12 @@ local function store_amount_type(entity, tags)
   if tags and tags.EditorExtensions then
     global.infinity_pipe_amount_type[entity.unit_number] = tags.EditorExtensions.amount_type
   end
+end
+
+--- @param entity LuaEntity
+--- @return uint?
+local function get_stored_amount_type(entity)
+  return global.infinity_pipe_amount_type[entity.unit_number]
 end
 
 --- @param entity LuaEntity
@@ -176,9 +182,17 @@ local function update_gui(self, new_entity, reset_temperature)
   elems.capacity_dropdown.selected_index = table.find(shared_constants.infinity_pipe_capacities, capacity) --[[@as uint]]
 
   elems.filter_button.elem_value = filter.name
+
+  local amount_type = get_stored_amount_type(entity) or 1
   elems.amount_slider.slider_value = filter.percentage or 0
   elems.amount_textfield.style = "ee_slider_textfield"
-  elems.amount_textfield.text = tostring(math.floor((filter.percentage or 0) * 100))
+  local percentage = filter.percentage or 0
+  if amount_type == defines_amount_type.percent then
+    elems.amount_textfield.text = tostring(math.floor(percentage * 100))
+  else
+    elems.amount_textfield.text = tostring(math.floor(percentage * capacity))
+  end
+  elems.amount_type_dropdown.selected_index = amount_type
 
   local mode = self.mode
   elems.mode_radio_button_at_least.state = mode == "at-least"
@@ -284,21 +298,39 @@ local handlers = {
     local textfield = e.element
     local text = textfield.text
     local value = tonumber(text)
-    if not value or value < 0 or value > 100 then
+    local max = 100
+    local amount_type = get_stored_amount_type(entity)
+    if amount_type == defines_amount_type.units then
+      max = entity.fluidbox.get_capacity(1)
+    end
+    if not value or value < 0 or value > max then
       textfield.style = "ee_invalid_slider_textfield"
       return
     end
     textfield.style = "ee_slider_textfield"
-    value = value / 100
 
-    self.elems.amount_slider.slider_value = value
+    local percentage = value / 100
+    if amount_type == defines_amount_type.units then
+      local capacity = entity.fluidbox.get_capacity(1)
+      percentage = value / capacity
+    end
+
+    self.elems.amount_slider.slider_value = percentage
 
     local filter = entity.get_infinity_pipe_filter()
     if filter then
-      filter.percentage = value
+      filter.percentage = percentage
       entity.set_infinity_pipe_filter(filter)
       update_all_guis(entity)
     end
+  end,
+
+  --- @param self InfinityPipeGui
+  --- @param e EventData.on_gui_selection_state_changed
+  on_ip_gui_amount_type_changed = function(self, e)
+    local amount_type = e.element.selected_index
+    store_amount_type(self.entity, { EditorExtensions = { amount_type = amount_type } })
+    update_all_guis(self.entity)
   end,
 
   --- @param self InfinityPipeGui
@@ -474,9 +506,7 @@ local function create_gui(player, entity)
           style_mods = { width = 55 },
           items = { { "gui-infinity-pipe.percent" }, { "gui-infinity-pipe.ee-units" } },
           selected_index = 1,
-          actions = {
-            on_selection_state_changed = { gui = "infinity_pipe", action = "change_amount_type" },
-          },
+          handler = { [defines.events.on_gui_selection_state_changed] = handlers.on_ip_gui_amount_type_changed },
         },
       },
       {
@@ -547,6 +577,7 @@ local function on_built_entity(e)
     return
   end
   snap(entity)
+  store_amount_type(entity, e.tags)
 end
 
 --- @param e EventData.on_gui_opened
@@ -564,13 +595,31 @@ end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  -- if entity then
-  -- 	if not blueprint_entity.tags then
-  -- 		blueprint_entity.tags = {}
-  -- 	end
-  -- 	blueprint_entity.tags.EditorExtensions = { amount_type = global.infinity_pipe_amount_type[entity.unit_number] }
-  -- end
-  -- return blueprint_entity
+  local blueprint = util.get_blueprint(e)
+  if not blueprint then
+    return
+  end
+
+  local entities = blueprint.get_blueprint_entities()
+  if not entities then
+    return
+  end
+  for i, entity in pairs(entities) do
+    --- @cast i uint
+    if not check_is_our_pipe(entity) then
+      goto continue
+    end
+    local real_entity = e.surface.find_entity(entity.name, entity.position)
+    if not real_entity then
+      goto continue
+    end
+    blueprint.set_blueprint_entity_tag(
+      i,
+      "EditorExtensions",
+      { amount_type = global.infinity_pipe_amount_type[real_entity.unit_number] }
+    )
+    ::continue::
+  end
 end
 
 -- TODO: Settings copy/paste
