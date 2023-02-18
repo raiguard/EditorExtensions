@@ -1,3 +1,5 @@
+local util = require("__EditorExtensions__/scripts/util")
+
 local editor_gui_width = 474
 
 --- @param e EventData.CustomInputEvent|EventData.on_lua_shortcut
@@ -51,6 +53,8 @@ local function on_player_created(e)
     return
   end
 
+  util.player_can_use_editor(player)
+
   if player.mod_settings["ee-auto-alt-mode"].value then
     local game_view_settings = player.game_view_settings
     game_view_settings.show_entity_info = true
@@ -68,6 +72,12 @@ editor.on_init = function()
   for player_index in pairs(game.players) do
     --- @cast player_index uint
     on_player_created({ player_index = player_index })
+  end
+end
+
+editor.on_configuration_changed = function()
+  for _, player in pairs(game.players) do
+    util.player_can_use_editor(player)
   end
 end
 

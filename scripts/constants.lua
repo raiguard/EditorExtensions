@@ -3,10 +3,6 @@ local table = require("__flib__/table")
 --- @class Constants
 local constants = {}
 
--- OTHER
-
-constants.editor_gui_width = 474
-
 -- SUPER PUMP
 
 constants.sp_slider_to_temperature = {
