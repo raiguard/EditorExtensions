@@ -1,19 +1,8 @@
-local constants = require("__EditorExtensions__/scripts/constants")
-
 --- @class Util
 local util = {}
 
 local coreutil = require("__core__/lualib/util")
 util.parse_energy = coreutil.parse_energy
-
-function util.add_cursor_enhancements_overrides()
-  if
-    remote.interfaces["CursorEnhancements"]
-    and remote.call("CursorEnhancements", "version") == constants.cursor_enhancements_interface_version
-  then
-    remote.call("CursorEnhancements", "add_overrides", constants.cursor_enhancements_overrides)
-  end
-end
 
 --- @param handler GuiElemHandler
 function util.close_button(handler)

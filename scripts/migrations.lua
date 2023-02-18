@@ -1,3 +1,4 @@
+--- @diagnostic disable
 local util = require("__EditorExtensions__/scripts/util")
 
 local aggregate_chest = require("__EditorExtensions__/scripts/entity/aggregate-chest")
@@ -8,8 +9,6 @@ local migrations = {}
 function migrations.generic()
   aggregate_chest.update_data()
   aggregate_chest.update_all_filters()
-
-  util.add_cursor_enhancements_overrides()
 
   for player_index in pairs(game.players) do
     migrations.migrate_player(player_index --[[@as uint]])
