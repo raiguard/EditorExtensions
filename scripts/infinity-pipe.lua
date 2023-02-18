@@ -49,7 +49,7 @@ local function remove_stored_amount_type(entity)
 end
 
 --- @param entity LuaEntity
---- @param new_capacity uint
+--- @param new_capacity double
 --- @return LuaEntity?
 local function swap_entity(entity, new_capacity)
   local amount_type = remove_stored_amount_type(entity)
@@ -650,7 +650,29 @@ local function on_player_setup_blueprint(e)
   end
 end
 
--- TODO: Settings copy/paste
+--- @param e EventData.on_entity_settings_pasted
+local function on_entity_settings_pasted(e)
+  local source, destination = e.source, e.destination
+  if not check_is_our_pipe(source) or not check_is_our_pipe(destination) then
+    return
+  end
+
+  if source.name ~= destination.name then
+    local new_destination = swap_entity(destination, source.fluidbox.get_capacity(1))
+    if not new_destination then
+      return
+    end
+    destination = new_destination
+  end
+
+  local source_amount_type = get_stored_amount_type(source)
+  local destination_amount_type = get_stored_amount_type(destination)
+  if source_amount_type ~= destination_amount_type then
+    store_amount_type(destination, { EditorExtensions = { amount_type = source_amount_type } })
+  end
+
+  update_all_guis(destination)
+end
 
 local infinity_pipe = {}
 
@@ -669,6 +691,7 @@ end
 infinity_pipe.events = {
   [defines.events.on_built_entity] = on_built_entity,
   [defines.events.on_entity_cloned] = on_built_entity,
+  [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
   [defines.events.on_gui_opened] = on_gui_opened,
   [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
   [defines.events.on_robot_built_entity] = on_built_entity,
