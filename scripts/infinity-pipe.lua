@@ -97,13 +97,24 @@ local function snap(entity)
   end
 end
 
+--- @param filter InfinityPipeFilter?
+--- @return double, double
+local function get_temperature_limits(filter)
+  if filter and filter.name then
+    local prototype = game.fluid_prototypes[filter.name]
+    return prototype.default_temperature, prototype.max_temperature
+  end
+  return 0, 100
+end
+
 -- GUI
 
 --- @class InfinityPipeGui
 --- @field elems InfinityPipeGuiElems
 --- @field entity LuaEntity
+--- @field mode InfinityPipeMode
 --- @field player LuaPlayer
---- @field stashed_mode InfinityPipeMode
+--- @field temperature double
 
 --- @class InfinityPipeGuiElems
 --- @field ee_infinity_pipe_window LuaGuiElement
@@ -139,7 +150,8 @@ end
 
 --- @param self InfinityPipeGui
 --- @param new_entity LuaEntity?
-local function update_gui(self, new_entity)
+--- @param reset_temperature boolean?
+local function update_gui(self, new_entity, reset_temperature)
   if not new_entity and not self.entity.valid then
     destroy_gui(self.player.index)
     return
@@ -152,7 +164,12 @@ local function update_gui(self, new_entity)
   local entity = self.entity
   local filter = entity.get_infinity_pipe_filter() or {}
   if filter.mode then
-    self.stashed_mode = filter.mode
+    self.mode = filter.mode
+  end
+  if filter.temperature then
+    self.temperature = filter.temperature
+  elseif reset_temperature then
+    self.temperature = 0
   end
 
   local capacity = entity.fluidbox.get_capacity(1)
@@ -163,21 +180,37 @@ local function update_gui(self, new_entity)
   elems.amount_textfield.style = "ee_slider_textfield"
   elems.amount_textfield.text = tostring(math.floor((filter.percentage or 0) * 100))
 
-  local mode = self.stashed_mode
+  local mode = self.mode
   elems.mode_radio_button_at_least.state = mode == "at-least"
   elems.mode_radio_button_at_most.state = mode == "at-most"
   elems.mode_radio_button_exactly.state = mode == "exactly"
   elems.mode_radio_button_add.state = mode == "add"
   elems.mode_radio_button_remove.state = mode == "remove"
+
+  local min, max = get_temperature_limits(filter)
+  if min == max then
+    elems.temperature_slider.enabled = false
+    elems.temperature_textfield.enabled = false
+    elems.temperature_slider.set_slider_minimum_maximum(min, max + 1)
+    elems.temperature_slider.slider_value = min
+  else
+    elems.temperature_slider.enabled = true
+    elems.temperature_textfield.enabled = true
+    elems.temperature_slider.set_slider_minimum_maximum(min, max)
+    elems.temperature_slider.slider_value = self.temperature
+  end
+  elems.temperature_textfield.style = "ee_slider_textfield"
+  elems.temperature_textfield.text = tostring(self.temperature)
 end
 
 --- @param entity LuaEntity
-local function update_all_guis(entity)
+--- @param reset_temperature boolean?
+local function update_all_guis(entity, reset_temperature)
   for _, gui in pairs(global.infinity_pipe_gui) do
     if not gui.entity.valid then
-      update_gui(gui, entity)
+      update_gui(gui, entity, reset_temperature)
     elseif gui.entity == entity then
-      update_gui(gui)
+      update_gui(gui, nil, reset_temperature)
     end
   end
 end
@@ -216,14 +249,14 @@ local handlers = {
     local elem = e.element.elem_value --[[@as string?]]
     if elem then
       if not filter then
-        filter = { mode = self.stashed_mode, percentage = 1 }
+        filter = { mode = self.mode, percentage = 1 }
       end
       filter.name = elem
       entity.set_infinity_pipe_filter(filter)
     else
       entity.set_infinity_pipe_filter(nil)
     end
-    update_all_guis(entity)
+    update_all_guis(entity, not elem)
   end,
 
   --- @param self InfinityPipeGui
@@ -234,7 +267,7 @@ local handlers = {
     local filter = entity.get_infinity_pipe_filter()
     if not filter then
       -- Textfield should always match slider
-      local textfield = self.elems.amount_textfield --
+      local textfield = self.elems.amount_textfield
       textfield.style = "ee_slider_textfield"
       textfield.text = tostring(math.floor(value * 100))
       return
@@ -272,7 +305,7 @@ local handlers = {
   --- @param e EventData.on_gui_checked_state_changed
   on_ip_gui_mode_radio_button_selected = function(self, e)
     local mode = e.element.tags.mode --[[@as string]]
-    self.stashed_mode = mode
+    self.mode = mode
 
     local entity = self.entity
     local filter = entity.get_infinity_pipe_filter()
@@ -281,7 +314,47 @@ local handlers = {
       entity.set_infinity_pipe_filter(filter)
     end
 
-    update_gui(self)
+    update_all_guis(entity)
+  end,
+
+  on_ip_gui_temperature_slider_value_changed = function(self, e)
+    local entity = self.entity
+    local value = math.floor(e.element.slider_value)
+    local filter = entity.get_infinity_pipe_filter()
+    if not filter then
+      -- Textfield should always match slider
+      local textfield = self.elems.temperature_textfield
+      textfield.style = "ee_slider_textfield"
+      textfield.text = tostring(value)
+      return
+    end
+    filter.temperature = value
+    entity.set_infinity_pipe_filter(filter)
+    update_all_guis(entity)
+  end,
+
+  on_ip_gui_temperature_textfield_changed = function(self, e)
+    local entity = self.entity
+    local textfield = e.element
+    local text = textfield.text
+    local value = tonumber(text)
+
+    local filter = entity.get_infinity_pipe_filter()
+    local min, max = get_temperature_limits(filter)
+
+    if not value or value < min or value > max then
+      textfield.style = "ee_invalid_slider_textfield"
+      return
+    end
+    textfield.style = "ee_slider_textfield"
+
+    self.elems.temperature_slider.slider_value = value
+
+    if filter then
+      filter.temperature = value
+      entity.set_infinity_pipe_filter(filter)
+      update_all_guis(entity)
+    end
   end,
 }
 
@@ -430,8 +503,8 @@ local function create_gui(player, entity)
           minimum_value = 0,
           maximum_value = 100,
           value = 0,
-          actions = {
-            on_value_changed = { gui = "infinity_pipe", action = "change_temperature", elem = "slider" },
+          handler = {
+            [defines.events.on_gui_value_changed] = handlers.on_ip_gui_temperature_slider_value_changed,
           },
         },
         {
@@ -440,12 +513,8 @@ local function create_gui(player, entity)
           style = "slider_value_textfield",
           clear_and_focus_on_right_click = true,
           text = "0",
-          actions = {
-            on_text_changed = {
-              gui = "infinity_pipe",
-              action = "change_temperature",
-              elem = "textfield",
-            },
+          handler = {
+            [defines.events.on_gui_text_changed] = handlers.on_ip_gui_temperature_textfield_changed,
           },
         },
       },
@@ -458,8 +527,9 @@ local function create_gui(player, entity)
   local self = {
     elems = elems,
     entity = entity,
+    mode = "at-least",
+    temperature = 0,
     player = player,
-    stashed_mode = "at-least",
   }
   global.infinity_pipe_gui[player.index] = self
 
