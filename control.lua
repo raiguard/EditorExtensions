@@ -11,6 +11,7 @@ handler.add_lib(require("__EditorExtensions__/scripts/infinity-loader"))
 handler.add_lib(require("__EditorExtensions__/scripts/infinity-pipe"))
 handler.add_lib(require("__EditorExtensions__/scripts/inventory-filters"))
 handler.add_lib(require("__EditorExtensions__/scripts/inventory-sync"))
+handler.add_lib(require("__EditorExtensions__/scripts/super-inserter"))
 
 -- remote.add_interface("EditorExtensions", {
 --   --- Get the force that the player is actually on, ignoring the testing lab force.
