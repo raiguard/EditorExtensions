@@ -12,6 +12,7 @@ handler.add_lib(require("__EditorExtensions__/scripts/infinity-pipe"))
 handler.add_lib(require("__EditorExtensions__/scripts/infinity-wagon"))
 handler.add_lib(require("__EditorExtensions__/scripts/inventory-filters"))
 handler.add_lib(require("__EditorExtensions__/scripts/inventory-sync"))
+handler.add_lib(require("__EditorExtensions__/scripts/linked-belt"))
 handler.add_lib(require("__EditorExtensions__/scripts/super-inserter"))
 
 -- remote.add_interface("EditorExtensions", {

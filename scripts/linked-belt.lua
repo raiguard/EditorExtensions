@@ -1,92 +1,5 @@
 local util = require("__EditorExtensions__/scripts/util")
 
-local linked_belt = {}
-
-function linked_belt.init()
-  --- @type table<uint, table<uint, boolean>>
-  global.linked_belt_sources = {}
-end
-
---- @param player LuaPlayer
---- @param player_table PlayerTable
---- @param entity LuaEntity
---- @param shift boolean?
-function linked_belt.start_connection(player, player_table, entity, shift)
-  local neighbour = entity.linked_belt_neighbour
-  local source
-  if neighbour then
-    if shift then
-      source = neighbour
-    else
-      source = entity
-    end
-  else
-    source = entity
-  end
-  player_table.flags.connecting_linked_belts = true
-  player_table.linked_belt_source = source
-
-  local source_players = global.linked_belt_sources[source.unit_number] or {}
-  source_players[player.index] = true
-  global.linked_belt_sources[source.unit_number] = source_players
-
-  linked_belt.render_connection(player, player_table)
-end
-
---- @param player LuaPlayer
---- @param player_table PlayerTable
---- @param entity LuaEntity
---- @param shift boolean?
-function linked_belt.finish_connection(player, player_table, entity, shift)
-  local source = player_table.linked_belt_source
-  if not source then
-    return
-  end
-  local neighbour = entity.linked_belt_neighbour
-  if entity.unit_number ~= source.unit_number and (shift or not neighbour) then
-    if neighbour then
-      linked_belt.sever_connection(player, player_table, entity)
-    end
-    entity.linked_belt_type = source.linked_belt_type == "input" and "output" or "input"
-    entity.connect_linked_belts(source)
-    player_table.flags.connecting_linked_belts = false
-    player_table.linked_belt_source = nil
-    local source_players = global.linked_belt_sources[source.unit_number]
-    source_players[player.index] = nil
-    if table_size(source_players) == 0 then
-      global.linked_belt_sources[source.unit_number] = nil
-    end
-    linked_belt.render_connection(player, player_table)
-  else
-    util.flying_text(player, { "message.ee-connection-blocked" }, true, entity.position)
-  end
-end
-
---- @param player LuaPlayer
---- @param player_table PlayerTable
-function linked_belt.cancel_connection(player, player_table)
-  player_table.flags.connecting_linked_belts = false
-  local source = player_table.linked_belt_source
-  if not source then
-    return
-  end
-  local source_players = global.linked_belt_sources[source.unit_number]
-  source_players[player.index] = nil
-  if table_size(source_players) == 0 then
-    global.linked_belt_sources[source.unit_number] = nil
-  end
-  player_table.linked_belt_source = nil
-  linked_belt.render_connection(player, player_table)
-end
-
---- @param player LuaPlayer
---- @param player_table PlayerTable
---- @param entity LuaEntity
-function linked_belt.sever_connection(player, player_table, entity)
-  entity.disconnect_linked_belts()
-  linked_belt.render_connection(player, player_table)
-end
-
 --- @param objects table
 --- @param color Color
 --- @param dashed boolean
@@ -94,7 +7,7 @@ end
 --- @param source LuaEntity
 --- @param destination LuaEntity?
 local function draw_connection(objects, color, dashed, player_index, source, destination)
-  for _, entity in ipairs({ source, destination }) do
+  for _, entity in pairs({ source, destination }) do
     objects[#objects + 1] = rendering.draw_circle({
       color = color,
       radius = 0.15,
@@ -119,6 +32,7 @@ local function draw_connection(objects, color, dashed, player_index, source, des
   end
 end
 
+--- @type table<string, Color>
 local colors = {
   red = { r = 1, g = 0.5, b = 0.5 },
   green = { r = 0.3, g = 0.8, b = 0.3 },
@@ -126,46 +40,109 @@ local colors = {
 }
 
 --- @param player LuaPlayer
---- @param player_table PlayerTable
-function linked_belt.render_connection(player, player_table)
-  local objects = player_table.linked_belt_render_objects
-  for i = 1, #objects do
+local function render_connection(player)
+  local objects = global.linked_belt_render_objects[player.index] or {}
+  for i = #objects, 1, -1 do
     rendering.destroy(objects[i])
+    objects[i] = nil
   end
 
-  objects = {} -- new objects table
-
-  local active_source = player_table.linked_belt_source
-  if active_source and active_source.valid then
-    local neighbour = active_source.linked_belt_neighbour
-    if neighbour then
-      draw_connection(objects, colors.red, false, player.index, active_source, active_source.linked_belt_neighbour)
-    end
-  end
-
+  local source = global.linked_belt_source[player.index]
   local selected = player.selected
-  if selected and selected.name == "ee-linked-belt" then
+  if selected and selected.name ~= "ee-linked-belt" then
+    selected = nil
+  end
+
+  if selected then
     local neighbour = selected.linked_belt_neighbour
-    if
-      neighbour
-      and not (active_source and active_source.unit_number == selected.unit_number)
-      and not (active_source and active_source.unit_number == neighbour.unit_number)
-    then
+    if neighbour and neighbour ~= source then
       draw_connection(objects, colors.green, false, player.index, selected, neighbour)
     end
-    if active_source and active_source.valid then
-      draw_connection(objects, colors.teal, true, player.index, active_source, selected)
-    end
-  elseif active_source and active_source.valid then
-    draw_connection(objects, colors.teal, true, player.index, active_source)
   end
 
-  player_table.linked_belt_render_objects = objects
+  if source and source.valid then
+    local neighbour = source.linked_belt_neighbour
+    if neighbour then
+      draw_connection(objects, colors.red, false, player.index, source, neighbour)
+    end
+    if selected and selected ~= neighbour then
+      draw_connection(objects, colors.teal, true, player.index, source, selected)
+    end
+    draw_connection(objects, colors.teal, true, player.index, source)
+  end
+
+  if objects[1] then
+    global.linked_belt_render_objects[player.index] = objects
+  else
+    global.linked_belt_render_objects[player.index] = nil
+  end
+end
+
+--- @param player LuaPlayer
+--- @param entity LuaEntity
+--- @param shift boolean?
+local function start_connection(player, entity, shift)
+  local neighbour = entity.linked_belt_neighbour
+  local source
+  if neighbour then
+    if shift then
+      source = neighbour
+    else
+      source = entity
+    end
+  else
+    source = entity
+  end
+  global.linked_belt_source[player.index] = source
+
+  render_connection(player)
+end
+
+--- @param player LuaPlayer
+--- @param entity LuaEntity
+--- @param shift boolean?
+local function finish_connection(player, entity, shift)
+  local source = global.linked_belt_source[player.index]
+  if not source or not source.valid then
+    return
+  end
+
+  local neighbour = entity.linked_belt_neighbour
+  if entity.unit_number == source.unit_number then
+    return
+  end
+  if neighbour and not shift then
+    util.flying_text(player, { "message.ee-connection-blocked" }, true, entity.position)
+    return
+  end
+  if neighbour then
+    entity.disconnect_linked_belts()
+  end
+
+  entity.linked_belt_type = source.linked_belt_type == "input" and "output" or "input"
+  entity.connect_linked_belts(source)
+
+  global.linked_belt_source[player.index] = nil
+
+  render_connection(player)
+end
+
+--- @param player LuaPlayer
+local function cancel_connection(player)
+  local source = global.linked_belt_source[player.index]
+  if not source then
+    return
+  end
+  global.linked_belt_source[player.index] = nil
+  render_connection(player)
 end
 
 --- @param e EventData.on_player_rotated_entity
-function linked_belt.on_rotated(e)
+local function on_player_rotated_entity(e)
   local entity = e.entity
+  if entity.name ~= "ee-linked-belt" then
+    return
+  end
 
   entity.direction = e.previous_direction
 
@@ -180,5 +157,98 @@ function linked_belt.on_rotated(e)
     entity.linked_belt_type = entity.linked_belt_type == "output" and "input" or "output"
   end
 end
+
+--- @param e EventData.on_selected_entity_changed
+local function on_selected_entity_changed(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+
+  render_connection(player)
+end
+
+--- @param e EventData.CustomInputEvent
+local function on_clear_cursor(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+  cancel_connection(player)
+end
+
+--- @param e EventData.CustomInputEvent
+local function on_left_click(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+
+  local selected = player.selected
+  if not selected or selected.name ~= "ee-linked-belt" then
+    return
+  end
+
+  local source = global.linked_belt_source[e.player_index]
+  if source then
+    finish_connection(player, selected)
+  else
+    start_connection(player, selected)
+  end
+end
+
+--- @param e EventData.CustomInputEvent
+local function on_shift_left_click(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+
+  local selected = player.selected
+  if not selected or selected.name ~= "ee-linked-belt" then
+    return
+  end
+
+  local source = global.linked_belt_source[e.player_index]
+  if source then
+    finish_connection(player, selected, true)
+  else
+    start_connection(player, selected, true)
+  end
+end
+
+--- @param e EventData.CustomInputEvent
+local function on_shift_right_click(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+
+  local selected = player.selected
+  if not selected or selected.name ~= "ee-linked-belt" or not selected.linked_belt_neighbour then
+    return
+  end
+
+  selected.disconnect_linked_belts()
+  render_connection(player)
+end
+
+local linked_belt = {}
+
+linked_belt.on_init = function()
+  --- @type table<uint, LuaEntity>
+  global.linked_belt_source = {}
+  --- @type table<uint, uint64[]>
+  global.linked_belt_render_objects = {}
+end
+
+linked_belt.events = {
+  [defines.events.on_player_rotated_entity] = on_player_rotated_entity,
+  [defines.events.on_selected_entity_changed] = on_selected_entity_changed,
+  ["ee-linked-clear-cursor"] = on_clear_cursor,
+  ["ee-linked-copy-entity-settings"] = on_shift_right_click,
+  ["ee-linked-open-gui"] = on_left_click,
+  ["ee-linked-paste-entity-settings"] = on_shift_left_click,
+}
 
 return linked_belt
