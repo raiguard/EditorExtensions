@@ -16,7 +16,7 @@ local function on_toggle_editor(e)
 
   local group = player.permission_group
   if not player.admin or (group and not group.allows_action(defines.input_action.toggle_map_editor)) then
-    player.print({ "message.ee-editor-denied-not-admin" })
+    player.print({ "message.ee-cannot-use-map-editor" })
     return
   end
 
