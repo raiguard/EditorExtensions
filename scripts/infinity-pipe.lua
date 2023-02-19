@@ -613,13 +613,17 @@ end
 
 --- @param e DestroyedEvent
 local function on_entity_destroyed(e)
+  local entity = e.entity
+  if not entity.valid or not check_is_our_pipe(entity) then
+    return
+  end
   remove_stored_amount_type(e.entity)
 end
 
 --- @param e EventData.on_gui_opened
 local function on_gui_opened(e)
   local entity = e.entity
-  if not entity or not check_is_our_pipe(entity) then
+  if not entity or not entity.valid or not check_is_our_pipe(entity) then
     return
   end
   local player = game.get_player(e.player_index)
