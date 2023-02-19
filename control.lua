@@ -15,23 +15,4 @@ handler.add_lib(require("__EditorExtensions__/scripts/inventory-sync"))
 handler.add_lib(require("__EditorExtensions__/scripts/linked-belt"))
 handler.add_lib(require("__EditorExtensions__/scripts/super-inserter"))
 handler.add_lib(require("__EditorExtensions__/scripts/super-pump"))
-
--- remote.add_interface("EditorExtensions", {
---   --- Get the force that the player is actually on, ignoring the testing lab force.
---   --- @param player LuaPlayer
---   --- @return ForceIdentification
---   get_player_proper_force = function(player)
---     if not player or not player.valid then
---       error("Did not pass a valid LuaPlayer")
---     end
---     if not global.players then
---       return player.force
---     end
---     local player_table = global.players[player.index]
---     if player_table and player_table.normal_state and player.controller_type == defines.controllers.editor then
---       return player_table.normal_state.force
---     else
---       return player.force
---     end
---   end,
--- })
+handler.add_lib(require("__EditorExtensions__/scripts/testing-lab"))
