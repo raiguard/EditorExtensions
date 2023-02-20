@@ -18,3 +18,5 @@ handler.add_lib(require("__EditorExtensions__/scripts/linked-belt"))
 handler.add_lib(require("__EditorExtensions__/scripts/super-inserter"))
 handler.add_lib(require("__EditorExtensions__/scripts/super-pump"))
 handler.add_lib(require("__EditorExtensions__/scripts/testing-lab"))
+
+handler.add_lib(require("__EditorExtensions__/scripts/update-notification"))

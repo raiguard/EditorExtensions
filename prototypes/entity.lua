@@ -234,6 +234,15 @@ data:extend({
     picture = constants.empty_sheet,
     collision_box = { { -0.1, -0.1 }, { 0.1, 0.1 } },
   },
+  util.copy_prototype(data.raw["constant-combinator"]["constant-combinator"], {
+    name = "ee-infinity-loader-dummy-combinator",
+    localised_description = { "entity-description.ee-infinity-loader" },
+    icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
+    minable = { mining_time = 0.1 },
+    placeable_by = { item = "ee-infinity-loader", count = 1 },
+    flags = { "not-upgradable", "player-creation" },
+    sprites = util.loader_dummy_sprites,
+  }),
 })
 
 -- Infinity pipe
