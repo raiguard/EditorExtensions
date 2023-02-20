@@ -75,29 +75,23 @@ end
 --- @param entity LuaEntity
 local function snap(entity)
   local own_id = entity.unit_number
-  for _, fluidbox in ipairs(entity.fluidbox.get_connections(1)) do
-    if not crafter_snapping_types[fluidbox.owner.type] then
-      goto continue
-    end
-    for i = 1, #fluidbox do
-      --- @cast i uint
-      local connections = fluidbox.get_connections(i)
-      for j = 1, #connections do
-        if not connections[j].owner.unit_number == own_id then
-          goto continue
-        end
+  for _, fluidbox in pairs(entity.fluidbox.get_connections(1)) do
+    if crafter_snapping_types[fluidbox.owner.type] then
+      for i = 1, #fluidbox do
+        --- @cast i uint
+        local connections = fluidbox.get_connections(i)
         local prototype = fluidbox.get_prototype(i)
-        if prototype.production_type ~= "input" then
-          goto continue
-        end
-        local fluid = fluidbox.get_locked_fluid(i)
-        if fluid then
-          entity.set_infinity_pipe_filter({ name = fluid, percentage = 1, mode = "at-least" })
-          return
+        for j = 1, #connections do
+          if prototype.production_type == "input" and connections[j].owner.unit_number == own_id then
+            local fluid = fluidbox.get_locked_fluid(i)
+            if fluid then
+              entity.set_infinity_pipe_filter({ name = fluid, percentage = 1, mode = "at-least" })
+              return
+            end
+          end
         end
       end
     end
-    ::continue::
   end
 end
 
@@ -602,11 +596,13 @@ local function on_entity_built(e)
     return
   end
 
-  snap(entity)
-
   local tags = e.tags
   if tags and tags.EditorExtensions then
     store_amount_type(entity, tags.EditorExtensions.amount_type --[[@as uint]])
+  end
+
+  if e.name == defines.events.on_built_entity then
+    snap(entity)
   end
 end
 
