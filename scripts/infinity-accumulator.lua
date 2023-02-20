@@ -312,7 +312,7 @@ local function create_gui(player, entity)
         type = "flow",
         style_mods = { top_margin = 4, vertical_align = "center" },
         { type = "label", caption = { "gui.ee-mode" } },
-        { type = "empty-widget", style = "flib_horizontal_pusher" },
+        util.pusher(),
         {
           type = "drop-down",
           name = "mode_dropdown",
@@ -332,7 +332,7 @@ local function create_gui(player, entity)
           caption = { "", { "gui.ee-priority" }, " [img=info]" },
           tooltip = { "gui.ee-ia-priority-description" },
         },
-        { type = "empty-widget", style = "flib_horizontal_pusher" },
+        util.pusher(),
         {
           type = "drop-down",
           name = "priority_dropdown",
