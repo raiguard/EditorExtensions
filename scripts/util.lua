@@ -37,6 +37,10 @@ function util.pusher()
   return { type = "empty-widget", style = "flib_horizontal_pusher", ignored_by_interaction = true }
 end
 
+function util.in_testing_scenario()
+  return script.level.mod_name == "EditorExtensions" and script.level.level_name == "testing"
+end
+
 --- @param player LuaPlayer
 --- @param message LocalisedString
 --- @param play_sound boolean?

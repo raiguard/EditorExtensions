@@ -61,7 +61,7 @@ local function on_player_created(e)
     player.game_view_settings = game_view_settings
   end
 
-  if not global.in_debug_world then
+  if not util.in_testing_scenario() then
     player.print({ "message.ee-welcome" })
   end
 end

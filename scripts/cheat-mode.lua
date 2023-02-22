@@ -1,3 +1,5 @@
+local util = require("__EditorExtensions__/scripts/util")
+
 local character_modifiers = {
   character_build_distance_bonus = 1000000,
   character_mining_speed_modifier = 2,
@@ -111,12 +113,8 @@ local function on_player_created(e)
   if not player then
     return
   end
-  local in_debug_world = global.in_debug_world
-  if in_debug_world and settings.global["ee-debug-world-give-testing-items"].value then
+  if util.in_testing_scenario() then
     set_loadout(player)
-  end
-  if in_debug_world and settings.global["ee-debug-world-cheat-mode"].value then
-    player.cheat_mode = true
   end
 end
 

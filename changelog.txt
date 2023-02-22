@@ -16,8 +16,6 @@ Date: ????
     - Relocated the "start in editor" setting to map settings
     - Removed the '/cheatmode' command in favor of the built-in '/cheat' command
       - Consequently, you can no longer enable cheat mode without disabling achievements in your game
-    - Removed the testing scenario in favor of the debug world
-      - Control+click the "singleplayer" or "new game" buttons in the main menu to enter the debug world
     - Testing tools are only available in cheat mode, and enabling cheat mode no longer unlocks them for everyone
   Optimizations:
     - Significantly reduced infinity loader UPS impact

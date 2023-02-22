@@ -116,45 +116,10 @@ data:extend({
   },
   {
     type = "bool-setting",
-    name = "ee-debug-world-cheat-mode",
-    setting_type = "runtime-global",
-    default_value = true,
-    order = "da",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-debug-world-give-testing-items",
-    setting_type = "runtime-global",
-    default_value = true,
-    order = "db",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-debug-world-research-all",
-    setting_type = "runtime-global",
-    default_value = true,
-    order = "dc",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-debug-world-lab-tiles",
-    setting_type = "runtime-global",
-    default_value = true,
-    order = "dd",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-debug-world-infinite",
-    setting_type = "runtime-global",
-    default_value = true,
-    order = "de",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-debug-world-start-in-editor",
+    name = "ee-testing-start-in-editor",
     setting_type = "runtime-global",
     default_value = false,
-    order = "df",
+    order = "d",
   },
   -- PLAYER SETTINGS
   {
