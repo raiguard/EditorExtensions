@@ -3,8 +3,8 @@
   "version": "1.13.8",
   "title": "Editor Extensions",
   "author": "raiguard",
-  "contact": "https://lists.sr.ht/~raiguard/factorio-mods-discuss",
-  "homepage": "https://sr.ht/~raiguard/factorio-mods",
+  "contact": "https://github.com/raiguard/EditorExtensions",
+  "homepage": "https://github.com/raiguard/EditorExtensions",
   "factorio_version": "1.1",
   "dependencies": [
     "base >= 1.1.42",
