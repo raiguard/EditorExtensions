@@ -1,3 +1,19 @@
+--- @class LabState
+--- @field lab StateData
+--- @field normal StateData
+--- @field player LuaPlayer
+--- @field refresh boolean?
+
+--- @class StateData
+--- @field force LuaForce
+--- @field position MapPosition
+--- @field surface LuaSurface
+
+--- @alias LabSetting
+--- | "force"
+--- | "off"
+--- | "personal"
+
 local empty_map_gen_settings = {
   default_enable_all_autoplace_controls = false,
   property_expression_names = { cliffiness = 0 },
@@ -7,16 +23,12 @@ local empty_map_gen_settings = {
   starting_area = "none",
 }
 
---- @class TestingLabState
---- @field surface LuaSurface
---- @field force LuaForce
---- @field player LuaPlayer
-
 --- @param player LuaPlayer
---- @param ts_setting string
-local function toggle_lab(player, ts_setting)
+--- @param lab_setting LabSetting
+--- @return LabState?
+local function create_lab(player, lab_setting)
   local key
-  if ts_setting == "personal" then
+  if lab_setting == "personal" then
     key = player.index
   elseif game.forces["EE_TESTSURFACE_shared"] then
     -- For versions prior to 1.13.0, all forces used the "shared" lab
@@ -25,81 +37,134 @@ local function toggle_lab(player, ts_setting)
     -- Use the actual force name, not the testing lab force name
     key = string.gsub(player.force.name, "EE_TESTFORCE_", "")
   end
-  local testing_surface_name = "EE_TESTSURFACE_" .. key
-  local testing_force_name = "EE_TESTFORCE_" .. key
-  local in_editor = player.controller_type == defines.controllers.editor
+  local surface_name = "EE_TESTSURFACE_" .. key
+  local force_name = "EE_TESTFORCE_" .. key
 
-  -- VERIFY INFO
-
-  local to_state = global.testing_lab_state[player.index]
-
-  -- If the surface is invalid in any way, or its name does not match our lab's name, or the force is invalid
-  if
-    not to_state
-    or not to_state.surface.valid
-    or (string.find(to_state.surface.name, "EE_TESTSURFACE_") and to_state.surface.name ~= testing_surface_name)
-    or not to_state.force.valid
-  then
-    local testing_surface = game.get_surface(testing_surface_name)
-    if not testing_surface then
-      testing_surface = game.create_surface(testing_surface_name, empty_map_gen_settings)
-      if not testing_surface then
-        player.print("Could not create test surface")
-        return
-      end
-      -- Lab conditions
-      testing_surface.generate_with_lab_tiles = true
-      testing_surface.freeze_daytime = true
-      testing_surface.show_clouds = false
-      testing_surface.daytime = 0
-      -- Warn the player about the passage of time
-      player.print({ "message.ee-time-passes-in-lab" })
+  local surface = game.get_surface(surface_name)
+  if not surface then
+    surface = game.create_surface(surface_name, empty_map_gen_settings)
+    if not surface then
+      player.print("Could not create test surface")
+      return
     end
-
-    local force = game.forces[testing_force_name]
-    if not game.forces[testing_force_name] then
-      if table_size(game.forces) == 64 then
-        player.print(
-          "Cannot create a testing lab force. Factorio only supports up to 64 forces at once. Please use a shared lab."
-        )
-        return
-      end
-
-      force = game.create_force(testing_force_name)
-      if settings.global["ee-testing-lab-match-research"].value then
-        -- Sync research techs with the parent force
-        for name, tech in pairs(player.force.technologies) do
-          force.technologies[name].researched = tech.researched
-        end
-      else
-        force.research_all_technologies()
-      end
-    end
-
-    to_state = { force = force, position = { x = 0, y = 0 }, surface = testing_surface }
+    -- Lab conditions
+    surface.generate_with_lab_tiles = true
+    surface.freeze_daytime = true
+    surface.show_clouds = false
+    surface.daytime = 0
+    -- Warn the player about the passage of time
+    player.print({ "message.ee-time-passes-in-lab" })
   end
 
-  --- @type TestingLabState?
-  local current_state = nil
-  if in_editor then
-    local force = player.force --[[@as LuaForce]]
-    current_state = {
-      force = force,
-      position = player.position,
-      surface = player.surface,
-    }
-  else
-    current_state = {
-      force = game.forces[testing_force_name],
-      position = player.position,
-      surface = game.get_surface(testing_surface_name),
-    }
-  end
-  global.testing_lab_state[player.index] = current_state
+  local force = game.forces[force_name]
+  if not game.forces[force_name] then
+    if table_size(game.forces) == 64 then
+      player.print(
+        "Cannot create a testing lab force. Factorio only supports up to 64 forces at once. Please use a shared lab."
+      )
+      return
+    end
 
-  if to_state.surface.valid and to_state.force.valid then
-    player.force = to_state.force
-    player.teleport(to_state.position, to_state.surface)
+    force = game.create_force(force_name)
+    if settings.global["ee-testing-lab-match-research"].value then
+      -- Sync research techs with the parent force
+      for name, tech in pairs(player.force.technologies) do
+        force.technologies[name].researched = tech.researched
+      end
+    else
+      force.research_all_technologies()
+    end
+  end
+
+  return {
+    lab = { force = force, position = { x = 0, y = 0 }, surface = surface },
+    normal = { force = player.force, position = player.position, surface = player.surface },
+    player = player,
+  }
+end
+
+--- @param player LuaPlayer
+--- @param to_state StateData
+local function transfer_player(player, to_state)
+  if not to_state.force.valid or not to_state.surface.valid then
+    return
+  end
+  player.teleport(to_state.position, to_state.surface)
+  player.force = to_state.force
+end
+
+--- @param player LuaPlayer
+--- @param lab_setting LabSetting
+local function enter_lab(player, lab_setting)
+  local lab_state = global.testing_lab_state[player.index]
+  if not lab_state or lab_state.refresh then
+    lab_state = create_lab(player, lab_setting)
+    global.testing_lab_state[player.index] = lab_state
+  end
+  if not lab_state then
+    return
+  end
+
+  local normal_state = lab_state.normal
+  normal_state.force = player.force --[[@as LuaForce]]
+  normal_state.position = player.position
+  normal_state.surface = player.surface
+
+  transfer_player(player, lab_state.lab)
+end
+
+--- @param player LuaPlayer
+local function exit_lab(player)
+  local lab_state = global.testing_lab_state[player.index]
+  if not lab_state then
+    return
+  end
+
+  local lab_data = lab_state.lab
+  if player.surface == lab_data.surface then
+    lab_data.position = player.position
+  end
+
+  transfer_player(player, lab_state.normal)
+end
+
+--- @param player LuaPlayer
+--- @return LabSetting
+local function get_lab_setting(player)
+  return player.mod_settings["ee-testing-lab"].value --[[@as LabSetting]]
+end
+
+--- @param e EventData.on_pre_player_toggled_map_editor
+local function on_pre_player_toggled_map_editor(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+
+  local lab_setting = get_lab_setting(player)
+  if lab_setting == "off" then
+    return
+  end
+
+  if player.controller_type == defines.controllers.editor then
+    exit_lab(player)
+  end
+end
+
+--- @param e EventData.on_player_toggled_map_editor
+local function on_player_toggled_map_editor(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+
+  local lab_setting = get_lab_setting(player)
+  if lab_setting == "off" then
+    return
+  end
+
+  if player.controller_type == defines.controllers.editor then
+    enter_lab(player, lab_setting)
   end
 end
 
@@ -122,21 +187,6 @@ local function on_force_reset(e)
     testing_force.technologies[name].researched = tech.researched
   end
   testing_force.reset_technology_effects()
-end
-
---- @param e EventData.on_player_toggled_map_editor
-local function on_player_toggled_map_editor(e)
-  local player = game.get_player(e.player_index)
-  if not player then
-    return
-  end
-
-  local testing_lab_setting = player.mod_settings["ee-testing-lab"].value --[[@as string]]
-  if testing_lab_setting == "off" then
-    return
-  end
-
-  toggle_lab(player, testing_lab_setting)
 end
 
 --- @param e EventData.on_research_reversed
@@ -185,11 +235,7 @@ local function on_research_finished(e)
   end
 end
 
---- @param e EventData.on_runtime_mod_setting_changed
-local function on_runtime_mod_setting_changed(e)
-  if e.setting ~= "ee-testing-lab-match-research" then
-    return
-  end
+local function on_match_research_setting_changed()
   for _, force in pairs(game.forces) do
     local _, _, force_key = string.find(force.name, "EE_TESTFORCE_(.*)")
     if not force_key then
@@ -219,16 +265,34 @@ local function on_runtime_mod_setting_changed(e)
   end
 end
 
+--- @param e EventData.on_runtime_mod_setting_changed
+local function on_testing_lab_setting_changed(e)
+  local lab_state = global.testing_lab_state[e.player_index]
+  if lab_state then
+    lab_state.refresh = true
+  end
+end
+
+--- @param e EventData.on_runtime_mod_setting_changed
+local function on_runtime_mod_setting_changed(e)
+  if e.setting == "ee-testing-lab-match-research" then
+    on_match_research_setting_changed()
+  elseif e.setting == "ee-testing-lab" then
+    on_testing_lab_setting_changed(e)
+  end
+end
+
 local testing_lab = {}
 
 testing_lab.on_init = function()
-  --- @type table<uint, TestingLabState>
+  --- @type table<uint, LabState?>
   global.testing_lab_state = {}
 end
 
 testing_lab.events = {
   [defines.events.on_force_reset] = on_force_reset,
   [defines.events.on_player_toggled_map_editor] = on_player_toggled_map_editor,
+  [defines.events.on_pre_player_toggled_map_editor] = on_pre_player_toggled_map_editor,
   [defines.events.on_research_finished] = on_research_finished,
   [defines.events.on_research_reversed] = on_research_reversed,
   [defines.events.on_runtime_mod_setting_changed] = on_runtime_mod_setting_changed,
