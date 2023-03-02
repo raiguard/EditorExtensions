@@ -123,7 +123,7 @@ update_notification.on_nth_tick = {
       for _, player in pairs(legacy.force.players) do
         player.add_custom_alert(
           legacy,
-          { type = "item", name = "ee-infinity-loader" },
+          { type = "item", name = "ee-infinity-loader-dummy-combinator" },
           "Remove legacy infinity loader",
           true
         )

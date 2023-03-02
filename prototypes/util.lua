@@ -112,7 +112,7 @@ for k, x in pairs(sprite_x) do
   dummy_sprites[k] = {}
   dummy_sprites[k].layers = {}
   for i, t in pairs(dummy_sprite_files) do
-    dummy_sprites[k].layers[i] = util.recursive_tint({
+    dummy_sprites[k].layers[i] = {
       filename = t[1],
       x = x,
       width = 96,
@@ -124,7 +124,7 @@ for k, x in pairs(sprite_x) do
         height = 192,
         scale = 0.5,
       },
-    })
+    }
   end
 end
 
