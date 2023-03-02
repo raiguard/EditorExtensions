@@ -37,7 +37,6 @@ local function register_recipes(t)
         ingredients = {},
         category = "ee-testing-tool",
         result = k,
-        only_in_cheat_mode = true,
       },
     })
   end
