@@ -105,10 +105,10 @@ local function enter_lab(player, lab_setting)
     return
   end
 
-  local normal_state = lab_state.normal
-  normal_state.force = player.force --[[@as LuaForce]]
-  normal_state.position = player.position
-  normal_state.surface = player.surface
+  local normal_data = lab_state.normal
+  normal_data.force = player.force --[[@as LuaForce]]
+  normal_data.position = player.position
+  normal_data.surface = player.surface
 
   transfer_player(player, lab_state.lab)
 end
