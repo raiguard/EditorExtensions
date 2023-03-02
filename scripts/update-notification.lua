@@ -81,6 +81,20 @@ local function create_gui(player)
   })
 end
 
+--- @param e BuiltEvent
+local function on_entity_built(e)
+  local entity = e.entity or e.created_entity or e.destination
+  if not entity.valid or entity.name ~= "ee-infinity-loader-dummy-combinator" then
+    return
+  end
+  local loaders = global.legacy_infinity_loaders
+  if not loaders then
+    loaders = {}
+    global.legacy_infinity_loaders = loaders
+  end
+  loaders[entity.unit_number] = entity
+end
+
 local update_notification = {}
 
 --- @param e ConfigurationChangedData
@@ -94,8 +108,8 @@ update_notification.on_configuration_changed = function(e)
     create_gui(player)
   end
 
+  --- @type table<uint64, LuaEntity>
   local loaders = {}
-
   for _, surface in pairs(game.surfaces) do
     for _, loader in pairs(surface.find_entities_filtered({ name = "ee-infinity-loader-dummy-combinator" })) do
       loaders[loader.unit_number] = loader
@@ -104,7 +118,6 @@ update_notification.on_configuration_changed = function(e)
       chest.destroy()
     end
   end
-  --- @type table<uint64, LuaEntity>
   global.legacy_infinity_loaders = loaders
 end
 
@@ -123,7 +136,7 @@ update_notification.on_nth_tick = {
       for _, player in pairs(legacy.force.players) do
         player.add_custom_alert(
           legacy,
-          { type = "item", name = "ee-infinity-loader-dummy-combinator" },
+          { type = "item", name = "ee-infinity-loader" },
           "Remove legacy infinity loader",
           true
         )
@@ -141,5 +154,13 @@ update_notification.on_nth_tick = {
 commands.add_command("ee-remove-legacy-loaders", nil, function()
   remove_legacy_loaders()
 end)
+
+update_notification.events = {
+  [defines.events.on_built_entity] = on_entity_built,
+  [defines.events.on_entity_cloned] = on_entity_built,
+  [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.script_raised_built] = on_entity_built,
+  [defines.events.script_raised_revive] = on_entity_built,
+}
 
 return update_notification
