@@ -116,10 +116,17 @@ data:extend({
   },
   {
     type = "bool-setting",
+    name = "ee-override-debug-world",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "d",
+  },
+  {
+    type = "bool-setting",
     name = "ee-testing-start-in-editor",
     setting_type = "runtime-global",
     default_value = false,
-    order = "d",
+    order = "e",
   },
   -- PLAYER SETTINGS
   {

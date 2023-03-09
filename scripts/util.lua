@@ -37,6 +37,23 @@ function util.pusher()
   return { type = "empty-widget", style = "flib_horizontal_pusher", ignored_by_interaction = true }
 end
 
+--- @return boolean
+function util.in_debug_world()
+  if not settings.global["ee-override-debug-world"].value then
+    return false
+  end
+  if script.level.mod_name ~= "base" or script.level.level_name ~= "freeplay" then
+    return false
+  end
+  local nauvis = game.get_surface("nauvis")
+  if not nauvis then
+    return false
+  end
+  local mps = nauvis.map_gen_settings
+  return mps.height == 50 and mps.width == 50
+end
+
+--- @return boolean
 function util.in_testing_scenario()
   return script.level.mod_name == "EditorExtensions" and script.level.level_name == "testing"
 end

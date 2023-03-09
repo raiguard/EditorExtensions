@@ -113,7 +113,7 @@ local function on_player_created(e)
   if not player then
     return
   end
-  if util.in_testing_scenario() then
+  if util.in_debug_world() or util.in_testing_scenario() then
     set_loadout(player)
   end
 end

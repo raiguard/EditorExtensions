@@ -6,6 +6,7 @@ handler.add_lib(require("__EditorExtensions__/scripts/migrations"))
 
 handler.add_lib(require("__EditorExtensions__/scripts/aggregate-chest"))
 handler.add_lib(require("__EditorExtensions__/scripts/cheat-mode"))
+handler.add_lib(require("__EditorExtensions__/scripts/debug-world"))
 handler.add_lib(require("__EditorExtensions__/scripts/editor"))
 handler.add_lib(require("__EditorExtensions__/scripts/infinity-accumulator"))
 handler.add_lib(require("__EditorExtensions__/scripts/infinity-loader"))
