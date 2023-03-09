@@ -220,7 +220,7 @@ data:extend({
     speed = 0.03125, -- Temporary, will be overwritten in data-final-fixes
     container_distance = 0,
     filter_count = 1,
-    structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure), -- TODO: Remove sideloading sets?
+    structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
   }),

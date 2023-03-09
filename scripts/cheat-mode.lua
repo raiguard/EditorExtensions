@@ -44,7 +44,6 @@ local function set_armor(inventory)
   if not inventory or not inventory.valid then
     return
   end
-  -- TODO: Use highest-tier armor instead of hardcoding to power armor mk2
   inventory[1].set_stack({ name = "power-armor-mk2" })
   local grid = inventory[1].grid
   if not grid then

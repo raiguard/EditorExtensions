@@ -119,7 +119,6 @@ local function on_settings_pasted(e)
   if not destination.valid or destination.name ~= "ee-infinity-loader" then
     return
   end
-  -- TODO: Handle to/from a constant combinator
   sync_chest_filter(destination)
 end
 

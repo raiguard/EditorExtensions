@@ -8,12 +8,24 @@ local infinity_wagon = require("__EditorExtensions__/scripts/infinity-wagon")
 local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
 local inventory_sync = require("__EditorExtensions__/scripts/inventory-sync")
 local linked_belt = require("__EditorExtensions__/scripts/linked-belt")
-local testing_lab = require("__EditorExtensions__/scripts/testing-lab")
 
 local version_migrations = {
   ["2.0.0"] = function()
+    -- Preserve testing lab state
+    local testing_lab_state = {}
+    for player_index, player_table in pairs(global.players) do
+      local player = game.get_player(player_index)
+      if player and player_table.lab_state and player_table.normal_state then
+        testing_lab_state[player_index] = {
+          normal = player_table.normal_state,
+          lab = player_table.lab_state,
+          player = player,
+          refresh = false,
+        }
+      end
+    end
     -- NUKE EVERYTHING
-    global = {}
+    global = { testing_lab_state = testing_lab_state }
     rendering.clear("EditorExtensions")
     for _, player in pairs(game.players) do
       for _, gui in pairs({ player.gui.top, player.gui.left, player.gui.center, player.gui.screen, player.gui.relative }) do
@@ -25,7 +37,6 @@ local version_migrations = {
       end
     end
     -- Start over
-    -- TODO: Migrate testing lab state and infinity pipe types
     aggregate_chest.on_init()
     infinity_accumulator.on_init()
     infinity_loader.on_init()
@@ -34,7 +45,6 @@ local version_migrations = {
     inventory_filters.on_init()
     inventory_sync.on_init()
     linked_belt.on_init()
-    testing_lab.on_init()
   end,
 }
 
