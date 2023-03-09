@@ -1,4 +1,4 @@
-local migration_util = require("__flib__/migration")
+local flib_migration = require("__flib__/migration")
 
 local aggregate_chest = require("__EditorExtensions__/scripts/aggregate-chest")
 local infinity_accumulator = require("__EditorExtensions__/scripts/infinity-accumulator")
@@ -15,6 +15,15 @@ local version_migrations = {
     -- NUKE EVERYTHING
     global = {}
     rendering.clear("EditorExtensions")
+    for _, player in pairs(game.players) do
+      for _, gui in pairs({ player.gui.top, player.gui.left, player.gui.center, player.gui.screen, player.gui.relative }) do
+        for _, child in pairs(gui.children) do
+          if child.get_mod() == "EditorExtensions" then
+            child.destroy()
+          end
+        end
+      end
+    end
     -- Start over
     -- TODO: Migrate testing lab state and infinity pipe types
     aggregate_chest.on_init()
@@ -32,7 +41,7 @@ local version_migrations = {
 local migrations = {}
 
 migrations.on_configuration_changed = function(e)
-  migration_util.on_config_changed(e, version_migrations)
+  flib_migration.on_config_changed(e, version_migrations)
 end
 
 return migrations
