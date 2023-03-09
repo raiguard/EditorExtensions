@@ -100,7 +100,7 @@ end
 --- @param e EventData.on_pre_player_toggled_map_editor
 local function on_pre_player_toggled_map_editor(e)
   local player = game.get_player(e.player_index)
-  if not player then
+  if not player or not player.cheat_mode then
     return
   end
   if not player.mod_settings["ee-inventory-sync"].value then
@@ -112,7 +112,7 @@ end
 --- @param e EventData.on_player_toggled_map_editor
 local function on_player_toggled_map_editor(e)
   local player = game.get_player(e.player_index)
-  if not player then
+  if not player or not player.cheat_mode then
     return
   end
   if not player.mod_settings["ee-inventory-sync"].value then
