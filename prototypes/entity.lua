@@ -1,3 +1,4 @@
+local sounds = require("__base__/prototypes/entity/sounds")
 local table = require("__flib__/table")
 
 local shared_constants = require("__EditorExtensions__/shared-constants")
@@ -198,135 +199,51 @@ super_inserter.rotation_speed = 0.5
 util.recursive_tint(super_inserter)
 data:extend({ super_inserter })
 
--- infinity loader
--- create everything except the actual loaders here. We create those in data-updates so they can get every belt type
-do
-  local loader_icon = util.recursive_tint({
-    { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 },
-  })
-  local loader_base = table.deepcopy(data.raw["underground-belt"]["underground-belt"])
-  loader_base.icons = loader_icon
-
-  data:extend({
-    -- infinity chest
-    {
-      type = "infinity-container",
-      name = "ee-infinity-loader-chest",
-      icons = loader_icon,
-      erase_contents_when_mined = true,
-      inventory_size = 10,
-      flags = { "hide-alt-info" },
-      picture = constants.empty_sheet,
-      collision_box = { { -0.05, -0.05 }, { 0.05, 0.05 } },
-    },
-    -- logic combinator (what you actually interact with)
-    {
-      type = "constant-combinator",
-      name = "ee-infinity-loader-logic-combinator",
-      icons = loader_icon,
-      localised_name = { "entity-name.ee-infinity-loader" },
-      localised_description = { "entity-description.ee-infinity-loader" },
-      map_color = constants.infinity_tint,
-      friendly_map_color = constants.infinity_tint,
-      order = "a",
-      collision_box = loader_base.collision_box,
-      selection_box = loader_base.selection_box,
-      fast_replaceable_group = "transport-belt",
-      next_upgrade = nil,
-      placeable_by = { item = "ee-infinity-loader", count = 1 },
-      minable = { result = "ee-infinity-loader", mining_time = 0.1 },
-      flags = { "hidden", "not-upgradable", "player-creation" },
-      item_slot_count = 2,
-      sprites = constants.empty_sheet,
-      activity_led_sprites = constants.empty_sheet,
-      activity_led_light_offsets = { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } },
-      circuit_wire_connection_points = constants.empty_circuit_wire_connection_points,
-    },
-  })
-
-  -- create spritesheet for dummy combinator
-  local sprite_files = {
-    {
-      "__base__/graphics/entity/underground-belt/underground-belt-structure-back-patch.png",
-      "__base__/graphics/entity/underground-belt/hr-underground-belt-structure-back-patch.png",
-    },
-    {
-      "__base__/graphics/entity/linked-belt/linked-belt-structure.png",
-      "__base__/graphics/entity/linked-belt/hr-linked-belt-structure.png",
-    },
-    {
-
-      "__base__/graphics/entity/underground-belt/underground-belt-structure-front-patch.png",
-      "__base__/graphics/entity/underground-belt/hr-underground-belt-structure-front-patch.png",
-    },
-  }
-  local sprite_x = { south = 96 * 0, west = 96 * 1, north = 96 * 2, east = 96 * 3 }
-  local sprites = {}
-  for k, x in pairs(sprite_x) do
-    sprites[k] = {}
-    sprites[k].layers = {}
-    for i, t in pairs(sprite_files) do
-      sprites[k].layers[i] = util.recursive_tint({
-        filename = t[1],
-        x = x,
-        width = 96,
-        height = 96,
-        hr_version = {
-          filename = t[2],
-          x = x * 2,
-          width = 192,
-          height = 192,
-          scale = 0.5,
-        },
-      })
-    end
-  end
-
-  -- dummy combinator (for placement and blueprints)
-  local dummy_combinator = table.deepcopy(data.raw["constant-combinator"]["ee-infinity-loader-logic-combinator"])
-  dummy_combinator.name = "ee-infinity-loader-dummy-combinator"
-  dummy_combinator.localised_description = { "entity-description.ee-infinity-loader" }
-  dummy_combinator.minable = nil
-  dummy_combinator.flags = { "not-upgradable", "player-creation" }
-  dummy_combinator.icons = loader_base.icons
-  dummy_combinator.sprites = sprites
-  data:extend({ dummy_combinator })
-
-  -- local filter_inserter = data.raw["inserter"]["stack-filter-inserter"]
-
-  -- inserter
-  data:extend({
-    {
-      type = "inserter",
-      name = "ee-infinity-loader-inserter",
-      localised_name = { "entity-name.ee-infinity-loader" },
-      icons = loader_icon,
-      stack = true,
-      collision_box = { { -0.1, -0.1 }, { 0.1, 0.1 } },
-      -- selection_box = {{-0.1,-0.1}, {0.1,0.1}},
-      -- selection_priority = 99,
-      selectable_in_game = false,
-      allow_custom_vectors = true,
-      energy_source = { type = "void" },
-      extension_speed = 1,
-      rotation_speed = 0.5,
-      energy_per_movement = "0.00001J",
-      pickup_position = { 0, -0.2 },
-      insert_position = { 0, 0.2 },
-      filter_count = 1,
-      draw_held_item = false,
-      platform_picture = constants.empty_sheet,
-      hand_base_picture = constants.empty_sheet,
-      hand_open_picture = constants.empty_sheet,
-      hand_closed_picture = constants.empty_sheet,
-      -- hand_base_picture = filter_inserter.hand_base_picture,
-      -- hand_open_picture = filter_inserter.hand_open_picture,
-      -- hand_closed_picture = filter_inserter.hand_closed_picture,
-      draw_inserter_arrow = false,
-      flags = { "hide-alt-info", "hidden", "not-upgradable" },
-    },
-  })
-end
+data:extend({
+  util.copy_prototype(data.raw["linked-belt"]["linked-belt"], {
+    name = "ee-linked-belt",
+    icons = "CONVERT",
+    minable = { mining_time = 0.1, result = "ee-linked-belt" },
+    belt_animation_set = table.deepcopy(express_belt_animation_set),
+    allow_side_loading = true,
+  }, constants.linked_belt_tint),
+  util.recursive_tint({
+    type = "loader-1x1",
+    name = "ee-infinity-loader",
+    icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
+    flags = { "player-creation" },
+    minable = { mining_time = 0.1, result = "ee-infinity-loader" },
+    collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
+    selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
+    animation_speed_coefficient = 32,
+    belt_animation_set = table.deepcopy(fast_belt_animation_set),
+    speed = 0.03125, -- Temporary, will be overwritten in data-final-fixes
+    container_distance = 0,
+    filter_count = 1,
+    structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
+    open_sound = sounds.machine_open,
+    close_sound = sounds.machine_close,
+  }),
+  {
+    type = "infinity-container",
+    name = "ee-infinity-loader-chest",
+    erase_contents_when_mined = true,
+    inventory_size = 10, -- Five for output, five for input
+    flags = { "hide-alt-info", "player-creation" },
+    selectable_in_game = false,
+    picture = constants.empty_sheet,
+    collision_box = { { -0.1, -0.1 }, { 0.1, 0.1 } },
+  },
+  util.copy_prototype(data.raw["constant-combinator"]["constant-combinator"], {
+    name = "ee-infinity-loader-dummy-combinator",
+    localised_description = { "entity-description.ee-infinity-loader" },
+    icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
+    minable = { mining_time = 0.1 },
+    placeable_by = { item = "ee-infinity-loader", count = 1 },
+    flags = { "not-upgradable", "player-creation" },
+    sprites = util.loader_dummy_sprites,
+  }, { r = 0.8, g = 0.8, b = 0.8 }),
+})
 
 -- Infinity pipe
 

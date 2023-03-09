@@ -1,140 +1,151 @@
-local cheat_mode = {}
+local util = require("__EditorExtensions__/scripts/util")
 
-local constants = require("__EditorExtensions__/scripts/constants")
+local character_modifiers = {
+  character_build_distance_bonus = 1000000,
+  character_mining_speed_modifier = 2,
+  character_reach_distance_bonus = 1000000,
+  character_resource_reach_distance_bonus = 1000000,
+}
 
---- @param player LuaPlayer
---- @param skip_message boolean?
-function cheat_mode.enable_recipes(player, skip_message)
-  local force = player.force
-  local recipes = force.recipes
-  -- check if it has already been enabled for this force
-  if recipes["ee-infinity-loader"].enabled == false then
-    for _, recipe in pairs(recipes) do
-      if recipe.category == "ee-testing-tool" and not recipe.enabled then
-        recipe.enabled = true
-      end
-    end
-    if not skip_message then
-      force.print({ "ee-message.testing-tools-enabled", player.name })
-    end
-  end
-end
+local equipment_to_add = {
+  { name = "ee-infinity-fusion-reactor-equipment", position = { 0, 0 } },
+  { name = "ee-super-personal-roboport-equipment", position = { 1, 0 } },
+  { name = "ee-super-exoskeleton-equipment", position = { 2, 0 } },
+  { name = "ee-super-exoskeleton-equipment", position = { 3, 0 } },
+  { name = "ee-super-energy-shield-equipment", position = { 4, 0 } },
+  { name = "ee-super-night-vision-equipment", position = { 5, 0 } },
+  { name = "ee-super-battery-equipment", position = { 6, 0 } },
+  { name = "belt-immunity-equipment", position = { 7, 0 } },
+}
 
---- @param player LuaPlayer
---- @param skip_message boolean?
-function cheat_mode.disable_recipes(player, skip_message)
-  local force = player.force
-  local recipes = force.recipes
-  if recipes["ee-infinity-loader"].enabled then
-    for _, recipe in pairs(recipes) do
-      if recipe.category == "ee-testing-tool" then
-        recipe.enabled = false
-      end
-    end
-    if not skip_message then
-      force.print({ "ee-message.testing-tools-disabled", player.name })
-    end
-  end
-end
+local items_to_add = {
+  { name = "ee-infinity-accumulator", count = 50 },
+  { name = "ee-infinity-chest", count = 50 },
+  { name = "ee-super-construction-robot", count = 100 },
+  { name = "ee-super-inserter", count = 50 },
+  { name = "ee-infinity-loader", count = 50 },
+  { name = "ee-infinity-pipe", count = 50 },
+  { name = "ee-super-substation", count = 50 },
+}
 
---- @param inventory LuaInventory
+local items_to_remove = {
+  { name = "express-loader", count = 50 },
+  { name = "stack-inserter", count = 50 },
+  { name = "substation", count = 50 },
+  { name = "construction-robot", count = 100 },
+  { name = "electric-energy-interface", count = 1 },
+  { name = "infinity-chest", count = 20 },
+  { name = "infinity-pipe", count = 10 },
+  { name = "linked-chest", count = 10 },
+}
+
+--- @param inventory LuaInventory?
 local function set_armor(inventory)
-  if inventory[1] and inventory[1].valid_for_read and inventory[1].name == "power-armor-mk2" then
-    inventory[1].grid.clear()
-  else
-    inventory[1].set_stack({ name = "power-armor-mk2" })
+  if not inventory or not inventory.valid then
+    return
   end
+  inventory[1].set_stack({ name = "power-armor-mk2" })
   local grid = inventory[1].grid
-  local equipment_to_add = constants.cheat_mode.equipment_to_add
+  if not grid then
+    return
+  end
   for i = 1, #equipment_to_add do
     grid.put(equipment_to_add[i])
   end
 end
 
 --- @param player LuaPlayer
-function cheat_mode.set_loadout(player)
-  -- remove default items
+local function set_character_cheats(player)
+  if not player.cheat_mode or player.character_reach_distance_bonus >= 1000000 then
+    return
+  end
+  local character = player.character
+  if not character or not character.valid then
+    return
+  end
+  for modifier, amount in pairs(character_modifiers) do
+    character[modifier] = character[modifier] + amount
+  end
+end
+
+--- @param player LuaPlayer
+local function set_loadout(player)
+  -- Remove default items
   local main_inventory = player.get_main_inventory()
   if not main_inventory then
     return
   end
-  local items_to_remove = constants.cheat_mode.items_to_remove
+  local items_to_remove = items_to_remove
   for i = 1, #items_to_remove do
     main_inventory.remove(items_to_remove[i])
   end
-  -- add custom items
-  local items_to_add = constants.cheat_mode.items_to_add
+  -- Add custom items
+  local items_to_add = items_to_add
   for i = 1, #items_to_add do
     main_inventory.insert(items_to_add[i])
   end
   if player.controller_type == defines.controllers.character then
-    -- overwrite the default armor loadout
-    set_armor(
-      player.get_inventory(defines.inventory.character_armor) --[[@as LuaInventory]]
-    )
-    -- apply character cheats
-    cheat_mode.update_character_cheats(player)
+    set_armor(player.get_inventory(defines.inventory.character_armor))
+    set_character_cheats(player)
   elseif player.controller_type == defines.controllers.editor then
-    -- overwrite the default armor loadout
-    set_armor(
-      player.get_inventory(defines.inventory.editor_armor) --[[@as LuaInventory]]
-    )
-    -- if the player uses a character, apply cheats to it upon exit
-    if player.stashed_controller_type == defines.controllers.character then
-      global.players[player.index].flags.update_character_cheats_when_possible = true
+    set_armor(player.get_inventory(defines.inventory.editor_armor))
+  end
+end
+
+--- @param force LuaForce
+local function unlock_recipes(force)
+  for _, recipe in pairs(force.recipes) do
+    if recipe.category == "ee-testing-tool" then
+      recipe.enabled = true
     end
   end
 end
 
---- @param player LuaPlayer
-function cheat_mode.update_character_cheats(player)
-  -- abort if they were already applied
-  -- we can safely assume that only this mod or Creative Mod would increase the reach this much
-  if player.cheat_mode and player.character and player.character_reach_distance_bonus >= 1000000 then
+--- @param e EventData.on_console_command
+local function on_console_command(e)
+  if e.command ~= "cheat" or not game.console_command_used then
     return
   end
-  -- get all associated characters as well as the active one
-  local associated_characters = player.get_associated_characters()
-  associated_characters[#associated_characters + 1] = player.character
-  local multiplier = player.cheat_mode and 1 or -1
-  -- apply bonuses
-  for _, character in pairs(associated_characters) do
-    for modifier, amount in pairs(constants.cheat_mode.modifiers) do
-      character[modifier] = math.max(character[modifier] + (amount * multiplier), 0)
-    end
+  local player = game.get_player(e.player_index)
+  if not player or not player.valid then
+    return
+  end
+  if e.parameters == "all" then
+    set_loadout(player)
+  end
+  unlock_recipes(player.force --[[@as LuaForce]])
+  if game.is_multiplayer() then
+    player.force.print({ "message.ee-tools-enabled", player.name })
   end
 end
 
---- @param player LuaPlayer
---- @param set_loadout boolean?
-function cheat_mode.enable(player, set_loadout)
-  -- recipes will be enabled automatically
-  player.cheat_mode = true
-
-  player.force.research_all_technologies()
-
-  cheat_mode.update_character_cheats(player)
-
-  if set_loadout then
-    cheat_mode.set_loadout(player)
+--- @param e EventData.on_player_created
+local function on_player_created(e)
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+  if util.in_debug_world() or util.in_testing_scenario() then
+    set_loadout(player)
+    unlock_recipes(player.force --[[@as LuaForce]])
   end
 end
 
---- @param player LuaPlayer
---- @param player_table PlayerTable
-function cheat_mode.disable(player, player_table)
-  -- disable cheat mode
-  player.cheat_mode = false
-
-  -- remove recipes
-  cheat_mode.disable_recipes(player)
-
-  -- reset bonuses or set a flag to do so
-  if player.controller_type == defines.controllers.character then
-    cheat_mode.update_character_cheats(player)
-  elseif player.stashed_controller_type == defines.controllers.character then
-    player_table.flags.update_character_cheats_when_possible = true
+--- @param e EventData.on_player_toggled_map_editor
+local function on_player_toggled_map_editor(e)
+  local player = game.get_player(e.player_index)
+  if not player or not player.cheat_mode or player.controller_type ~= defines.controllers.character then
+    return
   end
+  set_character_cheats(player)
 end
+
+local cheat_mode = {}
+
+cheat_mode.events = {
+  [defines.events.on_console_command] = on_console_command,
+  [defines.events.on_player_created] = on_player_created,
+  [defines.events.on_player_toggled_map_editor] = on_player_toggled_map_editor,
+}
 
 return cheat_mode

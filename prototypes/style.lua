@@ -46,9 +46,16 @@ styles.ee_super_pump_per_second_label = {
 
 -- PROGRESSBAR STYLES
 
-styles.ee_production_progressbar_light_text = {
+styles.ee_infinity_pipe_progressbar = {
   type = "progressbar_style",
   parent = "production_progressbar",
+  bottom_margin = 2,
+  horizontally_stretchable = "on",
+}
+
+styles.ee_infinity_pipe_progressbar_light_text = {
+  type = "progressbar_style",
+  parent = "ee_infinity_pipe_progressbar",
   filled_font_color = default_font_color,
 }
 

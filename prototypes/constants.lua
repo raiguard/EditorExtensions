@@ -11,19 +11,6 @@ constants.aggregate_chest_icon = {
   icon_mipmaps = 4,
 }
 
--- pattern -> replacement
--- iterate through all of these to result in the base belt type
-constants.belt_name_patterns = {
-  -- better belts: https://mods.factorio.com/mod/BetterBelts
-  ["%-v%d$"] = "",
-  -- factorioextended plus transport: https://mods.factorio.com/mod/FactorioExtended-Plus-Transport
-  ["%-?transport%-belt%-to%-ground"] = "",
-  -- krastorio 2:
-  ["^kr%-?"] = "",
-  -- vanilla and 99% of mods
-  ["%-?underground%-belt"] = "",
-}
-
 constants.empty_circuit_wire_connection_points = {
   { wire = {}, shadow = {} },
   { wire = {}, shadow = {} },

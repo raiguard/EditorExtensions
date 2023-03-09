@@ -1,7 +1,27 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.13.8
+Version: 2.0.0
 Date: ????
+  Info:
+    - This is a BREAKING UPDATE. Your existing testing setups will no longer function as they once did.
   Features:
+    - Added per-player setting to automatically enable alt-mode
+    - Infinity loaders can snap to belt ghosts
+  Changes:
+    - Changed the default toggle editor hotkey to Control + Alt + E
+    - Infinity loader and linked belt no longer snap belt type - instead, they are always at the max belt speed
+    - Infinity loader only supports a single filter - to put a different item on each half of a belt, use two loaders
+    - Infinity loaders will only snap when built, and will no longer react to changes in neighboring belts
+    - Map editor availability is gated behind the "toggle map editor" permission
+    - Removed the '/cheatmode' command in favor of the built-in '/cheat' command
+      - Consequently, you can no longer enable cheat mode without disabling achievements in your game
+  Optimizations:
+    - Significantly reduced infinity loader UPS impact
+  Bugfixes:
+    - Fixed several edge cases with infinity loader filters and snapping
+    - Fixed that entering then exiting the testing lab when personal robots were deployed would leave them behind in the lab world
+    - Fixed that inventory sync would function outside of cheat mode
+    - Fixed that items on belts would be compressed when placing infinity loaders or linked belts next to them
+    - Fixed that the infinity loader was not guaranteed to fill/consume high speed belts perfectly
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.7
 Date: 2022-12-02
@@ -41,7 +61,7 @@ Date: 2022-06-21
 Version: 1.13.1
 Date: 2022-06-12
   Bugfixes:
-    - Fixed a crash when toggling the editor while holding an item from the ammor or armor inventories with inventory sync enabled (https://todo.sr.ht/~raiguard/factorio-mods/27)
+    - Fixed a crash when toggling the editor while holding an item from the ammo or armor inventories with inventory sync enabled (https://todo.sr.ht/~raiguard/factorio-mods/27)
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.0
 Date: 2022-05-29

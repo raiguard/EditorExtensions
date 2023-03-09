@@ -1,0 +1,9 @@
+{
+  "entity": [
+    [ "ee-infinity-loader-logic-combinator", "ee-infinity-loader-dummy-combinator" ]
+  ],
+  "mod-setting": [
+    [ "ee-start-in-editor", "ee-debug-world-start-in-editor" ]
+  ]
+}
+

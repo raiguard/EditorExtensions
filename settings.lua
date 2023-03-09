@@ -109,16 +109,16 @@ data:extend({
   },
   {
     type = "bool-setting",
-    name = "ee-hijack-debug-world",
+    name = "ee-testing-lab-match-research",
     setting_type = "runtime-global",
-    default_value = true,
+    default_value = false,
     order = "c",
   },
   {
     type = "bool-setting",
-    name = "ee-testing-lab-match-research",
+    name = "ee-override-debug-world",
     setting_type = "runtime-global",
-    default_value = false,
+    default_value = true,
     order = "d",
   },
   -- PLAYER SETTINGS
@@ -146,10 +146,10 @@ data:extend({
   },
   {
     type = "bool-setting",
-    name = "ee-start-in-editor",
+    name = "ee-auto-alt-mode",
     setting_type = "runtime-per-user",
-    default_value = false,
-    order = "d",
+    default_value = true,
+    order = "e",
   },
   {
     type = "string-setting",
@@ -157,6 +157,13 @@ data:extend({
     setting_type = "runtime-per-user",
     allowed_values = { "off", "personal", "shared" },
     default_value = "off",
-    order = "e",
+    order = "f",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-start-in-editor",
+    setting_type = "runtime-per-user",
+    default_value = false,
+    order = "g",
   },
 })
