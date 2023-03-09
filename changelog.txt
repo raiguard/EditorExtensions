@@ -14,7 +14,6 @@ Date: ????
     - Map editor availability is gated behind the "toggle map editor" permission
     - Removed the '/cheatmode' command in favor of the built-in '/cheat' command
       - Consequently, you can no longer enable cheat mode without disabling achievements in your game
-    - Testing tools are only available in cheat mode, and enabling cheat mode no longer unlocks them for everyone
   Optimizations:
     - Significantly reduced infinity loader UPS impact
   Bugfixes:

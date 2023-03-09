@@ -93,6 +93,15 @@ local function set_loadout(player)
   end
 end
 
+--- @param force LuaForce
+local function unlock_recipes(force)
+  for _, recipe in pairs(force.recipes) do
+    if recipe.category == "ee-testing-tool" then
+      recipe.enabled = true
+    end
+  end
+end
+
 --- @param e EventData.on_console_command
 local function on_console_command(e)
   if e.command ~= "cheat" or not game.console_command_used then
@@ -105,6 +114,10 @@ local function on_console_command(e)
   if e.parameters == "all" then
     set_loadout(player)
   end
+  unlock_recipes(player.force --[[@as LuaForce]])
+  if game.is_multiplayer() then
+    player.force.print({ "message.ee-tools-enabled", player.name })
+  end
 end
 
 --- @param e EventData.on_player_created
@@ -115,6 +128,7 @@ local function on_player_created(e)
   end
   if util.in_debug_world() or util.in_testing_scenario() then
     set_loadout(player)
+    unlock_recipes(player.force --[[@as LuaForce]])
   end
 end
 
