@@ -14,6 +14,7 @@ Finally, the mod's control scripting has been rewritten from scratch, so there m
 - raiguard]]
 
 local gui = require("__flib__/gui-lite")
+local flib_migration = require("__flib__/migration")
 
 local function remove_legacy_loaders()
   for _, loader in pairs(global.legacy_infinity_loaders or {}) do
@@ -100,7 +101,11 @@ local update_notification = {}
 --- @param e ConfigurationChangedData
 update_notification.on_configuration_changed = function(e)
   local ee_changes = e.mod_changes["EditorExtensions"]
-  if ee_changes and not ee_changes.old_version then
+  if
+    not ee_changes
+    or not ee_changes.old_version
+    or flib_migration.is_newer_version("4.0.0", ee_changes.old_version)
+  then
     return
   end
 
