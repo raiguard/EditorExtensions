@@ -13,7 +13,7 @@ Finally, the mod's control scripting has been rewritten from scratch, so there m
 
 - raiguard]]
 
-local gui = require("__flib__/gui-lite")
+local flib_gui = require("__flib__/gui-lite")
 local flib_migration = require("__flib__/migration")
 
 local function remove_legacy_loaders()
@@ -39,14 +39,14 @@ local function on_notification_confirm_clicked(e)
   window.destroy()
 end
 
-gui.add_handlers({
+flib_gui.add_handlers({
   on_notification_confirm_clicked = on_notification_confirm_clicked,
   on_notification_remove_legacy_loaders_clicked = remove_legacy_loaders,
 })
 
 --- @param player LuaPlayer
 local function create_gui(player)
-  gui.add(player.gui.screen, {
+  flib_gui.add(player.gui.screen, {
     type = "frame",
     name = "ee_update_notification_window",
     style_mods = { width = 500 },
