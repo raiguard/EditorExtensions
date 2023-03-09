@@ -121,13 +121,6 @@ data:extend({
     default_value = true,
     order = "d",
   },
-  {
-    type = "bool-setting",
-    name = "ee-testing-start-in-editor",
-    setting_type = "runtime-global",
-    default_value = false,
-    order = "e",
-  },
   -- PLAYER SETTINGS
   {
     type = "bool-setting",
@@ -165,5 +158,12 @@ data:extend({
     allowed_values = { "off", "personal", "shared" },
     default_value = "off",
     order = "f",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-start-in-editor",
+    setting_type = "runtime-per-user",
+    default_value = false,
+    order = "g",
   },
 })

@@ -19,7 +19,7 @@ end
 --- @param player LuaPlayer
 local function setup_player(player)
   player.cheat_mode = true
-  local start_in_editor = settings.global["ee-testing-start-in-editor"]
+  local start_in_editor = player.mod_settings["ee-start-in-editor"]
   if start_in_editor and start_in_editor.value then
     player.toggle_map_editor()
   end
