@@ -8,9 +8,9 @@ Date: ????
     - Infinity loaders can snap to belt ghosts
   Changes:
     - Changed the default toggle editor hotkey to Control + Alt + E
-    - Infinity loader and linked belt no longer snap belt type - instead, they are always at the max belt speed
-    - Infinity loader only supports a single filter - to put a different item on each half of a belt, use two loaders
-    - Infinity loaders will only snap when built, and will no longer react to changes in neighboring belts
+    - Infinity loader and linked belt no longer snap belt type. Instead, they are always at the max belt speed
+    - Infinity loader only supports a single filter; to put a different item on each half of a belt, use two loaders
+    - Infinity loaders will only snap when they are built; they will not snap when you place or rotate a belt in front of them
     - Map editor availability is gated behind the "toggle map editor" permission
     - Removed the '/cheatmode' command in favor of the built-in '/cheat' command
       - Consequently, you can no longer enable cheat mode without disabling achievements in your game

@@ -123,18 +123,18 @@ data:extend({
   },
   -- PLAYER SETTINGS
   {
-    type = "bool-setting",
-    name = "ee-infinity-pipe-crafter-snapping",
-    setting_type = "runtime-per-user",
-    default_value = true,
-    order = "a",
-  },
-  {
     type = "string-setting",
     name = "ee-default-infinity-filters",
     setting_type = "runtime-per-user",
     allow_blank = true,
     default_value = "",
+    order = "a",
+  },
+  {
+    type = "bool-setting",
+    name = "ee-infinity-pipe-crafter-snapping",
+    setting_type = "runtime-per-user",
+    default_value = true,
     order = "b",
   },
   {
@@ -152,18 +152,18 @@ data:extend({
     order = "e",
   },
   {
+    type = "bool-setting",
+    name = "ee-start-in-editor",
+    setting_type = "runtime-per-user",
+    default_value = false,
+    order = "f",
+  },
+  {
     type = "string-setting",
     name = "ee-testing-lab",
     setting_type = "runtime-per-user",
     allowed_values = { "off", "personal", "shared" },
     default_value = "off",
-    order = "f",
-  },
-  {
-    type = "bool-setting",
-    name = "ee-start-in-editor",
-    setting_type = "runtime-per-user",
-    default_value = false,
     order = "g",
   },
 })
