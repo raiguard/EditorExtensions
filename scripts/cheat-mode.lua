@@ -93,7 +93,16 @@ local function set_loadout(player)
 end
 
 --- @param force LuaForce
-local function unlock_recipes(force)
+local function disable_recipes(force)
+  for _, recipe in pairs(force.recipes) do
+    if recipe.category == "ee-testing-tool" then
+      recipe.enabled = false
+    end
+  end
+end
+
+--- @param force LuaForce
+local function enable_recipes(force)
   for _, recipe in pairs(force.recipes) do
     if recipe.category == "ee-testing-tool" then
       recipe.enabled = true
@@ -113,7 +122,7 @@ local function on_console_command(e)
   if e.parameters == "all" then
     set_loadout(player)
   end
-  unlock_recipes(player.force --[[@as LuaForce]])
+  enable_recipes(player.force --[[@as LuaForce]])
   if game.is_multiplayer() then
     player.force.print({ "message.ee-tools-enabled", player.name })
   end
@@ -127,7 +136,7 @@ local function on_player_created(e)
   end
   if util.in_debug_world() or util.in_testing_scenario() then
     set_loadout(player)
-    unlock_recipes(player.force --[[@as LuaForce]])
+    enable_recipes(player.force --[[@as LuaForce]])
   end
 end
 
@@ -147,5 +156,18 @@ cheat_mode.events = {
   [defines.events.on_player_created] = on_player_created,
   [defines.events.on_player_toggled_map_editor] = on_player_toggled_map_editor,
 }
+
+cheat_mode.add_remote_interface = function()
+  remote.add_interface("ee_cheat_mode", {
+    --- @param force LuaForce
+    disable_testing_recipes = function(force)
+      disable_recipes(force)
+    end,
+    --- @param force LuaForce
+    enable_testing_recipes = function(force)
+      enable_recipes(force)
+    end,
+  })
+end
 
 return cheat_mode

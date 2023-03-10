@@ -16,6 +16,9 @@ Date: ????
       - Consequently, you can no longer enable cheat mode without disabling achievements in your game
   Optimizations:
     - Significantly reduced infinity loader UPS impact
+  Compatibility:
+    - Added remote interface to enable or disable testing recipes
+    - Testing recipes will not automatically enable when entering cheat mode; `/cheat` must be used explicitly
   Bugfixes:
     - Fixed several edge cases with infinity loader filters and snapping
     - Fixed that entering then exiting the testing lab when personal robots were deployed would leave them behind in the lab world
