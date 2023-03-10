@@ -14,6 +14,7 @@ Date: ????
     - Map editor availability is gated behind the "toggle map editor" permission
     - Removed the '/cheatmode' command in favor of the built-in '/cheat' command
       - Consequently, you can no longer enable cheat mode without disabling achievements in your game
+    - Testing labs will sync active research to parent force by default (can be disabled)
   Optimizations:
     - Significantly reduced infinity loader UPS impact
   Compatibility:
