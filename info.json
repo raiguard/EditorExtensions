@@ -2,7 +2,7 @@
   "name": "EditorExtensions",
   "version": "2.0.0",
   "title": "Editor Extensions",
-  "description": "Extends the map editor with new features and tools, makes tweaks to it to facilitate easier sandbox play, and adds items and entities to assist with testing factories.\n\nThe successor to Infinity Mode, which was inspired by Creative Mode.",
+  "description": "Extends the Factorio map editor with new features, testing tools, and quality of life changes. Also adds a separate editor lab that can be used to design blueprints separately from your main factory. Inspired by Creative Mode.",
   "author": "raiguard",
   "contact": "https://github.com/raiguard/EditorExtensions",
   "homepage": "https://github.com/raiguard/EditorExtensions",
