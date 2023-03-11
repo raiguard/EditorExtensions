@@ -1,6 +1,6 @@
 {
   "name": "EditorExtensions",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "title": "Editor Extensions",
   "description": "Extends the Factorio map editor with new features, testing tools, and quality of life changes. Also adds a separate editor lab that can be used to design blueprints separately from your main factory. Inspired by Creative Mode.",
   "author": "raiguard",
