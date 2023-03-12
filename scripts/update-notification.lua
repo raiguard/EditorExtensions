@@ -46,6 +46,10 @@ flib_gui.add_handlers({
 
 --- @param player LuaPlayer
 local function create_gui(player)
+  if player.gui.screen.ee_update_notification_window then
+    return
+  end
+
   flib_gui.add(player.gui.screen, {
     type = "frame",
     name = "ee_update_notification_window",
@@ -104,7 +108,7 @@ update_notification.on_configuration_changed = function(e)
   if
     not ee_changes
     or not ee_changes.old_version
-    or flib_migration.is_newer_version("4.0.0", ee_changes.old_version)
+    or flib_migration.is_newer_version("1.99.99", ee_changes.old_version)
   then
     return
   end
