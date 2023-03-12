@@ -127,7 +127,10 @@ local function on_gui_opened(e)
   if e.gui_type ~= defines.gui_type.entity then
     return
   end
-  local entity = e.entity --[[@as LuaEntity]]
+  local entity = e.entity
+  if not entity or not entity.valid then
+    return
+  end
   if entity.name == "ee-infinity-loader" then
     global.infinity_loader_open[e.player_index] = entity
   end

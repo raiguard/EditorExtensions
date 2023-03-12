@@ -115,7 +115,10 @@ gui.add_handlers(handlers, function(e, handler)
   if not player or player.opened_gui_type ~= defines.gui_type.entity then
     return
   end
-  local entity = player.opened --[[@as LuaEntity]]
+  local entity = player.opened
+  if not entity or not entity.valid then
+    return
+  end
   if entity.name ~= "ee-super-pump" then
     return
   end
@@ -226,7 +229,10 @@ local function on_gui_opened(e)
   if not player or player.opened_gui_type ~= defines.gui_type.entity then
     return
   end
-  local entity = player.opened --[[@as LuaEntity]]
+  local entity = e.entity
+  if not entity or not entity.valid then
+    return
+  end
   if entity.name ~= "ee-super-pump" then
     return
   end
