@@ -9,7 +9,7 @@
   "factorio_version": "1.1",
   "dependencies": [
     "base >= 1.1.76",
-    "flib >= 0.12.0",
+    "flib >= 0.12.5",
     "? CursorEnhancements",
     "(?) aai-industry",
     "(?) Krastorio2",
