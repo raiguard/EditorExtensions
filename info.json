@@ -20,6 +20,6 @@
     "(?) DeadlockStackingForAngels"
   ],
   "package": {
-    "ignore": [ ".github", "imgui.ini", ".kakrc", ".mailmap", "screenshots", "stylua.toml", ".vscode" ]
+    "ignore": [ "imgui.ini", "screenshots", "stylua.toml" ]
   }
 }
