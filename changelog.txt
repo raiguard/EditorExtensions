@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.3
-Date: ????
+Date: 2023-03-19
   Bugfixes:
     - Fixed a crash when a mod destroys an open infinity loader without raising an event (#110)
     - Fixed flib dependency causing broken GUIs (#108)
