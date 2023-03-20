@@ -312,7 +312,7 @@ testing_lab.add_remote_interface = function()
       if ts_setting == "off" or not in_editor then
         return player.force
       else
-        return global.testing_lab_state[player.index].force
+        return global.testing_lab_state[player.index].normal.force
       end
     end,
   })
