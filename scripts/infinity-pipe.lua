@@ -153,7 +153,12 @@ local function update_fluid_content_bar(self)
   local capacity = fluidbox.get_capacity(1)
   local content = fluidbox[1] or { amount = 0 }
 
-  local caption = format.number(content.amount) .. " / " .. format.number(capacity)
+  local caption
+  if content.amount < 100 then
+    caption = string.format("%.1f", content.amount)
+  else
+    caption = format.number(math.floor(content.amount))
+  end
   bar.caption = caption
   bar.value = content.amount / capacity
 
