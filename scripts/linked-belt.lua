@@ -140,7 +140,7 @@ end
 --- @param e EventData.on_player_rotated_entity
 local function on_player_rotated_entity(e)
   local entity = e.entity
-  if entity.name ~= "ee-linked-belt" then
+  if not entity.valid or entity.name ~= "ee-linked-belt" then
     return
   end
 

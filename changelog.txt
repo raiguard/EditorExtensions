@@ -2,6 +2,7 @@
 Version: 2.0.5
 Date: ????
   Bugfixes:
+    - Fixed a crash when rotating an invalid entity (#112)
     - Fixed formatting of fluid content in the infinity pipe GUI (#111)
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.4
