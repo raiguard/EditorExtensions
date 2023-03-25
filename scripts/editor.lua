@@ -68,6 +68,9 @@ end
 
 --- @param e EventData.on_permission_group_edited
 local function on_permission_group_edited(e)
+  if string.find(e.type, "permission") and e.action ~= defines.input_action.toggle_map_editor then
+    return
+  end
   for _, player in pairs(e.group.players) do
     util.player_can_use_editor(player)
   end
