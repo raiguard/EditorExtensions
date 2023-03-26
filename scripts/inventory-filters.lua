@@ -252,7 +252,9 @@ end
 
 --- @param e EventData.on_player_removed
 local function on_player_removed(e)
-  global.applied_default_filters[e.player_index] = nil
+  if global.applied_default_filters then
+    global.applied_default_filters[e.player_index] = nil
+  end
 end
 
 local inventory_filters = {}
