@@ -223,6 +223,7 @@ data:extend({
     structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
+    se_allow_in_space = true,
   }),
   {
     type = "infinity-container",
@@ -432,6 +433,7 @@ if super_beacon.graphics_set.module_visualisations then
     end
   end
 end
+super_beacon.se_allow_in_space = true
 data:extend({ super_beacon })
 
 local super_electric_pole = table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])

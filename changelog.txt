@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.6
 Date: ????
-  Features:
+  Bugfixes:
+    - [Space Exploration] Fixed that the infinity loader and super beacon could not be placed in space zones (#113)
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.5
 Date: 2023-03-25
