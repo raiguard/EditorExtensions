@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.6
-Date: ????
+Date: 2023-03-26
   Bugfixes:
     - Fixed a crash when a player is removed before mod initialization is complete (#114)
     - [Space Exploration] Fixed that the infinity loader and super beacon could not be placed in space zones (#113)
