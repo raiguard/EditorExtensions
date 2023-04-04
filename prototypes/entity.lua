@@ -223,6 +223,7 @@ data:extend({
     structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
+    additional_pastable_entities = { "constant-combinator" },
     se_allow_in_space = true,
   }),
   {
@@ -271,13 +272,13 @@ for _, volume in pairs(shared_constants.infinity_pipe_capacities) do
   table.insert(pipe_names, infinity_pipe.name)
 end
 
--- Modify constant combinator to be pastable to infinity pipes
+-- Modify constant combinator to be pasteable to infinity pipes and infinity loaders
 local constant_combinator = data.raw["constant-combinator"]["constant-combinator"]
 local pastable = constant_combinator.additional_pastable_entities or {}
 if not pastable then
   pastable = {}
 end
-constant_combinator.additional_pastable_entities = table.array_merge({ pastable, pipe_names })
+constant_combinator.additional_pastable_entities = table.array_merge({ pastable, pipe_names, { "ee-infinity-loader" } })
 
 -- infinity wagons
 do

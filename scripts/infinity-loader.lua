@@ -62,6 +62,36 @@ local function sync_chest_filter(entity, chest)
   end
 end
 
+--- @param loader LuaEntity
+--- @param combinator LuaEntity
+local function copy_from_loader_to_combinator(loader, combinator)
+  local filter = loader.get_filter(1)
+  if not filter then
+    return
+  end
+  local cb = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
+  cb.set_signal(1, {
+    signal = { type = "item", name = filter },
+    count = 1,
+  })
+end
+
+--- @param combinator LuaEntity
+--- @param loader LuaEntity
+local function copy_from_combinator_to_loader(combinator, loader)
+  local cb = combinator.get_control_behavior() --[[@as LuaConstantCombinatorControlBehavior?]]
+  if not cb then
+    return
+  end
+  local signal = cb.get_signal(1)
+  if signal.signal and signal.signal.type == "item" then
+    loader.set_filter(1, signal.signal.name)
+  else
+    loader.set_filter(1, nil)
+  end
+  sync_chest_filter(loader)
+end
+
 --- @param e BuiltEvent
 local function on_built(e)
   local entity = e.entity or e.created_entity or e.destination
@@ -114,12 +144,17 @@ local function on_rotated(e)
 end
 
 --- @param e EventData.on_entity_settings_pasted
-local function on_settings_pasted(e)
-  local destination = e.destination
-  if not destination.valid or destination.name ~= "ee-infinity-loader" then
-    return
+local function on_entity_settings_pasted(e)
+  local source, destination = e.source, e.destination
+  local source_is_loader, destination_is_loader =
+    source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
+  if source_is_loader and destination.name == "constant-combinator" then
+    copy_from_loader_to_combinator(source, destination)
+  elseif source.name == "constant-combinator" and destination_is_loader then
+    copy_from_combinator_to_loader(source, destination)
+  elseif destination_is_loader then
+    sync_chest_filter(destination)
   end
-  sync_chest_filter(destination)
 end
 
 --- @param e EventData.on_gui_opened
@@ -159,7 +194,7 @@ infinity_loader.events = {
   [defines.events.on_built_entity] = on_built,
   [defines.events.on_entity_cloned] = on_built,
   [defines.events.on_entity_died] = on_destroyed,
-  [defines.events.on_entity_settings_pasted] = on_settings_pasted,
+  [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
   [defines.events.on_gui_closed] = on_gui_closed,
   [defines.events.on_gui_opened] = on_gui_opened,
   [defines.events.on_player_mined_entity] = on_destroyed,
