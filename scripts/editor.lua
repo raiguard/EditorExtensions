@@ -2,6 +2,13 @@ local util = require("__EditorExtensions__/scripts/util")
 
 local editor_gui_width = 474
 
+--- @param player LuaPlayer
+--- @return boolean
+local function se_check_not_in_spaceship(player)
+  local surface_type = remote.call("space-exploration", "get_surface_type", { surface_index = player.surface_index })
+  return surface_type ~= "spaceship"
+end
+
 --- @param e EventData.CustomInputEvent|EventData.on_lua_shortcut
 local function on_toggle_editor(e)
   local input = e.prototype_name or e.input_name
@@ -17,6 +24,11 @@ local function on_toggle_editor(e)
   local group = player.permission_group
   if not player.admin or (group and not group.allows_action(defines.input_action.toggle_map_editor)) then
     player.print({ "message.ee-cannot-use-map-editor" })
+    return
+  end
+
+  if script.active_mods["space-exploration"] and not se_check_not_in_spaceship(player) then
+    player.print({ "message.ee-cannot-use-map-editor-spaceship" })
     return
   end
 

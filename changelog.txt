@@ -2,6 +2,7 @@
 Version: 2.0.7
 Date: ????
   Bugfixes:
+    - [Space Exploration] Disallowed toggling the map editor while on a spaceship to avoid getting stuck in empty space (#116)
     - [Space Exploration] Fixed that the editor shortcut availability did not correctly handle the satellite view (#106)
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.6
