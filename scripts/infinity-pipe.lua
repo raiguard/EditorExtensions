@@ -594,6 +594,59 @@ local function create_gui(player, entity)
   update_gui(self)
 end
 
+-- COPY/PASTE
+
+--- @param pipe LuaEntity
+--- @param combinator LuaEntity
+local function copy_from_pipe_to_combinator(pipe, combinator)
+  local filter = pipe.get_infinity_pipe_filter()
+  if not filter then
+    return
+  end
+  local cb = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
+  cb.set_signal(1, {
+    signal = { type = "fluid", name = filter.name },
+    count = 1,
+  })
+  update_all_guis(pipe)
+end
+
+--- @param combinator LuaEntity
+--- @param pipe LuaEntity
+local function copy_from_combinator_to_pipe(combinator, pipe)
+  local cb = combinator.get_control_behavior() --[[@as LuaConstantCombinatorControlBehavior?]]
+  if not cb then
+    return
+  end
+  local signal = cb.get_signal(1)
+  if signal.signal and signal.signal.type == "fluid" then
+    pipe.set_infinity_pipe_filter({ type = "fluid", name = signal.signal.name, percentage = 1 })
+  else
+    pipe.set_infinity_pipe_filter(nil)
+  end
+  update_all_guis(pipe)
+end
+
+--- @param source LuaEntity
+--- @param destination LuaEntity
+local function copy_from_pipe_to_pipe(source, destination)
+  if source.name ~= destination.name then
+    local new_destination = swap_entity(destination, source.fluidbox.get_capacity(1))
+    if not new_destination then
+      return
+    end
+    destination = new_destination
+  end
+  local source_amount_type = get_stored_amount_type(source)
+  local destination_amount_type = get_stored_amount_type(destination)
+  if source_amount_type ~= destination_amount_type then
+    store_amount_type(destination, source_amount_type)
+  end
+  update_all_guis(destination)
+end
+
+-- EVENTS
+
 --- @param e BuiltEvent
 local function on_entity_built(e)
   local entity = e.created_entity or e.entity or e.destination
@@ -665,25 +718,14 @@ end
 --- @param e EventData.on_entity_settings_pasted
 local function on_entity_settings_pasted(e)
   local source, destination = e.source, e.destination
-  if not check_is_our_pipe(source) or not check_is_our_pipe(destination) then
-    return
+  local source_is_pipe, destination_is_pipe = check_is_our_pipe(source), check_is_our_pipe(destination)
+  if source_is_pipe and destination.name == "constant-combinator" then
+    copy_from_pipe_to_combinator(source, destination)
+  elseif source.name == "constant-combinator" and destination_is_pipe then
+    copy_from_combinator_to_pipe(source, destination)
+  elseif source_is_pipe and destination_is_pipe then
+    copy_from_pipe_to_pipe(source, destination)
   end
-
-  if source.name ~= destination.name then
-    local new_destination = swap_entity(destination, source.fluidbox.get_capacity(1))
-    if not new_destination then
-      return
-    end
-    destination = new_destination
-  end
-
-  local source_amount_type = get_stored_amount_type(source)
-  local destination_amount_type = get_stored_amount_type(destination)
-  if source_amount_type ~= destination_amount_type then
-    store_amount_type(destination, source_amount_type)
-  end
-
-  update_all_guis(destination)
 end
 
 local infinity_pipe = {}
