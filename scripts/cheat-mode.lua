@@ -56,7 +56,7 @@ end
 
 --- @param player LuaPlayer
 local function set_character_cheats(player)
-  if not player.cheat_mode or player.character_reach_distance_bonus >= 1000000 then
+  if player.character_reach_distance_bonus >= 1000000 then
     return
   end
   local character = player.character
