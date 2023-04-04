@@ -1,0 +1,16 @@
+api_token_env: CROWDIN_TOKEN
+project_id_env: CROWDIN_FACTORIO_MODS_ID
+preserve_hierarchy: true
+
+files:
+  - source: /locale/en/EditorExtensions.cfg
+    dest: EditorExtensions/EditorExtensions.ini
+    translation: /locale/%two_letters_code%/%original_file_name%
+    type: ini
+    update_option: update_as_unapproved
+
+  - source: /scenarios/testing/locale/en/testing.cfg
+    dest: EditorExtensions/scenarios/testing.ini
+    translation: /scenarios/testing/locale/%two_letters_code%/%original_file_name%
+    type: ini
+    update_option: update_as_unapproved
