@@ -14,6 +14,9 @@ local function setup_force(force)
   force.max_successful_attempts_per_tick_per_construction_queue = 30
   force.max_failed_attempts_per_tick_per_construction_queue = 10
   force.research_all_technologies()
+  if util.in_testing_scenario() then
+    force.rechart()
+  end
 end
 
 --- @param player LuaPlayer
