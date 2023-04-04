@@ -55,6 +55,29 @@ local function on_player_created(e)
   end
 end
 
+--- @param e EventData.on_surface_cleared
+local function on_surface_cleared(e)
+  if not util.in_debug_world() then
+    return
+  end
+  local surface = game.get_surface(e.surface_index)
+  if not surface then
+    return
+  end
+  surface.create_entity({
+    name = "ee-infinity-accumulator-primary-output",
+    position = { -24, -24 },
+    force = game.forces.player,
+    create_build_effect_smoke = false,
+  })
+  surface.create_entity({
+    name = "ee-super-substation",
+    position = { -22, -24 },
+    force = game.forces.player,
+    create_build_effect_smoke = false,
+  })
+end
+
 local function on_init()
   if not util.in_debug_world() and not util.in_testing_scenario() then
     return
@@ -81,6 +104,7 @@ debug_world.on_init = on_init
 debug_world.events = {
   [defines.events.on_force_created] = on_force_created,
   [defines.events.on_player_created] = on_player_created,
+  [defines.events.on_surface_cleared] = on_surface_cleared,
 }
 
 return debug_world

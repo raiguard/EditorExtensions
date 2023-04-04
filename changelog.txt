@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.0
 Date: ????
+  Features:
+    - Added a super substation and infinity accumulator to the debug world
   Changes:
     - Changed the map colors of lab tiles when using the "all light" graphics option to make them visible on the map (#117)
   Bugfixes:
