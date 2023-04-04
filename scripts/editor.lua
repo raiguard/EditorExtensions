@@ -76,6 +76,28 @@ local function on_permission_group_edited(e)
   end
 end
 
+--- @class SERemoteViewToggledEventData: EventData
+--- @field player_index uint
+
+local function register_se_events()
+  local se = remote.interfaces["space-exploration"]
+  if not se then
+    return
+  end
+  if se.get_on_remote_view_started_event then
+    script.on_event(remote.call("space-exploration", "get_on_remote_view_started_event"), function(e)
+      --- @cast e SERemoteViewToggledEventData
+      game.get_player(e.player_index).set_shortcut_available("ee-toggle-map-editor", false)
+    end)
+  end
+  if se.get_on_remote_view_stopped_event then
+    script.on_event(remote.call("space-exploration", "get_on_remote_view_stopped_event"), function(e)
+      --- @cast e SERemoteViewToggledEventData
+      util.player_can_use_editor(game.get_player(e.player_index) --[[@as LuaPlayer]])
+    end)
+  end
+end
+
 local editor = {}
 
 editor.on_init = function()
@@ -83,7 +105,10 @@ editor.on_init = function()
     --- @cast player_index uint
     on_player_created({ player_index = player_index })
   end
+  register_se_events()
 end
+
+editor.on_load = register_se_events
 
 editor.on_configuration_changed = function()
   for _, player in pairs(game.players) do
