@@ -93,7 +93,7 @@ local function copy_from_combinator_to_loader(combinator, loader)
 end
 
 --- @param e BuiltEvent
-local function on_built(e)
+local function on_entity_built(e)
   local entity = e.entity or e.created_entity or e.destination
   if not entity.valid then
     return
@@ -123,7 +123,7 @@ local function on_built(e)
 end
 
 --- @param e DestroyedEvent
-local function on_destroyed(e)
+local function on_entity_destroyed(e)
   local entity = e.entity
   if not entity.valid or entity.name ~= "ee-infinity-loader" then
     return
@@ -135,7 +135,7 @@ local function on_destroyed(e)
 end
 
 --- @param e EventData.on_player_rotated_entity
-local function on_rotated(e)
+local function on_entity_rotated(e)
   local entity = e.entity
   if not entity.valid or entity.name ~= "ee-infinity-loader" then
     return
@@ -191,19 +191,19 @@ function infinity_loader.on_init()
 end
 
 infinity_loader.events = {
-  [defines.events.on_built_entity] = on_built,
-  [defines.events.on_entity_cloned] = on_built,
-  [defines.events.on_entity_died] = on_destroyed,
+  [defines.events.on_built_entity] = on_entity_built,
+  [defines.events.on_entity_cloned] = on_entity_built,
+  [defines.events.on_entity_died] = on_entity_destroyed,
   [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
   [defines.events.on_gui_closed] = on_gui_closed,
   [defines.events.on_gui_opened] = on_gui_opened,
-  [defines.events.on_player_mined_entity] = on_destroyed,
-  [defines.events.on_player_rotated_entity] = on_rotated,
-  [defines.events.on_robot_built_entity] = on_built,
-  [defines.events.on_robot_mined_entity] = on_destroyed,
-  [defines.events.script_raised_built] = on_built,
-  [defines.events.script_raised_destroy] = on_destroyed,
-  [defines.events.script_raised_revive] = on_built,
+  [defines.events.on_player_mined_entity] = on_entity_destroyed,
+  [defines.events.on_player_rotated_entity] = on_entity_rotated,
+  [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.on_robot_mined_entity] = on_entity_destroyed,
+  [defines.events.script_raised_built] = on_entity_built,
+  [defines.events.script_raised_destroy] = on_entity_destroyed,
+  [defines.events.script_raised_revive] = on_entity_built,
 }
 
 infinity_loader.on_nth_tick = {
