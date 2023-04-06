@@ -4,9 +4,13 @@ local editor_gui_width = 474
 
 --- @param player LuaPlayer
 --- @return boolean
-local function se_check_not_in_spaceship(player)
+local function se_check_in_spaceship(player)
+  local se_interface = remote.interfaces["space-exploration"]
+  if not se_interface or not se_interface.get_surface_type then
+    return false
+  end
   local surface_type = remote.call("space-exploration", "get_surface_type", { surface_index = player.surface_index })
-  return surface_type ~= "spaceship"
+  return surface_type == "spaceship"
 end
 
 --- @param e EventData.CustomInputEvent|EventData.on_lua_shortcut
@@ -27,8 +31,9 @@ local function on_toggle_editor(e)
     return
   end
 
-  if script.active_mods["space-exploration"] and not se_check_not_in_spaceship(player) then
-    player.print({ "message.ee-cannot-use-map-editor-spaceship" })
+  local lab_setting = player.mod_settings["ee-testing-lab"].value
+  if lab_setting ~= "off" and se_check_in_spaceship(player) then
+    player.print({ "message.ee-cannot-use-testing-lab-spaceship" })
     return
   end
 
