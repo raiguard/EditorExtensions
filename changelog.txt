@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.1
-Date: ????
+Date: 2023-04-06
   Changes:
     - [Space Exploration] Changed spaceship editor restriction to only apply when the testing lab is enabled (#123)
     - Updated translations from Crowdin
