@@ -176,7 +176,7 @@ local function build_relative_gui(player)
   gui.add(player.gui.relative, {
     type = "frame",
     name = "ee_inventory_filters",
-    style = "quick_bar_window_frame",
+    style = "slot_window_frame",
     anchor = {
       gui = defines.relative_gui_type.controller_gui,
       position = defines.relative_gui_position.left,

@@ -93,7 +93,7 @@ constants.module_data = {
     order = "ba",
     category = "speed",
     tier = 50,
-    effect = { speed = { bonus = 2.5 } },
+    effect = { speed = 2.5 },
     tint = { r = 0.4, g = 0.6, b = 1 },
   },
   {
@@ -102,7 +102,7 @@ constants.module_data = {
     order = "bb",
     category = "effectivity",
     tier = 50,
-    effect = { consumption = { bonus = -2.5 } },
+    effect = { consumption = -2.5 },
     tint = { r = 0.4, g = 1, b = 0.4 },
   },
   {
@@ -111,7 +111,7 @@ constants.module_data = {
     order = "bc",
     category = "productivity",
     tier = 50,
-    effect = { productivity = { bonus = 2.5 } },
+    effect = { productivity = 2.5 },
     tint = { r = 1, g = 0.4, b = 0.4 },
   },
   {
@@ -120,7 +120,7 @@ constants.module_data = {
     order = "bd",
     category = "effectivity",
     tier = 50,
-    effect = { pollution = { bonus = -2.5 } },
+    effect = { pollution = -2.5 },
     tint = { r = 0.4, g = 1, b = 1 },
   },
   {
@@ -129,7 +129,7 @@ constants.module_data = {
     order = "ca",
     category = "speed",
     tier = 50,
-    effect = { speed = { bonus = -2.5 } },
+    effect = { speed = -2.5 },
     tint = { r = 0.4, g = 0.6, b = 1 },
   },
   {
@@ -138,7 +138,7 @@ constants.module_data = {
     order = "cb",
     category = "effectivity",
     tier = 50,
-    effect = { consumption = { bonus = 2.5 } },
+    effect = { consumption = 2.5 },
     tint = { r = 0.4, g = 1, b = 0.4 },
   },
   {
@@ -147,7 +147,7 @@ constants.module_data = {
     order = "cc",
     category = "effectivity",
     tier = 50,
-    effect = { pollution = { bonus = 2.5 } },
+    effect = { pollution = 2.5 },
     tint = { r = 0.4, g = 1, b = 1 },
   },
 }

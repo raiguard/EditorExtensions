@@ -204,7 +204,7 @@ data:extend({
     name = "ee-linked-belt",
     icons = "CONVERT",
     minable = { mining_time = 0.1, result = "ee-linked-belt" },
-    belt_animation_set = table.deepcopy(express_belt_animation_set),
+    belt_animation_set = table.deepcopy(data.raw["transport-belt"]["express-transport-belt"].belt_animation_set),
     allow_side_loading = true,
   }, constants.linked_belt_tint),
   util.recursive_tint({
@@ -216,7 +216,7 @@ data:extend({
     collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
     selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
     animation_speed_coefficient = 32,
-    belt_animation_set = table.deepcopy(fast_belt_animation_set),
+    belt_animation_set = table.deepcopy(data.raw["transport-belt"]["fast-transport-belt"].belt_animation_set),
     speed = 0.03125, -- Temporary, will be overwritten in data-final-fixes
     container_distance = 0,
     filter_count = 1,
@@ -341,19 +341,21 @@ do
   infinity_wagon_chest.icons = util.recursive_tint(util.extract_icon_info(infinity_wagon_chest))
   infinity_wagon_chest.subgroup = nil
   infinity_wagon_chest.picture = constants.empty_sheet
-  infinity_wagon_chest.collision_mask = { "layer-15" }
+  -- infinity_wagon_chest.collision_mask = { "layer-15" }
   infinity_wagon_chest.selection_box = nil
   infinity_wagon_chest.selectable_in_game = false
-  infinity_wagon_chest.flags = { "hide-alt-info", "hidden" }
+  infinity_wagon_chest.flags = { "hide-alt-info" }
+  infinity_wagon_chest.hidden = true
 
   local infinity_wagon_pipe = table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
   infinity_wagon_pipe.name = "ee-infinity-wagon-pipe"
   infinity_wagon_pipe.icons = util.recursive_tint({ infinity_wagon_pipe.icons[1] })
-  infinity_wagon_pipe.collision_mask = { "layer-15" }
+  -- infinity_wagon_pipe.collision_mask = { "layer-15" }
   infinity_wagon_pipe.selection_box = nil
   infinity_wagon_pipe.selectable_in_game = false
   infinity_wagon_pipe.order = "a"
-  infinity_wagon_pipe.flags = { "hide-alt-info", "hidden" }
+  infinity_wagon_pipe.flags = { "hide-alt-info" }
+  infinity_wagon_pipe.hidden = true
   infinity_wagon_pipe.gui_mode = "all"
 
   for k in pairs(infinity_wagon_pipe.pictures) do

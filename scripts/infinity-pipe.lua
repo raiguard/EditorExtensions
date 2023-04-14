@@ -496,7 +496,7 @@ local function create_gui(player, entity)
       { type = "line", direction = "horizontal" },
       {
         type = "flow",
-        style = "centering_horizontal_flow",
+        style_mods = { vertical_align = "center" },
         direction = "horizontal",
         {
           type = "choose-elem-button",
@@ -551,7 +551,7 @@ local function create_gui(player, entity)
       { type = "line", direction = "horizontal" },
       {
         type = "flow",
-        style = "centering_horizontal_flow",
+        style_mods = { vertical_align = "center" },
         direction = "horizontal",
         { type = "label", caption = { "gui-infinity-pipe.temperature" } },
         {

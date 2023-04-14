@@ -149,7 +149,7 @@ local function create_gui(player)
       {
         type = "flow",
         name = "inner_flow",
-        style = "centering_horizontal_flow",
+        style_mods = { vertical_align = "center" },
         { type = "label", caption = { "gui.ee-speed" }, tooltip = { "gui.ee-speed-tooltip" } },
         {
           type = "slider",
