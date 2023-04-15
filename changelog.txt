@@ -2,6 +2,7 @@
 Version: 2.1.2
 Date: ????
   Bugfixes:
+    - Fixed being unable to enter decimal values in the infinity accumulator GUI (#124)
     - Fixed being unable to load testing scenarios from before 1.13.7 (#127)
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.1
