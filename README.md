@@ -65,6 +65,6 @@ roboport with super robots that can build or destroy anything you want. The
 scenario also massively increases the speed at which construction orders are
 dispatched.
 
+aforementioned improvements, except for a pre-built roboport and radar.
+game" buttons on the main menu) is optionally enhanced with all of the
 The debug world (accessed by control + clicking the "single player" or "new
-game" buttons on the main menu) is also overridden to have all the same effects
-as the testing scenario, except for the pre-built entities.
