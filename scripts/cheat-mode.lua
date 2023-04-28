@@ -1,4 +1,4 @@
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local character_modifiers = {
   character_build_distance_bonus = 1000000,
@@ -107,6 +107,9 @@ local function enable_recipes(force)
     if recipe.category == "ee-testing-tool" then
       recipe.enabled = true
     end
+  end
+  for _, player in pairs(force.players) do
+    player.clear_recipe_notifications()
   end
 end
 

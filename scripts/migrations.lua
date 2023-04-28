@@ -1,12 +1,12 @@
-local flib_migration = require("__flib__/migration")
+local flib_migration = require("__flib__.migration")
 
-local aggregate_chest = require("__EditorExtensions__/scripts/aggregate-chest")
-local infinity_accumulator = require("__EditorExtensions__/scripts/infinity-accumulator")
-local infinity_loader = require("__EditorExtensions__/scripts/infinity-loader")
-local infinity_pipe = require("__EditorExtensions__/scripts/infinity-pipe")
-local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
-local inventory_sync = require("__EditorExtensions__/scripts/inventory-sync")
-local linked_belt = require("__EditorExtensions__/scripts/linked-belt")
+local aggregate_chest = require("scripts.aggregate-chest")
+local infinity_accumulator = require("scripts.infinity-accumulator")
+local infinity_loader = require("scripts.infinity-loader")
+local infinity_pipe = require("scripts.infinity-pipe")
+local inventory_filters = require("scripts.inventory-filters")
+local inventory_sync = require("scripts.inventory-sync")
+local linked_belt = require("scripts.linked-belt")
 
 local version_migrations = {
   ["2.0.0"] = function()

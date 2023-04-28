@@ -1,11 +1,11 @@
-local format = require("__flib__/format")
-local gui = require("__flib__/gui-lite")
-local math = require("__flib__/math")
-local table = require("__flib__/table")
+local format = require("__flib__.format")
+local gui = require("__flib__.gui-lite")
+local math = require("__flib__.math")
+local table = require("__flib__.table")
 
-local shared_constants = require("__EditorExtensions__/shared-constants")
+local shared_constants = require("shared-constants")
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local crafter_snapping_types = {
   ["assembling-machine"] = true,
@@ -148,6 +148,9 @@ end
 
 --- @param self InfinityPipeGui
 local function update_fluid_content_bar(self)
+  if not self.entity.valid then
+    return
+  end
   local bar = self.elems.amount_progressbar
   local fluidbox = self.entity.fluidbox
   local capacity = fluidbox.get_capacity(1)
@@ -241,6 +244,15 @@ local function update_gui(self, new_entity, reset_temperature)
   elems.temperature_textfield.text = tostring(self.temperature)
 
   update_fluid_content_bar(self)
+end
+
+--- @param entity LuaEntity
+local function destroy_all_guis(entity)
+  for player_index, gui in pairs(global.infinity_pipe_gui) do
+    if not gui.entity.valid or gui.entity == entity then
+      destroy_gui(player_index)
+    end
+  end
 end
 
 --- @param entity LuaEntity
@@ -671,6 +683,7 @@ local function on_entity_destroyed(e)
     return
   end
   remove_stored_amount_type(e.entity)
+  destroy_all_guis(entity)
 end
 
 --- @param e EventData.on_gui_opened
@@ -718,6 +731,9 @@ end
 --- @param e EventData.on_entity_settings_pasted
 local function on_entity_settings_pasted(e)
   local source, destination = e.source, e.destination
+  if not source.valid or not destination.valid then
+    return
+  end
   local source_is_pipe, destination_is_pipe = check_is_our_pipe(source), check_is_our_pipe(destination)
   if source_is_pipe and destination.name == "constant-combinator" then
     copy_from_pipe_to_combinator(source, destination)
@@ -731,6 +747,7 @@ end
 local infinity_pipe = {}
 
 infinity_pipe.on_init = function()
+  --- @type table<uint, InfinityPipeGui>
   global.infinity_pipe_gui = {}
   --- @type table<uint, uint>
   global.infinity_pipe_amount_type = {}

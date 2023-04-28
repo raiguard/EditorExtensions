@@ -1,7 +1,59 @@
 ---------------------------------------------------------------------------------------------------
-Version: 2.1.2
+Version: 2.2.5
 Date: ????
+  Changes:
+---------------------------------------------------------------------------------------------------
+Version: 2.2.4
+Date: 2023-12-20
+  Bugfixes:
+    - Fixed accidental log spam when removing an infinity wagon. (#159)
+---------------------------------------------------------------------------------------------------
+Version: 2.2.3
+Date: 2023-12-12
+  Bugfixes:
+    - Fixed a small typo in the testing lab warning message. (#156)
+    - Fixed that infinity wagon proxies could become orphaned and never be cleaned up. (#151)
+---------------------------------------------------------------------------------------------------
+Version: 2.2.2
+Date: 2023-10-14
+  Bugfixes:
+    - Fixed that mining an infinity pipe with the GUI open would not close the GUI (#149).
+    - Fixed that infinity loaders had the wrong map color (#150).
+---------------------------------------------------------------------------------------------------
+Version: 2.2.1
+Date: 2023-08-30
+  Bugfixes:
+    - Fixed an occasional crash when copy/pasting settings on an infinity accumulator (#146)
+---------------------------------------------------------------------------------------------------
+Version: 2.2.0
+Date: 2023-08-25
   Features:
+    - If you are riding a vehicle when you toggle the testing lab, you will return to that vehicle when toggling back (#144)
+  Bugfixes:
+    - Fixed being unable to load the game when using the Polish language for real this time (#142)
+    - Fixed that exiting the testing lab with a full inventory when the testing force has a larger inventory slots bonus than the real force would spill items into the real world (they now spill into the lab instead) (#143)
+---------------------------------------------------------------------------------------------------
+Version: 2.1.5
+Date: 2023-07-04
+  Bugfixes:
+    - Fixed being unable to load the game when using the Polish language (#142)
+---------------------------------------------------------------------------------------------------
+Version: 2.1.4
+Date: 2023-06-24
+  Bugfixes:
+    - Fixed a crash when a mod calls get_player_proper_force before mod initialization has completed (#141)
+---------------------------------------------------------------------------------------------------
+Version: 2.1.3
+Date: 2023-06-04
+  Bugfixes:
+    - Fixed a crash when removing an infinity pipe with its GUI open (#134)
+    - Fixed that recipe notifications were not cleared when using /cheat (#137)
+---------------------------------------------------------------------------------------------------
+Version: 2.1.2
+Date: 2023-04-15
+  Bugfixes:
+    - Fixed being unable to enter decimal values in the infinity accumulator GUI (#124)
+    - Fixed being unable to load testing scenarios from before 1.13.7 (#127)
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.1
 Date: 2023-04-06

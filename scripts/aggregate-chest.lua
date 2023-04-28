@@ -1,4 +1,4 @@
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local aggregate_chest_names = {
   ["ee-aggregate-chest"] = "ee-aggregate-chest",
@@ -38,7 +38,7 @@ local function build_filter_cache()
 end
 
 --- @param e BuiltEvent
-local function on_built(e)
+local function on_entity_built(e)
   local entity = e.created_entity or e.entity or e.destination
   if not entity or not entity.valid or not aggregate_chest_names[entity.name] then
     return
@@ -47,7 +47,7 @@ local function on_built(e)
 end
 
 --- @param e EventData.on_player_setup_blueprint
-local function on_setup_blueprint(e)
+local function on_player_setup_blueprint(e)
   local blueprint = util.get_blueprint(e)
   if not blueprint then
     return
@@ -79,12 +79,12 @@ aggregate_chest.on_configuration_changed = function()
 end
 
 aggregate_chest.events = {
-  [defines.events.on_built_entity] = on_built,
-  [defines.events.on_entity_cloned] = on_built,
-  [defines.events.on_player_setup_blueprint] = on_setup_blueprint,
-  [defines.events.on_robot_built_entity] = on_built,
-  [defines.events.script_raised_built] = on_built,
-  [defines.events.script_raised_revive] = on_built,
+  [defines.events.on_built_entity] = on_entity_built,
+  [defines.events.on_entity_cloned] = on_entity_built,
+  [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
+  [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.script_raised_built] = on_entity_built,
+  [defines.events.script_raised_revive] = on_entity_built,
 }
 
 return aggregate_chest

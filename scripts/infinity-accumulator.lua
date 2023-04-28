@@ -1,8 +1,8 @@
-local gui = require("__flib__/gui-lite")
-local math = require("__flib__/math")
-local table = require("__flib__/table")
+local gui = require("__flib__.gui-lite")
+local math = require("__flib__.math")
+local table = require("__flib__.table")
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local si_suffixes_joule = { "kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ" }
 local si_suffixes_watt = { "kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW" }
@@ -104,7 +104,7 @@ local function get_slider_values(buffer_size, mode)
   -- `power` is the dropdown value - how many sets of three orders of magnitude there are, rounded down
   local power = math.floor((len - 1) / 3)
   -- Slider value is the buffer size scaled to its base-three order of magnitude
-  return math.floor(buffer_size / 10 ^ (power * 3)) --[[@as uint]],
+  return buffer_size / 10 ^ (power * 3) --[[@as uint]],
     math.max(power, 1) --[[@as uint]]
 end
 
@@ -238,6 +238,9 @@ local handlers = {
       return
     end
     textfield.style = "ee_slider_textfield"
+    if string.sub(text, #text) == "." then
+      return
+    end
 
     self.elems.power_slider.slider_value = value
 
@@ -466,11 +469,11 @@ end
 
 infinity_accumulator.events = {
   [defines.events.on_entity_died] = on_entity_destroyed,
+  [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
   [defines.events.on_gui_opened] = on_gui_opened,
   [defines.events.on_player_mined_entity] = on_entity_destroyed,
   [defines.events.on_robot_mined_entity] = on_entity_destroyed,
   [defines.events.script_raised_destroy] = on_entity_destroyed,
-  [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
 }
 
 return infinity_accumulator
