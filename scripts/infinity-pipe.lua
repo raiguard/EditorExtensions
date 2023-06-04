@@ -148,6 +148,9 @@ end
 
 --- @param self InfinityPipeGui
 local function update_fluid_content_bar(self)
+  if not self.entity.valid then
+    return
+  end
   local bar = self.elems.amount_progressbar
   local fluidbox = self.entity.fluidbox
   local capacity = fluidbox.get_capacity(1)
