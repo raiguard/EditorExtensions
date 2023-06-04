@@ -108,6 +108,9 @@ local function enable_recipes(force)
       recipe.enabled = true
     end
   end
+  for _, player in pairs(force.players) do
+    player.clear_recipe_notifications()
+  end
 end
 
 --- @param e EventData.on_console_command

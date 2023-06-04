@@ -3,6 +3,7 @@ Version: 2.1.3
 Date: ????
   Bugfixes:
     - Fixed a crash when removing an infinity pipe with its GUI open (#134)
+    - Fixed that recipe notifications were not cleared when using /cheat (#137)
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.2
 Date: 2023-04-15
