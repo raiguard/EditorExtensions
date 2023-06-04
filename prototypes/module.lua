@@ -7,6 +7,7 @@ local module_template = {
   subgroup = "ee-modules",
   stack_size = 50,
   art_style = "vanilla",
+  flags = { "hidden" },
 }
 
 for _, module_data in pairs(constants.module_data) do

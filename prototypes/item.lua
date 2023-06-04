@@ -12,6 +12,7 @@ data:extend({
     place_result = "ee-infinity-accumulator-primary-output",
     subgroup = "ee-electricity",
     order = "a",
+    flags = { "hidden" },
   },
 })
 
@@ -22,6 +23,7 @@ infinity_cargo_wagon.place_result = "ee-infinity-cargo-wagon"
 infinity_cargo_wagon.subgroup = "ee-trains"
 infinity_cargo_wagon.order = "ba"
 infinity_cargo_wagon.stack_size = 50
+infinity_cargo_wagon.flags = { "hidden" }
 data:extend({ infinity_cargo_wagon })
 
 -- infinity and aggregate chests
@@ -40,7 +42,7 @@ do
     chest.place_result = "ee-infinity-chest" .. suffix
     chest.subgroup = "ee-inventories"
     chest.order = t.o
-    chest.flags = {}
+    chest.flags = { "hidden" }
     data:extend({ chest })
   end
 
@@ -56,7 +58,7 @@ do
     chest.place_result = "ee-aggregate-chest" .. suffix
     chest.subgroup = "ee-inventories"
     chest.order = t.o
-    chest.flags = {}
+    chest.flags = { "hidden" }
     data:extend({ chest })
   end
 end
@@ -68,6 +70,7 @@ infinity_fluid_wagon.place_result = "ee-infinity-fluid-wagon"
 infinity_fluid_wagon.subgroup = "ee-trains"
 infinity_fluid_wagon.order = "bb"
 infinity_fluid_wagon.stack_size = 50
+infinity_fluid_wagon.flags = { "hidden" }
 data:extend({ infinity_fluid_wagon })
 
 -- infinity fusion reactor
@@ -81,6 +84,7 @@ data:extend({
     order = "aa",
     placed_as_equipment_result = "ee-infinity-fusion-reactor-equipment",
     stack_size = 50,
+    flags = { "hidden" },
   },
 })
 
@@ -94,6 +98,7 @@ infinity_heat_pipe.stack_size = 50
 infinity_heat_pipe.flags = {}
 infinity_heat_pipe.icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["heat-pipe"], true))
 infinity_heat_pipe.place_result = "ee-infinity-heat-pipe"
+infinity_heat_pipe.flags = { "hidden" }
 data:extend({ infinity_heat_pipe })
 
 -- infinity loader
@@ -110,6 +115,7 @@ data:extend({
     subgroup = "ee-misc",
     order = "aa",
     place_result = "ee-infinity-loader",
+    flags = { "hidden" },
   },
 })
 
@@ -120,7 +126,7 @@ infinity_pipe.subgroup = "ee-misc"
 infinity_pipe.order = "ba"
 infinity_pipe.stack_size = 50
 infinity_pipe.place_result = "ee-infinity-pipe-100"
-infinity_pipe.flags = {}
+infinity_pipe.flags = { "hidden" }
 data:extend({ infinity_pipe })
 
 local linked_belt = table.deepcopy(data.raw["item"]["linked-belt"])
@@ -130,7 +136,7 @@ linked_belt.icons = util.extract_icon_info(linked_belt)
 linked_belt.subgroup = "ee-misc"
 linked_belt.order = "ab"
 linked_belt.stack_size = 50
-linked_belt.flags = {}
+linked_belt.flags = { "hidden" }
 linked_belt.place_result = "ee-linked-belt"
 util.recursive_tint(linked_belt, constants.linked_belt_tint)
 data:extend({ linked_belt })
@@ -144,7 +150,7 @@ linked_chest.subgroup = "ee-inventories"
 linked_chest.order = "c"
 linked_chest.stack_size = 50
 linked_chest.place_result = "ee-linked-chest"
-linked_chest.flags = {}
+linked_chest.flags = { "hidden" }
 util.recursive_tint(linked_chest, constants.infinity_chest_data[1].t)
 data:extend({ linked_chest })
 
@@ -154,6 +160,7 @@ super_beacon.icons = util.recursive_tint(util.extract_icon_info(super_beacon))
 super_beacon.place_result = "ee-super-beacon"
 super_beacon.subgroup = "ee-modules"
 super_beacon.order = "aa"
+super_beacon.flags = { "hidden" }
 data:extend({ super_beacon })
 
 local super_construction_robot = table.deepcopy(data.raw["item"]["construction-robot"])
@@ -163,6 +170,7 @@ super_construction_robot.place_result = "ee-super-construction-robot"
 super_construction_robot.subgroup = "ee-robots"
 super_construction_robot.order = "ba"
 super_construction_robot.stack_size = 100
+super_construction_robot.flags = { "hidden" }
 data:extend({ super_construction_robot })
 
 local super_electric_pole = table.deepcopy(data.raw["item"]["big-electric-pole"])
@@ -171,6 +179,7 @@ super_electric_pole.icons = util.recursive_tint(util.extract_icon_info(super_ele
 super_electric_pole.place_result = "ee-super-electric-pole"
 super_electric_pole.subgroup = "ee-electricity"
 super_electric_pole.order = "ba"
+super_electric_pole.flags = { "hidden" }
 data:extend({ super_electric_pole })
 
 -- super energy shield
@@ -184,6 +193,7 @@ data:extend({
     order = "ad",
     placed_as_equipment_result = "ee-super-energy-shield-equipment",
     stack_size = 50,
+    flags = { "hidden" },
   },
 })
 
@@ -198,6 +208,7 @@ data:extend({
     order = "ac",
     placed_as_equipment_result = "ee-super-exoskeleton-equipment",
     stack_size = 50,
+    flags = { "hidden" },
   },
 })
 
@@ -209,6 +220,7 @@ super_fuel.stack_size = 100
 super_fuel.fuel_value = "1000YJ"
 super_fuel.subgroup = "ee-trains"
 super_fuel.order = "c"
+super_fuel.flags = { "hidden" }
 data:extend({ super_fuel })
 
 local super_inserter = table.deepcopy(data.raw["item"]["filter-inserter"])
@@ -217,6 +229,7 @@ super_inserter.icons = util.recursive_tint(util.extract_icon_info(super_inserter
 super_inserter.place_result = "ee-super-inserter"
 super_inserter.subgroup = "ee-misc"
 super_inserter.order = "ac"
+super_inserter.flags = { "hidden" }
 data:extend({ super_inserter })
 
 local super_lab = table.deepcopy(data.raw["item"]["lab"])
@@ -225,6 +238,7 @@ super_lab.icons = util.recursive_tint(util.extract_icon_info(super_lab))
 super_lab.place_result = "ee-super-lab"
 super_lab.subgroup = "ee-misc"
 super_lab.order = "ea"
+super_lab.flags = { "hidden" }
 data:extend({ super_lab })
 
 local super_locomotive = table.deepcopy(data.raw["item-with-entity-data"]["locomotive"])
@@ -234,6 +248,7 @@ super_locomotive.place_result = "ee-super-locomotive"
 super_locomotive.subgroup = "ee-trains"
 super_locomotive.order = "aa"
 super_locomotive.stack_size = 50
+super_locomotive.flags = { "hidden" }
 data:extend({ super_locomotive })
 
 local super_logistic_robot = table.deepcopy(data.raw["item"]["logistic-robot"])
@@ -243,6 +258,7 @@ super_logistic_robot.place_result = "ee-super-logistic-robot"
 super_logistic_robot.subgroup = "ee-robots"
 super_logistic_robot.order = "bb"
 super_logistic_robot.stack_size = 100
+super_logistic_robot.flags = { "hidden" }
 data:extend({ super_logistic_robot })
 
 -- super night vision
@@ -256,6 +272,7 @@ data:extend({
     order = "ae",
     placed_as_equipment_result = "ee-super-night-vision-equipment",
     stack_size = 50,
+    flags = { "hidden" },
   },
 })
 
@@ -270,6 +287,7 @@ data:extend({
     order = "af",
     placed_as_equipment_result = "ee-super-battery-equipment",
     stack_size = 50,
+    flags = { "hidden" },
   },
 })
 
@@ -284,6 +302,7 @@ data:extend({
     order = "ab",
     placed_as_equipment_result = "ee-super-personal-roboport-equipment",
     stack_size = 50,
+    flags = { "hidden" },
   },
 })
 
@@ -293,6 +312,7 @@ super_pump.icons = util.recursive_tint(util.extract_icon_info(super_pump))
 super_pump.place_result = "ee-super-pump"
 super_pump.subgroup = "ee-misc"
 super_pump.order = "bb"
+super_pump.flags = { "hidden" }
 data:extend({ super_pump })
 
 local super_radar = table.deepcopy(data.raw["item"]["radar"])
@@ -301,6 +321,7 @@ super_radar.icons = util.recursive_tint(util.extract_icon_info(super_radar))
 super_radar.place_result = "ee-super-radar"
 super_radar.subgroup = "ee-misc"
 super_radar.order = "da"
+super_radar.flags = { "hidden" }
 data:extend({ super_radar })
 
 local super_roboport = table.deepcopy(data.raw["item"]["roboport"])
@@ -310,6 +331,7 @@ super_roboport.place_result = "ee-super-roboport"
 super_roboport.subgroup = "ee-robots"
 super_roboport.order = "a"
 super_roboport.stack_size = 50
+super_roboport.flags = { "hidden" }
 data:extend({ super_roboport })
 
 local super_substation = table.deepcopy(data.raw["item"]["substation"])
@@ -318,4 +340,5 @@ super_substation.icons = util.recursive_tint(util.extract_icon_info(super_substa
 super_substation.place_result = "ee-super-substation"
 super_substation.subgroup = "ee-electricity"
 super_substation.order = "bb"
+super_substation.flags = { "hidden" }
 data:extend({ super_substation })
