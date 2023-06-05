@@ -13,6 +13,7 @@ data:extend({
   {
     type = "shortcut",
     name = "ee-toggle-map-editor",
+    order = "c[toggles]-m[map-editor]",
     icon = shortcut_sprite("x32.png", 32),
     disabled_icon = shortcut_sprite("x32-white.png", 32),
     small_icon = shortcut_sprite("x24.png", 24),
