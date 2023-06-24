@@ -309,11 +309,16 @@ testing_lab.add_remote_interface = function()
       end
       local in_editor = player.controller_type == defines.controllers.editor
       local ts_setting = player.mod_settings["ee-testing-lab"].value
-      if ts_setting == "off" or not in_editor then
+      if
+        ts_setting == "off"
+        or not in_editor
+        or not global.testing_lab_state
+        or not global.testing_lab_state[player.index]
+      then
         return player.force
-      else
-        return global.testing_lab_state[player.index].normal.force
       end
+
+      return global.testing_lab_state[player.index].normal.force
     end,
   })
 end
