@@ -708,6 +708,7 @@ local function on_player_setup_blueprint(e)
 
   local entities = blueprint.get_blueprint_entities()
   if not entities then
+    game.print("Still didn't work")
     return
   end
   for i, entity in pairs(entities) do

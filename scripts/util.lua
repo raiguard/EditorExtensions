@@ -9,9 +9,9 @@ function util.close_button(handler)
   return {
     type = "sprite-button",
     style = "frame_action_button",
-    sprite = "utility/close_white",
-    hovered_sprite = "utility/close_black",
-    clicked_sprite = "utility/close_black",
+    sprite = "utility/close",
+    -- hovered_sprite = "utility/close_black",
+    -- clicked_sprite = "utility/close_black",
     tooltip = { "gui.close-instruction" },
     mouse_button_filter = { "left" },
     handler = { [defines.events.on_gui_click] = handler },
