@@ -701,7 +701,7 @@ end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  local blueprint = util.get_blueprint(e)
+  local blueprint = e.stack
   if not blueprint then
     return
   end

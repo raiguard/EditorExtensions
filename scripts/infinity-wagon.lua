@@ -1,23 +1,3 @@
---- @class InfinityCargoWagonData
---- @field flip integer
---- @field proxy LuaEntity
---- @field proxy_inv LuaInventory
---- @field wagon LuaEntity
---- @field wagon_inv LuaInventory
---- @field wagon_last_position MapPosition
---- @field wagon_name "ee-infinity-cargo-wagon"
-
---- @class InfinityFluidWagonData
---- @field flip integer
---- @field proxy LuaEntity
---- @field proxy_fluidbox LuaFluidBox
---- @field wagon LuaEntity
---- @field wagon_fluidbox LuaFluidBox
---- @field wagon_last_position MapPosition
---- @field wagon_name "ee-infinity-fluid-wagon"
-
-local util = require("scripts.util")
-
 local wagon_names = {
   ["ee-infinity-cargo-wagon"] = true,
   ["ee-infinity-fluid-wagon"] = true,
@@ -236,7 +216,7 @@ end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  local blueprint = util.get_blueprint(e)
+  local blueprint = e.stack
   if not blueprint then
     return
   end
