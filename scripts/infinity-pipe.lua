@@ -462,7 +462,7 @@ local function create_gui(player, entity)
       drag_target = "ee_infinity_pipe_window",
       {
         type = "label",
-        style = "frame_title",
+        style = "flib_frame_title",
         caption = { "entity-name.ee-infinity-pipe" },
         ignored_by_interaction = true,
       },

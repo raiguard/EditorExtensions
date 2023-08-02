@@ -290,7 +290,7 @@ local function create_gui(player, entity)
       drag_target = "ee_infinity_accumulator_window",
       {
         type = "label",
-        style = "frame_title",
+        style = "flib_frame_title",
         caption = { "entity-name.ee-infinity-accumulator" },
         ignored_by_interaction = true,
       },
