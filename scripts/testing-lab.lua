@@ -8,6 +8,8 @@
 --- @field force LuaForce
 --- @field position MapPosition
 --- @field surface LuaSurface
+--- @field vehicle LuaEntity?
+--- @field is_driver boolean?
 
 --- @alias LabSetting
 --- | "force"
@@ -89,19 +91,15 @@ local function transfer_player(player, to_state)
   if not to_state.force.valid or not to_state.surface.valid then
     return
   end
+
   -- Change force first to avoid spilling items into the real world on inventory size change - see #143
   player.force = to_state.force
   player.teleport(to_state.position, to_state.surface)
 end
 
 --- @param player LuaPlayer
---- @param lab_setting LabSetting
-local function enter_lab(player, lab_setting)
+local function enter_lab(player)
   local lab_state = global.testing_lab_state[player.index]
-  if not lab_state or lab_state.refresh then
-    lab_state = create_lab(player, lab_setting)
-    global.testing_lab_state[player.index] = lab_state
-  end
   if not lab_state then
     return
   end
@@ -114,19 +112,14 @@ local function enter_lab(player, lab_setting)
   transfer_player(player, lab_state.lab)
 end
 
---- @param player LuaPlayer
-local function exit_lab(player)
-  local lab_state = global.testing_lab_state[player.index]
-  if not lab_state then
-    return
-  end
-
+--- @param lab_state LabState
+local function exit_lab(lab_state)
   local lab_data = lab_state.lab
-  if player.surface == lab_data.surface then
-    lab_data.position = player.position
+  if lab_state.player.surface == lab_data.surface then
+    lab_data.position = lab_state.player.position
   end
 
-  transfer_player(player, lab_state.normal)
+  transfer_player(lab_state.player, lab_state.normal)
 end
 
 --- @param player LuaPlayer
@@ -147,8 +140,44 @@ local function on_pre_player_toggled_map_editor(e)
     return
   end
 
-  if player.controller_type == defines.controllers.editor then
-    exit_lab(player)
+  local in_editor = player.controller_type == defines.controllers.editor
+  local lab_state = global.testing_lab_state[e.player_index]
+  if not lab_state and not in_editor then
+    lab_state = create_lab(player, lab_setting)
+    global.testing_lab_state[e.player_index] = lab_state
+  end
+  if not lab_state then
+    return
+  end
+
+  local current_state = in_editor and lab_state.lab or lab_state.normal
+  current_state.vehicle = player.vehicle
+  current_state.is_driver = player.driving
+
+  if in_editor then
+    exit_lab(lab_state)
+  end
+end
+
+--- @param player LuaPlayer
+local function sync_vehicle_state(player)
+  local lab_state = global.testing_lab_state[player.index]
+  if not lab_state then
+    return
+  end
+
+  local in_editor = player.controller_type == defines.controllers.editor
+  local new_state = in_editor and lab_state.lab or lab_state.normal
+
+  local vehicle = new_state.vehicle
+  if not vehicle or not vehicle.valid then
+    return
+  end
+
+  if new_state.is_driver and not vehicle.get_driver() then
+    new_state.vehicle.set_driver(player)
+  elseif not new_state.is_driver and not vehicle.get_passenger() then
+    new_state.vehicle.set_passenger(player)
   end
 end
 
@@ -159,14 +188,15 @@ local function on_player_toggled_map_editor(e)
     return
   end
 
-  local lab_setting = get_lab_setting(player)
-  if lab_setting == "off" then
+  if get_lab_setting(player) == "off" then
     return
   end
 
   if player.controller_type == defines.controllers.editor then
-    enter_lab(player, lab_setting)
+    enter_lab(player)
   end
+
+  sync_vehicle_state(player)
 end
 
 --- @param e EventData.on_force_reset

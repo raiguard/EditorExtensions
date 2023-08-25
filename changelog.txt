@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
-Version: 2.1.6
+Version: 2.2.0
 Date: ????
+  Features:
+    - If you are riding a vehicle when you toggle the testing lab, you will return to that vehicle when toggling back (#144)
   Bugfixes:
     - Fixed being unable to load the game when using the Polish language for real this time (#142)
     - Fixed that exiting the testing lab with a full inventory when the testing force has a larger inventory slots bonus than the real force would spill items into the real world (they now spill into the lab instead) (#143)
