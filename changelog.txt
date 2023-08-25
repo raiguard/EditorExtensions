@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.2.0
-Date: ????
+Date: 2023-08-25
   Features:
     - If you are riding a vehicle when you toggle the testing lab, you will return to that vehicle when toggling back (#144)
   Bugfixes:
