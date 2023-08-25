@@ -89,8 +89,9 @@ local function transfer_player(player, to_state)
   if not to_state.force.valid or not to_state.surface.valid then
     return
   end
-  player.teleport(to_state.position, to_state.surface)
+  -- Change force first to avoid spilling items into the real world on inventory size change - see #143
   player.force = to_state.force
+  player.teleport(to_state.position, to_state.surface)
 end
 
 --- @param player LuaPlayer

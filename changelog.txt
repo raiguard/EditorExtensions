@@ -3,6 +3,7 @@ Version: 2.1.6
 Date: ????
   Bugfixes:
     - Fixed being unable to load the game when using the Polish language for real this time (#142)
+    - Fixed that exiting the testing lab with a full inventory when the testing force has a larger inventory slots bonus than the real force would spill items into the real world (they now spill into the lab instead) (#143)
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.5
 Date: 2023-07-04
