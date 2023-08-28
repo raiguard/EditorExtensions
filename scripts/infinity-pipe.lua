@@ -721,6 +721,9 @@ end
 --- @param e EventData.on_entity_settings_pasted
 local function on_entity_settings_pasted(e)
   local source, destination = e.source, e.destination
+  if not source.valid or not destination.valid then
+    return
+  end
   local source_is_pipe, destination_is_pipe = check_is_our_pipe(source), check_is_our_pipe(destination)
   if source_is_pipe and destination.name == "constant-combinator" then
     copy_from_pipe_to_combinator(source, destination)

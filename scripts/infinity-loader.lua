@@ -146,6 +146,9 @@ end
 --- @param e EventData.on_entity_settings_pasted
 local function on_entity_settings_pasted(e)
   local source, destination = e.source, e.destination
+  if not source.valid or not destination.valid then
+    return
+  end
   local source_is_loader, destination_is_loader =
     source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
   if source_is_loader and destination.name == "constant-combinator" then
