@@ -211,6 +211,8 @@ data:extend({
     type = "loader-1x1",
     name = "ee-infinity-loader",
     icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
+    map_color = constants.infinity_tint,
+    friendly_map_color = constants.infinity_tint,
     flags = { "player-creation" },
     minable = { mining_time = 0.1, result = "ee-infinity-loader" },
     collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
