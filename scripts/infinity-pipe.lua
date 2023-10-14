@@ -247,6 +247,15 @@ local function update_gui(self, new_entity, reset_temperature)
 end
 
 --- @param entity LuaEntity
+local function destroy_all_guis(entity)
+  for player_index, gui in pairs(global.infinity_pipe_gui) do
+    if not gui.entity.valid or gui.entity == entity then
+      destroy_gui(player_index)
+    end
+  end
+end
+
+--- @param entity LuaEntity
 --- @param reset_temperature boolean?
 local function update_all_guis(entity, reset_temperature)
   for _, gui in pairs(global.infinity_pipe_gui) do
@@ -674,6 +683,7 @@ local function on_entity_destroyed(e)
     return
   end
   remove_stored_amount_type(e.entity)
+  destroy_all_guis(entity)
 end
 
 --- @param e EventData.on_gui_opened
@@ -737,6 +747,7 @@ end
 local infinity_pipe = {}
 
 infinity_pipe.on_init = function()
+  --- @type table<uint, InfinityPipeGui>
   global.infinity_pipe_gui = {}
   --- @type table<uint, uint>
   global.infinity_pipe_amount_type = {}

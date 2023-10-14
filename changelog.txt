@@ -2,6 +2,7 @@
 Version: 2.2.2
 Date: ????
   Bugfixes:
+    - Fixed that mining an infinity pipe with the GUI open would not close the GUI (#149).
     - Fixed that infinity loaders had the wrong map color (#150).
 ---------------------------------------------------------------------------------------------------
 Version: 2.2.1
