@@ -94,16 +94,16 @@ end
 local dummy_sprite_files = {
   {
     "__base__/graphics/entity/underground-belt/underground-belt-structure-back-patch.png",
-    "__base__/graphics/entity/underground-belt/hr-underground-belt-structure-back-patch.png",
+    "__base__/graphics/entity/underground-belt/underground-belt-structure-back-patch.png",
   },
   {
     "__base__/graphics/entity/linked-belt/linked-belt-structure.png",
-    "__base__/graphics/entity/linked-belt/hr-linked-belt-structure.png",
+    "__base__/graphics/entity/linked-belt/linked-belt-structure.png",
   },
   {
 
     "__base__/graphics/entity/underground-belt/underground-belt-structure-front-patch.png",
-    "__base__/graphics/entity/underground-belt/hr-underground-belt-structure-front-patch.png",
+    "__base__/graphics/entity/underground-belt/underground-belt-structure-front-patch.png",
   },
 }
 local sprite_x = { south = 96 * 0, west = 96 * 1, north = 96 * 2, east = 96 * 3 }
