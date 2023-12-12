@@ -162,22 +162,29 @@ local function sync_fluid(data)
 end
 
 local function on_tick()
-  for _, t in pairs(global.wagons) do
-    if not t.wagon.valid or not t.proxy.valid then
+  for unit_number, data in pairs(global.wagons) do
+    if not data.wagon.valid or not data.proxy.valid then
+      if data.wagon.valid then
+        data.wagon.destroy({ raise_destroy = true })
+      end
+      if data.proxy.valid then
+        data.proxy.destroy({ raise_destroy = true })
+      end
+      global.wagons[unit_number] = nil
       goto continue
     end
-    if t.wagon_name == "ee-infinity-cargo-wagon" then
-      --- @cast t InfinityCargoWagonData
-      sync_cargo(t)
-    elseif t.wagon_name == "ee-infinity-fluid-wagon" then
-      --- @cast t InfinityFluidWagonData
-      sync_fluid(t)
+    if data.wagon_name == "ee-infinity-cargo-wagon" then
+      --- @cast data InfinityCargoWagonData
+      sync_cargo(data)
+    elseif data.wagon_name == "ee-infinity-fluid-wagon" then
+      --- @cast data InfinityFluidWagonData
+      sync_fluid(data)
     end
-    local position = t.wagon.position
-    local last_position = t.wagon_last_position
+    local position = data.wagon.position
+    local last_position = data.wagon_last_position
     if last_position.x ~= position.x or last_position.y ~= position.y then
-      t.proxy.teleport(t.wagon.position)
-      t.wagon_last_position = last_position
+      data.proxy.teleport(data.wagon.position)
+      data.wagon_last_position = last_position
     end
     ::continue::
   end
