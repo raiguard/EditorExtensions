@@ -2,6 +2,7 @@
 Version: 2.2.3
 Date: ????
   Bugfixes:
+    - Fixed a small typo in the testing lab warning message. (#156)
     - Fixed that infinity wagon proxies could become orphaned and never be cleaned up. (#151)
 ---------------------------------------------------------------------------------------------------
 Version: 2.2.2
