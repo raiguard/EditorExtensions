@@ -1,3 +1,21 @@
+--- @class InfinityCargoWagonData
+--- @field flip integer
+--- @field proxy LuaEntity
+--- @field proxy_inv LuaInventory
+--- @field wagon LuaEntity
+--- @field wagon_inv LuaInventory
+--- @field wagon_last_position MapPosition
+--- @field wagon_name "ee-infinity-cargo-wagon"
+
+--- @class InfinityFluidWagonData
+--- @field flip integer
+--- @field proxy LuaEntity
+--- @field proxy_fluidbox LuaFluidBox
+--- @field wagon LuaEntity
+--- @field wagon_fluidbox LuaFluidBox
+--- @field wagon_last_position MapPosition
+--- @field wagon_name "ee-infinity-fluid-wagon"
+
 local util = require("__EditorExtensions__/scripts/util")
 
 local wagon_names = {
@@ -64,6 +82,7 @@ end
 
 --- @param e DestroyedEvent
 local function on_entity_destroyed(e)
+  log("destroyed: " .. e.entity.name)
   local entity = e.entity
   if not entity or not entity.valid or not wagon_names[entity.name] then
     return
@@ -71,7 +90,7 @@ local function on_entity_destroyed(e)
 
   local proxy = global.wagons[entity.unit_number].proxy
   if proxy and proxy.valid then
-    proxy.destroy()
+    proxy.destroy({})
   end
   global.wagons[entity.unit_number] = nil
 end
@@ -96,56 +115,71 @@ local function on_cancelled_deconstruction(e)
   global.wagons[entity.unit_number].flip = 0
 end
 
-local function on_tick()
-  local abs = math.abs
-  for _, t in pairs(global.wagons) do
-    if t.wagon.valid and t.proxy.valid then
-      if t.wagon_name == "ee-infinity-cargo-wagon" then
-        if t.flip == 0 then
-          t.wagon_inv.clear()
-          for n, c in pairs(t.proxy_inv.get_contents()) do
-            t.wagon_inv.insert({ name = n, count = c })
-          end
-          t.flip = 1
-        elseif t.flip == 1 then
-          t.proxy_inv.clear()
-          for n, c in pairs(t.wagon_inv.get_contents()) do
-            t.proxy_inv.insert({ name = n, count = c })
-          end
-          t.flip = 0
-        end
-      elseif t.wagon_name == "ee-infinity-fluid-wagon" then
-        if t.flip == 0 then
-          local fluid = t.proxy_fluidbox[1]
-          t.wagon_fluidbox[1] = fluid
-              and fluid.amount > 0
-              and {
-                name = fluid.name,
-                amount = (abs(fluid.amount) * 250),
-                temperature = fluid.temperature,
-              }
-            or nil
-          t.flip = 1
-        elseif t.flip == 1 then
-          local fluid = t.wagon_fluidbox[1]
-          t.proxy_fluidbox[1] = fluid
-              and fluid.amount > 0
-              and {
-                name = fluid.name,
-                amount = (abs(fluid.amount) / 250),
-                temperature = fluid.temperature,
-              }
-            or nil
-          t.flip = 0
-        end
-      end
-      local position = t.wagon.position
-      local last_position = t.wagon_last_position
-      if last_position.x ~= position.x or last_position.y ~= position.y then
-        t.proxy.teleport(t.wagon.position)
-        t.wagon_last_position = last_position
-      end
+--- @param data InfinityCargoWagonData
+local function sync_cargo(data)
+  if data.flip == 0 then
+    data.wagon_inv.clear()
+    for n, c in pairs(data.proxy_inv.get_contents()) do
+      data.wagon_inv.insert({ name = n, count = c })
     end
+    data.flip = 1
+  elseif data.flip == 1 then
+    data.proxy_inv.clear()
+    for n, c in pairs(data.wagon_inv.get_contents()) do
+      data.proxy_inv.insert({ name = n, count = c })
+    end
+    data.flip = 0
+  end
+end
+
+local abs = math.abs
+
+--- @param data InfinityFluidWagonData
+local function sync_fluid(data)
+  if data.flip == 0 then
+    local fluid = data.proxy_fluidbox[1]
+    data.wagon_fluidbox[1] = fluid
+        and fluid.amount > 0
+        and {
+          name = fluid.name,
+          amount = (abs(fluid.amount) * 250),
+          temperature = fluid.temperature,
+        }
+      or nil
+    data.flip = 1
+  elseif data.flip == 1 then
+    local fluid = data.wagon_fluidbox[1]
+    data.proxy_fluidbox[1] = fluid
+        and fluid.amount > 0
+        and {
+          name = fluid.name,
+          amount = (abs(fluid.amount) / 250),
+          temperature = fluid.temperature,
+        }
+      or nil
+    data.flip = 0
+  end
+end
+
+local function on_tick()
+  for _, t in pairs(global.wagons) do
+    if not t.wagon.valid or not t.proxy.valid then
+      goto continue
+    end
+    if t.wagon_name == "ee-infinity-cargo-wagon" then
+      --- @cast t InfinityCargoWagonData
+      sync_cargo(t)
+    elseif t.wagon_name == "ee-infinity-fluid-wagon" then
+      --- @cast t InfinityFluidWagonData
+      sync_fluid(t)
+    end
+    local position = t.wagon.position
+    local last_position = t.wagon_last_position
+    if last_position.x ~= position.x or last_position.y ~= position.y then
+      t.proxy.teleport(t.wagon.position)
+      t.wagon_last_position = last_position
+    end
+    ::continue::
   end
 end
 
@@ -231,6 +265,7 @@ end
 local infinity_wagon = {}
 
 infinity_wagon.on_init = function()
+  --- @type table<uint, InfinityCargoWagonData|InfinityFluidWagonData>
   global.wagons = {}
 end
 
