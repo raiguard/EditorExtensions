@@ -53,8 +53,9 @@ local function sync_chest_filter(entity, chest)
   if filter then
     chest.set_infinity_container_filter(1, {
       index = 1,
-      name = filter,
-      count = game.item_prototypes[filter].stack_size * 5,
+      name = filter.name,
+      quality = filter.quality,
+      count = game.item_prototypes[filter.name].stack_size * 5,
       mode = "exactly",
     })
   else
