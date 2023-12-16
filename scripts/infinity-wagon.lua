@@ -82,7 +82,6 @@ end
 
 --- @param e DestroyedEvent
 local function on_entity_destroyed(e)
-  log("destroyed: " .. e.entity.name)
   local entity = e.entity
   if not entity or not entity.valid or not wagon_names[entity.name] then
     return
