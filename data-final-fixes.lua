@@ -1,26 +1,26 @@
 -- Set aggregate chest inventory size
-local to_check = {
-  "ammo",
-  "armor",
-  "blueprint",
-  "blueprint-book",
-  "capsule",
-  "copy-paste-tool",
-  "deconstruction-item",
-  "gun",
-  "item",
-  "item-with-entity-data",
-  "module",
-  "rail-planner",
-  "repair-tool",
-  "selection-tool",
-  "tool",
-  "upgrade-item",
-}
+-- local to_check = {
+--   "ammo",
+--   "armor",
+--   "blueprint",
+--   "blueprint-book",
+--   "capsule",
+--   "copy-paste-tool",
+--   "deconstruction-item",
+--   "gun",
+--   "item",
+--   "item-with-entity-data",
+--   "module",
+--   "rail-planner",
+--   "repair-tool",
+--   "selection-tool",
+--   "tool",
+--   "upgrade-item",
+-- }
 -- Start with four extra slots to account for inserter interactions
 local slot_count = 4
-for _, category in pairs(to_check) do
-  slot_count = slot_count + table_size(data.raw[category])
+for category in pairs(defines.prototypes.item) do
+  slot_count = slot_count + table_size(data.raw[category] or {})
 end
 -- Apply to aggregate chests
 for _, container in pairs(data.raw["infinity-container"]) do

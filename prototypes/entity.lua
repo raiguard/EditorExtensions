@@ -148,7 +148,7 @@ infinity_heat_pipe.placeable_by = { item = "ee-infinity-heat-pipe", count = 1 }
 util.recursive_tint(infinity_heat_pipe)
 data:extend({ infinity_heat_pipe })
 
-local super_inserter = table.deepcopy(data.raw["inserter"]["fast-inserter"])
+local super_inserter = table.deepcopy(data.raw["inserter"]["bulk-inserter"])
 super_inserter.name = "ee-super-inserter"
 super_inserter.icons = util.extract_icon_info(super_inserter)
 super_inserter.map_color = constants.infinity_tint
@@ -156,7 +156,7 @@ super_inserter.friendly_map_color = constants.infinity_tint
 super_inserter.placeable_by = { item = "ee-super-inserter", count = 1 }
 super_inserter.minable.result = "ee-super-inserter"
 super_inserter.energy_source = { type = "void" }
-super_inserter.stack = true
+-- super_inserter.stack = true
 super_inserter.extension_speed = 1
 super_inserter.rotation_speed = 0.5
 util.recursive_tint(super_inserter)

@@ -10,6 +10,7 @@
   "dependencies": [
     "base >= 1.2.0",
     "flib >= 0.99.0",
+    "? space-age >= 1.2.0",
     "? CursorEnhancements",
     "(?) RecipeBook",
     "(?) aai-industry",
