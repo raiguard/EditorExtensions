@@ -1,4 +1,4 @@
-local constants = require("__EditorExtensions__/prototypes/constants")
+local constants = require("prototypes.constants")
 
 local function add_group(name, order)
   data:extend({

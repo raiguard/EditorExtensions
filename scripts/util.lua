@@ -1,7 +1,7 @@
 --- @class Util
 local util = {}
 
-local coreutil = require("__core__/lualib/util")
+local coreutil = require("__core__.lualib.util")
 util.parse_energy = coreutil.parse_energy
 
 --- @param handler GuiElemHandler

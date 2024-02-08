@@ -1,4 +1,4 @@
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local aggregate_chest_names = {
   ["ee-aggregate-chest"] = "ee-aggregate-chest",

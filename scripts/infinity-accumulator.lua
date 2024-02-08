@@ -1,8 +1,8 @@
-local gui = require("__flib__/gui-lite")
-local math = require("__flib__/math")
-local table = require("__flib__/table")
+local gui = require("__flib__.gui-lite")
+local math = require("__flib__.math")
+local table = require("__flib__.table")
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local si_suffixes_joule = { "kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ" }
 local si_suffixes_watt = { "kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW" }

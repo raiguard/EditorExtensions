@@ -1,7 +1,7 @@
-local gui = require("__flib__/gui-lite")
-local migration = require("__flib__/migration")
+local gui = require("__flib__.gui-lite")
+local migration = require("__flib__.migration")
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local filters_table_version = 0
 local filters_table_migrations = {}

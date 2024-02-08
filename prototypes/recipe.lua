@@ -1,4 +1,4 @@
-local constants = require("__EditorExtensions__/prototypes/constants")
+local constants = require("prototypes.constants")
 
 local recipe_names = {
   "ee-infinity-accumulator",

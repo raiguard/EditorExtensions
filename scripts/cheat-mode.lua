@@ -1,4 +1,4 @@
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local character_modifiers = {
   character_build_distance_bonus = 1000000,

@@ -1,24 +1,24 @@
-local handler = require("__core__/lualib/event_handler")
+local handler = require("__core__.lualib.event_handler")
 
 handler.add_libraries({
-  require("__flib__/gui-lite"),
+  require("__flib__.gui-lite"),
 
-  require("__EditorExtensions__/scripts/migrations"),
+  require("scripts.migrations"),
 
-  require("__EditorExtensions__/scripts/aggregate-chest"),
-  require("__EditorExtensions__/scripts/cheat-mode"),
-  require("__EditorExtensions__/scripts/debug-world"),
-  require("__EditorExtensions__/scripts/editor"),
-  require("__EditorExtensions__/scripts/infinity-accumulator"),
-  require("__EditorExtensions__/scripts/infinity-loader"),
-  require("__EditorExtensions__/scripts/infinity-pipe"),
-  require("__EditorExtensions__/scripts/infinity-wagon"),
-  require("__EditorExtensions__/scripts/inventory-filters"),
-  require("__EditorExtensions__/scripts/inventory-sync"),
-  require("__EditorExtensions__/scripts/linked-belt"),
-  require("__EditorExtensions__/scripts/super-inserter"),
-  require("__EditorExtensions__/scripts/super-pump"),
-  require("__EditorExtensions__/scripts/testing-lab"),
+  require("scripts.aggregate-chest"),
+  require("scripts.cheat-mode"),
+  require("scripts.debug-world"),
+  require("scripts.editor"),
+  require("scripts.infinity-accumulator"),
+  require("scripts.infinity-loader"),
+  require("scripts.infinity-pipe"),
+  require("scripts.infinity-wagon"),
+  require("scripts.inventory-filters"),
+  require("scripts.inventory-sync"),
+  require("scripts.linked-belt"),
+  require("scripts.super-inserter"),
+  require("scripts.super-pump"),
+  require("scripts.testing-lab"),
 
-  require("__EditorExtensions__/scripts/update-notification"),
+  require("scripts.update-notification"),
 })

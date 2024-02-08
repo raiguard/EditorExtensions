@@ -1,11 +1,11 @@
-local format = require("__flib__/format")
-local gui = require("__flib__/gui-lite")
-local math = require("__flib__/math")
-local table = require("__flib__/table")
+local format = require("__flib__.format")
+local gui = require("__flib__.gui-lite")
+local math = require("__flib__.math")
+local table = require("__flib__.table")
 
-local shared_constants = require("__EditorExtensions__/shared-constants")
+local shared_constants = require("shared-constants")
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local crafter_snapping_types = {
   ["assembling-machine"] = true,

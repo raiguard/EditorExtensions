@@ -13,8 +13,8 @@ Finally, the mod's control scripting has been rewritten from scratch, so there m
 
 - raiguard]]
 
-local flib_gui = require("__flib__/gui-lite")
-local flib_migration = require("__flib__/migration")
+local flib_gui = require("__flib__.gui-lite")
+local flib_migration = require("__flib__.migration")
 
 local function remove_legacy_loaders()
   for _, loader in pairs(global.legacy_infinity_loaders or {}) do

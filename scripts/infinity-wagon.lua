@@ -16,7 +16,7 @@
 --- @field wagon_last_position MapPosition
 --- @field wagon_name "ee-infinity-fluid-wagon"
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local wagon_names = {
   ["ee-infinity-cargo-wagon"] = true,
