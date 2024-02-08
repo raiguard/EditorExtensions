@@ -11,6 +11,7 @@
     "base >= 1.1.76",
     "flib >= 0.12.5",
     "? CursorEnhancements",
+    "(?) RecipeBook",
     "(?) aai-industry",
     "(?) Krastorio2",
     "(?) omnimatter_compression",
