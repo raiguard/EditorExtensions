@@ -30,7 +30,7 @@ local items_to_add = {
 
 local items_to_remove = {
   { name = "express-loader", count = 50 },
-  { name = "stack-inserter", count = 50 },
+  { name = "bulk-inserter", count = 50 },
   { name = "substation", count = 50 },
   { name = "construction-robot", count = 100 },
   { name = "electric-energy-interface", count = 1 },
