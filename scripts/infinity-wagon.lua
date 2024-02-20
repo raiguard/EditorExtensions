@@ -1,3 +1,21 @@
+--- @class InfinityCargoWagonData
+--- @field flip integer
+--- @field proxy LuaEntity
+--- @field proxy_inv LuaInventory
+--- @field wagon LuaEntity
+--- @field wagon_inv LuaInventory
+--- @field wagon_last_position MapPosition
+--- @field wagon_name string
+
+--- @class InfinityFluidWagonData
+--- @field flip integer
+--- @field proxy LuaEntity
+--- @field proxy_fluidbox LuaFluidBox
+--- @field wagon LuaEntity
+--- @field wagon_fluidbox LuaFluidBox
+--- @field wagon_last_position MapPosition
+--- @field wagon_name string
+
 local wagon_names = {
   ["ee-infinity-cargo-wagon"] = true,
   ["ee-infinity-fluid-wagon"] = true,
