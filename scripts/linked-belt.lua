@@ -1,6 +1,6 @@
 local util = require("scripts.util")
 
---- @param objects table
+--- @param objects LuaRenderObject[]
 --- @param color Color
 --- @param dashed boolean
 --- @param player_index uint
@@ -43,7 +43,7 @@ local colors = {
 local function render_connection(player)
   local objects = global.linked_belt_render_objects[player.index] or {}
   for i = #objects, 1, -1 do
-    rendering.destroy(objects[i])
+    objects[i].destroy()
     objects[i] = nil
   end
 
@@ -238,7 +238,7 @@ local linked_belt = {}
 linked_belt.on_init = function()
   --- @type table<uint, LuaEntity>
   global.linked_belt_source = {}
-  --- @type table<uint, uint64[]>
+  --- @type table<uint, LuaRenderObject[]>
   global.linked_belt_render_objects = {}
 end
 
