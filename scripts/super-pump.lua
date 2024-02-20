@@ -136,7 +136,7 @@ local function create_gui(player)
     style = "frame_with_even_paddings",
     style_mods = { width = 448 },
     anchor = {
-      gui = defines.relative_gui_type.entity_with_energy_source_gui,
+      gui = defines.relative_gui_type.pump_gui,
       position = defines.relative_gui_position.bottom,
       name = "ee-super-pump",
     },
