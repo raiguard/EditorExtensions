@@ -2,8 +2,6 @@ local gui = require("__flib__.gui-lite")
 local math = require("__flib__.math")
 local table = require("__flib__.table")
 
-local util = require("scripts.util")
-
 --- @param entity LuaEntity
 --- @param speed double
 local function set_speed(entity, speed)

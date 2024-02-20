@@ -16,7 +16,6 @@ handler.add_libraries({
   require("scripts.inventory-filters"),
   require("scripts.inventory-sync"),
   require("scripts.linked-belt"),
-  require("scripts.super-inserter"),
   require("scripts.super-pump"),
   require("scripts.testing-lab"),
 
