@@ -121,6 +121,13 @@ data:extend({
     default_value = true,
     order = "d",
   },
+  {
+    type = "bool-setting",
+    name = "ee-generate-debug-world-with-lab-tiles",
+    setting_type = "runtime-global",
+    default_value = true,
+    order = "e",
+  },
   -- PLAYER SETTINGS
   {
     type = "string-setting",
