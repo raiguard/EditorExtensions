@@ -8,7 +8,7 @@ local character_modifiers = {
 }
 
 local equipment_to_add = {
-  { name = "ee-infinity-fusion-reactor-equipment", position = { 0, 0 } },
+  { name = "ee-infinity-fission-reactor-equipment", position = { 0, 0 } },
   { name = "ee-super-personal-roboport-equipment", position = { 1, 0 } },
   { name = "ee-super-exoskeleton-equipment", position = { 2, 0 } },
   { name = "ee-super-exoskeleton-equipment", position = { 3, 0 } },

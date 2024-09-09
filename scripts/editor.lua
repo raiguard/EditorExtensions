@@ -54,10 +54,10 @@ local function on_player_toggled_map_editor(e)
   player.gui.top.style.left_margin = margin
   player.gui.left.style.left_margin = margin
 
-  if global.editor_toggled or not game.tick_paused then
+  if storage.editor_toggled or not game.tick_paused then
     return
   end
-  global.editor_toggled = true
+  storage.editor_toggled = true
   if game.tick_paused and settings.global["ee-prevent-initial-pause"].value then
     game.tick_paused = false
   end

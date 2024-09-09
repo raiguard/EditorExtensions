@@ -12,7 +12,7 @@ local version_migrations = {
   ["2.0.0"] = function()
     -- Preserve testing lab state
     local testing_lab_state = {}
-    for player_index, player_table in pairs(global.players) do
+    for player_index, player_table in pairs(storage.players) do
       local player = game.get_player(player_index)
       if player and player_table.lab_state and player_table.normal_state then
         testing_lab_state[player_index] = {
@@ -24,7 +24,7 @@ local version_migrations = {
       end
     end
     -- NUKE EVERYTHING
-    global = { testing_lab_state = testing_lab_state, wagons = global.wagons }
+    global = { testing_lab_state = testing_lab_state, wagons = storage.wagons }
     rendering.clear("EditorExtensions")
     for _, player in pairs(game.players) do
       for _, gui in pairs({ player.gui.top, player.gui.left, player.gui.center, player.gui.screen, player.gui.relative }) do

@@ -41,13 +41,13 @@ local colors = {
 
 --- @param player LuaPlayer
 local function render_connection(player)
-  local objects = global.linked_belt_render_objects[player.index] or {}
+  local objects = storage.linked_belt_render_objects[player.index] or {}
   for i = #objects, 1, -1 do
     objects[i].destroy()
     objects[i] = nil
   end
 
-  local source = global.linked_belt_source[player.index]
+  local source = storage.linked_belt_source[player.index]
   local selected = player.selected
   if selected and selected.name ~= "ee-linked-belt" then
     selected = nil
@@ -72,9 +72,9 @@ local function render_connection(player)
   end
 
   if objects[1] then
-    global.linked_belt_render_objects[player.index] = objects
+    storage.linked_belt_render_objects[player.index] = objects
   else
-    global.linked_belt_render_objects[player.index] = nil
+    storage.linked_belt_render_objects[player.index] = nil
   end
 end
 
@@ -93,7 +93,7 @@ local function start_connection(player, entity, shift)
   else
     source = entity
   end
-  global.linked_belt_source[player.index] = source
+  storage.linked_belt_source[player.index] = source
 
   render_connection(player)
 end
@@ -102,7 +102,7 @@ end
 --- @param entity LuaEntity
 --- @param shift boolean?
 local function finish_connection(player, entity, shift)
-  local source = global.linked_belt_source[player.index]
+  local source = storage.linked_belt_source[player.index]
   if not source or not source.valid then
     return
   end
@@ -122,18 +122,18 @@ local function finish_connection(player, entity, shift)
   entity.linked_belt_type = source.linked_belt_type == "input" and "output" or "input"
   entity.connect_linked_belts(source)
 
-  global.linked_belt_source[player.index] = nil
+  storage.linked_belt_source[player.index] = nil
 
   render_connection(player)
 end
 
 --- @param player LuaPlayer
 local function cancel_connection(player)
-  local source = global.linked_belt_source[player.index]
+  local source = storage.linked_belt_source[player.index]
   if not source then
     return
   end
-  global.linked_belt_source[player.index] = nil
+  storage.linked_belt_source[player.index] = nil
   render_connection(player)
 end
 
@@ -189,7 +189,7 @@ local function on_left_click(e)
     return
   end
 
-  local source = global.linked_belt_source[e.player_index]
+  local source = storage.linked_belt_source[e.player_index]
   if source then
     finish_connection(player, selected)
   else
@@ -209,7 +209,7 @@ local function on_shift_left_click(e)
     return
   end
 
-  local source = global.linked_belt_source[e.player_index]
+  local source = storage.linked_belt_source[e.player_index]
   if source then
     finish_connection(player, selected, true)
   else
@@ -237,9 +237,9 @@ local linked_belt = {}
 
 linked_belt.on_init = function()
   --- @type table<uint, LuaEntity>
-  global.linked_belt_source = {}
+  storage.linked_belt_source = {}
   --- @type table<uint, LuaRenderObject[]>
-  global.linked_belt_render_objects = {}
+  storage.linked_belt_render_objects = {}
 end
 
 linked_belt.events = {

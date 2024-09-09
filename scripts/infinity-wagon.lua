@@ -24,7 +24,7 @@ local wagon_names = {
 --- @param player LuaPlayer
 --- @param entity LuaEntity
 local function open_gui(player, entity)
-  player.opened = global.wagons[entity.unit_number].proxy
+  player.opened = storage.wagons[entity.unit_number].proxy
 end
 
 --- @param e BuiltEvent
@@ -55,7 +55,7 @@ local function on_entity_built(e)
     wagon_last_position = entity.position,
     wagon_name = entity.name,
   }
-  global.wagons[entity.unit_number] = data
+  storage.wagons[entity.unit_number] = data
 
   -- Apply any pre-existing filters
   local tags = e.tags
@@ -85,11 +85,11 @@ local function on_entity_destroyed(e)
     return
   end
 
-  local proxy = global.wagons[entity.unit_number].proxy
+  local proxy = storage.wagons[entity.unit_number].proxy
   if proxy and proxy.valid then
     proxy.destroy({})
   end
-  global.wagons[entity.unit_number] = nil
+  storage.wagons[entity.unit_number] = nil
 end
 
 --- @param e EventData.on_marked_for_deconstruction
@@ -98,7 +98,7 @@ local function on_marked_for_deconstruction(e)
   if not entity.valid or entity.name ~= "ee-infinity-cargo-wagon" then
     return
   end
-  global.wagons[entity.unit_number].flip = 3
+  storage.wagons[entity.unit_number].flip = 3
   entity.get_inventory(defines.inventory.cargo_wagon).clear()
 end
 
@@ -109,7 +109,7 @@ local function on_cancelled_deconstruction(e)
     return
   end
   -- Resume syncing
-  global.wagons[entity.unit_number].flip = 0
+  storage.wagons[entity.unit_number].flip = 0
 end
 
 --- @param data InfinityCargoWagonData
@@ -159,7 +159,7 @@ local function sync_fluid(data)
 end
 
 local function on_tick()
-  for unit_number, data in pairs(global.wagons) do
+  for unit_number, data in pairs(storage.wagons) do
     if not data.wagon.valid or not data.proxy.valid then
       if data.wagon.valid then
         data.wagon.destroy({ raise_destroy = true })
@@ -167,7 +167,7 @@ local function on_tick()
       if data.proxy.valid then
         data.proxy.destroy({ raise_destroy = true })
       end
-      global.wagons[unit_number] = nil
+      storage.wagons[unit_number] = nil
       goto continue
     end
     if data.wagon_name == "ee-infinity-cargo-wagon" then
@@ -229,7 +229,7 @@ local function on_entity_settings_pasted(e)
     return
   end
 
-  global.wagons[destination.unit_number].proxy.copy_settings(global.wagons[source.unit_number].proxy)
+  storage.wagons[destination.unit_number].proxy.copy_settings(storage.wagons[source.unit_number].proxy)
 end
 
 --- @param e EventData.on_player_setup_blueprint
@@ -252,7 +252,7 @@ local function on_player_setup_blueprint(e)
     if not real_entity then
       goto continue
     end
-    local proxy = global.wagons[real_entity.unit_number].proxy
+    local proxy = storage.wagons[real_entity.unit_number].proxy
     --- @type InfinityPipeFilter|InfinityInventoryFilter[]?
     local tags = {}
     if entity.name == "ee-infinity-cargo-wagon" then
@@ -270,7 +270,7 @@ local infinity_wagon = {}
 
 infinity_wagon.on_init = function()
   --- @type table<uint, InfinityCargoWagonData|InfinityFluidWagonData>
-  global.wagons = {}
+  storage.wagons = {}
 end
 
 infinity_wagon.events = {

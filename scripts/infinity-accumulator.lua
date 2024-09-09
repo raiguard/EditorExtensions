@@ -115,11 +115,11 @@ end
 
 --- @param player_index uint
 local function destroy_gui(player_index)
-  local self = global.infinity_accumulator_gui[player_index]
+  local self = storage.infinity_accumulator_gui[player_index]
   if not self then
     return
   end
-  global.infinity_accumulator_gui[player_index] = nil
+  storage.infinity_accumulator_gui[player_index] = nil
   local window = self.elems.ee_infinity_accumulator_window
   if not window.valid then
     return
@@ -166,7 +166,7 @@ end
 
 --- @param entity LuaEntity
 local function update_all_guis(entity)
-  for _, gui in pairs(global.infinity_accumulator_gui) do
+  for _, gui in pairs(storage.infinity_accumulator_gui) do
     if not gui.entity.valid or gui.entity == entity then
       update_gui(gui, entity)
     end
@@ -262,7 +262,7 @@ local handlers = {
 }
 
 gui.add_handlers(handlers, function(e, handler)
-  local self = global.infinity_accumulator_gui[e.player_index]
+  local self = storage.infinity_accumulator_gui[e.player_index]
   if not self then
     return
   end
@@ -395,7 +395,7 @@ local function create_gui(player, entity)
     entity = entity,
     player = player,
   }
-  global.infinity_accumulator_gui[player.index] = self
+  storage.infinity_accumulator_gui[player.index] = self
 
   update_gui(self)
 end
@@ -407,7 +407,7 @@ local function on_entity_destroyed(e)
     return
   end
 
-  for player_index, gui in pairs(global.infinity_accumulator_gui) do
+  for player_index, gui in pairs(storage.infinity_accumulator_gui) do
     if gui.entity == entity then
       destroy_gui(player_index)
     end
@@ -458,7 +458,7 @@ local infinity_accumulator = {}
 
 infinity_accumulator.on_init = function()
   --- @type table<uint, InfinityAccumulatorGui>
-  global.infinity_accumulator_gui = {}
+  storage.infinity_accumulator_gui = {}
 end
 
 infinity_accumulator.on_configuration_changed = function()

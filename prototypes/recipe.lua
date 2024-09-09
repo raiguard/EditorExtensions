@@ -4,7 +4,7 @@ local recipe_names = {
   "ee-infinity-accumulator",
   "ee-infinity-cargo-wagon",
   "ee-infinity-fluid-wagon",
-  "ee-infinity-fusion-reactor-equipment",
+  "ee-infinity-fission-reactor-equipment",
   "ee-infinity-heat-pipe",
   "ee-infinity-loader",
   "ee-infinity-pipe",

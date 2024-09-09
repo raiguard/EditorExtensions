@@ -227,12 +227,12 @@ local function on_player_toggled_map_editor(e)
     return
   end
   local in_editor = player.controller_type == defines.controllers.editor
-  if not in_editor or global.applied_default_filters[e.player_index] then
+  if not in_editor or storage.applied_default_filters[e.player_index] then
     return
   end
 
   -- Apply default infinity filters if this is their first time in the editor
-  global.applied_default_filters[e.player_index] = true
+  storage.applied_default_filters[e.player_index] = true
   local default_filters = player.mod_settings["ee-default-infinity-filters"].value --[[@as string]]
   if default_filters == "" then
     return
@@ -252,8 +252,8 @@ end
 
 --- @param e EventData.on_player_removed
 local function on_player_removed(e)
-  if global.applied_default_filters then
-    global.applied_default_filters[e.player_index] = nil
+  if storage.applied_default_filters then
+    storage.applied_default_filters[e.player_index] = nil
   end
 end
 
@@ -261,7 +261,7 @@ local inventory_filters = {}
 
 inventory_filters.on_init = function()
   --- @type table<uint, boolean>
-  global.applied_default_filters = {}
+  storage.applied_default_filters = {}
 end
 
 inventory_filters.on_configuration_changed = function()

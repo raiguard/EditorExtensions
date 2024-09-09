@@ -29,20 +29,20 @@ local defines_amount_type = {
 --- @param entity LuaEntity
 --- @param amount_type uint?
 local function store_amount_type(entity, amount_type)
-  global.infinity_pipe_amount_type[entity.unit_number] = amount_type
+  storage.infinity_pipe_amount_type[entity.unit_number] = amount_type
 end
 
 --- @param entity LuaEntity
 --- @return uint?
 local function get_stored_amount_type(entity)
-  return global.infinity_pipe_amount_type[entity.unit_number]
+  return storage.infinity_pipe_amount_type[entity.unit_number]
 end
 
 --- @param entity LuaEntity
 --- @return uint?
 local function remove_stored_amount_type(entity)
-  local value = global.infinity_pipe_amount_type[entity.unit_number]
-  global.infinity_pipe_amount_type[entity.unit_number] = nil
+  local value = storage.infinity_pipe_amount_type[entity.unit_number]
+  storage.infinity_pipe_amount_type[entity.unit_number] = nil
   return value
 end
 
@@ -135,11 +135,11 @@ end
 
 --- @param player_index uint
 local function destroy_gui(player_index)
-  local self = global.infinity_pipe_gui[player_index]
+  local self = storage.infinity_pipe_gui[player_index]
   if not self then
     return
   end
-  global.infinity_pipe_gui[player_index] = nil
+  storage.infinity_pipe_gui[player_index] = nil
   local window = self.elems.ee_infinity_pipe_window
   if window.valid then
     window.destroy()
@@ -248,7 +248,7 @@ end
 
 --- @param entity LuaEntity
 local function destroy_all_guis(entity)
-  for player_index, gui in pairs(global.infinity_pipe_gui) do
+  for player_index, gui in pairs(storage.infinity_pipe_gui) do
     if not gui.entity.valid or gui.entity == entity then
       destroy_gui(player_index)
     end
@@ -258,7 +258,7 @@ end
 --- @param entity LuaEntity
 --- @param reset_temperature boolean?
 local function update_all_guis(entity, reset_temperature)
-  for _, gui in pairs(global.infinity_pipe_gui) do
+  for _, gui in pairs(storage.infinity_pipe_gui) do
     if not gui.entity.valid then
       update_gui(gui, entity, reset_temperature)
     elseif gui.entity == entity then
@@ -433,7 +433,7 @@ local handlers = {
 }
 
 gui.add_handlers(handlers, function(e, handler)
-  local self = global.infinity_pipe_gui[e.player_index]
+  local self = storage.infinity_pipe_gui[e.player_index]
   if not self then
     return
   end
@@ -601,7 +601,7 @@ local function create_gui(player, entity)
     temperature = 0,
     player = player,
   }
-  global.infinity_pipe_gui[player.index] = self
+  storage.infinity_pipe_gui[player.index] = self
 
   update_gui(self)
 end
@@ -723,7 +723,7 @@ local function on_player_setup_blueprint(e)
     blueprint.set_blueprint_entity_tag(
       i,
       "EditorExtensions",
-      { amount_type = global.infinity_pipe_amount_type[real_entity.unit_number] }
+      { amount_type = storage.infinity_pipe_amount_type[real_entity.unit_number] }
     )
     ::continue::
   end
@@ -749,9 +749,9 @@ local infinity_pipe = {}
 
 infinity_pipe.on_init = function()
   --- @type table<uint, InfinityPipeGui>
-  global.infinity_pipe_gui = {}
+  storage.infinity_pipe_gui = {}
   --- @type table<uint, uint>
-  global.infinity_pipe_amount_type = {}
+  storage.infinity_pipe_amount_type = {}
 end
 
 infinity_pipe.on_configuration_changed = function()
@@ -777,7 +777,7 @@ infinity_pipe.events = {
 
 infinity_pipe.on_nth_tick = {
   [1] = function()
-    for _, gui in pairs(global.infinity_pipe_gui) do
+    for _, gui in pairs(storage.infinity_pipe_gui) do
       update_fluid_content_bar(gui)
     end
   end,

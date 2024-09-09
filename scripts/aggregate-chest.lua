@@ -9,7 +9,7 @@ local aggregate_chest_names = {
 --- @param entity LuaEntity
 local function set_filters(entity)
   entity.remove_unfiltered_items = true
-  entity.infinity_container_filters = global.aggregate_filters
+  entity.infinity_container_filters = storage.aggregate_filters
   entity.get_inventory(defines.inventory.chest).set_bar()
 end
 
@@ -34,7 +34,7 @@ local function build_filter_cache()
       filters[i] = { name = name, count = prototype.stack_size, mode = "exactly", index = i }
     end
   end
-  global.aggregate_filters = filters
+  storage.aggregate_filters = filters
 end
 
 --- @param e BuiltEvent

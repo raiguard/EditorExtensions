@@ -60,7 +60,7 @@ local function create_lab(player, lab_setting)
 
   local force = game.forces[force_name]
   if not game.forces[force_name] then
-    if table_size(game.forces) == 64 then
+    if #game.forces == 64 then
       player.print(
         "Cannot create a testing lab force. Factorio only supports up to 64 forces at once. Please use a shared lab."
       )
@@ -99,7 +99,7 @@ end
 
 --- @param player LuaPlayer
 local function enter_lab(player)
-  local lab_state = global.testing_lab_state[player.index]
+  local lab_state = storage.testing_lab_state[player.index]
   if not lab_state then
     return
   end
@@ -141,10 +141,10 @@ local function on_pre_player_toggled_map_editor(e)
   end
 
   local in_editor = player.controller_type == defines.controllers.editor
-  local lab_state = global.testing_lab_state[e.player_index]
+  local lab_state = storage.testing_lab_state[e.player_index]
   if not lab_state and not in_editor then
     lab_state = create_lab(player, lab_setting)
-    global.testing_lab_state[e.player_index] = lab_state
+    storage.testing_lab_state[e.player_index] = lab_state
   end
   if not lab_state then
     return
@@ -161,7 +161,7 @@ end
 
 --- @param player LuaPlayer
 local function sync_vehicle_state(player)
-  local lab_state = global.testing_lab_state[player.index]
+  local lab_state = storage.testing_lab_state[player.index]
   if not lab_state then
     return
   end
@@ -298,7 +298,7 @@ end
 
 --- @param e EventData.on_runtime_mod_setting_changed
 local function on_testing_lab_setting_changed(e)
-  local lab_state = global.testing_lab_state[e.player_index]
+  local lab_state = storage.testing_lab_state[e.player_index]
   if lab_state then
     lab_state.refresh = true
   end
@@ -317,7 +317,7 @@ local testing_lab = {}
 
 testing_lab.on_init = function()
   --- @type table<uint, LabState?>
-  global.testing_lab_state = {}
+  storage.testing_lab_state = {}
 end
 
 testing_lab.events = {
@@ -343,13 +343,13 @@ testing_lab.add_remote_interface = function()
       if
         ts_setting == "off"
         or not in_editor
-        or not global.testing_lab_state
-        or not global.testing_lab_state[player.index]
+        or not storage.testing_lab_state
+        or not storage.testing_lab_state[player.index]
       then
         return player.force
       end
 
-      return global.testing_lab_state[player.index].normal.force
+      return storage.testing_lab_state[player.index].normal.force
     end,
   })
 end

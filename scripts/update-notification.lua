@@ -17,12 +17,12 @@ local flib_gui = require("__flib__.gui-lite")
 local flib_migration = require("__flib__.migration")
 
 local function remove_legacy_loaders()
-  for _, loader in pairs(global.legacy_infinity_loaders or {}) do
+  for _, loader in pairs(storage.legacy_infinity_loaders or {}) do
     if loader.valid then
       loader.destroy()
     end
   end
-  global.legacy_infinity_loaders = nil
+  storage.legacy_infinity_loaders = nil
 end
 
 local function on_notification_confirm_clicked(e)
@@ -92,10 +92,10 @@ local function on_entity_built(e)
   if not entity.valid or entity.name ~= "ee-infinity-loader-dummy-combinator" then
     return
   end
-  local loaders = global.legacy_infinity_loaders
+  local loaders = storage.legacy_infinity_loaders
   if not loaders then
     loaders = {}
-    global.legacy_infinity_loaders = loaders
+    storage.legacy_infinity_loaders = loaders
   end
   loaders[entity.unit_number] = entity
 end
@@ -127,18 +127,18 @@ update_notification.on_configuration_changed = function(e)
       chest.destroy()
     end
   end
-  global.legacy_infinity_loaders = loaders
+  storage.legacy_infinity_loaders = loaders
 end
 
 update_notification.on_nth_tick = {
   [180] = function()
-    if not global.legacy_infinity_loaders then
+    if not storage.legacy_infinity_loaders then
       return
     end
 
-    for i, legacy in pairs(global.legacy_infinity_loaders) do
+    for i, legacy in pairs(storage.legacy_infinity_loaders) do
       if not legacy.valid then
-        global.legacy_infinity_loaders[i] = nil
+        storage.legacy_infinity_loaders[i] = nil
         goto continue
       end
 
@@ -154,8 +154,8 @@ update_notification.on_nth_tick = {
       ::continue::
     end
 
-    if not next(global.legacy_infinity_loaders) then
-      global.legacy_infinity_loaders = nil
+    if not next(storage.legacy_infinity_loaders) then
+      storage.legacy_infinity_loaders = nil
     end
   end,
 }

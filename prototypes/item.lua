@@ -74,12 +74,12 @@ data:extend({ infinity_fluid_wagon })
 data:extend({
   {
     type = "item",
-    name = "ee-infinity-fusion-reactor-equipment",
+    name = "ee-infinity-fission-reactor-equipment",
     icon_size = 32,
-    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["fusion-reactor-equipment"], true)),
+    icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["fission-reactor-equipment"], true)),
     subgroup = "ee-equipment",
     order = "aa",
-    placed_as_equipment_result = "ee-infinity-fusion-reactor-equipment",
+    placed_as_equipment_result = "ee-infinity-fission-reactor-equipment",
     stack_size = 50,
   },
 })

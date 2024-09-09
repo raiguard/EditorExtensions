@@ -27,7 +27,7 @@ local categories = {}
 for _, category in pairs(data.raw["equipment-category"]) do
   table.insert(categories, category.name)
 end
-data.raw["generator-equipment"]["ee-infinity-fusion-reactor-equipment"].categories = categories
+data.raw["generator-equipment"]["ee-infinity-fission-reactor-equipment"].categories = categories
 data.raw["roboport-equipment"]["ee-super-personal-roboport-equipment"].categories = categories
 data.raw["movement-bonus-equipment"]["ee-super-exoskeleton-equipment"].categories = categories
 data.raw["energy-shield-equipment"]["ee-super-energy-shield-equipment"].categories = categories

@@ -171,7 +171,7 @@ local function on_gui_opened(e)
     return
   end
   if entity.name == "ee-infinity-loader" then
-    global.infinity_loader_open[e.player_index] = entity
+    storage.infinity_loader_open[e.player_index] = entity
   end
 end
 
@@ -180,10 +180,10 @@ local function on_gui_closed(e)
   if e.gui_type ~= defines.gui_type.entity then
     return
   end
-  local loader = global.infinity_loader_open[e.player_index]
+  local loader = storage.infinity_loader_open[e.player_index]
   if loader and loader.valid then
     sync_chest_filter(loader)
-    global.infinity_loader_open[e.player_index] = nil
+    storage.infinity_loader_open[e.player_index] = nil
   end
 end
 
@@ -191,7 +191,7 @@ local infinity_loader = {}
 
 function infinity_loader.on_init()
   --- @type table<uint, LuaEntity>
-  global.infinity_loader_open = {}
+  storage.infinity_loader_open = {}
 end
 
 infinity_loader.events = {
@@ -212,11 +212,11 @@ infinity_loader.events = {
 
 infinity_loader.on_nth_tick = {
   [15] = function()
-    for unit_number, loader in pairs(global.infinity_loader_open) do
+    for unit_number, loader in pairs(storage.infinity_loader_open) do
       if loader.valid then
         sync_chest_filter(loader)
       else
-        global.infinity_loader_open[unit_number] = nil
+        storage.infinity_loader_open[unit_number] = nil
       end
     end
   end,
