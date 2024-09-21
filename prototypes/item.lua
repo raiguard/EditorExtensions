@@ -211,7 +211,7 @@ super_fuel.subgroup = "ee-trains"
 super_fuel.order = "c"
 data:extend({ super_fuel })
 
-local super_inserter = table.deepcopy(data.raw["item"]["stack-inserter"])
+local super_inserter = table.deepcopy(data.raw["item"]["bulk-inserter"])
 super_inserter.name = "ee-super-inserter"
 super_inserter.icons = util.recursive_tint(util.extract_icon_info(super_inserter))
 super_inserter.place_result = "ee-super-inserter"

@@ -1,6 +1,5 @@
 local flib_migration = require("__flib__.migration")
 
-local aggregate_chest = require("scripts.aggregate-chest")
 local infinity_accumulator = require("scripts.infinity-accumulator")
 local infinity_loader = require("scripts.infinity-loader")
 local infinity_pipe = require("scripts.infinity-pipe")
@@ -36,13 +35,15 @@ local version_migrations = {
       end
     end
     -- Start over
-    aggregate_chest.on_init()
     infinity_accumulator.on_init()
     infinity_loader.on_init()
     infinity_pipe.on_init()
     inventory_filters.on_init()
     inventory_sync.on_init()
     linked_belt.on_init()
+  end,
+  ["2.3.0"] = function()
+    global.aggregate_filters = nil
   end,
 }
 

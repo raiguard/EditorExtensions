@@ -1,15 +1,25 @@
-local util = require("scripts.util")
-
 local aggregate_chest_names = {
   ["ee-aggregate-chest"] = "ee-aggregate-chest",
   ["ee-aggregate-chest-passive-provider"] = "ee-aggregate-chest-passive-provider",
 }
 
+--- @type InfinityInventoryFilter[]
+local filters = {}
+do
+  local include_hidden = settings.global["ee-aggregate-include-hidden"].value
+  local i = 0
+  for name, prototype in pairs(prototypes.item) do
+    if prototype.type ~= "mining-tool" and include_hidden or not prototype.hidden then
+      i = i + 1
+      filters[i] = { name = name, count = prototype.stack_size, mode = "exactly", index = i }
+    end
+  end
+end
 --- Set the filters for the given aggregate chest and removes the bar if there is one
 --- @param entity LuaEntity
 local function set_filters(entity)
   entity.remove_unfiltered_items = true
-  entity.infinity_container_filters = storage.aggregate_filters
+  entity.infinity_container_filters = filters
   entity.get_inventory(defines.inventory.chest).set_bar()
 end
 
@@ -20,21 +30,6 @@ local function update_all_filters()
       set_filters(entity)
     end
   end
-end
-
--- Retrieve each item prototype and its stack size
-local function build_filter_cache()
-  local include_hidden = settings.global["ee-aggregate-include-hidden"].value
-  --- @type InfinityInventoryFilter[]
-  local filters = {}
-  local i = 0
-  for name, prototype in pairs(game.item_prototypes) do
-    if prototype.type ~= "mining-tool" and include_hidden or not prototype.has_flag("hidden") then
-      i = i + 1
-      filters[i] = { name = name, count = prototype.stack_size, mode = "exactly", index = i }
-    end
-  end
-  storage.aggregate_filters = filters
 end
 
 --- @param e BuiltEvent
@@ -71,10 +66,7 @@ end
 
 local aggregate_chest = {}
 
-aggregate_chest.on_init = build_filter_cache
-
-aggregate_chest.on_configuration_changed = function()
-  build_filter_cache()
+aggregate_chest.on_configuration_changed = function(_)
   update_all_filters()
 end
 

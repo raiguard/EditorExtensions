@@ -148,7 +148,7 @@ infinity_heat_pipe.placeable_by = { item = "ee-infinity-heat-pipe", count = 1 }
 util.recursive_tint(infinity_heat_pipe)
 data:extend({ infinity_heat_pipe })
 
-local super_inserter = table.deepcopy(data.raw["inserter"]["stack-inserter"])
+local super_inserter = table.deepcopy(data.raw["inserter"]["bulk-inserter"])
 super_inserter.name = "ee-super-inserter"
 super_inserter.icons = util.extract_icon_info(super_inserter)
 super_inserter.map_color = constants.infinity_tint

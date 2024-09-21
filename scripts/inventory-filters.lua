@@ -25,7 +25,7 @@ local function import_filters(player, string)
       -- Run migrations
       migration.run(version, filters_table_migrations, nil, input)
       -- Sanitize the filters to only include currently existing prototypes
-      local item_prototypes = game.item_prototypes
+      local item_prototypes = prototypes.item
       local output = {}
       local i = 0
       local filters = input.filters

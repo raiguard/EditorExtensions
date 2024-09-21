@@ -55,7 +55,7 @@ local function sync_chest_filter(entity, chest)
       index = 1,
       name = filter.name,
       quality = filter.quality,
-      count = game.item_prototypes[filter.name].stack_size * 5,
+      count = prototypes.item[filter.name].stack_size * 5,
       mode = "exactly",
     })
   else

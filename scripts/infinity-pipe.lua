@@ -99,7 +99,7 @@ end
 --- @return double, double
 local function get_temperature_limits(filter)
   if filter and filter.name then
-    local prototype = game.fluid_prototypes[filter.name]
+    local prototype = prototypes.fluid[filter.name]
     return prototype.default_temperature, prototype.max_temperature
   end
   return 0, 100
@@ -169,7 +169,7 @@ local function update_fluid_content_bar(self)
     return
   end
 
-  local bar_color = game.fluid_prototypes[content.name].base_color
+  local bar_color = prototypes.fluid[content.name].base_color
   -- Calculate luminance of the background color
   -- Source: https://stackoverflow.com/questions/596216/formula-to-determine-perceived-brightness-of-rgb-color
   local luminance = (0.2126 * bar_color.r) + (0.7152 * bar_color.g) + (0.0722 * bar_color.b)
