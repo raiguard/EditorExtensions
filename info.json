@@ -9,7 +9,7 @@
   "factorio_version": "1.2",
   "dependencies": [
     "base >= 1.2.0",
-    "flib >= 0.99.0",
+    "flib >= 0.15.0",
     "? space-age >= 1.2.0",
     "? CursorEnhancements",
     "(?) RecipeBook",
