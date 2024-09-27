@@ -82,6 +82,9 @@ local function on_init()
   if not util.in_debug_world() and not util.in_testing_scenario() then
     return
   end
+  if game.tick ~= 0 then
+    return
+  end
   for _, force in pairs(game.forces) do
     setup_force(force)
   end
