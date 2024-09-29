@@ -79,7 +79,7 @@ data:extend({
     icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["fission-reactor-equipment"], true)),
     subgroup = "ee-equipment",
     order = "aa",
-    placed_as_equipment_result = "ee-infinity-fission-reactor-equipment",
+    place_as_equipment_result = "ee-infinity-fission-reactor-equipment",
     stack_size = 50,
   },
 })
@@ -182,7 +182,7 @@ data:extend({
     icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["energy-shield-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ad",
-    placed_as_equipment_result = "ee-super-energy-shield-equipment",
+    place_as_equipment_result = "ee-super-energy-shield-equipment",
     stack_size = 50,
   },
 })
@@ -196,7 +196,7 @@ data:extend({
     icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["exoskeleton-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ac",
-    placed_as_equipment_result = "ee-super-exoskeleton-equipment",
+    place_as_equipment_result = "ee-super-exoskeleton-equipment",
     stack_size = 50,
   },
 })
@@ -254,7 +254,7 @@ data:extend({
     icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["night-vision-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ae",
-    placed_as_equipment_result = "ee-super-night-vision-equipment",
+    place_as_equipment_result = "ee-super-night-vision-equipment",
     stack_size = 50,
   },
 })
@@ -268,7 +268,7 @@ data:extend({
     icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["battery-equipment"], true)),
     subgroup = "ee-equipment",
     order = "af",
-    placed_as_equipment_result = "ee-super-battery-equipment",
+    place_as_equipment_result = "ee-super-battery-equipment",
     stack_size = 50,
   },
 })
@@ -282,7 +282,7 @@ data:extend({
     icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["personal-roboport-mk2-equipment"], true)),
     subgroup = "ee-equipment",
     order = "ab",
-    placed_as_equipment_result = "ee-super-personal-roboport-equipment",
+    place_as_equipment_result = "ee-super-personal-roboport-equipment",
     stack_size = 50,
   },
 })
