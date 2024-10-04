@@ -12,7 +12,6 @@
 --- @field proxy LuaEntity
 --- @field proxy_fluidbox LuaFluidBox
 --- @field wagon LuaEntity
---- @field wagon_fluidbox LuaFluidBox
 --- @field wagon_last_position MapPosition
 --- @field wagon_name string
 
@@ -50,7 +49,6 @@ local function on_entity_built(e)
     proxy_fluidbox = proxy.fluidbox,
     proxy_inv = proxy.get_inventory(defines.inventory.chest),
     wagon = entity,
-    wagon_fluidbox = entity.fluidbox,
     wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
     wagon_last_position = entity.position,
     wagon_name = entity.name,
@@ -135,17 +133,14 @@ local abs = math.abs
 local function sync_fluid(data)
   if data.flip == 0 then
     local fluid = data.proxy_fluidbox[1]
-    data.wagon_fluidbox[1] = fluid
-        and fluid.amount > 0
-        and {
-          name = fluid.name,
-          amount = (abs(fluid.amount) * 250),
-          temperature = fluid.temperature,
-        }
-      or nil
+    data.wagon.set_fluid(1, fluid and fluid.amount > 0 and {
+      name = fluid.name,
+      amount = (abs(fluid.amount) * 250),
+      temperature = fluid.temperature,
+    } or nil)
     data.flip = 1
   elseif data.flip == 1 then
-    local fluid = data.wagon_fluidbox[1]
+    local fluid = data.wagon.get_fluid(1)
     data.proxy_fluidbox[1] = fluid
         and fluid.amount > 0
         and {
