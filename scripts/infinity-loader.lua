@@ -72,7 +72,7 @@ local function copy_from_loader_to_combinator(loader, combinator)
   end
   local cb = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
   cb.set_signal(1, {
-    signal = { type = "item", name = filter },
+    signal = { type = "item", name = filter.name, quality = filter.quality },
     count = 1,
   })
 end
@@ -85,7 +85,8 @@ local function copy_from_combinator_to_loader(combinator, loader)
     return
   end
   local signal = cb.get_signal(1)
-  if signal.signal and signal.signal.type == "item" then
+  -- FIXME: Temporary workaround because signal doesn't have a type field.
+  if signal.signal and prototypes.item[signal.signal.name] then
     loader.set_filter(1, signal.signal.name)
   else
     loader.set_filter(1, nil)
