@@ -1,14 +1,12 @@
 local sounds = require("__base__.prototypes.entity.sounds")
-local table = require("__flib__.table")
-
-local shared_constants = require("shared-constants")
+local flib_table = require("__flib__.table")
 
 local constants = require("prototypes.constants")
 local util = require("prototypes.util")
 
 -- INFINITY ACCUMULATOR
 do
-  local base_entity = table.deepcopy(data.raw["electric-energy-interface"]["electric-energy-interface"])
+  local base_entity = flib_table.deepcopy(data.raw["electric-energy-interface"]["electric-energy-interface"])
   -- buffer size for 500 GW
   base_entity.energy_source = {
     type = "electric",
@@ -25,7 +23,7 @@ do
   util.recursive_tint(base_entity)
 
   for _, entity_data in ipairs(constants.infinity_accumulator_data) do
-    local entity = table.deepcopy(base_entity)
+    local entity = flib_table.deepcopy(base_entity)
     entity.name = "ee-infinity-accumulator-" .. entity_data.name
     entity.energy_source.usage_priority = entity_data.priority
     entity.energy_source.render_no_power_icon = entity_data.render_no_power_icon
@@ -57,18 +55,18 @@ do
     },
   }
 
-  local base_entity = table.deepcopy(data.raw["infinity-container"]["infinity-chest"])
+  local base_entity = flib_table.deepcopy(data.raw["infinity-container"]["infinity-chest"])
   util.extract_icon_info(base_entity)
   for _, t in pairs(constants.infinity_chest_data) do
     local lm = t.lm
     local suffix = lm and "-" .. lm or ""
-    local chest = table.deepcopy(base_entity)
+    local chest = flib_table.deepcopy(base_entity)
     chest.name = "ee-infinity-chest" .. suffix
     chest.localised_description = util.chest_description(suffix)
-    chest.icons = { table.deepcopy(constants.infinity_chest_icon) }
+    chest.icons = { flib_table.deepcopy(constants.infinity_chest_icon) }
     chest.map_color = constants.infinity_tint
     chest.friendly_map_color = constants.infinity_tint
-    chest.picture = table.deepcopy(infinity_chest_picture)
+    chest.picture = flib_table.deepcopy(infinity_chest_picture)
     chest.order = t.o
     chest.subgroup = "ee-inventories"
     chest.erase_contents_when_mined = true
@@ -113,12 +111,12 @@ do
   for _, t in pairs(constants.aggregate_chest_data) do
     local lm = t.lm
     local suffix = lm and "-" .. lm or ""
-    local chest = table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest" .. suffix])
+    local chest = flib_table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest" .. suffix])
     chest.name = "ee-aggregate-chest" .. suffix
     chest.localised_description = util.chest_description(suffix, true)
     chest.order = t.o
-    chest.icons = { table.deepcopy(constants.aggregate_chest_icon) }
-    chest.picture = table.deepcopy(aggregate_chest_picture)
+    chest.icons = { flib_table.deepcopy(constants.aggregate_chest_icon) }
+    chest.picture = flib_table.deepcopy(aggregate_chest_picture)
     chest.minable.result = "ee-aggregate-chest" .. suffix
     chest.enable_inventory_bar = false
     chest.flags = { "player-creation", "hide-alt-info" }
@@ -128,7 +126,7 @@ do
   end
 end
 
-local infinity_heat_pipe = table.deepcopy(data.raw["heat-interface"]["heat-interface"])
+local infinity_heat_pipe = flib_table.deepcopy(data.raw["heat-interface"]["heat-interface"])
 util.extract_icon_info(infinity_heat_pipe)
 infinity_heat_pipe.name = "ee-infinity-heat-pipe"
 infinity_heat_pipe.localised_description = { "entity-description.ee-infinity-heat-pipe" }
@@ -148,7 +146,7 @@ infinity_heat_pipe.placeable_by = { item = "ee-infinity-heat-pipe", count = 1 }
 util.recursive_tint(infinity_heat_pipe)
 data:extend({ infinity_heat_pipe })
 
-local super_inserter = table.deepcopy(data.raw["inserter"]["bulk-inserter"])
+local super_inserter = flib_table.deepcopy(data.raw["inserter"]["bulk-inserter"])
 super_inserter.name = "ee-super-inserter"
 super_inserter.icons = util.extract_icon_info(super_inserter)
 super_inserter.map_color = constants.infinity_tint
@@ -167,7 +165,7 @@ data:extend({
     name = "ee-linked-belt",
     icons = "CONVERT",
     minable = { mining_time = 0.1, result = "ee-linked-belt" },
-    belt_animation_set = table.deepcopy(data.raw["transport-belt"]["express-transport-belt"].belt_animation_set),
+    belt_animation_set = flib_table.deepcopy(data.raw["transport-belt"]["express-transport-belt"].belt_animation_set),
     allow_side_loading = true,
   }, constants.linked_belt_tint),
   util.copy_prototype(data.raw["pipe"]["pipe"], {
@@ -187,11 +185,11 @@ data:extend({
     collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
     selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
     animation_speed_coefficient = 32,
-    belt_animation_set = table.deepcopy(data.raw["transport-belt"]["fast-transport-belt"].belt_animation_set),
+    belt_animation_set = flib_table.deepcopy(data.raw["transport-belt"]["fast-transport-belt"].belt_animation_set),
     speed = 0.03125, -- Temporary, will be overwritten in data-final-fixes
     container_distance = 0,
     filter_count = 1,
-    structure = table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
+    structure = flib_table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
     additional_pastable_entities = { "constant-combinator" },
@@ -220,40 +218,28 @@ data:extend({
 
 -- Infinity pipe
 
-local infinity_pipe_base = table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
-infinity_pipe_base.name = "ee-infinity-pipe"
-infinity_pipe_base.localised_name = { "entity-name.ee-infinity-pipe" }
-infinity_pipe_base.localised_description = { "entity-description.ee-infinity-pipe" }
-infinity_pipe_base.map_color = constants.infinity_tint
-infinity_pipe_base.friendly_map_color = constants.infinity_tint
-infinity_pipe_base.gui_mode = "all"
-infinity_pipe_base.icons = util.extract_icon_info(infinity_pipe_base)
-infinity_pipe_base.minable = { mining_time = 0.5, result = "ee-infinity-pipe" }
-infinity_pipe_base.placeable_by = { item = "ee-infinity-pipe", count = 1 }
-infinity_pipe_base.additional_pastable_entities = { "constant-combinator" }
-util.recursive_tint(infinity_pipe_base)
-
--- Create a pipe for each of the volume options
-local pipe_names = {}
-for _, volume in pairs(shared_constants.infinity_pipe_capacities) do
-  local infinity_pipe = table.deepcopy(infinity_pipe_base)
-  infinity_pipe.name = infinity_pipe.name .. "-" .. volume
-  infinity_pipe.fluid_box.height = volume / 100
-  data:extend({ infinity_pipe })
-  table.insert(pipe_names, infinity_pipe.name)
-end
+local infinity_pipe = flib_table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
+infinity_pipe.name = "ee-infinity-pipe"
+infinity_pipe.map_color = constants.infinity_tint
+infinity_pipe.friendly_map_color = constants.infinity_tint
+infinity_pipe.gui_mode = "all"
+infinity_pipe.icons = util.extract_icon_info(infinity_pipe)
+infinity_pipe.minable = { mining_time = 0.5, result = "ee-infinity-pipe" }
+infinity_pipe.placeable_by = { item = "ee-infinity-pipe", count = 1 }
+infinity_pipe.additional_pastable_entities = { "constant-combinator" }
+util.recursive_tint(infinity_pipe)
+data:extend({ infinity_pipe })
 
 -- Modify constant combinator to be pasteable to infinity pipes and infinity loaders
-local constant_combinator = data.raw["constant-combinator"]["constant-combinator"]
-local pastable = constant_combinator.additional_pastable_entities or {}
-if not pastable then
-  pastable = {}
-end
-constant_combinator.additional_pastable_entities = table.array_merge({ pastable, pipe_names, { "ee-infinity-loader" } })
+--- @type data.EntityID[]
+local pastable =
+  flib_table.get_or_insert(data.raw["constant-combinator"]["constant-combinator"], "additional_pastable_entities", {})
+table.insert(pastable, "ee-infinity-pipe")
+table.insert(pastable, "ee-infinity-loader")
 
 -- infinity wagons
 do
-  local cargo_wagon = table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
+  local cargo_wagon = flib_table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
   cargo_wagon.name = "ee-infinity-cargo-wagon"
   cargo_wagon.localised_description = {
     "",
@@ -280,7 +266,7 @@ do
   }
   util.recursive_tint(cargo_wagon)
 
-  local fluid_wagon = table.deepcopy(data.raw["fluid-wagon"]["fluid-wagon"])
+  local fluid_wagon = flib_table.deepcopy(data.raw["fluid-wagon"]["fluid-wagon"])
   fluid_wagon.name = "ee-infinity-fluid-wagon"
   fluid_wagon.localised_description = {
     "",
@@ -307,7 +293,7 @@ do
   util.recursive_tint(fluid_wagon)
 
   -- non-interactable chest and pipe
-  local infinity_wagon_chest = table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest"])
+  local infinity_wagon_chest = flib_table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest"])
   infinity_wagon_chest.name = "ee-infinity-wagon-chest"
   infinity_wagon_chest.icons = util.recursive_tint(util.extract_icon_info(infinity_wagon_chest))
   infinity_wagon_chest.subgroup = nil
@@ -318,7 +304,7 @@ do
   infinity_wagon_chest.flags = { "hide-alt-info" }
   infinity_wagon_chest.hidden = true
 
-  local infinity_wagon_pipe = table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
+  local infinity_wagon_pipe = flib_table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
   infinity_wagon_pipe.name = "ee-infinity-wagon-pipe"
   infinity_wagon_pipe.icons = util.recursive_tint({ infinity_wagon_pipe.icons[1] })
   -- infinity_wagon_pipe.collision_mask = { "layer-15" }
@@ -336,7 +322,7 @@ do
   data:extend({ cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe })
 end
 
-local linked_chest = table.deepcopy(data.raw["linked-container"]["linked-chest"])
+local linked_chest = flib_table.deepcopy(data.raw["linked-container"]["linked-chest"])
 linked_chest.name = "ee-linked-chest"
 linked_chest.icons = {
   { icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64, icon_mipmaps = 4 },
@@ -371,7 +357,7 @@ linked_chest.picture = {
 util.recursive_tint(linked_chest, constants.infinity_chest_data[1].t)
 data:extend({ linked_chest })
 
-local super_beacon = table.deepcopy(data.raw["beacon"]["beacon"])
+local super_beacon = flib_table.deepcopy(data.raw["beacon"]["beacon"])
 super_beacon.name = "ee-super-beacon"
 super_beacon.icons = util.extract_icon_info(super_beacon)
 super_beacon.map_color = constants.infinity_tint
@@ -395,7 +381,7 @@ end
 super_beacon.se_allow_in_space = true
 data:extend({ super_beacon })
 
-local super_electric_pole = table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])
+local super_electric_pole = flib_table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])
 super_electric_pole.name = "ee-super-electric-pole"
 super_electric_pole.icons = util.extract_icon_info(super_electric_pole)
 super_electric_pole.map_color = constants.infinity_tint
@@ -407,7 +393,7 @@ super_electric_pole.maximum_wire_distance = 64
 util.recursive_tint(super_electric_pole)
 data:extend({ super_electric_pole })
 
-local super_lab = table.deepcopy(data.raw["lab"]["lab"])
+local super_lab = flib_table.deepcopy(data.raw["lab"]["lab"])
 super_lab.name = "ee-super-lab"
 super_lab.icons = util.extract_icon_info(super_lab)
 super_lab.map_color = constants.infinity_tint
@@ -420,7 +406,7 @@ super_lab.module_specification = { module_slots = 12 }
 util.recursive_tint(super_lab)
 data:extend({ super_lab })
 
-local super_locomotive = table.deepcopy(data.raw["locomotive"]["locomotive"])
+local super_locomotive = flib_table.deepcopy(data.raw["locomotive"]["locomotive"])
 super_locomotive.name = "ee-super-locomotive"
 super_locomotive.icons = util.extract_icon_info(super_locomotive)
 super_locomotive.map_color = constants.infinity_tint
@@ -437,7 +423,7 @@ super_locomotive.color = { r = 0, g = 0, b = 0, a = 0.5 }
 util.recursive_tint(super_locomotive)
 data:extend({ super_locomotive })
 
-local super_substation = table.deepcopy(data.raw["electric-pole"]["substation"])
+local super_substation = flib_table.deepcopy(data.raw["electric-pole"]["substation"])
 super_substation.name = "ee-super-substation"
 super_substation.icons = util.extract_icon_info(super_substation)
 super_substation.map_color = constants.infinity_tint
@@ -450,7 +436,7 @@ super_substation.supply_area_distance = 64
 util.recursive_tint(super_substation)
 data:extend({ super_substation })
 
-local super_pump = table.deepcopy(data.raw["pump"]["pump"])
+local super_pump = flib_table.deepcopy(data.raw["pump"]["pump"])
 super_pump.name = "ee-super-pump"
 super_pump.icons = util.extract_icon_info(super_pump)
 super_pump.map_color = constants.infinity_tint
@@ -471,7 +457,7 @@ super_pump.pumping_speed = 10000
 util.recursive_tint(super_pump)
 data:extend({ super_pump })
 
-local super_radar = table.deepcopy(data.raw["radar"]["radar"])
+local super_radar = flib_table.deepcopy(data.raw["radar"]["radar"])
 super_radar.name = "ee-super-radar"
 super_radar.icons = util.extract_icon_info(super_radar)
 super_radar.map_color = constants.infinity_tint
@@ -483,7 +469,7 @@ super_radar.max_distance_of_nearby_sector_revealed = 20
 util.recursive_tint(super_radar)
 data:extend({ super_radar })
 
-local super_roboport = table.deepcopy(data.raw["roboport"]["roboport"])
+local super_roboport = flib_table.deepcopy(data.raw["roboport"]["roboport"])
 super_roboport.name = "ee-super-roboport"
 super_roboport.icons = util.extract_icon_info(super_roboport)
 super_roboport.map_color = constants.infinity_tint
@@ -514,7 +500,7 @@ do
     speed_multiplier_when_out_of_energy = 1,
   }
 
-  local construction_robot = table.deepcopy(data.raw["construction-robot"]["construction-robot"])
+  local construction_robot = flib_table.deepcopy(data.raw["construction-robot"]["construction-robot"])
   construction_robot.name = "ee-super-construction-robot"
   construction_robot.icons = util.extract_icon_info(construction_robot)
   -- construction_robot.map_color = constants.infinity_tint
@@ -525,7 +511,7 @@ do
   end
   util.recursive_tint(construction_robot)
 
-  local logistic_robot = table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
+  local logistic_robot = flib_table.deepcopy(data.raw["logistic-robot"]["logistic-robot"])
   logistic_robot.name = "ee-super-logistic-robot"
   logistic_robot.icons = util.extract_icon_info(logistic_robot)
   -- logistic_robot.map_color = constants.infinity_tint
