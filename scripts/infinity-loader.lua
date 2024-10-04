@@ -1,13 +1,5 @@
-local direction_util = require("__flib__.direction")
+local flib_direction = require("__flib__.direction")
 local position = require("__flib__.position")
-
---- @type table<defines.direction, Vector>
-local offsets = {
-  [defines.direction.north] = { 0, -1 },
-  [defines.direction.east] = { 1, 0 },
-  [defines.direction.south] = { 0, 1 },
-  [defines.direction.west] = { -1, 0 },
-}
 
 local transport_belt_connectables = {
   "transport-belt",
@@ -22,9 +14,9 @@ local transport_belt_connectables = {
 local function snap(entity)
   local offset_direction = entity.direction
   if entity.loader_type == "input" then
-    offset_direction = direction_util.opposite(offset_direction)
+    offset_direction = flib_direction.opposite(offset_direction)
   end
-  local belt_position = position.add(entity.position, offsets[offset_direction])
+  local belt_position = position.add(entity.position, flib_direction.to_vector(offset_direction))
   local belt =
     entity.surface.find_entities_filtered({ position = belt_position, type = transport_belt_connectables })[1]
   if not belt then
@@ -34,7 +26,7 @@ local function snap(entity)
   if not belt then
     return
   end
-  if belt.direction == direction_util.opposite(entity.direction) then
+  if belt.direction == flib_direction.opposite(entity.direction) then
     entity.loader_type = entity.loader_type == "output" and "input" or "output"
   end
 end
