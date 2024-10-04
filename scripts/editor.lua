@@ -9,7 +9,7 @@ local function se_check_in_spaceship(player)
   if not se_interface or not se_interface.get_surface_type then
     return false
   end
-  local surface_type = remote.call("space-exploration", "get_surface_type", { surface_index = player.surface_index })
+  local surface_type = remote.call("space-exploration", "get_surface_type", { surface_index = player.surface_index }) --- @diagnostic disable-line: missing-fields
   return surface_type == "spaceship"
 end
 
@@ -102,13 +102,13 @@ local function register_se_events()
     return
   end
   if se.get_on_remote_view_started_event then
-    script.on_event(remote.call("space-exploration", "get_on_remote_view_started_event"), function(e)
+    script.on_event(remote.call("space-exploration", "get_on_remote_view_started_event") --[[@as uint]], function(e)
       --- @cast e SERemoteViewToggledEventData
       game.get_player(e.player_index).set_shortcut_available("ee-toggle-map-editor", false)
     end)
   end
   if se.get_on_remote_view_stopped_event then
-    script.on_event(remote.call("space-exploration", "get_on_remote_view_stopped_event"), function(e)
+    script.on_event(remote.call("space-exploration", "get_on_remote_view_stopped_event") --[[@as uint]], function(e)
       --- @cast e SERemoteViewToggledEventData
       util.player_can_use_editor(game.get_player(e.player_index) --[[@as LuaPlayer]])
     end)
@@ -120,7 +120,7 @@ local editor = {}
 editor.on_init = function()
   for player_index in pairs(game.players) do
     --- @cast player_index uint
-    on_player_created({ player_index = player_index })
+    on_player_created({ player_index = player_index }) --- @diagnostic disable-line: missing-fields
   end
   register_se_events()
 end
