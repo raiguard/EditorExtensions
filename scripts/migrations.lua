@@ -23,7 +23,7 @@ local version_migrations = {
       end
     end
     -- NUKE EVERYTHING
-    global = { testing_lab_state = testing_lab_state, wagons = storage.wagons }
+    storage = { testing_lab_state = testing_lab_state, wagons = storage.wagons }
     rendering.clear("EditorExtensions")
     for _, player in pairs(game.players) do
       for _, gui in pairs({ player.gui.top, player.gui.left, player.gui.center, player.gui.screen, player.gui.relative }) do
@@ -43,7 +43,15 @@ local version_migrations = {
     linked_belt.on_init()
   end,
   ["2.3.0"] = function()
-    global.aggregate_filters = nil
+    storage.aggregate_filters = nil
+    storage.infinity_pipe_amount_type = nil
+    for _, gui in pairs(storage.infinity_pipe_gui or {}) do
+      local window = gui.elems.ee_infinity_pipe_window
+      if window and window.valid then
+        window.destroy()
+      end
+    end
+    storage.infinity_pipe_gui = nil
   end,
 }
 
