@@ -116,14 +116,14 @@ end
 local function sync_cargo(data)
   if data.flip == 0 then
     data.wagon_inv.clear()
-    for n, c in pairs(data.proxy_inv.get_contents()) do
-      data.wagon_inv.insert({ name = n, count = c })
+    for _, item in pairs(data.proxy_inv.get_contents()) do
+      data.wagon_inv.insert({ name = item.name, count = item.count, quality = item.quality })
     end
     data.flip = 1
   elseif data.flip == 1 then
     data.proxy_inv.clear()
-    for n, c in pairs(data.wagon_inv.get_contents()) do
-      data.proxy_inv.insert({ name = n, count = c })
+    for _, item in pairs(data.wagon_inv.get_contents()) do
+      data.proxy_inv.insert({ name = item.name, count = item.count, quality = item.quality })
     end
     data.flip = 0
   end
