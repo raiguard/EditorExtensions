@@ -8,6 +8,7 @@ local transport_belt_connectables = {
   "loader",
   "loader-1x1",
   "linked-belt",
+  "lane-splitter",
 }
 
 --- @param entity LuaEntity
