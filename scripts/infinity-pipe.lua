@@ -6,9 +6,28 @@ local function copy_from_pipe_to_combinator(pipe, combinator)
     return
   end
   local cb = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
-  cb.set_signal(1, {
-    signal = { type = "fluid", name = filter.name },
-    count = 1,
+  --- @type LuaLogisticSection?
+  local section
+  for _, sec in pairs(cb.sections) do
+    if sec.group == "" then
+      section = sec
+      break
+    end
+  end
+  if not section then
+    section = cb.add_section()
+  end
+  if not section then
+    return -- When will this ever happen?
+  end
+  section.set_slot(1, {
+    value = {
+      comparator = "=",
+      type = "fluid",
+      name = filter.name --[[@as string]],
+      quality = "normal",
+    },
+    min = 1,
   })
 end
 
@@ -19,9 +38,23 @@ local function copy_from_combinator_to_pipe(combinator, pipe)
   if not cb then
     return
   end
-  local signal = cb.get_signal(1)
-  if signal.signal and signal.signal.type == "fluid" then
-    pipe.set_infinity_pipe_filter({ type = "fluid", name = signal.signal.name, percentage = 1 })
+  local cb = combinator.get_control_behavior() --[[@as LuaConstantCombinatorControlBehavior?]]
+  if not cb then
+    return
+  end
+  local section = cb.get_section(1)
+  if not section then
+    return
+  end
+  local filter = section.filters[1]
+  if not filter then
+    return
+  end
+  game.print(serpent.line(filter))
+  local value = filter.value
+  -- XXX: `filter` will not always have a `type` field.
+  if value and prototypes.fluid[value.name] then
+    pipe.set_infinity_pipe_filter({ type = "fluid", name = value.name, percentage = 1 })
   else
     pipe.set_infinity_pipe_filter(nil)
   end
