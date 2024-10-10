@@ -88,7 +88,7 @@ end
 
 --- @param e BuiltEvent
 local function on_entity_built(e)
-  local entity = e.entity or e.created_entity or e.destination
+  local entity = e.entity or e.destination
   if not entity.valid or entity.name ~= "ee-infinity-loader-dummy-combinator" then
     return
   end

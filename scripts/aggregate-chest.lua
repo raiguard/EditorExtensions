@@ -34,7 +34,7 @@ end
 
 --- @param e BuiltEvent
 local function on_entity_built(e)
-  local entity = e.created_entity or e.entity or e.destination
+  local entity = e.entity or e.destination
   if not entity or not entity.valid or not aggregate_chest_names[entity.name] then
     return
   end
