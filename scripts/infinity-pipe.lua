@@ -50,7 +50,6 @@ local function copy_from_combinator_to_pipe(combinator, pipe)
   if not filter then
     return
   end
-  game.print(serpent.line(filter))
   local value = filter.value
   -- XXX: `filter` will not always have a `type` field.
   if value and prototypes.fluid[value.name] then
