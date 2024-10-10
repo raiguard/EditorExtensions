@@ -1,7 +1,9 @@
 local table = require("__flib__.table")
 
+--- @class ItemFilters table<integer, ItemFilter?>
+--
 --- @class InventorySyncData
---- @field filters table<integer, string?>
+--- @field filters ItemFilters
 --- @field hand_location uint?
 --- @field inventory LuaInventory
 
@@ -12,7 +14,7 @@ local function pre_sync(player)
   --- @type table<string, InventorySyncData>
   local sync_tables = {}
   for _, name in ipairs({ "cursor", "main", "guns", "armor", "ammo" }) do
-    --- @type table<integer, string?>
+    --- @type ItemFilters
     local sync_filters = {}
     local sync_inventory
     local inventory_def = defines.inventory[prefix .. name]

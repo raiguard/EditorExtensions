@@ -248,7 +248,6 @@ local function on_player_setup_blueprint(e)
       goto continue
     end
     local proxy = storage.wagons[real_entity.unit_number].proxy
-    --- @type InfinityPipeFilter|InfinityInventoryFilter[]?
     local tags = {}
     if entity.name == "ee-infinity-cargo-wagon" then
       tags.filters = proxy.infinity_container_filters
