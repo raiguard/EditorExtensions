@@ -46,7 +46,7 @@ local function sync_chest_filter(entity, chest)
   if filter then
     chest.set_infinity_container_filter(1, {
       index = 1,
-      name = filter.name,
+      name = filter.name --[[@as string]],
       quality = filter.quality,
       count = prototypes.item[filter.name].stack_size * 5,
       mode = "exactly",
@@ -64,9 +64,27 @@ local function copy_from_loader_to_combinator(loader, combinator)
     return
   end
   local cb = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
-  cb.set_signal(1, {
-    signal = { type = "item", name = filter.name, quality = filter.quality },
-    count = 1,
+  --- @type LuaLogisticSection?
+  local section
+  for _, sec in pairs(cb.sections) do
+    if sec.group == "" then
+      section = sec
+      break
+    end
+  end
+  if not section then
+    section = cb.add_section()
+  end
+  if not section then
+    return -- When will this ever happen?
+  end
+  section.set_slot(1, {
+    value = {
+      type = "item",
+      name = filter.name --[[@as string]],
+      quality = filter.quality,
+    },
+    min = 1,
   })
 end
 
@@ -77,10 +95,18 @@ local function copy_from_combinator_to_loader(combinator, loader)
   if not cb then
     return
   end
-  local signal = cb.get_signal(1)
-  -- FIXME: Temporary workaround because signal doesn't have a type field.
-  if signal.signal and prototypes.item[signal.signal.name] then
-    loader.set_filter(1, signal.signal.name)
+  local section = cb.get_section(1)
+  if not section then
+    return
+  end
+  local filter = section.filters[1]
+  if not filter then
+    return
+  end
+  local value = filter.value
+  -- XXX: `filter` will not always have a `type` field.
+  if value and prototypes.item[value.name] then
+    loader.set_filter(1, value.name)
   else
     loader.set_filter(1, nil)
   end
