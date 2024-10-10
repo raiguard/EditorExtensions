@@ -4,7 +4,7 @@ local util = {}
 local coreutil = require("__core__.lualib.util")
 util.parse_energy = coreutil.parse_energy
 
---- @param handler GuiElemHandler
+--- @param handler flib.GuiElemHandler
 function util.close_button(handler)
   return {
     type = "sprite-button",
@@ -18,9 +18,9 @@ function util.close_button(handler)
   }
 end
 
---- @param mode InfinityPipeMode
---- @param handler GuiElemHandler
---- @return GuiElemDef
+--- @param mode string
+--- @param handler flib.GuiElemHandler
+--- @return flib.GuiElemDef
 function util.mode_radio_button(mode, handler)
   return {
     type = "radiobutton",

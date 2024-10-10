@@ -333,7 +333,7 @@ testing_lab.add_remote_interface = function()
   remote.add_interface("EditorExtensions", {
     --- Get the force that the player is actually on, ignoring the testing lab force.
     --- @param player LuaPlayer
-    --- @return ForceIdentification
+    --- @return ForceID
     get_player_proper_force = function(player)
       if not player or not player.valid then
         error("Did not pass a valid LuaPlayer")

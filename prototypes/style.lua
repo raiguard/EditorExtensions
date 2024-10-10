@@ -56,7 +56,7 @@ styles.ee_infinity_pipe_progressbar = {
 styles.ee_infinity_pipe_progressbar_light_text = {
   type = "progressbar_style",
   parent = "ee_infinity_pipe_progressbar",
-  filled_font_color = default_font_color,
+  filled_font_color = default_font_color, --- @diagnostic disable-line: undefined-global
 }
 
 -- TEXTFIELD STYLES

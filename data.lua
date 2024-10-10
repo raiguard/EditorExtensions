@@ -12,5 +12,3 @@ require("prototypes.shortcut")
 require("prototypes.sprite")
 require("prototypes.style")
 require("prototypes.tile")
-
-require("prototypes.recipe-book-compat")

@@ -12,7 +12,7 @@ local function import_filters(player, string)
   if string == "" then
     return
   end
-  local decoded_string = game.decode_string(string)
+  local decoded_string = helpers.decode_string(string)
   if
     decoded_string
     and string.sub(decoded_string, 1, 16) == "EditorExtensions"
@@ -20,7 +20,7 @@ local function import_filters(player, string)
   then
     -- Extract version for migrations
     local version, json = string.match(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
-    local input = game.json_to_table(json)
+    local input = helpers.json_to_table(json)
     if input then
       -- Run migrations
       migration.run(version, filters_table_migrations, nil, input)
@@ -52,8 +52,8 @@ local function export_filters(player)
     filters = filters,
     remove_unfiltered_items = player.remove_unfiltered_items,
   }
-  return game.encode_string(
-    "EditorExtensions-inventory_filters-" .. filters_table_version .. "-" .. game.table_to_json(output)
+  return helpers.encode_string(
+    "EditorExtensions-inventory_filters-" .. filters_table_version .. "-" .. helpers.table_to_json(output)
   )
 end
 
