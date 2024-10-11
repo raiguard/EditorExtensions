@@ -9,7 +9,12 @@ do
   local include_hidden = settings.global["ee-aggregate-include-hidden"].value
   local i = 0
   for name, prototype in pairs(prototypes.item) do
-    if prototype.type ~= "mining-tool" and include_hidden or not prototype.hidden then
+    if
+      (include_hidden or not prototype.hidden)
+      -- FIXME: Prevent items from spoiling
+      and not prototype.spoil_result
+      and not prototype.spoil_to_trigger_result
+    then
       i = i + 1
       filters[i] = { name = name, count = prototype.stack_size, mode = "exactly", index = i }
     end
