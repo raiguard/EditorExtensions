@@ -50,7 +50,7 @@ function util.chest_description(suffix, is_aggregate)
     return {
       "",
       { "entity-description.ee-aggregate-chest" },
-      suffix ~= "" and { "", "\n", { "entity-description.logistic-chest" .. suffix } } or "",
+      suffix ~= "" and { "", "\n", { "entity-description." .. suffix .. "-chest" } } or "",
       "\n[color=255,57,48]",
       { "entity-description.ee-performance-warning" },
       "[/color]",
@@ -59,7 +59,7 @@ function util.chest_description(suffix, is_aggregate)
     return {
       "",
       { "entity-description.ee-infinity-chest" },
-      suffix ~= "" and { "", "\n", { "entity-description.logistic-chest" .. suffix } } or "",
+      suffix ~= "" and { "", "\n", { "entity-description." .. suffix .. "-chest" } } or "",
     }
   end
 end

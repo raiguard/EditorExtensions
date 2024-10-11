@@ -62,7 +62,7 @@ do
     local suffix = lm and "-" .. lm or ""
     local chest = flib_table.deepcopy(base_entity)
     chest.name = "ee-infinity-chest" .. suffix
-    chest.localised_description = util.chest_description(suffix)
+    chest.localised_description = util.chest_description(lm or "")
     chest.icons = { flib_table.deepcopy(constants.infinity_chest_icon) }
     chest.map_color = constants.infinity_tint
     chest.friendly_map_color = constants.infinity_tint
@@ -113,7 +113,7 @@ do
     local suffix = lm and "-" .. lm or ""
     local chest = flib_table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest" .. suffix])
     chest.name = "ee-aggregate-chest" .. suffix
-    chest.localised_description = util.chest_description(suffix, true)
+    chest.localised_description = util.chest_description(lm or "", true)
     chest.order = t.o
     chest.icons = { flib_table.deepcopy(constants.aggregate_chest_icon) }
     chest.picture = flib_table.deepcopy(aggregate_chest_picture)
