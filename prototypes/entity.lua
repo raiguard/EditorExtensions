@@ -290,6 +290,7 @@ do
     scale = 0.5,
     size = { 20, 40 },
   }
+  fluid_wagon.additional_pastable_entities = { "ee-infinity-fluid-wagon" }
   util.recursive_tint(fluid_wagon)
 
   -- non-interactable chest and pipe
