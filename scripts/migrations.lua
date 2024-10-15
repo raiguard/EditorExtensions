@@ -2,7 +2,6 @@ local flib_migration = require("__flib__.migration")
 
 local infinity_accumulator = require("scripts.infinity-accumulator")
 local infinity_loader = require("scripts.infinity-loader")
-local infinity_pipe = require("scripts.infinity-pipe")
 local inventory_filters = require("scripts.inventory-filters")
 local inventory_sync = require("scripts.inventory-sync")
 local linked_belt = require("scripts.linked-belt")
@@ -37,7 +36,6 @@ local version_migrations = {
     -- Start over
     infinity_accumulator.on_init()
     infinity_loader.on_init()
-    infinity_pipe.on_init()
     inventory_filters.on_init()
     inventory_sync.on_init()
     linked_belt.on_init()
