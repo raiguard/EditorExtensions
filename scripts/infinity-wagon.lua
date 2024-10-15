@@ -174,9 +174,9 @@ local function on_tick()
     end
     local position = data.wagon.position
     local last_position = data.wagon_last_position
-    if last_position.x ~= position.x or last_position.y ~= position.y then
+    if not last_position or last_position.x ~= position.x or last_position.y ~= position.y then
       data.proxy.teleport(data.wagon.position)
-      data.wagon_last_position = last_position
+      data.wagon_last_position = data.wagon.position
     end
     ::continue::
   end
