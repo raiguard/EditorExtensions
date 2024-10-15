@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.3.0
-Date: ????
+Date: 2024-10-15
   Changes:
     - Updated to Factorio 2.0.
     - Removed infinity pipe capacities. The infinity pipe now operates directly on the fluid segment instead of having a standalone fluid box.
