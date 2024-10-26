@@ -36,6 +36,7 @@ do
     chest.localised_description = util.chest_description(suffix)
     chest.icons = { table.deepcopy(constants.infinity_chest_icon) }
     chest.icons[1].tint = t.t
+    chest.hidden = false
     chest.stack_size = 50
     chest.place_result = "ee-infinity-chest" .. suffix
     chest.subgroup = "ee-inventories"
@@ -52,6 +53,7 @@ do
     chest.localised_description = util.chest_description(suffix, true)
     chest.icons = { table.deepcopy(constants.aggregate_chest_icon) }
     chest.icons[1].tint = t.t
+    chest.hidden = false
     chest.stack_size = 50
     chest.place_result = "ee-aggregate-chest" .. suffix
     chest.subgroup = "ee-inventories"
@@ -93,6 +95,7 @@ infinity_heat_pipe.order = "ca"
 infinity_heat_pipe.stack_size = 50
 infinity_heat_pipe.flags = {}
 infinity_heat_pipe.icons = util.recursive_tint(util.extract_icon_info(data.raw["item"]["heat-pipe"], true))
+infinity_heat_pipe.hidden = false
 infinity_heat_pipe.place_result = "ee-infinity-heat-pipe"
 data:extend({ infinity_heat_pipe })
 
@@ -116,6 +119,7 @@ data:extend({
 local infinity_pipe = table.deepcopy(data.raw["item"]["infinity-pipe"])
 infinity_pipe.name = "ee-infinity-pipe"
 infinity_pipe.icons = util.recursive_tint({ infinity_pipe.icons[1] })
+infinity_pipe.hidden = false
 infinity_pipe.subgroup = "ee-misc"
 infinity_pipe.order = "ba"
 infinity_pipe.stack_size = 50
@@ -127,6 +131,7 @@ local linked_belt = table.deepcopy(data.raw["item"]["linked-belt"])
 linked_belt.name = "ee-linked-belt"
 linked_belt.localised_description = { "item-description.ee-linked-belt" }
 linked_belt.icons = util.extract_icon_info(linked_belt)
+linked_belt.hidden = false
 linked_belt.subgroup = "ee-misc"
 linked_belt.order = "ab"
 linked_belt.stack_size = 50
@@ -140,6 +145,7 @@ linked_chest.name = "ee-linked-chest"
 linked_chest.icons = {
   { icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64, icon_mipmaps = 4 },
 }
+linked_chest.hidden = false
 linked_chest.subgroup = "ee-inventories"
 linked_chest.order = "c"
 linked_chest.stack_size = 50
