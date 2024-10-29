@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.3.1
-Date: ????
+Date: 2024-10-29
   Bugfixes:
     - Fixed that several items were unavailable in selection lists. (#181)
     - Fixed that testing lab surfaces would be visible in the surfaces list outside the editor. (#182)
