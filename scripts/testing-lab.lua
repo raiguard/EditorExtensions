@@ -45,6 +45,12 @@ local function create_lab(player, lab_setting)
   local surface = game.get_surface(surface_name)
   if not surface then
     surface = game.create_surface(surface_name, empty_map_gen_settings)
+    for force_name, force in pairs(game.forces) do
+      if not string.find(force_name, "EE_TESTFORCE_") then
+        force.set_surface_hidden(surface, true)
+      end
+    end
+    player.force.set_surface_hidden(surface, true)
     if not surface then
       player.print("Could not create test surface")
       return

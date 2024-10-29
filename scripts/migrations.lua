@@ -51,6 +51,17 @@ local version_migrations = {
     end
     storage.infinity_pipe_gui = nil
   end,
+  ["2.3.1"] = function()
+    for surface_name, surface in pairs(game.surfaces) do
+      if string.find(surface_name, "EE_TESTSURFACE_") then
+        for force_name, force in pairs(game.forces) do
+          if not string.find(force_name, "EE_TESTFORCE_") then
+            force.set_surface_hidden(surface, true)
+          end
+        end
+      end
+    end
+  end,
 }
 
 local migrations = {}
