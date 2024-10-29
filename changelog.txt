@@ -4,6 +4,7 @@ Date: ????
   Bugfixes:
     - Fixed that several items were unavailable in selection lists. (#181)
     - Fixed that testing lab surfaces would be visible in the surfaces list outside the editor. (#182)
+    - Fixed that the super productivity module erroneously claimed it could be used on all recipes. (#175)
 ---------------------------------------------------------------------------------------------------
 Version: 2.3.0
 Date: 2024-10-15
