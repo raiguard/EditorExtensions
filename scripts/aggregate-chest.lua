@@ -10,10 +10,10 @@ do
   local i = 0
   for name, prototype in pairs(prototypes.item) do
     if
-      (include_hidden or not prototype.hidden)
-      -- FIXME: Prevent items from spoiling
-      and not prototype.spoil_result
-      and not prototype.spoil_to_trigger_result
+        (include_hidden or not prototype.hidden)
+        -- FIXME: Prevent items from spoiling
+        and not prototype.spoil_result
+        and not prototype.spoil_to_trigger_result
     then
       i = i + 1
       filters[i] = { name = name, count = prototype.stack_size, mode = "exactly", index = i }
@@ -80,6 +80,7 @@ aggregate_chest.events = {
   [defines.events.on_entity_cloned] = on_entity_built,
   [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
   [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_revive] = on_entity_built,
 }

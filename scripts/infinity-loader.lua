@@ -19,10 +19,10 @@ local function snap(entity)
   end
   local belt_position = position.add(entity.position, flib_direction.to_vector(offset_direction))
   local belt =
-    entity.surface.find_entities_filtered({ position = belt_position, type = transport_belt_connectables })[1]
+      entity.surface.find_entities_filtered({ position = belt_position, type = transport_belt_connectables })[1]
   if not belt then
     belt =
-      entity.surface.find_entities_filtered({ position = belt_position, ghost_type = transport_belt_connectables })[1]
+        entity.surface.find_entities_filtered({ position = belt_position, ghost_type = transport_belt_connectables })[1]
   end
   if not belt then
     return
@@ -171,7 +171,7 @@ local function on_entity_settings_pasted(e)
     return
   end
   local source_is_loader, destination_is_loader =
-    source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
+      source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
   if source_is_loader and destination.name == "constant-combinator" then
     copy_from_loader_to_combinator(source, destination)
   elseif source.name == "constant-combinator" and destination_is_loader then
@@ -228,6 +228,8 @@ infinity_loader.events = {
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_destroy] = on_entity_destroyed,
   [defines.events.script_raised_revive] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
+  [defines.events.on_space_platform_mined_entity] = on_entity_destroyed,
 }
 
 infinity_loader.on_nth_tick = {

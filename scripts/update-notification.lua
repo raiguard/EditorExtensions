@@ -1,5 +1,5 @@
 local content =
-  [[Editor Extensions has been updated to 2.0. This version is a BREAKING CHANGE, meaning that your testing setups may not function as they did before.
+[[Editor Extensions has been updated to 2.0. This version is a BREAKING CHANGE, meaning that your testing setups may not function as they did before.
 
 The infinity loader has been overhauled to fix belt saturation issues, solve edge cases with blueprints, and make them much more UPS efficient. Due to this, [font=default-bold][color=255,50,50]all previously placed infinity loaders will no longer function.[/color][/font] You will need to replace them in order for your testing setups to work again.
 
@@ -106,9 +106,9 @@ local update_notification = {}
 update_notification.on_configuration_changed = function(e)
   local ee_changes = e.mod_changes["EditorExtensions"]
   if
-    not ee_changes
-    or not ee_changes.old_version
-    or flib_migration.is_newer_version("1.99.99", ee_changes.old_version)
+      not ee_changes
+      or not ee_changes.old_version
+      or flib_migration.is_newer_version("1.99.99", ee_changes.old_version)
   then
     return
   end
@@ -170,6 +170,7 @@ update_notification.events = {
   [defines.events.on_robot_built_entity] = on_entity_built,
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_revive] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
 }
 
 return update_notification

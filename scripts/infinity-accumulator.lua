@@ -105,7 +105,7 @@ local function get_slider_values(buffer_size, mode)
   local power = math.floor((len - 1) / 3)
   -- Slider value is the buffer size scaled to its base-three order of magnitude
   return buffer_size / 10 ^ (power * 3) --[[@as uint]],
-    math.max(power, 1) --[[@as uint]]
+      math.max(power, 1) --[[@as uint]]
 end
 
 --- Returns the entity buffer size based on the power_slider value and dropdown selected index
@@ -474,6 +474,7 @@ infinity_accumulator.events = {
   [defines.events.on_player_mined_entity] = on_entity_destroyed,
   [defines.events.on_robot_mined_entity] = on_entity_destroyed,
   [defines.events.script_raised_destroy] = on_entity_destroyed,
+  [defines.events.on_space_platform_mined_entity] = on_entity_destroyed,
 }
 
 return infinity_accumulator
