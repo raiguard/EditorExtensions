@@ -4,27 +4,30 @@ local aggregate_chest_names = {
 }
 
 --- @type InfinityInventoryFilter[]
-local filters = {}
-do
-  local include_hidden = settings.global["ee-aggregate-include-hidden"].value
-  local i = 0
-  for name, prototype in pairs(prototypes.item) do
-    if
-      (include_hidden or not prototype.hidden)
-      -- FIXME: Prevent items from spoiling
-      and not prototype.spoil_result
-      and not prototype.spoil_to_trigger_result
-    then
-      i = i + 1
-      filters[i] = { name = name, count = prototype.stack_size, mode = "exactly", index = i }
+local function create_infinity_filters(entity)
+  local filters = {}
+  do
+    local include_hidden = settings.global["ee-aggregate-include-hidden"].value
+    local i = 0
+    for name, prototype in pairs(prototypes.item) do
+      if
+        (include_hidden or not prototype.hidden)
+        -- FIXME: Prevent items from spoiling
+        and not prototype.spoil_result
+        and not prototype.spoil_to_trigger_result
+      then
+        i = i + 1
+        filters[i] = { name = name, quality = entity.quality.name, count = prototype.stack_size, mode = "exactly", index = i }
+      end
     end
   end
+  return filters
 end
 --- Set the filters for the given aggregate chest and removes the bar if there is one
 --- @param entity LuaEntity
 local function set_filters(entity)
   entity.remove_unfiltered_items = true
-  entity.infinity_container_filters = filters
+  entity.infinity_container_filters = create_infinity_filters(entity)
   entity.get_inventory(defines.inventory.chest).set_bar()
 end
 
