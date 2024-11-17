@@ -6,19 +6,17 @@ local aggregate_chest_names = {
 --- @type InfinityInventoryFilter[]
 local function create_infinity_filters(entity)
   local filters = {}
-  do
-    local include_hidden = settings.global["ee-aggregate-include-hidden"].value
-    local i = 0
-    for name, prototype in pairs(prototypes.item) do
-      if
-        (include_hidden or not prototype.hidden)
-        -- FIXME: Prevent items from spoiling
-        and not prototype.spoil_result
-        and not prototype.spoil_to_trigger_result
-      then
-        i = i + 1
-        filters[i] = { name = name, quality = entity.quality.name, count = prototype.stack_size, mode = "exactly", index = i }
-      end
+  local include_hidden = settings.global["ee-aggregate-include-hidden"].value
+  local i = 0
+  for name, prototype in pairs(prototypes.item) do
+    if
+      (include_hidden or not prototype.hidden)
+      -- FIXME: Prevent items from spoiling
+      and not prototype.spoil_result
+      and not prototype.spoil_to_trigger_result
+    then
+      i = i + 1
+      filters[i] = { name = name, quality = entity.quality.name, count = prototype.stack_size, mode = "exactly", index = i }
     end
   end
   return filters
