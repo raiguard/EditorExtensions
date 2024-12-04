@@ -18,6 +18,4 @@ handler.add_libraries({
   require("scripts.linked-belt"),
   require("scripts.super-pump"),
   require("scripts.testing-lab"),
-
-  require("scripts.update-notification"),
 })

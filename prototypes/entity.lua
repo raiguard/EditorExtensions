@@ -211,11 +211,11 @@ data:extend({
   util.copy_prototype(data.raw["constant-combinator"]["constant-combinator"], {
     name = "ee-infinity-loader-dummy-combinator",
     localised_description = { "entity-description.ee-infinity-loader" },
-    icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
+    icon = "__base__/graphics/icons/linked-belt.png",
     minable = { mining_time = 0.1 },
     placeable_by = { item = "ee-infinity-loader", count = 1 },
     flags = { "not-upgradable", "player-creation" },
-    sprites = util.loader_dummy_sprites,
+    sprites = data.raw["constant-combinator"]["constant-combinator"].sprites,
   }, { r = 0.8, g = 0.8, b = 0.8 }),
 })
 

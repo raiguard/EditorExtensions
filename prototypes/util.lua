@@ -90,44 +90,4 @@ function util.copy_prototype(base, mods, tint)
   return base
 end
 
--- create spritesheet for dummy combinator
-local dummy_sprite_files = {
-  {
-    "__base__/graphics/entity/underground-belt/underground-belt-structure-back-patch.png",
-    "__base__/graphics/entity/underground-belt/underground-belt-structure-back-patch.png",
-  },
-  {
-    "__base__/graphics/entity/linked-belt/linked-belt-structure.png",
-    "__base__/graphics/entity/linked-belt/linked-belt-structure.png",
-  },
-  {
-
-    "__base__/graphics/entity/underground-belt/underground-belt-structure-front-patch.png",
-    "__base__/graphics/entity/underground-belt/underground-belt-structure-front-patch.png",
-  },
-}
-local sprite_x = { south = 96 * 0, west = 96 * 1, north = 96 * 2, east = 96 * 3 }
-local dummy_sprites = {}
-for k, x in pairs(sprite_x) do
-  dummy_sprites[k] = {}
-  dummy_sprites[k].layers = {}
-  for i, t in pairs(dummy_sprite_files) do
-    dummy_sprites[k].layers[i] = {
-      filename = t[1],
-      x = x,
-      width = 96,
-      height = 96,
-      hr_version = {
-        filename = t[2],
-        x = x * 2,
-        width = 192,
-        height = 192,
-        scale = 0.5,
-      },
-    }
-  end
-end
-
-util.loader_dummy_sprites = dummy_sprites
-
 return util

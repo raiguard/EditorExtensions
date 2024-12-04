@@ -221,19 +221,63 @@ end
 
 --- @param e ConfigurationChangedData
 function infinity_loader.on_configuration_changed(e)
-  if
-    not e.mod_changes.EditorExtensions
-    or flib_migration.is_newer_version("2.4.0", e.mod_changes.EditorExtensions.old_version)
-  then
-    return
-  end
-
-  for _, surface in pairs(game.surfaces) do
-    for _, loader in pairs(surface.find_entities_filtered({ name = "ee-infinity-loader" })) do
-      loader.set_filter(2, loader.get_filter(1))
-    end
-  end
+  flib_migration.on_config_changed(
+    e,
+    infinity_loader.migrations,
+    script.mod_name,
+    e.mod_changes.EditorExtensions and e.mod_changes.EditorExtensions.old_version
+  )
 end
+
+infinity_loader.migrations = {
+  ["2.0.0"] = function()
+    for _, surface in pairs(game.surfaces) do
+      for _, combinator in pairs(surface.find_entities_filtered({ name = "ee-infinity-loader-dummy-combinator" })) do
+        local cb = combinator.get_control_behavior() --[[@as LuaConstantCombinatorControlBehavior?]]
+        if not cb then
+          goto continue
+        end
+        local section = cb.get_section(1)
+        if not section then
+          goto continue
+        end
+        local filter_1, filter_2 = section.filters[1], section.filters[2]
+        local loader = combinator.surface.create_entity({
+          name = "ee-infinity-loader",
+          direction = combinator.direction,
+          position = combinator.position,
+          force = combinator.force,
+          last_user = combinator.last_user,
+          fast_replace = true,
+          create_build_effect_smoke = false,
+        })
+        if not loader then
+          error("Failed to create infinity loader replacement.")
+        end
+        if filter_1 and filter_1.value then
+          loader.set_filter(1, { name = filter_1.value.name, quality = filter_1.value.quality, amount = filter_1.min })
+        end
+        if filter_2 and filter_2.value then
+          loader.set_filter(2, { name = filter_2.value.name, quality = filter_2.value.quality, amount = filter_2.min })
+        end
+        snap(loader)
+        combinator.destroy()
+        ::continue::
+      end
+    end
+  end,
+  --- @param old_version string
+  ["2.4.0"] = function(old_version)
+    if not flib_migration.is_newer_version("2.0.0", old_version) then
+      return
+    end
+    for _, surface in pairs(game.surfaces) do
+      for _, loader in pairs(surface.find_entities_filtered({ name = "ee-infinity-loader" })) do
+        loader.set_filter(2, loader.get_filter(1))
+      end
+    end
+  end,
+}
 
 infinity_loader.events = {
   [defines.events.on_built_entity] = on_entity_built,
