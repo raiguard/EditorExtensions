@@ -50,9 +50,6 @@ local function on_player_toggled_map_editor(e)
   player.set_shortcut_toggled("ee-toggle-map-editor", player.controller_type == defines.controllers.editor)
 
   local in_editor = player.controller_type == defines.controllers.editor
-  local margin = in_editor and editor_gui_width or 0
-  player.gui.top.style.left_margin = margin
-  player.gui.left.style.left_margin = margin
 
   if storage.editor_toggled or not game.tick_paused then
     return
