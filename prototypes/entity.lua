@@ -189,7 +189,8 @@ data:extend({
     belt_animation_set = flib_table.deepcopy(data.raw["transport-belt"]["fast-transport-belt"].belt_animation_set),
     speed = 0.03125, -- Temporary, will be overwritten in data-final-fixes
     container_distance = 0,
-    filter_count = 1,
+    filter_count = 2,
+    per_lane_filters = true,
     structure = flib_table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
@@ -200,7 +201,7 @@ data:extend({
     type = "infinity-container",
     name = "ee-infinity-loader-chest",
     erase_contents_when_mined = true,
-    inventory_size = 10, -- Five for output, five for input
+    inventory_size = 10, -- Five for each belt lane
     flags = { "hide-alt-info", "player-creation" },
     hidden = true,
     selectable_in_game = false,

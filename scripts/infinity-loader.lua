@@ -42,27 +42,25 @@ local function sync_chest_filter(entity, chest)
     entity.destroy()
     return
   end
-  local filter = entity.get_filter(1)
-  if filter then
-    chest.set_infinity_container_filter(1, {
-      index = 1,
-      name = filter.name --[[@as string]],
-      quality = filter.quality,
-      count = prototypes.item[filter.name].stack_size * 5,
-      mode = "exactly",
-    })
-  else
-    chest.set_infinity_container_filter(1, nil)
+  for i = 1, 2 do
+    local filter = entity.get_filter(i)
+    if filter then
+      chest.set_infinity_container_filter(i, {
+        index = i,
+        name = filter.name --[[@as string]],
+        quality = filter.quality,
+        count = prototypes.item[filter.name].stack_size * 5,
+        mode = "exactly",
+      })
+    else
+      chest.set_infinity_container_filter(i, nil)
+    end
   end
 end
 
 --- @param loader LuaEntity
 --- @param combinator LuaEntity
 local function copy_from_loader_to_combinator(loader, combinator)
-  local filter = loader.get_filter(1)
-  if not filter then
-    return
-  end
   local cb = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
   --- @type LuaLogisticSection?
   local section
@@ -78,14 +76,20 @@ local function copy_from_loader_to_combinator(loader, combinator)
   if not section then
     return -- When will this ever happen?
   end
-  section.set_slot(1, {
-    value = {
-      type = "item",
-      name = filter.name --[[@as string]],
-      quality = filter.quality,
-    },
-    min = 1,
-  })
+  for i = 1, 2 do
+    local filter = loader.get_filter(i)
+    if not filter then
+      return
+    end
+    section.set_slot(i, {
+      value = {
+        type = "item",
+        name = filter.name --[[@as string]],
+        quality = filter.quality,
+      },
+      min = 1,
+    })
+  end
 end
 
 --- @param combinator LuaEntity
@@ -99,16 +103,16 @@ local function copy_from_combinator_to_loader(combinator, loader)
   if not section then
     return
   end
-  local filter = section.filters[1]
-  if not filter then
-    return
-  end
-  local value = filter.value
-  -- XXX: `filter` will not always have a `type` field.
-  if value and prototypes.item[value.name] then
-    loader.set_filter(1, value.name)
-  else
-    loader.set_filter(1, nil)
+  for i = 1, 2 do
+    local filter = section.filters[i]
+    if filter then
+      local value = filter.value
+      if value and prototypes[value.type or "item"][value.name] then
+        loader.set_filter(i, value.name)
+      else
+        loader.set_filter(i, nil)
+      end
+    end
   end
   sync_chest_filter(loader)
 end

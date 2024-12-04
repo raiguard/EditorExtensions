@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.0
 Date: ????
+  Features:
+    - Infinity loader supports per-lane filters again. (#147)
   Changes:
     - Updated map editor shortcut icon.
   Bugfixes:
