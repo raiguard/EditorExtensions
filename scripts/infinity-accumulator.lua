@@ -104,8 +104,8 @@ local function get_slider_values(buffer_size, mode)
   -- `power` is the dropdown value - how many sets of three orders of magnitude there are, rounded down
   local power = math.floor((len - 1) / 3)
   -- Slider value is the buffer size scaled to its base-three order of magnitude
-  return buffer_size / 10 ^ (power * 3) --[[@as uint]],
-      math.max(power, 1) --[[@as uint]]
+  return buffer_size / 10 ^ (power * 3), --[[@as uint]]
+    math.max(power, 1) --[[@as uint]]
 end
 
 --- Returns the entity buffer size based on the power_slider value and dropdown selected index

@@ -148,7 +148,7 @@ local function sync_fluid(data)
           amount = (abs(fluid.amount) / 250),
           temperature = fluid.temperature,
         }
-        or nil
+      or nil
     data.flip = 0
   end
 end

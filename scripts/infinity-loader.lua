@@ -19,10 +19,10 @@ local function snap(entity)
   end
   local belt_position = position.add(entity.position, flib_direction.to_vector(offset_direction))
   local belt =
-      entity.surface.find_entities_filtered({ position = belt_position, type = transport_belt_connectables })[1]
+    entity.surface.find_entities_filtered({ position = belt_position, type = transport_belt_connectables })[1]
   if not belt then
     belt =
-        entity.surface.find_entities_filtered({ position = belt_position, ghost_type = transport_belt_connectables })[1]
+      entity.surface.find_entities_filtered({ position = belt_position, ghost_type = transport_belt_connectables })[1]
   end
   if not belt then
     return
@@ -171,7 +171,7 @@ local function on_entity_settings_pasted(e)
     return
   end
   local source_is_loader, destination_is_loader =
-      source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
+    source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
   if source_is_loader and destination.name == "constant-combinator" then
     copy_from_loader_to_combinator(source, destination)
   elseif source.name == "constant-combinator" and destination_is_loader then
