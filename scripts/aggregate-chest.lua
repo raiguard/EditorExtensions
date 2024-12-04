@@ -11,16 +11,21 @@ do
   for quality_name in pairs(prototypes.quality) do
     local this_filters = {}
     for item_name, prototype in pairs(prototypes.item) do
-      if include_hidden or not prototype.hidden then
-        i = i + 1
-        this_filters[i] = {
-          name = item_name,
-          quality = quality_name,
-          count = prototype.stack_size,
-          mode = "exactly",
-          index = i,
-        }
+      if string.find(item_name, "^parameter%-") then
+        goto continue
       end
+      if prototype.hidden and not include_hidden then
+        goto continue
+      end
+      i = i + 1
+      this_filters[i] = {
+        name = item_name,
+        quality = quality_name,
+        count = prototype.stack_size,
+        mode = "exactly",
+        index = i,
+      }
+      ::continue::
     end
     filters[quality_name] = this_filters
   end

@@ -7,6 +7,8 @@ Date: ????
   Changes:
     - Infinity loader will output stacked items. (#184)
     - Updated map editor shortcut icon.
+    - Aggregate chest contains spoilable items again, but they won't start spoiling until they are removed.
+    - Removed parameters from the aggregate chest. (#185)
   Bugfixes:
     - Fixed that the editor window would overlap mod GUI elements. (#199)
     - Fixed that internal entities were showing in Factoriopedia. (#205)
