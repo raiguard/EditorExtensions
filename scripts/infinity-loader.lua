@@ -1,4 +1,5 @@
 local flib_direction = require("__flib__.direction")
+local flib_migration = require("__flib__.migration")
 local position = require("__flib__.position")
 
 local transport_belt_connectables = {
@@ -216,6 +217,22 @@ local infinity_loader = {}
 function infinity_loader.on_init()
   --- @type table<uint, LuaEntity>
   storage.infinity_loader_open = {}
+end
+
+--- @param e ConfigurationChangedData
+function infinity_loader.on_configuration_changed(e)
+  if
+    not e.mod_changes.EditorExtensions
+    or flib_migration.is_newer_version("2.4.0", e.mod_changes.EditorExtensions.old_version)
+  then
+    return
+  end
+
+  for _, surface in pairs(game.surfaces) do
+    for _, loader in pairs(surface.find_entities_filtered({ name = "ee-infinity-loader" })) do
+      loader.set_filter(2, loader.get_filter(1))
+    end
+  end
 end
 
 infinity_loader.events = {
