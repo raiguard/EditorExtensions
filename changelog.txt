@@ -5,6 +5,7 @@ Date: ????
     - Updated map editor shortcut icon.
   Bugfixes:
     - Fixed that the editor window would overlap mod GUI elements. (#199)
+    - Fixed that internal entities were showing in Factoriopedia. (#205)
 ---------------------------------------------------------------------------------------------------
 Version: 2.3.1
 Date: 2024-10-29
