@@ -49,8 +49,6 @@ local function on_player_toggled_map_editor(e)
 
   player.set_shortcut_toggled("ee-toggle-map-editor", player.controller_type == defines.controllers.editor)
 
-  local in_editor = player.controller_type == defines.controllers.editor
-
   if storage.editor_toggled or not game.tick_paused then
     return
   end
