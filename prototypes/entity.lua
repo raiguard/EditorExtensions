@@ -173,6 +173,7 @@ data:extend({
     icons = "CONVERT",
     minable = { mining_time = 0.1, result = "ee-linked-belt" },
     allow_side_loading = true,
+    hidden = true,
   }, constants.linked_belt_tint),
   util.recursive_tint({
     type = "loader-1x1",
@@ -201,6 +202,7 @@ data:extend({
     erase_contents_when_mined = true,
     inventory_size = 10, -- Five for output, five for input
     flags = { "hide-alt-info", "player-creation" },
+    hidden = true,
     selectable_in_game = false,
     picture = constants.empty_sheet,
     collision_box = { { -0.1, -0.1 }, { 0.1, 0.1 } },
