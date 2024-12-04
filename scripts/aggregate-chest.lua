@@ -80,6 +80,7 @@ aggregate_chest.events = {
   [defines.events.on_entity_cloned] = on_entity_built,
   [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
   [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_revive] = on_entity_built,
 }

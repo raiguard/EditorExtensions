@@ -170,6 +170,7 @@ update_notification.events = {
   [defines.events.on_robot_built_entity] = on_entity_built,
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_revive] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
 }
 
 return update_notification
