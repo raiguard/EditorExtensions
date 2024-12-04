@@ -146,7 +146,7 @@ local function on_pre_player_toggled_map_editor(e)
     return
   end
 
-  local in_editor = player.controller_type == defines.controllers.editor
+  local in_editor = player.physical_controller_type == defines.controllers.editor
   local lab_state = storage.testing_lab_state[e.player_index]
   if not lab_state and not in_editor then
     lab_state = create_lab(player, lab_setting)
@@ -172,7 +172,7 @@ local function sync_vehicle_state(player)
     return
   end
 
-  local in_editor = player.controller_type == defines.controllers.editor
+  local in_editor = player.physical_controller_type == defines.controllers.editor
   local new_state = in_editor and lab_state.lab or lab_state.normal
 
   local vehicle = new_state.vehicle
@@ -198,7 +198,7 @@ local function on_player_toggled_map_editor(e)
     return
   end
 
-  if player.controller_type == defines.controllers.editor then
+  if player.physical_controller_type == defines.controllers.editor then
     enter_lab(player)
   end
 
@@ -344,7 +344,7 @@ testing_lab.add_remote_interface = function()
       if not player or not player.valid then
         error("Did not pass a valid LuaPlayer")
       end
-      local in_editor = player.controller_type == defines.controllers.editor
+      local in_editor = player.physical_controller_type == defines.controllers.editor
       local ts_setting = player.mod_settings["ee-testing-lab"].value
       if
         ts_setting == "off"

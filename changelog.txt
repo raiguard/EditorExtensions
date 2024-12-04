@@ -12,6 +12,7 @@ Date: ????
   Bugfixes:
     - Fixed that the editor window would overlap mod GUI elements. (#199)
     - Fixed that internal entities were showing in Factoriopedia. (#205)
+    - Fixed that the testing lab switching logic would break if you toggled the testing lab while in remote view. (#176)
 ---------------------------------------------------------------------------------------------------
 Version: 2.3.1
 Date: 2024-10-29
