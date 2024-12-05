@@ -12,6 +12,5 @@ data:extend({
     max_temperature = 600001,
     default_temperature = 0, -- follow up on default pump speed
     auto_barrel = false,
-    base_flow_rate = 100,
   },
 })

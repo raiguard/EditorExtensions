@@ -4,6 +4,7 @@ local util = {}
 local core_util = require("__core__.lualib.util")
 
 util.by_pixel = core_util.by_pixel
+util.empty_sprite = core_util.empty_sprite
 
 local function is_sprite_def(array)
   return array.icon or array.width and array.height and (array.filename or array.stripes or array.filenames)
@@ -34,12 +35,11 @@ end
 
 -- consolidate icon information into a table to use in "icons"
 function util.extract_icon_info(obj, skip_cleanup)
-  local icons = obj.icons or { { icon = obj.icon, icon_size = obj.icon_size, icon_mipmaps = obj.icon_mipmaps } }
+  local icons = obj.icons or { { icon = obj.icon, icon_size = obj.icon_size } }
   icons[1].icon_size = icons[1].icon_size or obj.icon_size
   if not skip_cleanup then
     obj.icon = nil
     obj.icon_size = nil
-    obj.icon_mipmaps = nil
   end
   return icons
 end
@@ -77,7 +77,6 @@ function util.copy_prototype(base, mods, tint)
       base.icons = { { icon = base.icon, icon_size = base.icon_size, icon_mipmaps = base.icon_mipmaps } }
       base.icon = nil
       base.icon_size = nil
-      base.icon_mipmaps = nil
     elseif value == "NIL" then
       base[key] = nil
     else

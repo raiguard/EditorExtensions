@@ -28,7 +28,6 @@ data:extend({
       {
         icon = "__EditorExtensions__/graphics/gui/crafting-group.png",
         icon_size = 128,
-        icon_mipmaps = 2,
         tint = constants.infinity_tint,
       },
     },

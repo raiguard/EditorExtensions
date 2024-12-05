@@ -107,7 +107,7 @@ data:extend({
     localised_name = { "entity-name.ee-infinity-loader" },
     localised_description = { "entity-description.ee-infinity-loader" },
     icons = util.recursive_tint({
-      { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 },
+      { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64 },
     }),
     stack_size = 50,
     subgroup = "ee-misc",
@@ -142,8 +142,9 @@ data:extend({ linked_belt })
 
 local linked_chest = table.deepcopy(data.raw["item"]["linked-chest"])
 linked_chest.name = "ee-linked-chest"
+linked_chest.icon = nil
 linked_chest.icons = {
-  { icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64, icon_mipmaps = 4 },
+  { icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64 },
 }
 linked_chest.hidden = false
 linked_chest.subgroup = "ee-inventories"

@@ -4,6 +4,8 @@ Date: ????
   Bugfixes:
     - Fixed being unable to load the mod without Space Age. (#208)
     - Removed unused infinity pipe snapping setting. (#207)
+    - Fixed super beacon and super lab having the wrong number of module slots.
+    - Fixed unused prototype property warnings.
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.0
 Date: 2024-12-04

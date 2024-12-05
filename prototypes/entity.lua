@@ -1,5 +1,6 @@
-local sounds = require("__base__.prototypes.entity.sounds")
 local flib_table = require("__flib__.table")
+local meld = require("meld")
+local sounds = require("__base__.prototypes.entity.sounds")
 
 local constants = require("prototypes.constants")
 local util = require("prototypes.util")
@@ -118,7 +119,6 @@ do
     chest.icons = { flib_table.deepcopy(constants.aggregate_chest_icon) }
     chest.picture = flib_table.deepcopy(aggregate_chest_picture)
     chest.minable.result = "ee-aggregate-chest" .. suffix
-    chest.enable_inventory_bar = false
     chest.flags = { "player-creation", "hide-alt-info" }
     chest.gui_mode = aggregate_chest_mode
     util.recursive_tint(chest, t.t)
@@ -166,19 +166,17 @@ data:extend({
     icons = "CONVERT",
     minable = { mining_time = 0.1, result = "ee-linked-belt" },
     belt_animation_set = flib_table.deepcopy(data.raw["transport-belt"]["express-transport-belt"].belt_animation_set),
-    allow_side_loading = true,
   }, constants.linked_belt_tint),
   util.copy_prototype(data.raw["pipe"]["pipe"], {
     name = "ee-linked-pipe",
     icons = "CONVERT",
     minable = { mining_time = 0.1, result = "ee-linked-belt" },
-    allow_side_loading = true,
     hidden = true,
   }, constants.linked_belt_tint),
   util.recursive_tint({
     type = "loader-1x1",
     name = "ee-infinity-loader",
-    icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64, icon_mipmaps = 4 } },
+    icons = { { icon = "__base__/graphics/icons/linked-belt.png", icon_size = 64 } },
     map_color = constants.infinity_tint,
     friendly_map_color = constants.infinity_tint,
     flags = { "player-creation" },
@@ -192,11 +190,14 @@ data:extend({
     filter_count = 2,
     per_lane_filters = true,
     max_belt_stack_size = feature_flags.space_travel and 255 or nil,
-    structure = flib_table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
+    structure = meld(
+      table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
+      { direction_in_side_loading = meld.delete(), direction_out_side_loading = meld.delete() }
+    ),
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
     additional_pastable_entities = { "constant-combinator" },
-    se_allow_in_space = true,
+    se_allow_in_space = mods["space-exploration"] and true or nil,
   }),
   {
     type = "infinity-container",
@@ -206,7 +207,7 @@ data:extend({
     flags = { "hide-alt-info", "player-creation" },
     hidden = true,
     selectable_in_game = false,
-    picture = constants.empty_sheet,
+    picture = util.empty_sprite(),
     collision_box = { { -0.1, -0.1 }, { 0.1, 0.1 } },
   },
   util.copy_prototype(data.raw["constant-combinator"]["constant-combinator"], {
@@ -302,7 +303,7 @@ do
   infinity_wagon_chest.name = "ee-infinity-wagon-chest"
   infinity_wagon_chest.icons = util.recursive_tint(util.extract_icon_info(infinity_wagon_chest))
   infinity_wagon_chest.subgroup = nil
-  infinity_wagon_chest.picture = constants.empty_sheet
+  infinity_wagon_chest.picture = util.empty_sprite()
   -- infinity_wagon_chest.collision_mask = { "layer-15" }
   infinity_wagon_chest.selection_box = nil
   infinity_wagon_chest.selectable_in_game = false
@@ -321,7 +322,7 @@ do
   infinity_wagon_pipe.gui_mode = "all"
 
   for k in pairs(infinity_wagon_pipe.pictures) do
-    infinity_wagon_pipe.pictures[k] = constants.empty_sheet
+    infinity_wagon_pipe.pictures[k] = util.empty_sprite()
   end
 
   data:extend({ cargo_wagon, fluid_wagon, infinity_wagon_chest, infinity_wagon_pipe })
@@ -330,11 +331,10 @@ end
 local linked_chest = flib_table.deepcopy(data.raw["linked-container"]["linked-chest"])
 linked_chest.name = "ee-linked-chest"
 linked_chest.icons = {
-  { icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64, icon_mipmaps = 4 },
+  { icon = "__EditorExtensions__/graphics/item/linked-chest.png", icon_size = 64 },
 }
 linked_chest.icon = nil
 linked_chest.icon_size = nil
-linked_chest.icon_mipmaps = nil
 linked_chest.minable.result = "ee-linked-chest"
 linked_chest.inventory_size = 100
 linked_chest.gui_mode = "all"
@@ -371,7 +371,7 @@ super_beacon.minable.result = "ee-super-beacon"
 super_beacon.energy_source = { type = "void" }
 super_beacon.allowed_effects = { "consumption", "speed", "productivity", "pollution" }
 super_beacon.supply_area_distance = 64
-super_beacon.module_specification = { module_slots = 12 }
+super_beacon.module_slots = 10
 util.recursive_tint(super_beacon, constants.infinity_tint)
 -- undo the tint of the module slots, except for the base
 if super_beacon.graphics_set.module_visualisations then
@@ -383,7 +383,7 @@ if super_beacon.graphics_set.module_visualisations then
     end
   end
 end
-super_beacon.se_allow_in_space = true
+super_beacon.se_allow_in_space = mods["space-exploration"] and true or nil --- @diagnostic disable-line:inject-field
 data:extend({ super_beacon })
 
 local super_electric_pole = flib_table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])
@@ -407,7 +407,7 @@ super_lab.minable.result = "ee-super-lab"
 super_lab.energy_source = { type = "void" }
 super_lab.energy_usage = "1W"
 super_lab.researching_speed = 100
-super_lab.module_specification = { module_slots = 12 }
+super_lab.module_slots = 10
 util.recursive_tint(super_lab)
 data:extend({ super_lab })
 
@@ -418,7 +418,6 @@ super_locomotive.map_color = constants.infinity_tint
 super_locomotive.friendly_map_color = constants.infinity_tint
 super_locomotive.max_power = "10MW"
 super_locomotive.energy_source = { type = "void" }
-super_locomotive.burner = nil
 super_locomotive.max_speed = 10
 super_locomotive.reversing_power_modifier = 1
 super_locomotive.braking_force = 100
