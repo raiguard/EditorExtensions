@@ -191,7 +191,7 @@ data:extend({
     container_distance = 0,
     filter_count = 2,
     per_lane_filters = true,
-    max_belt_stack_size = 255,
+    max_belt_stack_size = feature_flags.space_travel and 255 or nil,
     structure = flib_table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
     open_sound = sounds.machine_open,
     close_sound = sounds.machine_close,
