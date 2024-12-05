@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.1
-Date: ????
+Date: 2024-12-05
   Bugfixes:
     - Fixed being unable to load the mod without Space Age. (#208)
     - Removed unused infinity pipe snapping setting. (#207)
