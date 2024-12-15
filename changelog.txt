@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.2
-Date: ????
+Date: 2024-12-15
   Bugfixes:
     - Fixed a crash when pasting infinity loader settings to a combinator when the loader has the same item on both sides. (#209)
     - Fixed that pasting combinator settings to an infinity loader would not account for quality.
