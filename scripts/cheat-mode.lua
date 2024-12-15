@@ -154,6 +154,17 @@ end
 
 local cheat_mode = {}
 
+function cheat_mode.on_configuration_changed()
+  for _, force in pairs(game.forces) do
+    for _, player in pairs(force.players) do
+      if player.cheat_mode then
+        enable_recipes(force)
+        break
+      end
+    end
+  end
+end
+
 cheat_mode.events = {
   [defines.events.on_console_command] = on_console_command,
   [defines.events.on_player_created] = on_player_created,

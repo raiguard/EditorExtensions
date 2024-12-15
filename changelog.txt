@@ -5,6 +5,7 @@ Date: ????
     - Fixed a crash when pasting infinity loader settings to a combinator when the loader has the same item on both sides. (#209)
     - Fixed that pasting combinator settings to an infinity loader would not account for quality.
     - Fixed that pasting infinity loader settings to a combinator would not work if the loader only had a filter on the right side. (#210)
+    - Fixed that testing recipes would become uncraftable if a mod added or removed recipes. (#194)
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.1
 Date: 2024-12-05
