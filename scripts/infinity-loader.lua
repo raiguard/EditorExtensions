@@ -82,7 +82,7 @@ local function copy_from_loader_to_combinator(loader, combinator)
   for i = 1, 2 do
     local filter = loader.get_filter(i)
     if not filter then
-      return
+      goto continue
     end
     if i == 1 then
       first_filter = filter
@@ -97,6 +97,7 @@ local function copy_from_loader_to_combinator(loader, combinator)
       },
       min = 1,
     })
+    ::continue::
   end
 end
 
