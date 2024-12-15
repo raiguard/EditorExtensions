@@ -77,9 +77,16 @@ local function copy_from_loader_to_combinator(loader, combinator)
   if not section then
     return -- When will this ever happen?
   end
+  --- @type ItemFilter?
+  local first_filter
   for i = 1, 2 do
     local filter = loader.get_filter(i)
     if not filter then
+      return
+    end
+    if i == 1 then
+      first_filter = filter
+    elseif first_filter and filter.name == first_filter.name and filter.quality == first_filter.quality then
       return
     end
     section.set_slot(i, {
@@ -109,7 +116,7 @@ local function copy_from_combinator_to_loader(combinator, loader)
     if filter then
       local value = filter.value
       if value and prototypes[value.type or "item"][value.name] then
-        loader.set_filter(i, value.name)
+        loader.set_filter(i, { name = value.name, quality = value.quality })
       else
         loader.set_filter(i, nil)
       end
