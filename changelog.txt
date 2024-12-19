@@ -2,6 +2,7 @@
 Version: 2.4.3
 Date: ????
   Changes:
+    - Added an option to generate the debug world with normal terrain (#133)
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.2
 Date: 2024-12-15
