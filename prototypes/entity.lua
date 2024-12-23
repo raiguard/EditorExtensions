@@ -184,6 +184,7 @@ data:extend({
     collision_box = { { -0.3, -0.3 }, { 0.3, 0.3 } },
     selection_box = { { -0.5, -0.5 }, { 0.5, 0.5 } },
     animation_speed_coefficient = 32,
+    fast_replaceable_group = "infinity-loader",
     belt_animation_set = flib_table.deepcopy(data.raw["transport-belt"]["fast-transport-belt"].belt_animation_set),
     speed = 0.03125, -- Temporary, will be overwritten in data-final-fixes
     container_distance = 0,
@@ -221,6 +222,21 @@ data:extend({
   }, { r = 0.8, g = 0.8, b = 0.8 }),
 })
 
+-- Infinity loader flat (not-stacked)
+
+data:extend({
+  util.copy_prototype(data.raw["loader-1x1"]["ee-infinity-loader"], {
+    name = "ee-infinity-loader-flat",
+    localised_name = { "entity-name.ee-infinity-loader" },
+    localised_description = { "entity-description.ee-infinity-loader" },
+    placeable_by = { item = "ee-infinity-loader", count = 1 },
+    max_belt_stack_size = 1,
+    hidden = true,
+    factoriopedia_alternative = "ee-infinity-loader",
+    deconstruction_alternative = "ee-infinity-loader",
+  })
+})
+
 -- Infinity pipe
 
 local infinity_pipe = flib_table.deepcopy(data.raw["infinity-pipe"]["infinity-pipe"])
@@ -240,6 +256,7 @@ data:extend({ infinity_pipe })
 local pastable =
   flib_table.get_or_insert(data.raw["constant-combinator"]["constant-combinator"], "additional_pastable_entities", {})
 table.insert(pastable, "ee-infinity-pipe")
+table.insert(pastable, "ee-infinity-loader")
 table.insert(pastable, "ee-infinity-loader")
 
 -- infinity wagons

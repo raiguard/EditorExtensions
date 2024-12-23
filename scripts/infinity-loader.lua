@@ -1,3 +1,4 @@
+local flib_gui = require("__flib__.gui")
 local flib_direction = require("__flib__.direction")
 local flib_migration = require("__flib__.migration")
 local position = require("__flib__.position")
@@ -10,6 +11,11 @@ local transport_belt_connectables = {
   "loader-1x1",
   "linked-belt",
   "lane-splitter",
+}
+
+local infinity_loaders = {
+  ["ee-infinity-loader"] = true,
+  ["ee-infinity-loader-flat"] = true,
 }
 
 --- @param entity LuaEntity
@@ -126,6 +132,38 @@ local function copy_from_combinator_to_loader(combinator, loader)
   sync_chest_filter(loader)
 end
 
+---@param old LuaEntity
+local function swap_stack(old)
+  local prototype = old.prototype
+  if old.name == "entity-ghost" then
+    prototype = old.ghost_prototype --[[@as LuaEntityPrototype]]
+  end
+  -- Determine swap direction from existing entity name and generate the new entity name
+  local base_name = string.match(prototype.name, "^(.*)-flat")
+  local new_name = base_name or prototype.name .. "-flat"
+  local new = {
+    name = new_name,
+    fast_replace = true,
+    create_build_effect_smoke = false,
+    player = old.last_user,
+    position = old.position,
+    direction = old.direction,
+    force = old.force,
+    type = old.loader_type,
+    quality = old.quality,
+  }
+  if old.name == "entity-ghost" then
+    new.name = "entity-ghost"
+    new.inner_name = new_name
+  end
+  storage.infinity_loader_swapping = true
+  local loader = old.surface.create_entity(new)
+  if not loader then
+    return
+  end
+  return loader
+end
+
 --- @param e BuiltEvent
 local function on_entity_built(e)
   local entity = e.entity or e.destination
@@ -133,7 +171,7 @@ local function on_entity_built(e)
     return
   end
 
-  if entity.name ~= "ee-infinity-loader" then
+  if not infinity_loaders[entity.name] then
     return
   end
 
@@ -159,7 +197,11 @@ end
 --- @param e DestroyedEvent
 local function on_entity_destroyed(e)
   local entity = e.entity
-  if not entity.valid or entity.name ~= "ee-infinity-loader" then
+  if not entity.valid or not infinity_loaders[entity.name] then
+    return
+  end
+  if storage.infinity_loader_swapping then
+    storage.infinity_loader_swapping = nil
     return
   end
   local chest = entity.surface.find_entity("ee-infinity-loader-chest", entity.position)
@@ -171,7 +213,7 @@ end
 --- @param e EventData.on_player_rotated_entity
 local function on_entity_rotated(e)
   local entity = e.entity
-  if not entity.valid or entity.name ~= "ee-infinity-loader" then
+  if not entity.valid or not infinity_loaders[entity.name] then
     return
   end
   sync_chest_filter(entity)
@@ -184,7 +226,7 @@ local function on_entity_settings_pasted(e)
     return
   end
   local source_is_loader, destination_is_loader =
-    source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
+    infinity_loaders[source.name] and true, infinity_loaders[destination.name] and true
   if source_is_loader and destination.name == "constant-combinator" then
     copy_from_loader_to_combinator(source, destination)
   elseif source.name == "constant-combinator" and destination_is_loader then
@@ -192,6 +234,56 @@ local function on_entity_settings_pasted(e)
   elseif destination_is_loader then
     sync_chest_filter(destination)
   end
+end
+
+---@param e EventData.on_gui_checked_state_changed
+local function on_stack_state_changed(e)
+  local gui = storage.infinity_loader_gui[e.player_index]
+  local loader = storage.infinity_loader_open[e.player_index]
+  if not gui or not loader or not loader.valid then
+    storage.infinity_loader_gui[e.player_index] = nil
+    storage.infinity_loader_open[e.player_index] = nil
+  end
+  local new = swap_stack(loader)
+  game.get_player(e.player_index).opened = new
+end
+
+---@param player LuaPlayer.drag_wire_param
+local function destroy_gui(player)
+  if player.gui.relative.ee_infinity_loader_stacking then
+    player.gui.relative.ee_infinity_loader_stacking.destroy()
+  end
+end
+
+---@param player LuaPlayer
+---@param entity LuaEntity
+local function create_relative_gui(player, entity)
+  destroy_gui(player)
+  if not script.feature_flags.space_travel then
+    return
+  end
+  if not infinity_loaders[entity.name] then
+    return
+  end
+  storage.infinity_loader_gui[player.index] = flib_gui.add(player.gui.relative, {
+    type = "frame",
+    name = "ee_infinity_loader_stacking",
+    direction = "horizontal",
+    anchor = {
+      gui = defines.relative_gui_type.loader_gui,
+      position = defines.relative_gui_position.bottom,
+    },
+    {
+      type = "checkbox",
+      caption = { "gui.ee-stacking" },
+      tooltip = { "gui.ee-stacking-tooltip" },
+      state = not string.match(entity.name, "%-flat$") and true or false,
+      name = "cb_state",
+      handler = {
+        [defines.events.on_gui_checked_state_changed] = on_stack_state_changed
+      },
+    }
+  })
 end
 
 --- @param e EventData.on_gui_opened
@@ -203,7 +295,12 @@ local function on_gui_opened(e)
   if not entity or not entity.valid then
     return
   end
-  if entity.name == "ee-infinity-loader" then
+  local player = game.get_player(e.player_index)
+  if not player then
+    return
+  end
+  create_relative_gui(player, entity)
+  if infinity_loaders[entity.name] then
     storage.infinity_loader_open[e.player_index] = entity
   end
 end
@@ -220,11 +317,16 @@ local function on_gui_closed(e)
   end
 end
 
+flib_gui.add_handlers{
+  on_stack_state_changed = on_stack_state_changed,
+}
+
 local infinity_loader = {}
 
 function infinity_loader.on_init()
   --- @type table<uint, LuaEntity>
   storage.infinity_loader_open = {}
+  storage.infinity_loader_gui = {}
 end
 
 --- @param e ConfigurationChangedData
@@ -284,6 +386,9 @@ infinity_loader.migrations = {
         loader.set_filter(2, loader.get_filter(1))
       end
     end
+  end,
+  ["2.4.3"] = function()
+    storage.infinity_loader_gui = {}
   end,
 }
 

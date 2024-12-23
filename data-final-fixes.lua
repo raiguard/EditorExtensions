@@ -48,3 +48,4 @@ for _, prototype in pairs(data.raw["underground-belt"]) do
 end
 data.raw["linked-belt"]["ee-linked-belt"].speed = fastest_speed
 data.raw["loader-1x1"]["ee-infinity-loader"].speed = fastest_speed
+data.raw["loader-1x1"]["ee-infinity-loader-flat"].speed = fastest_speed
