@@ -257,7 +257,7 @@ local pastable =
   flib_table.get_or_insert(data.raw["constant-combinator"]["constant-combinator"], "additional_pastable_entities", {})
 table.insert(pastable, "ee-infinity-pipe")
 table.insert(pastable, "ee-infinity-loader")
-table.insert(pastable, "ee-infinity-loader")
+table.insert(pastable, "ee-infinity-loader-flat")
 
 -- infinity wagons
 do
