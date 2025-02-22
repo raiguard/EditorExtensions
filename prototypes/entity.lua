@@ -190,6 +190,7 @@ data:extend({
     filter_count = 2,
     per_lane_filters = true,
     max_belt_stack_size = feature_flags.space_travel and 255 or nil,
+    adjustable_belt_stack_size = feature_flags.space_travel,
     structure = meld(
       table.deepcopy(data.raw["linked-belt"]["linked-belt"].structure),
       { direction_in_side_loading = meld.delete(), direction_out_side_loading = meld.delete() }
