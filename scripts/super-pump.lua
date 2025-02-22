@@ -187,7 +187,7 @@ end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  local blueprint = e.stack
+  local blueprint = e.stack or e.record
   if not blueprint then
     return
   end
@@ -210,6 +210,7 @@ local function on_player_setup_blueprint(e)
   end
 end
 
+--- @param e EventData.on_entity_settings_pasted
 local function on_entity_settings_pasted(e)
   local source, destination = e.source, e.destination
   if not source.valid or not destination.valid then

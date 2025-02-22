@@ -58,7 +58,7 @@ end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  local blueprint = e.stack
+  local blueprint = e.stack or e.record
   if not blueprint then
     return
   end

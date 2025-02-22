@@ -1,7 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.3
 Date: ????
-  Changes:
+  Bugfixes:
+    - Fixed that infinity wagons, aggregate chests, and super pumps were not correctly saved to blueprints when reassigning contents from the library. Requires Factorio 2.0.34 or newer.
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.2
 Date: 2024-12-15
