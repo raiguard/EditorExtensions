@@ -12,6 +12,7 @@ local module_template = {
 for _, module_data in pairs(constants.module_data) do
   local module = table.deep_copy(module_template)
   module.name = module_data.name
+  module.hidden_in_factoriopedia = true
   module.order = module_data.order
   module.category = module_data.category
   module.tier = module_data.tier

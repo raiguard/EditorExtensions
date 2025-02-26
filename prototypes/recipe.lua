@@ -34,6 +34,7 @@ local function register_recipes(t)
       {
         type = "recipe",
         name = k,
+        hidden_in_factoriopedia = true,
         ingredients = {},
         category = "ee-testing-tool",
         results = { { type = "item", name = k, amount = 1 } },
