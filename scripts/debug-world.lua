@@ -2,11 +2,13 @@ local util = require("scripts.util")
 
 --- @param surface LuaSurface
 local function setup_surface(surface)
-  surface.generate_with_lab_tiles = settings.global["ee-generate-debug-world-with-lab-tiles"].value --[[@as boolean]]
-  surface.show_clouds = false
+  if not settings.global["ee-generate-debug-world-with-lab-tiles"].value then
+    surface.generate_with_lab_tiles = true
+    surface.show_clouds = false
+    surface.clear(true)
+  end
   surface.freeze_daytime = true
   surface.daytime = 0
-  surface.clear(true)
 end
 
 --- @param force LuaForce
