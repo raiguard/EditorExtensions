@@ -1,12 +1,34 @@
 local util = require("scripts.util")
 
 --- @param surface LuaSurface
+local function place_power(surface)
+  surface.request_to_generate_chunks({-24, -24}, 0)
+  surface.force_generate_chunk_requests()
+  surface.create_entity({
+    name = "ee-infinity-accumulator-primary-output",
+    position = { -24, -24 },
+    force = game.forces.player,
+    create_build_effect_smoke = false,
+  })
+  surface.create_entity({
+    name = "ee-super-substation",
+    position = { -22, -24 },
+    force = game.forces.player,
+    create_build_effect_smoke = false,
+  })
+end
+
+--- @param surface LuaSurface
 local function setup_surface(surface)
-  surface.generate_with_lab_tiles = true
-  surface.show_clouds = false
+  if settings.global["ee-generate-debug-world-with-lab-tiles"].value then
+    surface.generate_with_lab_tiles = true
+    surface.show_clouds = false
+    surface.clear(true)
+  else
+    place_power(surface)
+  end
   surface.freeze_daytime = true
   surface.daytime = 0
-  surface.clear(true)
 end
 
 --- @param force LuaForce
@@ -64,18 +86,7 @@ local function on_surface_cleared(e)
   if not surface then
     return
   end
-  surface.create_entity({
-    name = "ee-infinity-accumulator-primary-output",
-    position = { -24, -24 },
-    force = game.forces.player,
-    create_build_effect_smoke = false,
-  })
-  surface.create_entity({
-    name = "ee-super-substation",
-    position = { -22, -24 },
-    force = game.forces.player,
-    create_build_effect_smoke = false,
-  })
+  place_power(surface)
 end
 
 local function on_init()
