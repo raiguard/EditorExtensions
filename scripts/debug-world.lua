@@ -1,5 +1,6 @@
 local util = require("scripts.util")
 
+--- @param surface LuaSurface
 local function place_power(surface)
   surface.request_to_generate_chunks({-24, -24}, 0)
   surface.force_generate_chunk_requests()
