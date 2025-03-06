@@ -1,14 +1,12 @@
 name: Bug report
 description: File a bug report
-assignees:
-  - raiguard
 body:
   - type: textarea
     attributes:
       label: Description
       description: A brief description of the issue. Attach `factorio-current.log` by dragging the file into the area below.
       placeholder: |
-        The mod EditorExtensions (2.0.0) caused a non-recovarable error...
+        The mod EditorExtensions (2.0.0) caused an unrecoverable error...
     validations:
       required: true
   - type: textarea

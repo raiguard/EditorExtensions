@@ -1,8 +1,6 @@
-local gui = require("__flib__/gui-lite")
-local math = require("__flib__/math")
-local table = require("__flib__/table")
-
-local util = require("__EditorExtensions__/scripts/util")
+local gui = require("__flib__.gui")
+local math = require("__flib__.math")
+local table = require("__flib__.table")
 
 --- @param entity LuaEntity
 --- @param speed double
@@ -138,7 +136,7 @@ local function create_gui(player)
     style = "frame_with_even_paddings",
     style_mods = { width = 448 },
     anchor = {
-      gui = defines.relative_gui_type.entity_with_energy_source_gui,
+      gui = defines.relative_gui_type.pump_gui,
       position = defines.relative_gui_position.bottom,
       name = "ee-super-pump",
     },
@@ -149,7 +147,7 @@ local function create_gui(player)
       {
         type = "flow",
         name = "inner_flow",
-        style = "centering_horizontal_flow",
+        style_mods = { vertical_align = "center" },
         { type = "label", caption = { "gui.ee-speed" }, tooltip = { "gui.ee-speed-tooltip" } },
         {
           type = "slider",
@@ -175,7 +173,7 @@ end
 
 --- @param e BuiltEvent
 local function on_entity_built(e)
-  local entity = e.created_entity or e.entity or e.destination
+  local entity = e.entity or e.destination
   if not entity or not entity.valid or entity.name ~= "ee-super-pump" then
     return
   end
@@ -189,7 +187,7 @@ end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  local blueprint = util.get_blueprint(e)
+  local blueprint = e.stack or e.record
   if not blueprint then
     return
   end
@@ -212,6 +210,7 @@ local function on_player_setup_blueprint(e)
   end
 end
 
+--- @param e EventData.on_entity_settings_pasted
 local function on_entity_settings_pasted(e)
   local source, destination = e.source, e.destination
   if not source.valid or not destination.valid then
@@ -268,6 +267,7 @@ super_pump.events = {
   [defines.events.on_robot_built_entity] = on_entity_built,
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_revive] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
 }
 
 return super_pump

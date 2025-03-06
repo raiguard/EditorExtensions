@@ -1,5 +1,5 @@
-local constants = require("__EditorExtensions__/prototypes/constants")
-local util = require("__EditorExtensions__/prototypes/util")
+local constants = require("prototypes.constants")
+local util = require("prototypes.util")
 
 local personal_battery = table.deepcopy(data.raw["battery-equipment"]["battery-equipment"])
 personal_battery.name = "ee-super-battery-equipment"
@@ -34,9 +34,9 @@ data:extend({
   -- infinity personal fusion reactor
   {
     type = "generator-equipment",
-    name = "ee-infinity-fusion-reactor-equipment",
+    name = "ee-infinity-fission-reactor-equipment",
     sprite = {
-      filename = "__base__/graphics/equipment/fusion-reactor-equipment.png",
+      filename = "__base__/graphics/equipment/fission-reactor-equipment.png",
       width = 128,
       height = 128,
       priority = "medium",

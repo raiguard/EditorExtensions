@@ -1,26 +1,26 @@
 --- @class Util
 local util = {}
 
-local coreutil = require("__core__/lualib/util")
+local coreutil = require("__core__.lualib.util")
 util.parse_energy = coreutil.parse_energy
 
---- @param handler GuiElemHandler
+--- @param handler flib.GuiElemHandler
 function util.close_button(handler)
   return {
     type = "sprite-button",
     style = "frame_action_button",
-    sprite = "utility/close_white",
-    hovered_sprite = "utility/close_black",
-    clicked_sprite = "utility/close_black",
+    sprite = "utility/close",
+    -- hovered_sprite = "utility/close_black",
+    -- clicked_sprite = "utility/close_black",
     tooltip = { "gui.close-instruction" },
     mouse_button_filter = { "left" },
     handler = { [defines.events.on_gui_click] = handler },
   }
 end
 
---- @param mode InfinityPipeMode
---- @param handler GuiElemHandler
---- @return GuiElemDef
+--- @param mode string
+--- @param handler flib.GuiElemHandler
+--- @return flib.GuiElemDef
 function util.mode_radio_button(mode, handler)
   return {
     type = "radiobutton",
@@ -93,36 +93,6 @@ function util.player_can_use_editor(player, to_state)
   end
   player.set_shortcut_available("ee-toggle-map-editor", can_use_editor or false)
   return can_use_editor and player.admin or false
-end
-
---- @param e EventData.on_player_setup_blueprint
---- @return LuaItemStack?
-function util.get_blueprint(e)
-  local player = game.get_player(e.player_index)
-  if not player then
-    return
-  end
-
-  local bp = player.blueprint_to_setup
-  if bp and bp.valid_for_read then
-    return bp
-  end
-
-  bp = player.cursor_stack
-  if not bp or not bp.valid_for_read then
-    return
-  end
-
-  if bp.type == "blueprint-book" then
-    local item_inventory = bp.get_inventory(defines.inventory.item_main)
-    if item_inventory then
-      bp = item_inventory[bp.active_index]
-    else
-      return
-    end
-  end
-
-  return bp
 end
 
 return util

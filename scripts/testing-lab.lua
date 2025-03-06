@@ -8,6 +8,8 @@
 --- @field force LuaForce
 --- @field position MapPosition
 --- @field surface LuaSurface
+--- @field vehicle LuaEntity?
+--- @field is_driver boolean?
 
 --- @alias LabSetting
 --- | "force"
@@ -43,6 +45,12 @@ local function create_lab(player, lab_setting)
   local surface = game.get_surface(surface_name)
   if not surface then
     surface = game.create_surface(surface_name, empty_map_gen_settings)
+    for force_name, force in pairs(game.forces) do
+      if not string.find(force_name, "EE_TESTFORCE_") then
+        force.set_surface_hidden(surface, true)
+      end
+    end
+    player.force.set_surface_hidden(surface, true)
     if not surface then
       player.print("Could not create test surface")
       return
@@ -58,7 +66,7 @@ local function create_lab(player, lab_setting)
 
   local force = game.forces[force_name]
   if not game.forces[force_name] then
-    if table_size(game.forces) == 64 then
+    if #game.forces == 64 then
       player.print(
         "Cannot create a testing lab force. Factorio only supports up to 64 forces at once. Please use a shared lab."
       )
@@ -89,18 +97,15 @@ local function transfer_player(player, to_state)
   if not to_state.force.valid or not to_state.surface.valid then
     return
   end
-  player.teleport(to_state.position, to_state.surface)
+
+  -- Change force first to avoid spilling items into the real world on inventory size change - see #143
   player.force = to_state.force
+  player.teleport(to_state.position, to_state.surface)
 end
 
 --- @param player LuaPlayer
---- @param lab_setting LabSetting
-local function enter_lab(player, lab_setting)
-  local lab_state = global.testing_lab_state[player.index]
-  if not lab_state or lab_state.refresh then
-    lab_state = create_lab(player, lab_setting)
-    global.testing_lab_state[player.index] = lab_state
-  end
+local function enter_lab(player)
+  local lab_state = storage.testing_lab_state[player.index]
   if not lab_state then
     return
   end
@@ -113,19 +118,14 @@ local function enter_lab(player, lab_setting)
   transfer_player(player, lab_state.lab)
 end
 
---- @param player LuaPlayer
-local function exit_lab(player)
-  local lab_state = global.testing_lab_state[player.index]
-  if not lab_state then
-    return
-  end
-
+--- @param lab_state LabState
+local function exit_lab(lab_state)
   local lab_data = lab_state.lab
-  if player.surface == lab_data.surface then
-    lab_data.position = player.position
+  if lab_state.player.surface == lab_data.surface then
+    lab_data.position = lab_state.player.position
   end
 
-  transfer_player(player, lab_state.normal)
+  transfer_player(lab_state.player, lab_state.normal)
 end
 
 --- @param player LuaPlayer
@@ -146,8 +146,44 @@ local function on_pre_player_toggled_map_editor(e)
     return
   end
 
-  if player.controller_type == defines.controllers.editor then
-    exit_lab(player)
+  local in_editor = player.physical_controller_type == defines.controllers.editor
+  local lab_state = storage.testing_lab_state[e.player_index]
+  if not lab_state and not in_editor then
+    lab_state = create_lab(player, lab_setting)
+    storage.testing_lab_state[e.player_index] = lab_state
+  end
+  if not lab_state then
+    return
+  end
+
+  local current_state = in_editor and lab_state.lab or lab_state.normal
+  current_state.vehicle = player.vehicle
+  current_state.is_driver = player.driving
+
+  if in_editor then
+    exit_lab(lab_state)
+  end
+end
+
+--- @param player LuaPlayer
+local function sync_vehicle_state(player)
+  local lab_state = storage.testing_lab_state[player.index]
+  if not lab_state then
+    return
+  end
+
+  local in_editor = player.physical_controller_type == defines.controllers.editor
+  local new_state = in_editor and lab_state.lab or lab_state.normal
+
+  local vehicle = new_state.vehicle
+  if not vehicle or not vehicle.valid then
+    return
+  end
+
+  if new_state.is_driver and not vehicle.get_driver() then
+    new_state.vehicle.set_driver(player)
+  elseif not new_state.is_driver and not vehicle.get_passenger() then
+    new_state.vehicle.set_passenger(player)
   end
 end
 
@@ -158,14 +194,15 @@ local function on_player_toggled_map_editor(e)
     return
   end
 
-  local lab_setting = get_lab_setting(player)
-  if lab_setting == "off" then
+  if get_lab_setting(player) == "off" then
     return
   end
 
-  if player.controller_type == defines.controllers.editor then
-    enter_lab(player, lab_setting)
+  if player.physical_controller_type == defines.controllers.editor then
+    enter_lab(player)
   end
+
+  sync_vehicle_state(player)
 end
 
 --- @param e EventData.on_force_reset
@@ -267,7 +304,7 @@ end
 
 --- @param e EventData.on_runtime_mod_setting_changed
 local function on_testing_lab_setting_changed(e)
-  local lab_state = global.testing_lab_state[e.player_index]
+  local lab_state = storage.testing_lab_state[e.player_index]
   if lab_state then
     lab_state.refresh = true
   end
@@ -286,7 +323,7 @@ local testing_lab = {}
 
 testing_lab.on_init = function()
   --- @type table<uint, LabState?>
-  global.testing_lab_state = {}
+  storage.testing_lab_state = {}
 end
 
 testing_lab.events = {
@@ -302,18 +339,23 @@ testing_lab.add_remote_interface = function()
   remote.add_interface("EditorExtensions", {
     --- Get the force that the player is actually on, ignoring the testing lab force.
     --- @param player LuaPlayer
-    --- @return ForceIdentification
+    --- @return ForceID
     get_player_proper_force = function(player)
       if not player or not player.valid then
         error("Did not pass a valid LuaPlayer")
       end
-      local in_editor = player.controller_type == defines.controllers.editor
+      local in_editor = player.physical_controller_type == defines.controllers.editor
       local ts_setting = player.mod_settings["ee-testing-lab"].value
-      if ts_setting == "off" or not in_editor then
+      if
+        ts_setting == "off"
+        or not in_editor
+        or not storage.testing_lab_state
+        or not storage.testing_lab_state[player.index]
+      then
         return player.force
-      else
-        return global.testing_lab_state[player.index].normal.force
       end
+
+      return storage.testing_lab_state[player.index].normal.force
     end,
   })
 end

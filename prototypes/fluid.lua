@@ -9,7 +9,7 @@ data:extend({
     base_color = { 1, 1, 1 },
     flow_color = { 1, 1, 1 },
     hidden = true,
-    max_temperature = math.huge,
+    max_temperature = 600001,
     default_temperature = 0, -- follow up on default pump speed
     auto_barrel = false,
   },

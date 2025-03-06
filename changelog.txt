@@ -1,8 +1,103 @@
 ---------------------------------------------------------------------------------------------------
-Version: 2.1.3
+Version: 2.5.0
 Date: ????
+  Minor Features:
+    - Infinity loader has an adjustable stack size. Requires Factorio 2.0.35 or newer. (https://github.com/raiguard/EditorExtensions/issues/212)
   Changes:
+    - Removed all testing tools from Factoriopedia.
     - Added an option to generate the debug world with normal terrain (#133)
+  Bugfixes:
+    - Fixed that infinity wagons, aggregate chests, and super pumps were not correctly saved to blueprints when reassigning contents from the library. Requires Factorio 2.0.34 or newer.
+---------------------------------------------------------------------------------------------------
+Version: 2.4.2
+Date: 2024-12-15
+  Bugfixes:
+    - Fixed a crash when pasting infinity loader settings to a combinator when the loader has the same item on both sides. (#209)
+    - Fixed that pasting combinator settings to an infinity loader would not account for quality.
+    - Fixed that pasting infinity loader settings to a combinator would not work if the loader only had a filter on the right side. (#210)
+    - Fixed that testing recipes would become uncraftable if a mod added or removed recipes. (#194)
+---------------------------------------------------------------------------------------------------
+Version: 2.4.1
+Date: 2024-12-05
+  Bugfixes:
+    - Fixed being unable to load the mod without Space Age. (#208)
+    - Removed unused infinity pipe snapping setting. (#207)
+    - Fixed super beacon and super lab having the wrong number of module slots.
+    - Fixed unused prototype property warnings.
+---------------------------------------------------------------------------------------------------
+Version: 2.4.0
+Date: 2024-12-04
+  Features:
+    - Aggregate chest quality is applied to the chest's item filters. (#188)
+    - Infinity loader supports per-lane filters again. (#147)
+  Changes:
+    - Infinity loader will output stacked items. (#184)
+    - Updated map editor shortcut icon.
+    - Aggregate chest contains spoilable items again, but they won't start spoiling until they are removed.
+    - Removed parameters from the aggregate chest. (#185)
+  Bugfixes:
+    - Fixed that the editor window would overlap mod GUI elements. (#199)
+    - Fixed that internal entities were showing in Factoriopedia. (#205)
+    - Fixed that the testing lab switching logic would break if you toggled the testing lab while in remote view. (#176)
+---------------------------------------------------------------------------------------------------
+Version: 2.3.1
+Date: 2024-10-29
+  Bugfixes:
+    - Fixed that several items were unavailable in selection lists. (#181)
+    - Fixed that testing lab surfaces would be visible in the surfaces list outside the editor. (#182)
+    - Fixed that the super productivity module erroneously claimed it could be used on all recipes. (#175)
+---------------------------------------------------------------------------------------------------
+Version: 2.3.0
+Date: 2024-10-15
+  Changes:
+    - Updated to Factorio 2.0.
+    - Removed infinity pipe capacities. The infinity pipe now operates directly on the fluid segment instead of having a standalone fluid box.
+---------------------------------------------------------------------------------------------------
+Version: 2.2.4
+Date: 2023-12-20
+  Bugfixes:
+    - Fixed accidental log spam when removing an infinity wagon. (#159)
+---------------------------------------------------------------------------------------------------
+Version: 2.2.3
+Date: 2023-12-12
+  Bugfixes:
+    - Fixed a small typo in the testing lab warning message. (#156)
+    - Fixed that infinity wagon proxies could become orphaned and never be cleaned up. (#151)
+---------------------------------------------------------------------------------------------------
+Version: 2.2.2
+Date: 2023-10-14
+  Bugfixes:
+    - Fixed that mining an infinity pipe with the GUI open would not close the GUI (#149).
+    - Fixed that infinity loaders had the wrong map color (#150).
+---------------------------------------------------------------------------------------------------
+Version: 2.2.1
+Date: 2023-08-30
+  Bugfixes:
+    - Fixed an occasional crash when copy/pasting settings on an infinity accumulator (#146)
+---------------------------------------------------------------------------------------------------
+Version: 2.2.0
+Date: 2023-08-25
+  Features:
+    - If you are riding a vehicle when you toggle the testing lab, you will return to that vehicle when toggling back (#144)
+  Bugfixes:
+    - Fixed being unable to load the game when using the Polish language for real this time (#142)
+    - Fixed that exiting the testing lab with a full inventory when the testing force has a larger inventory slots bonus than the real force would spill items into the real world (they now spill into the lab instead) (#143)
+---------------------------------------------------------------------------------------------------
+Version: 2.1.5
+Date: 2023-07-04
+  Bugfixes:
+    - Fixed being unable to load the game when using the Polish language (#142)
+---------------------------------------------------------------------------------------------------
+Version: 2.1.4
+Date: 2023-06-24
+  Bugfixes:
+    - Fixed a crash when a mod calls get_player_proper_force before mod initialization has completed (#141)
+---------------------------------------------------------------------------------------------------
+Version: 2.1.3
+Date: 2023-06-04
+  Bugfixes:
+    - Fixed a crash when removing an infinity pipe with its GUI open (#134)
+    - Fixed that recipe notifications were not cleared when using /cheat (#137)
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.2
 Date: 2023-04-15

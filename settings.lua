@@ -139,31 +139,24 @@ data:extend({
   },
   {
     type = "bool-setting",
-    name = "ee-infinity-pipe-crafter-snapping",
+    name = "ee-inventory-sync",
     setting_type = "runtime-per-user",
     default_value = true,
     order = "b",
   },
   {
     type = "bool-setting",
-    name = "ee-inventory-sync",
+    name = "ee-auto-alt-mode",
     setting_type = "runtime-per-user",
     default_value = true,
     order = "c",
   },
   {
     type = "bool-setting",
-    name = "ee-auto-alt-mode",
-    setting_type = "runtime-per-user",
-    default_value = true,
-    order = "e",
-  },
-  {
-    type = "bool-setting",
     name = "ee-start-in-editor",
     setting_type = "runtime-per-user",
     default_value = false,
-    order = "f",
+    order = "d",
   },
   {
     type = "string-setting",
@@ -171,6 +164,6 @@ data:extend({
     setting_type = "runtime-per-user",
     allowed_values = { "off", "personal", "shared" },
     default_value = "off",
-    order = "g",
+    order = "e",
   },
 })

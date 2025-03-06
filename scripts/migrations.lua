@@ -1,18 +1,16 @@
-local flib_migration = require("__flib__/migration")
+local flib_migration = require("__flib__.migration")
 
-local aggregate_chest = require("__EditorExtensions__/scripts/aggregate-chest")
-local infinity_accumulator = require("__EditorExtensions__/scripts/infinity-accumulator")
-local infinity_loader = require("__EditorExtensions__/scripts/infinity-loader")
-local infinity_pipe = require("__EditorExtensions__/scripts/infinity-pipe")
-local inventory_filters = require("__EditorExtensions__/scripts/inventory-filters")
-local inventory_sync = require("__EditorExtensions__/scripts/inventory-sync")
-local linked_belt = require("__EditorExtensions__/scripts/linked-belt")
+local infinity_accumulator = require("scripts.infinity-accumulator")
+local infinity_loader = require("scripts.infinity-loader")
+local inventory_filters = require("scripts.inventory-filters")
+local inventory_sync = require("scripts.inventory-sync")
+local linked_belt = require("scripts.linked-belt")
 
 local version_migrations = {
   ["2.0.0"] = function()
     -- Preserve testing lab state
     local testing_lab_state = {}
-    for player_index, player_table in pairs(global.players) do
+    for player_index, player_table in pairs(storage.players) do
       local player = game.get_player(player_index)
       if player and player_table.lab_state and player_table.normal_state then
         testing_lab_state[player_index] = {
@@ -24,7 +22,7 @@ local version_migrations = {
       end
     end
     -- NUKE EVERYTHING
-    global = { testing_lab_state = testing_lab_state, wagons = global.wagons }
+    storage = { testing_lab_state = testing_lab_state, wagons = storage.wagons }
     rendering.clear("EditorExtensions")
     for _, player in pairs(game.players) do
       for _, gui in pairs({ player.gui.top, player.gui.left, player.gui.center, player.gui.screen, player.gui.relative }) do
@@ -36,13 +34,33 @@ local version_migrations = {
       end
     end
     -- Start over
-    aggregate_chest.on_init()
     infinity_accumulator.on_init()
     infinity_loader.on_init()
-    infinity_pipe.on_init()
     inventory_filters.on_init()
     inventory_sync.on_init()
     linked_belt.on_init()
+  end,
+  ["2.3.0"] = function()
+    storage.aggregate_filters = nil
+    storage.infinity_pipe_amount_type = nil
+    for _, gui in pairs(storage.infinity_pipe_gui or {}) do
+      local window = gui.elems.ee_infinity_pipe_window
+      if window and window.valid then
+        window.destroy()
+      end
+    end
+    storage.infinity_pipe_gui = nil
+  end,
+  ["2.3.1"] = function()
+    for surface_name, surface in pairs(game.surfaces) do
+      if string.find(surface_name, "EE_TESTSURFACE_") then
+        for force_name, force in pairs(game.forces) do
+          if not string.find(force_name, "EE_TESTFORCE_") then
+            force.set_surface_hidden(surface, true)
+          end
+        end
+      end
+    end
   end,
 }
 

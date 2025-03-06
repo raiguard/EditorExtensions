@@ -1,8 +1,8 @@
-local gui = require("__flib__/gui-lite")
-local math = require("__flib__/math")
-local table = require("__flib__/table")
+local gui = require("__flib__.gui")
+local math = require("__flib__.math")
+local table = require("__flib__.table")
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local si_suffixes_joule = { "kJ", "MJ", "GJ", "TJ", "PJ", "EJ", "ZJ", "YJ" }
 local si_suffixes_watt = { "kW", "MW", "GW", "TW", "PW", "EW", "ZW", "YW" }
@@ -104,7 +104,7 @@ local function get_slider_values(buffer_size, mode)
   -- `power` is the dropdown value - how many sets of three orders of magnitude there are, rounded down
   local power = math.floor((len - 1) / 3)
   -- Slider value is the buffer size scaled to its base-three order of magnitude
-  return buffer_size / 10 ^ (power * 3) --[[@as uint]],
+  return buffer_size / 10 ^ (power * 3), --[[@as uint]]
     math.max(power, 1) --[[@as uint]]
 end
 
@@ -115,11 +115,11 @@ end
 
 --- @param player_index uint
 local function destroy_gui(player_index)
-  local self = global.infinity_accumulator_gui[player_index]
+  local self = storage.infinity_accumulator_gui[player_index]
   if not self then
     return
   end
-  global.infinity_accumulator_gui[player_index] = nil
+  storage.infinity_accumulator_gui[player_index] = nil
   local window = self.elems.ee_infinity_accumulator_window
   if not window.valid then
     return
@@ -166,7 +166,7 @@ end
 
 --- @param entity LuaEntity
 local function update_all_guis(entity)
-  for _, gui in pairs(global.infinity_accumulator_gui) do
+  for _, gui in pairs(storage.infinity_accumulator_gui) do
     if not gui.entity.valid or gui.entity == entity then
       update_gui(gui, entity)
     end
@@ -262,7 +262,7 @@ local handlers = {
 }
 
 gui.add_handlers(handlers, function(e, handler)
-  local self = global.infinity_accumulator_gui[e.player_index]
+  local self = storage.infinity_accumulator_gui[e.player_index]
   if not self then
     return
   end
@@ -290,7 +290,7 @@ local function create_gui(player, entity)
       drag_target = "ee_infinity_accumulator_window",
       {
         type = "label",
-        style = "frame_title",
+        style = "flib_frame_title",
         caption = { "entity-name.ee-infinity-accumulator" },
         ignored_by_interaction = true,
       },
@@ -395,7 +395,7 @@ local function create_gui(player, entity)
     entity = entity,
     player = player,
   }
-  global.infinity_accumulator_gui[player.index] = self
+  storage.infinity_accumulator_gui[player.index] = self
 
   update_gui(self)
 end
@@ -407,7 +407,7 @@ local function on_entity_destroyed(e)
     return
   end
 
-  for player_index, gui in pairs(global.infinity_accumulator_gui) do
+  for player_index, gui in pairs(storage.infinity_accumulator_gui) do
     if gui.entity == entity then
       destroy_gui(player_index)
     end
@@ -458,7 +458,7 @@ local infinity_accumulator = {}
 
 infinity_accumulator.on_init = function()
   --- @type table<uint, InfinityAccumulatorGui>
-  global.infinity_accumulator_gui = {}
+  storage.infinity_accumulator_gui = {}
 end
 
 infinity_accumulator.on_configuration_changed = function()
@@ -474,6 +474,7 @@ infinity_accumulator.events = {
   [defines.events.on_player_mined_entity] = on_entity_destroyed,
   [defines.events.on_robot_mined_entity] = on_entity_destroyed,
   [defines.events.script_raised_destroy] = on_entity_destroyed,
+  [defines.events.on_space_platform_mined_entity] = on_entity_destroyed,
 }
 
 return infinity_accumulator

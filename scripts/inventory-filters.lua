@@ -1,7 +1,7 @@
-local gui = require("__flib__/gui-lite")
-local migration = require("__flib__/migration")
+local gui = require("__flib__.gui")
+local migration = require("__flib__.migration")
 
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local filters_table_version = 0
 local filters_table_migrations = {}
@@ -12,7 +12,7 @@ local function import_filters(player, string)
   if string == "" then
     return
   end
-  local decoded_string = game.decode_string(string)
+  local decoded_string = helpers.decode_string(string)
   if
     decoded_string
     and string.sub(decoded_string, 1, 16) == "EditorExtensions"
@@ -20,12 +20,12 @@ local function import_filters(player, string)
   then
     -- Extract version for migrations
     local version, json = string.match(decoded_string, "^.-%-.-%-(%d-)%-(.*)$")
-    local input = game.json_to_table(json)
+    local input = helpers.json_to_table(json)
     if input then
       -- Run migrations
       migration.run(version, filters_table_migrations, nil, input)
       -- Sanitize the filters to only include currently existing prototypes
-      local item_prototypes = game.item_prototypes
+      local item_prototypes = prototypes.item
       local output = {}
       local i = 0
       local filters = input.filters
@@ -52,8 +52,8 @@ local function export_filters(player)
     filters = filters,
     remove_unfiltered_items = player.remove_unfiltered_items,
   }
-  return game.encode_string(
-    "EditorExtensions-inventory_filters-" .. filters_table_version .. "-" .. game.table_to_json(output)
+  return helpers.encode_string(
+    "EditorExtensions-inventory_filters-" .. filters_table_version .. "-" .. helpers.table_to_json(output)
   )
 end
 
@@ -176,7 +176,7 @@ local function build_relative_gui(player)
   gui.add(player.gui.relative, {
     type = "frame",
     name = "ee_inventory_filters",
-    style = "quick_bar_window_frame",
+    style = "slot_window_frame",
     anchor = {
       gui = defines.relative_gui_type.controller_gui,
       position = defines.relative_gui_position.left,
@@ -227,12 +227,12 @@ local function on_player_toggled_map_editor(e)
     return
   end
   local in_editor = player.controller_type == defines.controllers.editor
-  if not in_editor or global.applied_default_filters[e.player_index] then
+  if not in_editor or storage.applied_default_filters[e.player_index] then
     return
   end
 
   -- Apply default infinity filters if this is their first time in the editor
-  global.applied_default_filters[e.player_index] = true
+  storage.applied_default_filters[e.player_index] = true
   local default_filters = player.mod_settings["ee-default-infinity-filters"].value --[[@as string]]
   if default_filters == "" then
     return
@@ -252,8 +252,8 @@ end
 
 --- @param e EventData.on_player_removed
 local function on_player_removed(e)
-  if global.applied_default_filters then
-    global.applied_default_filters[e.player_index] = nil
+  if storage.applied_default_filters then
+    storage.applied_default_filters[e.player_index] = nil
   end
 end
 
@@ -261,7 +261,7 @@ local inventory_filters = {}
 
 inventory_filters.on_init = function()
   --- @type table<uint, boolean>
-  global.applied_default_filters = {}
+  storage.applied_default_filters = {}
 end
 
 inventory_filters.on_configuration_changed = function()

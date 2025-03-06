@@ -1,0 +1,12 @@
+{
+  "adapters": {
+    "all": {
+      "cmd": "fmtk debug --workspace /home/rai/dev/factorio-mods/EditorExtensions -- /home/rai/games/factorio/bin/x64/factorio",
+      "args": {
+        "hookControl": ["EditorExtensions"],
+        "hookData": true,
+        "modsPath": "/home/rai/games/factorio/mods"
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 local character_modifiers = {
   character_build_distance_bonus = 1000000,
@@ -8,7 +8,7 @@ local character_modifiers = {
 }
 
 local equipment_to_add = {
-  { name = "ee-infinity-fusion-reactor-equipment", position = { 0, 0 } },
+  { name = "ee-infinity-fission-reactor-equipment", position = { 0, 0 } },
   { name = "ee-super-personal-roboport-equipment", position = { 1, 0 } },
   { name = "ee-super-exoskeleton-equipment", position = { 2, 0 } },
   { name = "ee-super-exoskeleton-equipment", position = { 3, 0 } },
@@ -30,7 +30,7 @@ local items_to_add = {
 
 local items_to_remove = {
   { name = "express-loader", count = 50 },
-  { name = "stack-inserter", count = 50 },
+  { name = "bulk-inserter", count = 50 },
   { name = "substation", count = 50 },
   { name = "construction-robot", count = 100 },
   { name = "electric-energy-interface", count = 1 },
@@ -44,7 +44,7 @@ local function set_armor(inventory)
   if not inventory or not inventory.valid then
     return
   end
-  inventory[1].set_stack({ name = "power-armor-mk2" })
+  inventory[1].set_stack({ name = script.active_mods["space-age"] and "mech-armor" or "power-armor-mk2" })
   local grid = inventory[1].grid
   if not grid then
     return
@@ -108,6 +108,9 @@ local function enable_recipes(force)
       recipe.enabled = true
     end
   end
+  for _, player in pairs(force.players) do
+    player.clear_recipe_notifications()
+  end
 end
 
 --- @param e EventData.on_console_command
@@ -150,6 +153,17 @@ local function on_player_toggled_map_editor(e)
 end
 
 local cheat_mode = {}
+
+function cheat_mode.on_configuration_changed()
+  for _, force in pairs(game.forces) do
+    for _, player in pairs(force.players) do
+      if player.cheat_mode then
+        enable_recipes(force)
+        break
+      end
+    end
+  end
+end
 
 cheat_mode.events = {
   [defines.events.on_console_command] = on_console_command,

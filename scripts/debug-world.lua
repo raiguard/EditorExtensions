@@ -1,4 +1,4 @@
-local util = require("__EditorExtensions__/scripts/util")
+local util = require("scripts.util")
 
 --- @param surface LuaSurface
 local function setup_surface(surface)
@@ -27,9 +27,9 @@ local function setup_player(player)
     player.toggle_map_editor()
   end
   if util.in_debug_world() then
-    local items = remote.call("freeplay", "get_created_items")
-    remote.call("freeplay", "set_created_items", {})
-    remote.call("freeplay", "set_respawn_items", {})
+    local items = remote.call("freeplay", "get_created_items") --[[@as table<string, uint>]]
+    remote.call("freeplay", "set_created_items", {}) --- @diagnostic disable-line: missing-fields
+    remote.call("freeplay", "set_respawn_items", {}) --- @diagnostic disable-line: missing-fields
     for name, count in pairs(items) do
       player.remove_item({ name = name, count = count })
     end
@@ -80,6 +80,9 @@ end
 
 local function on_init()
   if not util.in_debug_world() and not util.in_testing_scenario() then
+    return
+  end
+  if game.tick ~= 0 then
     return
   end
   for _, force in pairs(game.forces) do

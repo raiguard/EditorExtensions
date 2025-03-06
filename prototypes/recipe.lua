@@ -1,10 +1,10 @@
-local constants = require("__EditorExtensions__/prototypes/constants")
+local constants = require("prototypes.constants")
 
 local recipe_names = {
   "ee-infinity-accumulator",
   "ee-infinity-cargo-wagon",
   "ee-infinity-fluid-wagon",
-  "ee-infinity-fusion-reactor-equipment",
+  "ee-infinity-fission-reactor-equipment",
   "ee-infinity-heat-pipe",
   "ee-infinity-loader",
   "ee-infinity-pipe",
@@ -34,9 +34,10 @@ local function register_recipes(t)
       {
         type = "recipe",
         name = k,
+        hidden_in_factoriopedia = true,
         ingredients = {},
         category = "ee-testing-tool",
-        result = k,
+        results = { { type = "item", name = k, amount = 1 } },
         enabled = false,
       },
     })

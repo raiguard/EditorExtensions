@@ -1,15 +1,40 @@
-local util = require("__EditorExtensions__/scripts/util")
-
 local aggregate_chest_names = {
   ["ee-aggregate-chest"] = "ee-aggregate-chest",
   ["ee-aggregate-chest-passive-provider"] = "ee-aggregate-chest-passive-provider",
 }
 
+--- @type table<string, InfinityInventoryFilter[]>
+local filters = {}
+do
+  local include_hidden = settings.global["ee-aggregate-include-hidden"].value --[[@as boolean]]
+  local i = 0
+  for quality_name in pairs(prototypes.quality) do
+    local this_filters = {}
+    for item_name, prototype in pairs(prototypes.item) do
+      if string.find(item_name, "^parameter%-") then
+        goto continue
+      end
+      if prototype.hidden and not include_hidden then
+        goto continue
+      end
+      i = i + 1
+      this_filters[i] = {
+        name = item_name,
+        quality = quality_name,
+        count = prototype.stack_size,
+        mode = "exactly",
+        index = i,
+      }
+      ::continue::
+    end
+    filters[quality_name] = this_filters
+  end
+end
 --- Set the filters for the given aggregate chest and removes the bar if there is one
 --- @param entity LuaEntity
 local function set_filters(entity)
   entity.remove_unfiltered_items = true
-  entity.infinity_container_filters = global.aggregate_filters
+  entity.infinity_container_filters = filters[entity.quality.name]
   entity.get_inventory(defines.inventory.chest).set_bar()
 end
 
@@ -22,24 +47,9 @@ local function update_all_filters()
   end
 end
 
--- Retrieve each item prototype and its stack size
-local function build_filter_cache()
-  local include_hidden = settings.global["ee-aggregate-include-hidden"].value
-  --- @type InfinityInventoryFilter[]
-  local filters = {}
-  local i = 0
-  for name, prototype in pairs(game.item_prototypes) do
-    if prototype.type ~= "mining-tool" and include_hidden or not prototype.has_flag("hidden") then
-      i = i + 1
-      filters[i] = { name = name, count = prototype.stack_size, mode = "exactly", index = i }
-    end
-  end
-  global.aggregate_filters = filters
-end
-
 --- @param e BuiltEvent
 local function on_entity_built(e)
-  local entity = e.created_entity or e.entity or e.destination
+  local entity = e.entity or e.destination
   if not entity or not entity.valid or not aggregate_chest_names[entity.name] then
     return
   end
@@ -48,7 +58,7 @@ end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  local blueprint = util.get_blueprint(e)
+  local blueprint = e.stack or e.record
   if not blueprint then
     return
   end
@@ -71,10 +81,7 @@ end
 
 local aggregate_chest = {}
 
-aggregate_chest.on_init = build_filter_cache
-
-aggregate_chest.on_configuration_changed = function()
-  build_filter_cache()
+aggregate_chest.on_configuration_changed = function(_)
   update_all_filters()
 end
 
@@ -83,6 +90,7 @@ aggregate_chest.events = {
   [defines.events.on_entity_cloned] = on_entity_built,
   [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,
   [defines.events.on_robot_built_entity] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_revive] = on_entity_built,
 }

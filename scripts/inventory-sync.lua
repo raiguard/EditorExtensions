@@ -1,7 +1,9 @@
-local table = require("__flib__/table")
+local table = require("__flib__.table")
 
+--- @class ItemFilters table<integer, ItemFilter?>
+--
 --- @class InventorySyncData
---- @field filters table<integer, string?>
+--- @field filters ItemFilters
 --- @field hand_location uint?
 --- @field inventory LuaInventory
 
@@ -12,7 +14,7 @@ local function pre_sync(player)
   --- @type table<string, InventorySyncData>
   local sync_tables = {}
   for _, name in ipairs({ "cursor", "main", "guns", "armor", "ammo" }) do
-    --- @type table<integer, string?>
+    --- @type ItemFilters
     local sync_filters = {}
     local sync_inventory
     local inventory_def = defines.inventory[prefix .. name]
@@ -47,7 +49,7 @@ local function pre_sync(player)
       }
     end
   end
-  global.inventory_sync[player.index] = sync_tables
+  storage.inventory_sync[player.index] = sync_tables
 end
 
 --- @param player LuaPlayer
@@ -55,11 +57,11 @@ local function post_sync(player)
   -- determine prefix based on controller type
   local prefix = table.find(defines.controllers, player.controller_type) .. "_"
   -- iterate all inventories
-  local sync_data = global.inventory_sync[player.index]
+  local sync_data = storage.inventory_sync[player.index]
   if not sync_data then
     return
   end
-  global.inventory_sync[player.index] = nil
+  storage.inventory_sync[player.index] = nil
   -- Cursor first to allow setting the hand, then armor to correct the inventory size
   for _, name in ipairs({ "cursor", "armor", "main", "guns", "ammo" }) do
     local sync_table = sync_data[name]
@@ -125,7 +127,7 @@ local inventory_sync = {}
 
 inventory_sync.on_init = function()
   --- @type table<uint, table<string, InventorySyncData?>>
-  global.inventory_sync = {}
+  storage.inventory_sync = {}
 end
 
 inventory_sync.events = {

@@ -1,4 +1,19 @@
-local util = require("__EditorExtensions__/scripts/util")
+--- @class InfinityCargoWagonData
+--- @field flip integer
+--- @field proxy LuaEntity
+--- @field proxy_inv LuaInventory
+--- @field wagon LuaEntity
+--- @field wagon_inv LuaInventory
+--- @field wagon_last_position MapPosition
+--- @field wagon_name string
+
+--- @class InfinityFluidWagonData
+--- @field flip integer
+--- @field proxy LuaEntity
+--- @field proxy_fluidbox LuaFluidBox
+--- @field wagon LuaEntity
+--- @field wagon_last_position MapPosition
+--- @field wagon_name string
 
 local wagon_names = {
   ["ee-infinity-cargo-wagon"] = true,
@@ -8,12 +23,12 @@ local wagon_names = {
 --- @param player LuaPlayer
 --- @param entity LuaEntity
 local function open_gui(player, entity)
-  player.opened = global.wagons[entity.unit_number].proxy
+  player.opened = storage.wagons[entity.unit_number].proxy
 end
 
 --- @param e BuiltEvent
 local function on_entity_built(e)
-  local entity = e.created_entity or e.entity or e.destination
+  local entity = e.entity or e.destination
   if not entity or not entity.valid or not wagon_names[entity.name] then
     return
   end
@@ -34,12 +49,11 @@ local function on_entity_built(e)
     proxy_fluidbox = proxy.fluidbox,
     proxy_inv = proxy.get_inventory(defines.inventory.chest),
     wagon = entity,
-    wagon_fluidbox = entity.fluidbox,
     wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
     wagon_last_position = entity.position,
     wagon_name = entity.name,
   }
-  global.wagons[entity.unit_number] = data
+  storage.wagons[entity.unit_number] = data
 
   -- Apply any pre-existing filters
   local tags = e.tags
@@ -69,11 +83,11 @@ local function on_entity_destroyed(e)
     return
   end
 
-  local proxy = global.wagons[entity.unit_number].proxy
+  local proxy = storage.wagons[entity.unit_number].proxy
   if proxy and proxy.valid then
-    proxy.destroy()
+    proxy.destroy({})
   end
-  global.wagons[entity.unit_number] = nil
+  storage.wagons[entity.unit_number] = nil
 end
 
 --- @param e EventData.on_marked_for_deconstruction
@@ -82,7 +96,7 @@ local function on_marked_for_deconstruction(e)
   if not entity.valid or entity.name ~= "ee-infinity-cargo-wagon" then
     return
   end
-  global.wagons[entity.unit_number].flip = 3
+  storage.wagons[entity.unit_number].flip = 3
   entity.get_inventory(defines.inventory.cargo_wagon).clear()
 end
 
@@ -93,59 +107,78 @@ local function on_cancelled_deconstruction(e)
     return
   end
   -- Resume syncing
-  global.wagons[entity.unit_number].flip = 0
+  storage.wagons[entity.unit_number].flip = 0
+end
+
+--- @param data InfinityCargoWagonData
+local function sync_cargo(data)
+  if data.flip == 0 then
+    data.wagon_inv.clear()
+    for _, item in pairs(data.proxy_inv.get_contents()) do
+      data.wagon_inv.insert({ name = item.name, count = item.count, quality = item.quality })
+    end
+    data.flip = 1
+  elseif data.flip == 1 then
+    data.proxy_inv.clear()
+    for _, item in pairs(data.wagon_inv.get_contents()) do
+      data.proxy_inv.insert({ name = item.name, count = item.count, quality = item.quality })
+    end
+    data.flip = 0
+  end
+end
+
+local abs = math.abs
+
+--- @param data InfinityFluidWagonData
+local function sync_fluid(data)
+  if data.flip == 0 then
+    local fluid = data.proxy_fluidbox[1]
+    data.wagon.set_fluid(1, fluid and fluid.amount > 0 and {
+      name = fluid.name,
+      amount = (abs(fluid.amount) * 250),
+      temperature = fluid.temperature,
+    } or nil)
+    data.flip = 1
+  elseif data.flip == 1 then
+    local fluid = data.wagon.get_fluid(1)
+    data.proxy_fluidbox[1] = fluid
+        and fluid.amount > 0
+        and {
+          name = fluid.name,
+          amount = (abs(fluid.amount) / 250),
+          temperature = fluid.temperature,
+        }
+      or nil
+    data.flip = 0
+  end
 end
 
 local function on_tick()
-  local abs = math.abs
-  for _, t in pairs(global.wagons) do
-    if t.wagon.valid and t.proxy.valid then
-      if t.wagon_name == "ee-infinity-cargo-wagon" then
-        if t.flip == 0 then
-          t.wagon_inv.clear()
-          for n, c in pairs(t.proxy_inv.get_contents()) do
-            t.wagon_inv.insert({ name = n, count = c })
-          end
-          t.flip = 1
-        elseif t.flip == 1 then
-          t.proxy_inv.clear()
-          for n, c in pairs(t.wagon_inv.get_contents()) do
-            t.proxy_inv.insert({ name = n, count = c })
-          end
-          t.flip = 0
-        end
-      elseif t.wagon_name == "ee-infinity-fluid-wagon" then
-        if t.flip == 0 then
-          local fluid = t.proxy_fluidbox[1]
-          t.wagon_fluidbox[1] = fluid
-              and fluid.amount > 0
-              and {
-                name = fluid.name,
-                amount = (abs(fluid.amount) * 250),
-                temperature = fluid.temperature,
-              }
-            or nil
-          t.flip = 1
-        elseif t.flip == 1 then
-          local fluid = t.wagon_fluidbox[1]
-          t.proxy_fluidbox[1] = fluid
-              and fluid.amount > 0
-              and {
-                name = fluid.name,
-                amount = (abs(fluid.amount) / 250),
-                temperature = fluid.temperature,
-              }
-            or nil
-          t.flip = 0
-        end
+  for unit_number, data in pairs(storage.wagons) do
+    if not data.wagon.valid or not data.proxy.valid then
+      if data.wagon.valid then
+        data.wagon.destroy({ raise_destroy = true })
       end
-      local position = t.wagon.position
-      local last_position = t.wagon_last_position
-      if last_position.x ~= position.x or last_position.y ~= position.y then
-        t.proxy.teleport(t.wagon.position)
-        t.wagon_last_position = last_position
+      if data.proxy.valid then
+        data.proxy.destroy({ raise_destroy = true })
       end
+      storage.wagons[unit_number] = nil
+      goto continue
     end
+    if data.wagon_name == "ee-infinity-cargo-wagon" then
+      --- @cast data InfinityCargoWagonData
+      sync_cargo(data)
+    elseif data.wagon_name == "ee-infinity-fluid-wagon" then
+      --- @cast data InfinityFluidWagonData
+      sync_fluid(data)
+    end
+    local position = data.wagon.position
+    local last_position = data.wagon_last_position
+    if not last_position or last_position.x ~= position.x or last_position.y ~= position.y then
+      data.proxy.teleport(data.wagon.position)
+      data.wagon_last_position = data.wagon.position
+    end
+    ::continue::
   end
 end
 
@@ -191,12 +224,12 @@ local function on_entity_settings_pasted(e)
     return
   end
 
-  global.wagons[destination.unit_number].proxy.copy_settings(global.wagons[source.unit_number].proxy)
+  storage.wagons[destination.unit_number].proxy.copy_settings(storage.wagons[source.unit_number].proxy)
 end
 
 --- @param e EventData.on_player_setup_blueprint
 local function on_player_setup_blueprint(e)
-  local blueprint = util.get_blueprint(e)
+  local blueprint = e.stack or e.record
   if not blueprint then
     return
   end
@@ -214,8 +247,7 @@ local function on_player_setup_blueprint(e)
     if not real_entity then
       goto continue
     end
-    local proxy = global.wagons[real_entity.unit_number].proxy
-    --- @type InfinityPipeFilter|InfinityInventoryFilter[]?
+    local proxy = storage.wagons[real_entity.unit_number].proxy
     local tags = {}
     if entity.name == "ee-infinity-cargo-wagon" then
       tags.filters = proxy.infinity_container_filters
@@ -231,7 +263,8 @@ end
 local infinity_wagon = {}
 
 infinity_wagon.on_init = function()
-  global.wagons = {}
+  --- @type table<uint, InfinityCargoWagonData|InfinityFluidWagonData>
+  storage.wagons = {}
 end
 
 infinity_wagon.events = {
@@ -250,6 +283,8 @@ infinity_wagon.events = {
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_destroy] = on_entity_destroyed,
   [defines.events.script_raised_revive] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
+  [defines.events.on_space_platform_mined_entity] = on_entity_destroyed,
   ["ee-linked-open-gui"] = on_linked_open_gui,
 }
 

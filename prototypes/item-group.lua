@@ -1,4 +1,4 @@
-local constants = require("__EditorExtensions__/prototypes/constants")
+local constants = require("prototypes.constants")
 
 local function add_group(name, order)
   data:extend({
@@ -28,7 +28,6 @@ data:extend({
       {
         icon = "__EditorExtensions__/graphics/gui/crafting-group.png",
         icon_size = 128,
-        icon_mipmaps = 2,
         tint = constants.infinity_tint,
       },
     },

@@ -1,13 +1,6 @@
-local direction_util = require("__flib__/direction")
-local position = require("__flib__/position")
-
---- @type table<defines.direction, Vector>
-local offsets = {
-  [defines.direction.north] = { 0, -1 },
-  [defines.direction.east] = { 1, 0 },
-  [defines.direction.south] = { 0, 1 },
-  [defines.direction.west] = { -1, 0 },
-}
+local flib_direction = require("__flib__.direction")
+local flib_migration = require("__flib__.migration")
+local position = require("__flib__.position")
 
 local transport_belt_connectables = {
   "transport-belt",
@@ -16,15 +9,16 @@ local transport_belt_connectables = {
   "loader",
   "loader-1x1",
   "linked-belt",
+  "lane-splitter",
 }
 
 --- @param entity LuaEntity
 local function snap(entity)
   local offset_direction = entity.direction
   if entity.loader_type == "input" then
-    offset_direction = direction_util.opposite(offset_direction)
+    offset_direction = flib_direction.opposite(offset_direction)
   end
-  local belt_position = position.add(entity.position, offsets[offset_direction])
+  local belt_position = position.add(entity.position, flib_direction.to_vector(offset_direction))
   local belt =
     entity.surface.find_entities_filtered({ position = belt_position, type = transport_belt_connectables })[1]
   if not belt then
@@ -34,7 +28,7 @@ local function snap(entity)
   if not belt then
     return
   end
-  if belt.direction == direction_util.opposite(entity.direction) then
+  if belt.direction == flib_direction.opposite(entity.direction) then
     entity.loader_type = entity.loader_type == "output" and "input" or "output"
   end
 end
@@ -49,31 +43,62 @@ local function sync_chest_filter(entity, chest)
     entity.destroy()
     return
   end
-  local filter = entity.get_filter(1)
-  if filter then
-    chest.set_infinity_container_filter(1, {
-      index = 1,
-      name = filter,
-      count = game.item_prototypes[filter].stack_size * 5,
-      mode = "exactly",
-    })
-  else
-    chest.set_infinity_container_filter(1, nil)
+  for i = 1, 2 do
+    local filter = entity.get_filter(i)
+    if filter then
+      chest.set_infinity_container_filter(i, {
+        index = i,
+        name = filter.name --[[@as string]],
+        quality = filter.quality,
+        count = prototypes.item[filter.name].stack_size * 5,
+        mode = "exactly",
+      })
+    else
+      chest.set_infinity_container_filter(i, nil)
+    end
   end
 end
 
 --- @param loader LuaEntity
 --- @param combinator LuaEntity
 local function copy_from_loader_to_combinator(loader, combinator)
-  local filter = loader.get_filter(1)
-  if not filter then
-    return
-  end
   local cb = combinator.get_or_create_control_behavior() --[[@as LuaConstantCombinatorControlBehavior]]
-  cb.set_signal(1, {
-    signal = { type = "item", name = filter },
-    count = 1,
-  })
+  --- @type LuaLogisticSection?
+  local section
+  for _, sec in pairs(cb.sections) do
+    if sec.group == "" then
+      section = sec
+      break
+    end
+  end
+  if not section then
+    section = cb.add_section()
+  end
+  if not section then
+    return -- When will this ever happen?
+  end
+  --- @type ItemFilter?
+  local first_filter
+  for i = 1, 2 do
+    local filter = loader.get_filter(i)
+    if not filter then
+      goto continue
+    end
+    if i == 1 then
+      first_filter = filter
+    elseif first_filter and filter.name == first_filter.name and filter.quality == first_filter.quality then
+      return
+    end
+    section.set_slot(i, {
+      value = {
+        type = "item",
+        name = filter.name --[[@as string]],
+        quality = filter.quality,
+      },
+      min = 1,
+    })
+    ::continue::
+  end
 end
 
 --- @param combinator LuaEntity
@@ -83,18 +108,27 @@ local function copy_from_combinator_to_loader(combinator, loader)
   if not cb then
     return
   end
-  local signal = cb.get_signal(1)
-  if signal.signal and signal.signal.type == "item" then
-    loader.set_filter(1, signal.signal.name)
-  else
-    loader.set_filter(1, nil)
+  local section = cb.get_section(1)
+  if not section then
+    return
+  end
+  for i = 1, 2 do
+    local filter = section.filters[i]
+    if filter then
+      local value = filter.value
+      if value and prototypes[value.type or "item"][value.name] then
+        loader.set_filter(i, { name = value.name, quality = value.quality })
+      else
+        loader.set_filter(i, nil)
+      end
+    end
   end
   sync_chest_filter(loader)
 end
 
 --- @param e BuiltEvent
 local function on_entity_built(e)
-  local entity = e.entity or e.created_entity or e.destination
+  local entity = e.entity or e.destination
   if not entity.valid then
     return
   end
@@ -146,6 +180,9 @@ end
 --- @param e EventData.on_entity_settings_pasted
 local function on_entity_settings_pasted(e)
   local source, destination = e.source, e.destination
+  if not source.valid or not destination.valid then
+    return
+  end
   local source_is_loader, destination_is_loader =
     source.name == "ee-infinity-loader", destination.name == "ee-infinity-loader"
   if source_is_loader and destination.name == "constant-combinator" then
@@ -167,7 +204,7 @@ local function on_gui_opened(e)
     return
   end
   if entity.name == "ee-infinity-loader" then
-    global.infinity_loader_open[e.player_index] = entity
+    storage.infinity_loader_open[e.player_index] = entity
   end
 end
 
@@ -176,10 +213,10 @@ local function on_gui_closed(e)
   if e.gui_type ~= defines.gui_type.entity then
     return
   end
-  local loader = global.infinity_loader_open[e.player_index]
+  local loader = storage.infinity_loader_open[e.player_index]
   if loader and loader.valid then
     sync_chest_filter(loader)
-    global.infinity_loader_open[e.player_index] = nil
+    storage.infinity_loader_open[e.player_index] = nil
   end
 end
 
@@ -187,8 +224,68 @@ local infinity_loader = {}
 
 function infinity_loader.on_init()
   --- @type table<uint, LuaEntity>
-  global.infinity_loader_open = {}
+  storage.infinity_loader_open = {}
 end
+
+--- @param e ConfigurationChangedData
+function infinity_loader.on_configuration_changed(e)
+  flib_migration.on_config_changed(
+    e,
+    infinity_loader.migrations,
+    script.mod_name,
+    e.mod_changes.EditorExtensions and e.mod_changes.EditorExtensions.old_version
+  )
+end
+
+infinity_loader.migrations = {
+  ["2.0.0"] = function()
+    for _, surface in pairs(game.surfaces) do
+      for _, combinator in pairs(surface.find_entities_filtered({ name = "ee-infinity-loader-dummy-combinator" })) do
+        local cb = combinator.get_control_behavior() --[[@as LuaConstantCombinatorControlBehavior?]]
+        if not cb then
+          goto continue
+        end
+        local section = cb.get_section(1)
+        if not section then
+          goto continue
+        end
+        local filter_1, filter_2 = section.filters[1], section.filters[2]
+        local loader = combinator.surface.create_entity({
+          name = "ee-infinity-loader",
+          direction = combinator.direction,
+          position = combinator.position,
+          force = combinator.force,
+          last_user = combinator.last_user,
+          fast_replace = true,
+          create_build_effect_smoke = false,
+        })
+        if not loader then
+          error("Failed to create infinity loader replacement.")
+        end
+        if filter_1 and filter_1.value then
+          loader.set_filter(1, { name = filter_1.value.name, quality = filter_1.value.quality, amount = filter_1.min })
+        end
+        if filter_2 and filter_2.value then
+          loader.set_filter(2, { name = filter_2.value.name, quality = filter_2.value.quality, amount = filter_2.min })
+        end
+        snap(loader)
+        combinator.destroy()
+        ::continue::
+      end
+    end
+  end,
+  --- @param old_version string
+  ["2.4.0"] = function(old_version)
+    if not flib_migration.is_newer_version("2.0.0", old_version) then
+      return
+    end
+    for _, surface in pairs(game.surfaces) do
+      for _, loader in pairs(surface.find_entities_filtered({ name = "ee-infinity-loader" })) do
+        loader.set_filter(2, loader.get_filter(1))
+      end
+    end
+  end,
+}
 
 infinity_loader.events = {
   [defines.events.on_built_entity] = on_entity_built,
@@ -204,15 +301,17 @@ infinity_loader.events = {
   [defines.events.script_raised_built] = on_entity_built,
   [defines.events.script_raised_destroy] = on_entity_destroyed,
   [defines.events.script_raised_revive] = on_entity_built,
+  [defines.events.on_space_platform_built_entity] = on_entity_built,
+  [defines.events.on_space_platform_mined_entity] = on_entity_destroyed,
 }
 
 infinity_loader.on_nth_tick = {
   [15] = function()
-    for unit_number, loader in pairs(global.infinity_loader_open) do
+    for unit_number, loader in pairs(storage.infinity_loader_open) do
       if loader.valid then
         sync_chest_filter(loader)
       else
-        global.infinity_loader_open[unit_number] = nil
+        storage.infinity_loader_open[unit_number] = nil
       end
     end
   end,
