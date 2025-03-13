@@ -8,9 +8,9 @@
   "homepage": "https://github.com/raiguard/EditorExtensions",
   "factorio_version": "2.0",
   "dependencies": [
-    "base >= 2.0.23",
-    "flib >= 0.15.0",
-    "? space-age >= 2.0.0",
+    "base >= 2.0.42",
+    "flib >= 0.16.2",
+    "? space-age",
     "? CursorEnhancements",
     "(?) RecipeBook",
     "(?) aai-industry",

@@ -4,6 +4,7 @@ Date: ????
   Minor Features:
     - Infinity loader has an adjustable stack size. Requires Factorio 2.0.35 or newer. (https://github.com/raiguard/EditorExtensions/issues/212)
   Changes:
+    - Updated to use the new infinity-cargo-wagon prototype. (#218)
     - Removed all testing tools from Factoriopedia.
   Bugfixes:
     - Fixed that infinity wagons, aggregate chests, and super pumps were not correctly saved to blueprints when reassigning contents from the library. Requires Factorio 2.0.34 or newer.

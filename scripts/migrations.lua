@@ -62,6 +62,24 @@ local version_migrations = {
       end
     end
   end,
+  ["2.5.0"] = function()
+    local to_remove = {}
+    for unit_number, wagon_data in pairs(storage.wagons) do
+      local proxy = wagon_data.proxy
+      if proxy and proxy.valid and proxy.name == "ee-infinity-wagon-chest" then
+        local wagon = proxy.surface.find_entity("ee-infinity-cargo-wagon", proxy.position)
+        if wagon then
+          wagon.infinity_container_filters = proxy.infinity_container_filters
+          wagon.remove_unfiltered_items = proxy.remove_unfiltered_items
+          proxy.destroy()
+        end
+        table.insert(to_remove, unit_number)
+      end
+    end
+    for _, unit_number in pairs(to_remove) do
+      storage.wagons[unit_number] = nil
+    end
+  end,
 }
 
 local migrations = {}

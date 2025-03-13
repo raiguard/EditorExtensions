@@ -1,12 +1,3 @@
---- @class InfinityCargoWagonData
---- @field flip integer
---- @field proxy LuaEntity
---- @field proxy_inv LuaInventory
---- @field wagon LuaEntity
---- @field wagon_inv LuaInventory
---- @field wagon_last_position MapPosition
---- @field wagon_name string
-
 --- @class InfinityFluidWagonData
 --- @field flip integer
 --- @field proxy LuaEntity
@@ -14,11 +5,6 @@
 --- @field wagon LuaEntity
 --- @field wagon_last_position MapPosition
 --- @field wagon_name string
-
-local wagon_names = {
-  ["ee-infinity-cargo-wagon"] = true,
-  ["ee-infinity-fluid-wagon"] = true,
-}
 
 --- @param player LuaPlayer
 --- @param entity LuaEntity
@@ -29,12 +15,12 @@ end
 --- @param e BuiltEvent
 local function on_entity_built(e)
   local entity = e.entity or e.destination
-  if not entity or not entity.valid or not wagon_names[entity.name] then
+  if not entity or not entity.valid or entity.name ~= "ee-infinity-fluid-wagon" then
     return
   end
 
   local proxy = entity.surface.create_entity({
-    name = "ee-infinity-wagon-" .. (entity.name == "ee-infinity-cargo-wagon" and "chest" or "pipe"),
+    name = "ee-infinity-wagon-pipe",
     position = entity.position,
     force = entity.force,
   })
@@ -47,39 +33,23 @@ local function on_entity_built(e)
     flip = 0,
     proxy = proxy,
     proxy_fluidbox = proxy.fluidbox,
-    proxy_inv = proxy.get_inventory(defines.inventory.chest),
     wagon = entity,
-    wagon_inv = entity.get_inventory(defines.inventory.cargo_wagon),
     wagon_last_position = entity.position,
     wagon_name = entity.name,
   }
   storage.wagons[entity.unit_number] = data
 
-  -- Apply any pre-existing filters
   local tags = e.tags
   if not tags or not tags.EditorExtensions then
     return
   end
-  local tags = tags.EditorExtensions
-  if entity.name == "ee-infinity-cargo-wagon" then
-    -- LEGACY: Before v1.9.16, we did not store the `remove unfiltered items` setting
-    if tags.filters then
-      data.proxy.infinity_container_filters = tags.filters
-      data.proxy.remove_unfiltered_items = tags.remove_unfiltered_items
-    else
-      --- @cast tags InfinityInventoryFilter[]
-      data.proxy.infinity_container_filters = tags
-    end
-  elseif entity.name == "ee-infinity-fluid-wagon" then
-    --- @cast tags InfinityPipeFilter
-    proxy.set_infinity_pipe_filter(tags)
-  end
+  proxy.set_infinity_pipe_filter(tags.EditorExtensions --[[@as InfinityPipeFilter]])
 end
 
 --- @param e DestroyedEvent
 local function on_entity_destroyed(e)
   local entity = e.entity
-  if not entity or not entity.valid or not wagon_names[entity.name] then
+  if not entity or not entity.valid or entity.name ~= "ee-infinity-fluid-wagon" then
     return
   end
 
@@ -108,23 +78,6 @@ local function on_cancelled_deconstruction(e)
   end
   -- Resume syncing
   storage.wagons[entity.unit_number].flip = 0
-end
-
---- @param data InfinityCargoWagonData
-local function sync_cargo(data)
-  if data.flip == 0 then
-    data.wagon_inv.clear()
-    for _, item in pairs(data.proxy_inv.get_contents()) do
-      data.wagon_inv.insert({ name = item.name, count = item.count, quality = item.quality })
-    end
-    data.flip = 1
-  elseif data.flip == 1 then
-    data.proxy_inv.clear()
-    for _, item in pairs(data.wagon_inv.get_contents()) do
-      data.proxy_inv.insert({ name = item.name, count = item.count, quality = item.quality })
-    end
-    data.flip = 0
-  end
 end
 
 local abs = math.abs
@@ -165,13 +118,7 @@ local function on_tick()
       storage.wagons[unit_number] = nil
       goto continue
     end
-    if data.wagon_name == "ee-infinity-cargo-wagon" then
-      --- @cast data InfinityCargoWagonData
-      sync_cargo(data)
-    elseif data.wagon_name == "ee-infinity-fluid-wagon" then
-      --- @cast data InfinityFluidWagonData
-      sync_fluid(data)
-    end
+    sync_fluid(data)
     local position = data.wagon.position
     local last_position = data.wagon_last_position
     if not last_position or last_position.x ~= position.x or last_position.y ~= position.y then
@@ -180,19 +127,6 @@ local function on_tick()
     end
     ::continue::
   end
-end
-
---- @param e EventData.on_gui_opened
-local function on_gui_opened(e)
-  local player = game.get_player(e.player_index)
-  if not player then
-    return
-  end
-  local entity = e.entity
-  if not entity or not entity.valid or not wagon_names[entity.name] then
-    return
-  end
-  open_gui(player, entity)
 end
 
 --- @param e EventData.CustomInputEvent
@@ -217,7 +151,7 @@ local function on_entity_settings_pasted(e)
   if not source.valid or not destination.valid then
     return
   end
-  if not wagon_names[source.name] or not wagon_names[destination.name] then
+  if source.name ~= "ee-infinity-fluid-wagon" or destination.name ~= "ee-infinity-fluid-wagon" then
     return
   end
   if source.name ~= destination.name then
@@ -240,7 +174,7 @@ local function on_player_setup_blueprint(e)
   end
   for i, entity in pairs(entities) do
     --- @cast i uint
-    if not wagon_names[entity.name] then
+    if entity.name ~= "ee-infinity-fluid-wagon" then
       goto continue
     end
     local real_entity = e.surface.find_entity(entity.name, entity.position)
@@ -263,7 +197,7 @@ end
 local infinity_wagon = {}
 
 infinity_wagon.on_init = function()
-  --- @type table<uint, InfinityCargoWagonData|InfinityFluidWagonData>
+  --- @type table<uint, InfinityFluidWagonData>
   storage.wagons = {}
 end
 
@@ -273,7 +207,6 @@ infinity_wagon.events = {
   [defines.events.on_entity_cloned] = on_entity_built,
   [defines.events.on_entity_died] = on_entity_destroyed,
   [defines.events.on_entity_settings_pasted] = on_entity_settings_pasted,
-  [defines.events.on_gui_opened] = on_gui_opened,
   [defines.events.on_marked_for_deconstruction] = on_marked_for_deconstruction,
   [defines.events.on_player_mined_entity] = on_entity_destroyed,
   [defines.events.on_player_setup_blueprint] = on_player_setup_blueprint,

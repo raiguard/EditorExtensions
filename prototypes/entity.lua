@@ -248,17 +248,11 @@ table.insert(pastable, "ee-infinity-loader")
 
 -- infinity wagons
 do
-  local cargo_wagon = flib_table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
+  local cargo_wagon = flib_table.deepcopy(data.raw["infinity-cargo-wagon"]["infinity-cargo-wagon"])
   cargo_wagon.name = "ee-infinity-cargo-wagon"
-  cargo_wagon.localised_description = {
-    "",
-    { "entity-description.ee-infinity-cargo-wagon" },
-    "\n[color=255,57,48]",
-    { "entity-description.ee-performance-warning" },
-    "[/color]",
-  }
+  cargo_wagon.localised_description = { "entity-description.ee-infinity-cargo-wagon" }
+
   cargo_wagon.icons = util.extract_icon_info(cargo_wagon)
-  cargo_wagon.hidden_in_factoriopedia = true
   cargo_wagon.inventory_size = 100
   cargo_wagon.max_speed = 10
   cargo_wagon.minable.result = "ee-infinity-cargo-wagon"
