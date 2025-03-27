@@ -367,6 +367,7 @@ data:extend({ linked_chest })
 local super_beacon = flib_table.deepcopy(data.raw["beacon"]["beacon"])
 super_beacon.name = "ee-super-beacon"
 super_beacon.icons = util.extract_icon_info(super_beacon)
+super_beacon.hidden_in_factoriopedia = true
 super_beacon.map_color = constants.infinity_tint
 super_beacon.friendly_map_color = constants.infinity_tint
 super_beacon.minable.result = "ee-super-beacon"
