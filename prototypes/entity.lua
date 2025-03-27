@@ -299,6 +299,7 @@ do
   util.recursive_tint(fluid_wagon)
 
   -- non-interactable chest and pipe
+  -- Chest is kept for migration purposes
   local infinity_wagon_chest = flib_table.deepcopy(data.raw["infinity-container"]["ee-infinity-chest"])
   infinity_wagon_chest.name = "ee-infinity-wagon-chest"
   infinity_wagon_chest.icons = util.recursive_tint(util.extract_icon_info(infinity_wagon_chest))
@@ -320,6 +321,7 @@ do
   infinity_wagon_pipe.flags = { "hide-alt-info" }
   infinity_wagon_pipe.hidden = true
   infinity_wagon_pipe.gui_mode = "all"
+  infinity_wagon_pipe.fluid_box.volume = fluid_wagon.capacity
 
   for k in pairs(infinity_wagon_pipe.pictures) do
     infinity_wagon_pipe.pictures[k] = util.empty_sprite()
