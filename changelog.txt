@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.5.0
-Date: ????
+Date: 2025-06-05
   Minor Features:
     - Infinity loader has an adjustable stack size. (#212)
   Changes:
