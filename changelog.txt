@@ -11,6 +11,7 @@ Date: 2025-06-05
     - Updated to Factorio 2.0.42.
     - Updated to use the new infinity-cargo-wagon prototype. (#218)
     - Removed all testing tools from Factoriopedia.
+    - Added an option to generate the debug world with normal terrain (#133)
   Bugfixes:
     - Fixed that infinity wagons, aggregate chests, and super pumps were not correctly saved to blueprints when reassigning contents from the library.
     - Fixed that infinity fluid wagons would only fill up to 25k.
